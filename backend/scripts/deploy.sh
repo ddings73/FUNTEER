@@ -2,13 +2,13 @@
 sudo docker ps -a -q --filter "name=funteer" | grep -q . && docker stop funteer && docker rm funteer | true
 
 # 기존 이미지 삭제
-sudo docker rmi funteer/funteer:1.0
+sudo docker rmi ddings73/funteer-jenkins:1.0
 
 # 도커허브 이미지 pull
-sudo docker pull funteer/funteer:1.0
+sudo docker pull ddings73/funteer-jenkins:1.0
 
 # 도커 run
-docker run -d -p 8080:8080 --name funteer funteer/funteer:1.0
+docker run -d -p 8080:8080 --name funteer ddings73/funteer-jenkins:1.0
 
 # 사용하지 않는 불필요한 이미지 삭제 -> 현재 컨테이너가 물고 있는 이미지는 삭제되지 않습니다.
 docker rmi -f $(docker images -f "dangling=true" -q) || true
