@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Paths } from './paths';
 import { Login } from './pages/index';
+import ErrorPage from './pages/ErrorPage';
 
 // redux
 import { increment, decrement } from './store/slices/counterSlice';
@@ -15,7 +16,7 @@ function App() {
     <Routes>
       <Route path={Paths.index} element={<div>메인페이지 입니다.</div>} />
       <Route path={Paths.login} element={<Login />} />
-      <Route path="/*" element={<div> 에러페이지</div>} />
+      <Route path="/*" element={<ErrorPage />} />
     </Routes>
   );
 }
