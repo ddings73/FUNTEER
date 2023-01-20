@@ -1,21 +1,34 @@
 import { Button, TextField } from '@mui/material';
-import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styles from './LoginContainer.module.scss';
 
-type LoginType = {
+type UserLoginType = {
   email: string;
   password: string;
 };
 
 function LoginContainer() {
-  const [loginInfo, setLoginInfo] = useState<LoginType>();
+  const [userInfo, setUserInfo] = useState<UserLoginType>({
+    email: '',
+    password: '',
+  });
 
+  // 로 그인 정보 입력
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.value);
+    const { name, value } = e.target;
+
+    setUserInfo({ ...userInfo, [name]: value });
   };
 
+  const requestLogin = async () => {
+    console.log('로그인 요청');
+  };
+
+  useEffect(() => {
+    console.log(userInfo);
+  }, [userInfo]);
+
+  // KAKAO 로그인 요청
   const OAuth = () => {
     const REST_API_KEY = process.env.REACT_APP_KAKAO_LOGIN_API;
     const REDIRECT_URI = `http://localhost:3000`;
@@ -43,7 +56,13 @@ function LoginContainer() {
             variant="outlined"
           />
 
-          <Button className={styles['login-button']} variant="contained">
+          <div className={styles['findInfo-box']}>
+            <p>
+              <span>아이디 찾기</span> <span>비밀번호 찾기</span>{' '}
+            </p>
+          </div>
+
+          <Button className={styles['login-button']} variant="contained" onClick={requestLogin}>
             이메일로 로그인하기
           </Button>
 

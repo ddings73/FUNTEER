@@ -20,6 +20,16 @@
       padding: 10px;
       border-radius: 10px;
 
+      & .findInfo-box {
+        text-align: right;
+
+        & span {
+          font-size: 0.8rem;
+          color: #707070;
+          cursor: pointer;
+        }
+      }
+
       & .title {
         font-weight: bold;
         font-size: 3rem;
