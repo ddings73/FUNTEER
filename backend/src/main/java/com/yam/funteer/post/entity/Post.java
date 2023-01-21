@@ -70,7 +70,6 @@ public class Post {
 	@Column( name="post_reject")
 	private String reject;
 
-	@ManyToMany(mappedBy = "postList")
-	private List<Category> categoryList=new ArrayList<>();
+
 
 }
