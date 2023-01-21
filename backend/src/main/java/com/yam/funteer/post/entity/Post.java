@@ -18,13 +18,19 @@ import javax.persistence.Table;
 import com.yam.funteer.code.GroupCode;
 import com.yam.funteer.member.entity.Member;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
 @Table(name="post")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Post {
 	@Id
 	@Column(name="post_id")
@@ -69,7 +75,5 @@ public class Post {
 
 	@Column( name="post_reject")
 	private String reject;
-
-
 
 }
