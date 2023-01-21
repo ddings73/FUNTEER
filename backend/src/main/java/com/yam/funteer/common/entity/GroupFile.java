@@ -1,2 +1,4 @@
-package com.yam.funteer.common.entity;public class GroupFile {
+package com.yam.funteer.common.entity;
+
+public class GroupFile {
 }
