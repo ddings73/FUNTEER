@@ -1,2 +1,5 @@
-package com.yam.funteer.common.entity;public class PostFile {
+package com.yam.funteer.common.entity;
+
+public class PostFile {
+
 }
