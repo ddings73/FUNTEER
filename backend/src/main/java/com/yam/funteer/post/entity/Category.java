@@ -23,6 +23,6 @@ public class Category {
 	@Column(name="category_name")
 	private String name;
 
-	@ManyToMany(mappedBy = "categoryList")
+	@OneToMany(mappedBy = "categoryList")
 	private List<Post>postList=new ArrayList<>();
 }
