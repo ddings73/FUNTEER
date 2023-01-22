@@ -9,10 +9,13 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinColumns;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 @Entity
 public class Category {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +26,6 @@ public class Category {
 	@Column(name="category_name")
 	private String name;
 
-	@OneToMany(mappedBy = "categoryList")
+	@OneToMany(mappedBy = "category")
 	private List<Post>postList=new ArrayList<>();
 }
