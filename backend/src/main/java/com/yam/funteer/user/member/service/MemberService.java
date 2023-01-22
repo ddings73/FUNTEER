@@ -1,4 +1,4 @@
-package com.yam.funteer.member.service;
+package com.yam.funteer.user.member.service;
 
 public interface MemberService {
 }

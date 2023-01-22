@@ -1,21 +1,27 @@
-package com.yam.funteer.member.controller;
+package com.yam.funteer.user.member.controller;
 
-import com.yam.funteer.member.service.MemberService;
+import com.yam.funteer.user.member.dto.MemberResponseDto;
+import com.yam.funteer.user.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import com.yam.funteer.member.dto.MemberRequestDto;
+import com.yam.funteer.user.member.dto.MemberRequestDto;
 
 @RestController
 @RequestMapping("/member")
-@RequiredArgsConstructor
+@RequiredArgsConstructor @Slf4j
 public class MemberController {
 
 	private final MemberService memberService;
 
 	@PostMapping("/")
-	public ResponseEntity signupMember(@ModelAttribute MemberRequestDto memberRequestDto){
+	public ResponseEntity<MemberResponseDto> signupMember(@ModelAttribute MemberRequestDto requestDto, BindingResult bindingResult){
+		if(bindingResult.hasErrors()){
+			return ResponseEntity.badRequest().build();
+		}
 		return null;
 	}
 

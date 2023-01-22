@@ -1,12 +1,14 @@
-package com.yam.funteer.member.entity;
+package com.yam.funteer.user.member.entity;
 
 import java.io.File;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 import com.sun.istack.NotNull;
 
-import com.yam.funteer.code.CommonCode;
+import com.yam.funteer.common.entity.Attach;
+import com.yam.funteer.user.UserType;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -25,26 +27,27 @@ public class Member {
 	@Column(name = "member_email")
 	private String email;
 
-	@NotNull
+	@NotBlank
 	@Column(name = "member_name")
 	private String name;
 
-	@NotNull
+	@NotBlank
 	@Column(name = "member_nickname")
 	private String nickName;
 
-	@NotNull
+	@NotBlank
 	@Column(name = "member_phone")
 	private String phone;
 
-	@Column(name = "member_image")
-	private File profileImg;
+//	@Column(name = "member_image")
+//	private Attach profileImg;
 
 	@Column(name = "member_money")
 	private Long money;
 
+	@Enumerated(value = EnumType.STRING)
 	@Column(name = "member_code")
-	 private CommonCode code;
+	 private UserType code;
 
 	@Column(name = "member_private")
 	 private boolean publishProfile;
