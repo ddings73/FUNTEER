@@ -15,6 +15,7 @@ import lombok.Setter;
 
 @Entity
 @Getter @Setter
+@Table(name = "member")
 @RequiredArgsConstructor
 public class Member {
 
