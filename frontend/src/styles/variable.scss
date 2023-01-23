@@ -1,1 +1,63 @@
 @import './reset.scss';
+
+@font-face {
+  font-family: 'SEBANG_Gothic_Bold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Bold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NanumSquareRound';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_two@1.0/NanumSquareRound.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+/*
+laptop : 1440px 이상
+tablet : 768px ~ 1280px
+mobile : 425px
+*/
+
+$primary: rgba(236, 153, 75, 1);
+$second: E6750A;
+$error: D34F04;
+
+/*
+브라우저 사이즈가 1440px 이상일때
+*/
+@mixin desktop {
+  @media (min-width: 1440px) {
+    html {
+      font-size: 16px;
+    }
+
+    @content;
+  }
+}
+
+/*
+브라우저 사이즈가 768px 이상 1440px 이하일때
+*/
+@mixin tablet {
+  @media (min-width: 768px) and (max-width: 1440px) {
+    html {
+      font-size: 14px;
+    }
+    @content;
+  }
+}
+
+/*
+브라우저 사이즈가 768px 이하일때
+*/
+@mixin mobile {
+  @media (max-width: 768px) {
+    html {
+      font-size: 12px;
+    }
+
+    @content;
+  }
+}
