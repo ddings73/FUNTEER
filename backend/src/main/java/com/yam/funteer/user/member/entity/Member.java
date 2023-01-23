@@ -1,55 +1,63 @@
 package com.yam.funteer.user.member.entity;
 
 import java.io.File;
+import java.time.LocalDateTime;
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 import com.sun.istack.NotNull;
 
 import com.yam.funteer.common.entity.Attach;
 import com.yam.funteer.user.UserType;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
-@Getter @Setter
 @Table(name = "member")
-@RequiredArgsConstructor
+@Getter @Builder
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "member_id")
 	private Long id;
 
-	@NotNull
-	@Column(name = "member_email")
-	private String email;
+	@Email
+	@Column(name = "member_email", unique = true)
+	private @NotNull String email;
 
-	@NotBlank
+	@Column(name = "member_password")
+	private @NotNull String password;
+
 	@Column(name = "member_name")
-	private String name;
+	private @NotNull String name;
 
-	@NotBlank
-	@Column(name = "member_nickname")
-	private String nickName;
+	@Column(name = "member_nickname", unique = true)
+	private @NotNull String nickName;
 
-	@NotBlank
 	@Column(name = "member_phone")
-	private String phone;
+	private @NotNull String phone;
 
 //	@Column(name = "member_image")
+//	@OneToOne(targetEntity = Attach.class)
 //	private Attach profileImg;
 
 	@Column(name = "member_money")
 	private Long money;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "member_code")
-	 private UserType code;
+	@Column(name = "member_code", nullable = false)
+	 private UserType status;
 
 	@Column(name = "member_private")
-	 private boolean publishProfile;
+	private boolean isPrivate;
+
+	@Column(name = "member_regdate")
+	private LocalDateTime regDate;
+
+	public void setSignOut() {
+		this.status = UserType.NORMAL_OUT;
+	}
 }
