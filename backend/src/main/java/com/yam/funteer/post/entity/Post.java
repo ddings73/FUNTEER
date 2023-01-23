@@ -17,9 +17,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import com.yam.funteer.code.GroupCode;
-import com.yam.funteer.member.entity.Member;
 
+import com.yam.funteer.user.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -47,6 +46,9 @@ public class Post {
 	@JoinColumn(name="member_id")
 	private Member member;
 
+	@ManyToOne
+	private Category category;
+
 	@Column(nullable = false,name="post_title")
 	private String title;
 
@@ -71,9 +73,9 @@ public class Post {
 	@Column(name="post_end")
 	private LocalDateTime end;
 
-	@Enumerated
-	@Column(nullable = false,name="post_code")
-	private GroupCode code;
+//	@Enumerated
+//	@Column(nullable = false,name="post_code")
+//	private GroupCode code;
 
 	@Column( name="post_reject")
 	private String reject;
