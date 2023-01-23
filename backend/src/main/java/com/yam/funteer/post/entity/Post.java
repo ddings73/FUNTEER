@@ -14,10 +14,11 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-
+import com.yam.funteer.post.PostType;
 import com.yam.funteer.user.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -73,9 +74,9 @@ public class Post {
 	@Column(name="post_end")
 	private LocalDateTime end;
 
-//	@Enumerated
-//	@Column(nullable = false,name="post_code")
-//	private GroupCode code;
+	@Enumerated
+	@Column(nullable = false,name="post_type")
+	private PostType postType;
 
 	@Column( name="post_reject")
 	private String reject;
@@ -83,5 +84,8 @@ public class Post {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id")
 	private Category categoryList;
+
+	@OneToMany(mappedBy = "post")
+	private List<TargetMoney> targetMoney;
 
 }

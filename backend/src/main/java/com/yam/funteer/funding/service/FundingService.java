@@ -2,14 +2,14 @@ package com.yam.funteer.funding.service;
 
 import java.util.List;
 
-import com.yam.funteer.code.GroupCode;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
 import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.post.PostType;
 import com.yam.funteer.post.entity.Post;
 
 public interface FundingService {
-	List<FundingListResponse> findAllFundings(GroupCode groupcode);
+	List<FundingListResponse> findApprovedFunding(String keyword, String category, String hashTag);
 
 	void createFunding(FundingRequest data);
 

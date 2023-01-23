@@ -9,13 +9,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.yam.funteer.code.GroupCode;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
 import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
 import com.yam.funteer.funding.service.FundingService;
+import com.yam.funteer.post.PostType;
+import com.yam.funteer.post.entity.Category;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -27,10 +30,11 @@ public class FundingController {
 
 	private final FundingService fundingService;
 
-	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
+	@ApiOperation(value = "진행중인 펀딩 리스트 조회", notes = "진행중인 펀딩 리스트를 조회한다.")
 	@GetMapping("/")
-	public ResponseEntity<List<FundingListResponse>> findAllFundings() {
-		return ResponseEntity.ok(fundingService.findAllFundings(GroupCode.A01));
+	public ResponseEntity<List<FundingListResponse>> findAllFundings(@RequestParam String keyword, @RequestParam
+		String category, @RequestParam String hashTag) {
+		return ResponseEntity.ok(fundingService.findApprovedFunding(keyword, hashTag, category));
 	}
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
