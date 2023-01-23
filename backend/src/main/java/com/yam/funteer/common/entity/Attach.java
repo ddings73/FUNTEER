@@ -10,7 +10,6 @@ import javax.persistence.Id;
 
 import org.aspectj.apache.bcel.classfile.Code;
 
-import com.yam.funteer.code.GroupCode;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,7 +38,7 @@ public class Attach {
 	@Column(name = "attach_uploaddate")
 	private LocalDateTime uploadDate;
 
-	@Column(name = "attach_code")
+//	@Column(name = "attach_code")
 	// 공통 코드
-	private GroupCode code;
+//	private GroupCode code;
 }
