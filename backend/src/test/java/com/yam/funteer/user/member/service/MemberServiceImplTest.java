@@ -36,7 +36,7 @@ class MemberServiceImplTest {
 
         Member member = requestDto.toEntity();
         assertNotNull(member);
-        assertEquals(UserType.NORMAL, member.getCode());
+        assertEquals(UserType.NORMAL, member.getStatus());
         assertEquals(0L, member.getMoney());
     }
 
