@@ -1,4 +1,4 @@
-package com.yam.funteer.common.entity;
+package com.yam.funteer.attach.entity;
 
 import java.time.LocalDateTime;
 

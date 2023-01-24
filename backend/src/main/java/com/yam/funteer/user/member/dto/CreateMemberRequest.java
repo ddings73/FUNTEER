@@ -4,6 +4,7 @@ import com.yam.funteer.user.UserType;
 import com.yam.funteer.user.member.entity.Member;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -42,11 +43,12 @@ public class CreateMemberRequest {
                 .nickName(nickname)
                 .status(UserType.NORMAL)
                 .money(0L)
-                .publishProfile(false)
+                .isPrivate(false)
                 .regDate(LocalDateTime.now())
                 .build();
     }
 
-    public void encryptPassword() {
+    public void encryptPassword(PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(this.password);
     }
 }

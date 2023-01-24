@@ -7,6 +7,6 @@ import com.yam.funteer.user.member.dto.SelectMemberRequest;
 public interface MemberService {
 
     void signupMember(CreateMemberRequest requestDto);
-    void signoutUMember(SelectMemberRequest selectMemberRequest);
+    void signoutMember(SelectMemberRequest selectMemberRequest);
     MemberProfileResponse getMemberProfile(SelectMemberRequest selectMemberRequest);
 }
