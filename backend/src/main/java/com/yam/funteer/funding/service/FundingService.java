@@ -15,11 +15,11 @@ import com.yam.funteer.post.entity.Post;
 public interface FundingService {
 	List<FundingListResponse> findApprovedFunding(String keyword, String category, String hashTag);
 
-	void createFunding(FundingRequest data);
+	Post createFunding(FundingRequest data);
 
 	FundingDetailResponse findFundingById(Long id);
 
-	FundingDetailResponse updateFunding(Long fundingId, FundingRequest data);
+	FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception;
 
 	void deleteFunding(Long fundingId) throws PostNotFoundException;
 

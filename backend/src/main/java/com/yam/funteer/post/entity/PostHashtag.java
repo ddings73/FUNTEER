@@ -7,7 +7,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
@@ -15,6 +17,8 @@ import lombok.Setter;
 @Entity
 @IdClass(PostHashtagId.class)
 @Table(name="post_hashtag")
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostHashtag {
 	@Id
 	@ManyToOne
@@ -25,4 +29,5 @@ public class PostHashtag {
 	@ManyToOne
 	@JoinColumn(name="hashtag_id")
 	private Hashtag hashtag;
+
 }

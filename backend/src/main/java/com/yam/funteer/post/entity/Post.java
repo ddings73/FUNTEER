@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.yam.funteer.funding.dto.FundingRequest;
 import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.post.PostType;
 import com.yam.funteer.user.member.entity.Member;
@@ -92,4 +93,8 @@ public class Post {
 	@OneToOne
 	@JoinColumn(name = "report_id")
 	private Report report;
+
+	public void update(FundingRequest data) {
+		this.date = data.getPostDate();
+	}
 }

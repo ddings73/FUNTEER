@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
@@ -22,12 +21,8 @@ import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
 import com.yam.funteer.funding.exception.PostNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
-import com.yam.funteer.post.PostType;
-import com.yam.funteer.post.entity.Category;
 
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -58,8 +53,9 @@ public class FundingController {
 	}
 
 	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다. (D12: 승인 거절 시 게시글 전체 수정 가능 / D14: 진행중일때 기간 1회 수정 가능 / D15: 진행중, 수정 불가능")
-	@PutMapping("/{fundingId}/report")
-	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, @RequestBody FundingRequest data) {
+	@PutMapping("/{fundingId}")
+	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId,
+		@RequestBody FundingRequest data) throws Exception {
 		return ResponseEntity.ok(fundingService.updateFunding(fundingId, data));
 	}
 
