@@ -1,6 +1,6 @@
 package com.yam.funteer.user.member.service;
 
-import com.yam.funteer.common.repository.AttachRepository;
+import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.exception.EmailDuplicateException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.user.member.dto.CreateMemberRequest;
@@ -10,14 +10,18 @@ import com.yam.funteer.user.member.entity.Member;
 import com.yam.funteer.user.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.Optional;
 
 @Service @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class MemberServiceImpl implements MemberService {
 
+    private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final AttachRepository attachRepository;
 
@@ -31,23 +35,19 @@ public class MemberServiceImpl implements MemberService {
         }
 
         log.info("중복회원 검증 종료 => ");
-        requestDto.encryptPassword(); // security 미구현
+        requestDto.encryptPassword(passwordEncoder);
         Member member = requestDto.toEntity();
         memberRepository.save(member);
     }
 
     @Override
-    public void signoutUMember(SelectMemberRequest selectMemberRequest) {
+    public void signoutMember(SelectMemberRequest selectMemberRequest) {
         Optional<Member> findMember = memberRepository.findById(selectMemberRequest.getMemberId());
         Member member = findMember.orElseThrow(UserNotFoundException::new);
         String password = selectMemberRequest.getPassword().orElseThrow(IllegalArgumentException::new);
 
-        // 암호화 로직 필요
-        String encrptedPass = password;
-        if(encrptedPass.equals(member.getPassword())){
-            member.setSignOut();
-        }
-
+        validatePassword(password, member.getPassword());
+        member.signOut();
     }
 
     @Override
@@ -60,5 +60,9 @@ public class MemberServiceImpl implements MemberService {
         // 팔로잉 조회
         MemberProfileResponse memberProfileResponse = MemberProfileResponse.of(member);
         return memberProfileResponse;
+    }
+
+    private void validatePassword(String p1, String p2) {
+        if(!passwordEncoder.matches(p1, p2)) throw new IllegalArgumentException();
     }
 }

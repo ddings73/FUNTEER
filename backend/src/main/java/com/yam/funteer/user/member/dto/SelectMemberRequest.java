@@ -5,7 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 @Getter @Setter
@@ -13,7 +13,7 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SelectMemberRequest {
 
-    @NotBlank
+    @NotNull
     private Long memberId;
     private String password;
 
