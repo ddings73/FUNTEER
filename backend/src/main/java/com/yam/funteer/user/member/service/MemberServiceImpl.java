@@ -1,6 +1,6 @@
 package com.yam.funteer.user.member.service;
 
-import com.yam.funteer.common.repository.AttachRepository;
+import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.exception.EmailDuplicateException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.user.member.dto.CreateMemberRequest;

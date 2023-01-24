@@ -10,9 +10,11 @@ import lombok.ToString;
 @RequiredArgsConstructor
 public enum UserType implements CommonCode {
     NORMAL("일반"),
-    NORMAL_OUT("일반_탈퇴"),
+    NORMAL_RESIGN("일반_탈퇴"),
     KAKAO("카카오"),
-    TEAM("단체");
+    TEAM_AWAIT("단체_대기"),
+    TEAM("단체_승인"),
+    TEAM_RESIGN("단체_탈퇴");
 
     private final String description;
 

@@ -42,7 +42,7 @@ public class CreateMemberRequest {
                 .nickName(nickname)
                 .status(UserType.NORMAL)
                 .money(0L)
-                .publishProfile(false)
+                .isPrivate(false)
                 .regDate(LocalDateTime.now())
                 .build();
     }
