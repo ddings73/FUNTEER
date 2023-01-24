@@ -8,6 +8,7 @@ import com.yam.funteer.user.member.repository.MemberRepository;
 import com.yam.funteer.user.team.entity.Team;
 import com.yam.funteer.user.team.repository.TeamRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,6 +16,8 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService{
+
+    private final PasswordEncoder passwordEncoder;
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
 
@@ -26,17 +29,19 @@ public class LoginServiceImpl implements LoginService{
     private LoginResponse memberLogin(LoginRequest loginRequest){
         Optional<Member> findMember = memberRepository.findByEmail(loginRequest.getEmail());
         Member member = findMember.orElseThrow(UserNotFoundException::new);
-        validatePassword(member.getPassword(), loginRequest.encryptedPassword());
+
+        validatePassword(loginRequest.getPassword(), member.getPassword());
         return LoginResponse.of(member, null, null);
     }
     private LoginResponse teamLogin(LoginRequest loginRequest){
         Optional<Team> fineTeam = teamRepository.findByEmail(loginRequest.getEmail());
         Team team = fineTeam.orElseThrow(UserNotFoundException::new);
-        validatePassword(team.getPassword(), loginRequest.encryptedPassword());
+
+        validatePassword(loginRequest.getPassword(), team.getPassword());
         return LoginResponse.of(team, null, null);
     }
 
     private void validatePassword(String p1, String p2){
-        if(!p1.equals(p2)) throw new IllegalArgumentException();
+        if(!passwordEncoder.matches(p1, p2)) throw new IllegalArgumentException();
     }
 }

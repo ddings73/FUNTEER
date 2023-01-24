@@ -55,7 +55,7 @@ public class Member {
 	@Column(name = "member_regdate")
 	private LocalDateTime regDate;
 
-	public void setSignOut() {
+	public void signOut() {
 		this.status = UserType.NORMAL_RESIGN;
 	}
 }
