@@ -3,6 +3,7 @@ package com.yam.funteer.funding.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,14 +14,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
 import com.yam.funteer.funding.dto.FundingListResponse;
+import com.yam.funteer.funding.dto.FundingReportRequest;
+import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.exception.PostNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
 import com.yam.funteer.post.PostType;
 import com.yam.funteer.post.entity.Category;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -32,7 +39,7 @@ public class FundingController {
 
 	@ApiOperation(value = "진행중인 펀딩 리스트 조회", notes = "진행중인 펀딩 리스트를 조회한다.")
 	@GetMapping("/")
-	public ResponseEntity<List<FundingListResponse>> findAllFundings(@RequestParam String keyword, @RequestParam
+	public ResponseEntity<List<FundingListResponse>> findApprovedFunding(@RequestParam String keyword, @RequestParam
 		String category, @RequestParam String hashTag) {
 		return ResponseEntity.ok(fundingService.findApprovedFunding(keyword, hashTag, category));
 	}
@@ -54,5 +61,44 @@ public class FundingController {
 	@PutMapping("/{fundingId}/report")
 	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, @RequestBody FundingRequest data) {
 		return ResponseEntity.ok(fundingService.updateFunding(fundingId, data));
+	}
+
+	@ApiOperation(value = "펀딩 게시글 삭제", notes = "펀딩 게시글을 삭제한다.")
+	@DeleteMapping("/{fundingId}")
+	public ResponseEntity<?> deleteFunding(@PathVariable Long fundingId) throws PostNotFoundException {
+		fundingService.deleteFunding(fundingId);
+		return ResponseEntity.ok().build();
+	}
+
+	@ApiOperation(value = "펀딩 게시글 보고서 작성", notes = "펀딩 게시글 보고서를 작성한다.")
+	@PostMapping("/{fundingId}/report")
+	public ResponseEntity<?> createFundingReport(@PathVariable Long fundingId, @RequestBody FundingReportRequest data) {
+		fundingService.createFundingReport(data);
+		return ResponseEntity.ok().build();
+	}
+
+	@ApiOperation(value = "펀딩 게시글 보고서 탭 조회", notes = "펀딩 게시글 보고서 탭을 조회한다.")
+	@GetMapping("/{fundingId}/report")
+	public ResponseEntity<FundingReportResponse> readFundingReport(@PathVariable Long fundingId) {
+		return ResponseEntity.ok(fundingService.findFundingReportById(fundingId));
+	}
+
+	@ApiOperation(value = "펀딩 게시글 보고서 수정", notes = "펀딩 게시글 보고서를 수정한다.")
+	@PutMapping("/{fundingId}/report")
+	public ResponseEntity<FundingReportResponse> updateFundingReport(@PathVariable Long fundingId, @RequestBody FundingReportResponse data) {
+		return ResponseEntity.ok(fundingService.updateFundingReport(fundingId, data));
+	}
+
+	@ApiOperation(value = "펀딩 참여", notes = "회원이 펀딩에 참여한다.")
+	@PostMapping("/{fundingId}/pay")
+	public ResponseEntity<?> takeFunding(@PathVariable Long fundingId) {
+		return null;
+	}
+
+	@ApiOperation(value = "펀딩 응원 댓글", notes = "펀딩 게시글에 응원 댓글을 작성한다.")
+	@PostMapping("/{fundingId}/reply")
+	public ResponseEntity<?> createFundingComment(@PathVariable Long fundingId, @RequestBody FundingCommentRequest data) {
+		fundingService.createFundingComment(data);
+		return ResponseEntity.ok("CommentCreated Well !");
 	}
 }

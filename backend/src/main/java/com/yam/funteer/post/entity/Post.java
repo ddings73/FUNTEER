@@ -18,6 +18,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.post.PostType;
 import com.yam.funteer.user.member.entity.Member;
 import lombok.AllArgsConstructor;
@@ -88,4 +89,7 @@ public class Post {
 	@OneToMany(mappedBy = "post")
 	private List<TargetMoney> targetMoney;
 
+	@OneToOne
+	@JoinColumn(name = "report_id")
+	private Report report;
 }

@@ -7,9 +7,12 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
 import com.yam.funteer.funding.dto.FundingListResponse;
+import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.exception.PostNotFoundException;
 import com.yam.funteer.post.PostType;
 import com.yam.funteer.post.TargetMoneyType;
 import com.yam.funteer.post.entity.Post;
@@ -88,6 +91,22 @@ public class FundingServiceImpl implements FundingService{
 	public FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) {
 		Post funding = postRepository.findById(fundingId).orElseThrow(() -> new NullPointerException());
 		return FundingDetailResponse.from(funding);
+	}
+
+	@Override
+	public void deleteFunding(Long fundingId) throws PostNotFoundException {
+		Post funding = postRepository.findById(fundingId).orElseThrow(() -> new PostNotFoundException());
+		postRepository.delete(funding);
+	}
+
+	@Override
+	public FundingReportResponse findFundingReportById(Long fundingId) {
+		return null;
+	}
+
+	@Override
+	public void createFundingComment(FundingCommentRequest data) {
+
 	}
 
 }
