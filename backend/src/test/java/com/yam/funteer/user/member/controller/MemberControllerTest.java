@@ -2,6 +2,7 @@ package com.yam.funteer.user.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yam.funteer.user.member.dto.CreateMemberRequest;
+import com.yam.funteer.user.member.service.MemberService;
 import com.yam.funteer.user.member.service.MemberServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@WebMvcTest(MemberController.class)
 class MemberControllerTest {
 
     @Autowired
@@ -25,7 +26,7 @@ class MemberControllerTest {
     ObjectMapper objectMapper;
 
     @MockBean
-    MemberServiceImpl memberServiceImpl;
+    MemberService memberService;
 
     @Test
     @DisplayName("유저_회원가입_정상입력")

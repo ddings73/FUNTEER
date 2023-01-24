@@ -1,15 +1,13 @@
 package com.yam.funteer.user.member.entity;
 
-import java.io.File;
 import java.time.LocalDateTime;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
 
 import com.sun.istack.NotNull;
 
-import com.yam.funteer.common.entity.Attach;
+import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.user.UserType;
 import lombok.*;
 
@@ -40,15 +38,15 @@ public class Member {
 	@Column(name = "member_phone")
 	private @NotNull String phone;
 
-//	@Column(name = "member_image")
-//	@OneToOne(targetEntity = Attach.class)
-//	private Attach profileImg;
+	@OneToOne
+	@JoinColumn(name = "member_profile")
+	private Attach profileImg;
 
 	@Column(name = "member_money")
 	private Long money;
 
 	@Enumerated(value = EnumType.STRING)
-	@Column(name = "member_code", nullable = false)
+	@Column(name = "member_status", nullable = false)
 	 private UserType status;
 
 	@Column(name = "member_private")
@@ -57,7 +55,7 @@ public class Member {
 	@Column(name = "member_regdate")
 	private LocalDateTime regDate;
 
-	public void setSignOut() {
-		this.status = UserType.NORMAL_OUT;
+	public void signOut() {
+		this.status = UserType.NORMAL_RESIGN;
 	}
 }
