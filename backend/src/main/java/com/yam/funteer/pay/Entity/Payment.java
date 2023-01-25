@@ -2,7 +2,7 @@ package com.yam.funteer.pay.Entity;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
+import javax.naming.Name;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,37 +12,29 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.yam.funteer.post.entity.Post;
+import com.yam.funteer.user.entity.Member;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
-@Setter
-@Getter
 @Entity
-@Table(name="payment")
+@Table(name = "payment")
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Payment {
 
-	@Id
-	@Column(name="payment_id")
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
-	@ManyToOne(targetEntity = Post.class)
-	@JoinColumn(name="post_id")
+	@ManyToOne
+	@JoinColumn(name = "post_id")
 	private Post post;
-
-	@Column(name="payment_amount")
-	private Integer amount;
-
-	@Column(name="payment_date")
-	private LocalDateTime date;
-
-	// @ManyToOne(targetEntity = "team")
-	// @JoinColumn
-	// private Team team;
-	//
-	// @ManyToOne(targetEntity = "member")
-	// @JoinColumn
-	// private Member member;
-
+	@ManyToOne
+	@JoinColumn(name = "member_id")
+	private Member member;
+	private Long amount;
+	private LocalDateTime payDate;
 }

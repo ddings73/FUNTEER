@@ -1,9 +1,9 @@
 package com.yam.funteer.user.member.service;
 
 import com.yam.funteer.user.UserType;
-import com.yam.funteer.user.member.dto.CreateMemberRequest;
-import com.yam.funteer.user.member.entity.Member;
-import com.yam.funteer.user.member.repository.MemberRepository;
+import com.yam.funteer.user.dto.CreateMemberRequest;
+import com.yam.funteer.user.entity.Member;
+import com.yam.funteer.user.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

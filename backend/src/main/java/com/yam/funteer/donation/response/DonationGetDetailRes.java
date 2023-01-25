@@ -1,6 +1,6 @@
 package com.yam.funteer.donation.response;
 
-import com.yam.funteer.BaseResponseBody;
+import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.post.entity.Post;
 
 import lombok.Getter;

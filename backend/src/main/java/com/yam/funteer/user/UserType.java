@@ -13,7 +13,8 @@ public enum UserType implements GrantedAuthority {
     KAKAO(ROLES.USER,"카카오"),
     TEAM_AWAIT(null,"단체_대기"),
     TEAM(null,"단체_승인"),
-    TEAM_RESIGN(null,"단체_탈퇴");
+    TEAM_RESIGN(null,"단체_탈퇴"),
+    ADMIN(ROLES.ADMIN, "관리자");
 
     public static class ROLES{
         public static final String USER = "ROLE_USER";

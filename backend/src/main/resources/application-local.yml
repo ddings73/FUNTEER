@@ -4,24 +4,3 @@ spring:
     url: jdbc:mysql://localhost:3306/funteer_db?serverTimezone=UTC&characterEncoding=UTF-8
     username: funteer
     password: Qndnfrud@04
-
-  jpa:
-    database-platform: org.hibernate.dialect.MySQL8Dialect
-    open-in-view: false
-    show-sql: true
-    hibernate:
-      format_sql: true
-      ddl-auto: create
-
-  mvc:
-    pathmatch:
-      matching-strategy: ant_path_matcher
-
-logging:
-  level:
-    org:
-      hibernate:
-        type:
-          descriptor:
-            sql:
-              BasicBinder: TRACE

@@ -1,11 +1,7 @@
 package com.yam.funteer.donation.request;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
-import com.yam.funteer.code.GroupCode;
-import com.yam.funteer.post.entity.Category;
-import com.yam.funteer.post.entity.Hashtag;
 
 import lombok.Getter;
 import lombok.Setter;

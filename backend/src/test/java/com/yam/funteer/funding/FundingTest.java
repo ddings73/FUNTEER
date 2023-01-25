@@ -3,7 +3,6 @@ package com.yam.funteer.funding;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -12,9 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.yam.funteer.funding.dto.FundingRequest;
 import com.yam.funteer.funding.service.FundingService;
-import com.yam.funteer.post.entity.Hashtag;
 import com.yam.funteer.post.entity.Post;
-import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.post.repository.PostRepository;
 
 @SpringBootTest

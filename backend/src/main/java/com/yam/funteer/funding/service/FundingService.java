@@ -13,21 +13,21 @@ import com.yam.funteer.post.PostType;
 import com.yam.funteer.post.entity.Post;
 
 public interface FundingService {
-	List<FundingListResponse> findApprovedFunding(String keyword, String category, String hashTag);
-
-	Post createFunding(FundingRequest data);
-
-	FundingDetailResponse findFundingById(Long id);
-
-	FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception;
-
-	void deleteFunding(Long fundingId) throws PostNotFoundException;
-
-	void createFundingReport(FundingReportRequest data);
-
-	FundingReportResponse findFundingReportById(Long fundingId);
-
-	FundingReportResponse updateFundingReport(Long fundingId, FundingReportResponse data);
-
-	void createFundingComment(FundingCommentRequest data);
+	// List<FundingListResponse> findApprovedFunding(String keyword, String category, String hashTag);
+	//
+	// Post createFunding(FundingRequest data);
+	//
+	// FundingDetailResponse findFundingById(Long id);
+	//
+	// FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception;
+	//
+	// void deleteFunding(Long fundingId) throws PostNotFoundException;
+	//
+	// void createFundingReport(FundingReportRequest data);
+	//
+	// FundingReportResponse findFundingReportById(Long fundingId);
+	//
+	// FundingReportResponse updateFundingReport(Long fundingId, FundingReportResponse data);
+	//
+	// void createFundingComment(FundingCommentRequest data);
 }

@@ -1,8 +1,8 @@
 package com.yam.funteer.user.dto;
 
 import com.yam.funteer.attach.entity.Attach;
-import com.yam.funteer.user.member.entity.Member;
-import com.yam.funteer.user.team.entity.Team;
+import com.yam.funteer.user.entity.Member;
+import com.yam.funteer.user.entity.Team;
 import lombok.*;
 
 @Getter @Setter

@@ -1,14 +1,8 @@
 package com.yam.funteer.funding.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
-import org.springframework.web.multipart.MultipartFile;
-
-import com.yam.funteer.post.entity.Hashtag;
-import com.yam.funteer.post.entity.Post;
-import com.yam.funteer.post.entity.PostHashtag;
-import com.yam.funteer.post.entity.TargetMoney;
+import com.yam.funteer.funding.entity.Funding;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,18 +20,18 @@ public class FundingDetailResponse {
 
 	private LocalDateTime postDate;
 
-	private List<TargetMoney> targetMonies;
+	// private List<TargetMoney> targetMonies;
+	//
+	// private List<PostHashtag> postHashtagList;
 
-	private List<PostHashtag> postHashtagList;
-
-	public static FundingDetailResponse from(Post funding) {
+	public static FundingDetailResponse from(Funding funding) {
 		return FundingDetailResponse.builder()
 			.fundingId(funding.getId())
 			.title(funding.getTitle())
 			.content(funding.getContent())
-			.start(funding.getStart())
-			.end(funding.getEnd())
-			.postDate(funding.getDate())
+			.start(funding.getStartDate())
+			.end(funding.getEndDate())
+			.postDate(funding.getRegDate())
 			// .targetMonies(funding.getTargetMoney())
 			// .postHashtagList(funding.getpostHashTagList)
 			.build();
