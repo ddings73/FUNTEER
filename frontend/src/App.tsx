@@ -1,9 +1,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Paths } from './paths';
-import { MainPage, Login, TeamPage, ServiceDetail } from './pages/index';
+import { MainPage, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge } from './pages/index';
 import Navbar from './components/Navbar';
-import { Charge, FindEmail, Login, ResetPassword } from './pages/index';
 import ErrorPage from './pages/ErrorPage';
 
 // redux
@@ -19,19 +18,20 @@ function App() {
     /**
      * path = 이동할 경로 , element = 렌더링할 페이지
      */
-    <Navbar />
-    <Routes>
-      <Route index element={<MainPage />} />
-      <Route path={Paths.memberSignUp} element={<MemberSignUp />} />
-      <Route path={Paths.team} element={<TeamPage />} />
-      <Route path={Paths.service} element={<ServiceDetail />} />
-      <Route path={Paths.login} element={<Login />} />
-      <Route path={Paths.findEmail.index} element={<FindEmail />} />
-      <Route path={Paths.findPassword.index} element={<FindPassword />} />
-      <Route path={Paths.findPassword.reset} element={<ResetPassword />} />
-      <Route path={Paths.charge} element={<Charge />} />
-      <Route path="/*" element={<ErrorPage />} />
-    </Routes>
+    <>
+      <Navbar />
+      <Routes>
+        <Route index element={<MainPage />} />
+        <Route path={Paths.memberSignUp} element={<MemberSignUp />} />
+        <Route path={Paths.team} element={<TeamPage />} />
+        <Route path={Paths.service} element={<ServiceDetail />} />
+        <Route path={Paths.login} element={<Login />} />
+        <Route path={Paths.findEmail.index} element={<FindEmail />} />
+        <Route path={Paths.findPassword.index} element={<FindPassword />} />
+        <Route path={Paths.findPassword.reset} element={<ResetPassword />} />
+        <Route path={Paths.charge} element={<Charge />} />
+        <Route path="/*" element={<ErrorPage />} />
+      </Routes>
     </>
   );
 }
