@@ -10,9 +10,8 @@ import lombok.Setter;
 public class QnaGetDetailRes extends BaseResponseBody {
 	Post post;
 
-	public static QnaGetDetailRes of(Integer statusCode,String message, Post post){
+	public static QnaGetDetailRes of(String message, Post post){
 		QnaGetDetailRes res=new QnaGetDetailRes();
-		res.setStatusCode(statusCode);
 		res.setMessage(message);
 		res.setPost(post);
 
