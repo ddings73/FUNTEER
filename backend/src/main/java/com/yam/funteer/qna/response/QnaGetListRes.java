@@ -1,9 +1,6 @@
 package com.yam.funteer.qna.response;
 
-import java.util.List;
-
 import com.yam.funteer.common.BaseResponseBody;
-import com.yam.funteer.post.entity.Post;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,14 +8,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class QnaGetListRes extends BaseResponseBody {
-	private List<Post>list;
 
-	public static QnaGetListRes of(Integer statusCode,String message,List<Post> list){
+	public static QnaGetListRes of(String message){
 		QnaGetListRes res=new QnaGetListRes();
-		res.setStatusCode(statusCode);
 		res.setMessage(message);
-		res.setList(list);
-
 		return res;
 	}
 

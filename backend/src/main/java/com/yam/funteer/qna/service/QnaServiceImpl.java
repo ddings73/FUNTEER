@@ -6,9 +6,13 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.post.entity.Post;
-import com.yam.funteer.post.repository.PostRepository;
+import com.yam.funteer.qna.entity.Qna;
+import com.yam.funteer.qna.repository.QnaRepository;
 import com.yam.funteer.qna.request.QnaMemberRegisterReq;
 import com.yam.funteer.qna.request.QnaTeamRegisterReq;
+import com.yam.funteer.user.UserType;
+import com.yam.funteer.user.repository.MemberRepository;
+import com.yam.funteer.user.repository.TeamRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,83 +20,90 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QnaServiceImpl implements QnaService {
 
-	private final PostRepository postRepository;
+	private final QnaRepository qnaRepository;
+	private final TeamRepository teamRepository;
+	private final MemberRepository memberRepository;
 
-	// public List<Post> qnaGetList(GroupCode postcode,GroupCode membercode)
-	public List<Post> qnaGetList(){
-		// return postRepository.findAllByCodeAndCode(postcode,membercode);
-		return postRepository.findAll();
+	@Override
+	public List<Qna> qnaGetList(UserType userType){
+		return qnaRepository.findAll();
 	}
 
+	@Override
+	public Qna qnaTeamRegister(QnaTeamRegisterReq qnaRegisterReq) {
+		Qna qna=Qna.builder()
+			.password(qnaRegisterReq.getPassword())
+			.content(qnaRegisterReq.getContent())
+			.title(qnaRegisterReq.getTitle())
+			.user(teamRepository.findById(qnaRegisterReq.getTeamId()).get())
+			.regDate(LocalDateTime.now())
+			.build();
 
-	public Post qnaTeamRegister(QnaTeamRegisterReq qnaRegisterReq) {
-		// Post post=new Post();
-		// post.setContent(qnaRegisterReq.getContent());
-		// post.setTitle(qnaRegisterReq.getTitle());
-		// post.setPassword(qnaRegisterReq.getPassword());
-		// post.setDate(LocalDateTime.now());
-		// post.setHit(Long.valueOf(0));
+		return qnaRepository.save(qna);
+	}
 
-		// Team team=new Team();
-		// team.setId(qnaRegisterReq.getTeamId());
-		//
-		//post.setTeam(qnaRegisterReq.getTeam());
+	@Override
+	public Qna qnaMemberRegister(QnaMemberRegisterReq qnaRegisterReq) {
+		Qna qna=Qna.builder()
+			.password(qnaRegisterReq.getPassword())
+			.content(qnaRegisterReq.getContent())
+			.title(qnaRegisterReq.getTitle())
+			.user(teamRepository.findById(qnaRegisterReq.getMemberId()).get())
+			.regDate(LocalDateTime.now())
+			.build();
 
-		// return postRepository.save(post);
+		return qnaRepository.save(qna);
+	}
+
+	@Override
+	public Qna qnaGetDetail(Long id,String password) {
+		Qna qna=qnaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());;
+		if(qna.getPassword().equals(password)){
+			return qna;
+		}
 		return null;
 	}
 
+	@Override
+	public boolean qnaTeamModify(Long id,QnaTeamRegisterReq qnaTeamModifyReq) {
+		Qna qna=qnaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());;
 
-	public Post qnaMemberRegister(QnaMemberRegisterReq qnaRegisterReq) {
-		// Post post=new Post();
-		// post.setContent(qnaRegisterReq.getContent());
-		// post.setTitle(qnaRegisterReq.getTitle());
-		// post.setPassword(qnaRegisterReq.getPassword());
-		// post.setDate(LocalDateTime.now());
-		// post.setHit(Long.valueOf(0));
+		if(qna.getUser().getId()==qnaTeamModifyReq.getTeamId()){
+			qna.builder()
+				.title(qnaTeamModifyReq.getTitle())
+				.content(qnaTeamModifyReq.getTitle())
+				.build();
 
-		// Member member=new Member();
-		// member.setId(qnaRegisterReq.getMemberId());
-		//
-		// post.setMember();
+			qnaRepository.save(qna);
+			return true;
+		}
+		return false;
+	}
 
-		// return postRepository.save(post);
-		return null;
+	@Override
+	public boolean qnaMemberModify(Long id,QnaMemberRegisterReq qnaMemberModifyReq) {
+		Qna qna=qnaRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());;
+
+		if(qna.getUser().getId()==qnaMemberModifyReq.getMemberId()){
+			qna.builder()
+				.title(qnaMemberModifyReq.getTitle())
+				.content(qnaMemberModifyReq.getTitle())
+				.build();
+
+			qnaRepository.save(qna);
+			return true;
+		}
+		return false;
 	}
 
 
-	public Post qnaGetDetail(Long id) {
-		return postRepository.findById(id).get();
-	}
-
-
-	public Post qnaTeamModify(Long id,QnaTeamRegisterReq qnaTeamModifyReq) {
-		Post post=postRepository.findById(id).get();
-
-		// if(post.getTeam().getId()==qnaTeamModifyReq.getTeamId()) {
-		// 	post.setTitle(qnaTeamModifyReq.getTitle());
-		// 	post.setPassword(qnaTeamModifyReq.getPassword());
-		// 	post.setContent(qnaTeamModifyReq.getContent());
-		// 	post.setDate(LocalDateTime.now());
-
-			return postRepository.save(post);
-		// }
-		// return post;
-	}
-
-	public Post qnaMemberModify(Long id,QnaMemberRegisterReq qnaMemberModifyReq) {
-
-		Post post=postRepository.findById(id).get();
-
-		// if(post.getMember().getId()==qnaMemberModifyReq.getMemberId()) {
-
-			// post.setTitle(qnaMemberModifyReq.getTitle());
-			// post.setPassword(qnaMemberModifyReq.getPassword());
-			// post.setContent(qnaMemberModifyReq.getContent());
-			// post.setDate(LocalDateTime.now());
-
-			return postRepository.save(post);
-		// }
-		// return post;
+	@Override
+	public boolean qnaDelete(Long Id, Long userId) {
+		Long postUserId=qnaRepository.findById(Id).orElseThrow(() -> new IllegalArgumentException()).getUser().getId();
+		if(userId==postUserId) {
+			qnaRepository.deleteById(Id);
+			return true;
+		}
+		return false;
 	}
 }
