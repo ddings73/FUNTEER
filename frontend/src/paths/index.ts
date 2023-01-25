@@ -3,4 +3,5 @@ export const Paths = {
   charger: '/charger',
   login: '/login',
   error: '/error',
+  memberSignUp: '/member/signup',
 };
