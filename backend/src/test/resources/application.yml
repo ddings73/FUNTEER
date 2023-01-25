@@ -16,6 +16,12 @@ spring:
       format_sql: true
       ddl-auto: create
 
+
+
+  mvc:
+    pathmatch:
+      matching-strategy: ant_path_matcher
+
 logging:
   level:
     org:
