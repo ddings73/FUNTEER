@@ -1,0 +1,6 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://funteer-1.cmvoqg06ghpq.ap-northeast-2.rds.amazonaws.com:3306/funteer_db?serverTimezone=UTC&characterEncoding=UTF-8
+    username: funteer
+    password: Qndnfrud@04
