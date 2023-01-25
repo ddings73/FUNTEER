@@ -1,11 +1,10 @@
-package com.yam.funteer.user.dto;
+package com.yam.funteer.user.dto.response;
 
 import java.util.List;
 
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.funding.entity.Funding;
-import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
 
 import lombok.AllArgsConstructor;

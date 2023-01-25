@@ -1,4 +1,4 @@
-package com.yam.funteer.user.dto;
+package com.yam.funteer.user.dto.request;
 
 import com.yam.funteer.user.UserType;
 import lombok.AllArgsConstructor;
