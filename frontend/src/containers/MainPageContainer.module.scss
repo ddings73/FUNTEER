@@ -1,0 +1,101 @@
+@import '../styles/reset.scss';
+@import '../styles/variable.scss';
+
+/*==========삭제 필요!! 임시 리소스============*/
+@import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
+
+@font-face {
+  font-family: 'Arita-buri-SemiBold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Arita-buri-SemiBold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+/*============================================*/
+.container {
+  width: 100%;
+  min-height: 500vh;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  background: linear-gradient(180deg, #15133c 49.64%, rgba(255, 255, 255, 0) 98.67%);
+
+  & .bannerContainer {
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    height: 80vh;
+    margin-top: 5%;
+    border: 1px solid rgb(255, 255, 255);
+    transition: 0.5s;
+    @media (max-width: 900px) {
+      text-align: center;
+      justify-content: center;
+    }
+
+    & .typoBox {
+      margin: 2%;
+      height: 30% auto;
+      border: 1px solid rgb(255, 255, 255);
+
+      @media (max-width: 900px) {
+        width: 100%;
+      }
+
+      & .logoTypo {
+        /* 정해진 폰트 규격 사용할 것 - 아래는 임시 크기*/
+        font-family: 'Arita-buri-SemiBold';
+        font-size: 3vw;
+        line-height: 4.5vw;
+        border: 1px solid rgb(255, 255, 255);
+
+        & .logoStrong {
+          background: linear-gradient(261.5deg, #ffd2b2 59.63%, #fd6f08 102.79%);
+          color: transparent;
+          -webkit-background-clip: text;
+          border: 1px solid rgb(255, 255, 255);
+        }
+      }
+
+      & .subLogoTypo {
+        /* 정해진 폰트 규격 - 아래는 임시 크기*/
+        font-family: 'NanumSquare';
+        margin-top: 5%;
+        font-size: 2vw;
+        border: 1px solid rgb(255, 255, 255);
+      }
+
+      & .serviceBtn {
+        width: 200px;
+        height: 60px;
+        margin-top: 10%;
+
+        background-color: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.72);
+        border-radius: 20px;
+        color: white;
+
+        font-family: 'NanumSquare';
+        font-size: large;
+        transition: 0.5s;
+        cursor: pointer;
+        &:hover {
+          opacity: 0.5;
+        }
+        @media (max-width: 600px) {
+          scale: 50%;
+        }
+      }
+    }
+
+    & .bannerImg {
+      margin: 1%;
+      width: 45%;
+      display: flex;
+      border: 1px solid rgb(255, 255, 255);
+      @media (max-width: 900px) {
+        display: none;
+      }
+    }
+  }
+}
