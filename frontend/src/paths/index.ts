@@ -1,8 +1,11 @@
 export const Paths = {
-  index: '/',
+  main: '/',
   charger: '/charger',
   login: '/login',
   error: '/error',
+  team: '/team',
+  service: '/service',
+
   findEmail: {
     index: 'findEmail/',
   },

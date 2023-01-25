@@ -1,0 +1,54 @@
+@font-face {
+  font-family: 'SEBANG_Gothic_Bold';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Bold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.appBar {
+  background-color: rgb(255, 255, 255) !important;
+  & .noti {
+    @media (max-width: 900px) {
+      display: none;
+    }
+  }
+  & .navItems {
+    @media (max-width: 975px) {
+      display: none;
+    }
+  }
+}
+
+.logoImg {
+  width: 150px;
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+.logoImgMobile {
+  width: 150px;
+  display: none;
+  @media (max-width: 900px) {
+    display: flex;
+  }
+}
+
+.menuBtn {
+  font-family: 'SEBANG_Gothic_Bold' !important;
+  font-size: larger !important;
+  color: black !important;
+  transition: 0.5s !important;
+  &:hover {
+    color: rgb(226, 128, 82) !important;
+    scale: 1.3 !important;
+  }
+}
+
+.iconBtn {
+  color: black;
+  transition: 0.5s;
+  display: none;
+  @media (max-width: 900px) {
+    display: block;
+  }
+}
