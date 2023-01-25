@@ -4,20 +4,22 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.yam.funteer.code.GroupCode;
+import com.yam.funteer.member.entity.Member;
 
-import com.yam.funteer.user.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,9 +31,10 @@ import lombok.Setter;
 @Setter
 @Table(name="post")
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Post {
+
 	@Id
 	@Column(name="post_id")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -46,6 +49,7 @@ public class Post {
 	private Member member;
 
 	@ManyToOne
+	@JoinColumn(name="category_id")
 	private Category category;
 
 	@Column(nullable = false,name="post_title")
@@ -72,11 +76,15 @@ public class Post {
 	@Column(name="post_end")
 	private LocalDateTime end;
 
-//	@Enumerated
-//	@Column(nullable = false,name="post_code")
-//	private GroupCode code;
+	@Column(nullable = false,name="post_code")
+	private GroupCode code;
 
 	@Column( name="post_reject")
 	private String reject;
+
+
+	// @OneToMany(mappedBy = "payment")
+	// private List<Payment> paymentList=new ArrayList<>();
+
 
 }

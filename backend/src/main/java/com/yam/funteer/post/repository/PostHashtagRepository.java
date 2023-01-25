@@ -1,15 +1,21 @@
 package com.yam.funteer.post.repository;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import java.util.List;
+
+import javax.transaction.Transactional;
+
 import org.springframework.data.repository.CrudRepository;
 
 import com.yam.funteer.post.entity.Hashtag;
+import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.post.entity.PostHashtagId;
 
-import lombok.Getter;
-import lombok.Setter;
 
 public interface PostHashtagRepository extends CrudRepository<PostHashtag, PostHashtagId> {
+	List<Hashtag>findPostHashtagsByPost(Post post);
+	List<Post>findPostHashtagsByHashtag(Hashtag hashtag);
 
+	@Transactional
+	List<PostHashtag>deleteAllByPost(Post post);
 }
