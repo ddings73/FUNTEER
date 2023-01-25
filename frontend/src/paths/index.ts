@@ -5,7 +5,6 @@ export const Paths = {
   error: '/error',
   team: '/team',
   service: '/service',
-
   findEmail: {
     index: 'findEmail/',
   },
@@ -14,5 +13,8 @@ export const Paths = {
     reset: 'findPassword/reset',
   },
   charge: '/charge',
-  memberSignUp: '/member/signup',
+  signUp: {
+    member: 'signup/member',
+    team: 'signup/team',
+  },
 };
