@@ -1,5 +1,6 @@
 import { Button, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from './LoginContainer.module.scss';
 
 type UserLoginType = {
@@ -12,6 +13,7 @@ function LoginContainer() {
     email: '',
     password: '',
   });
+  const navigate = useNavigate();
 
   // 로 그인 정보 입력
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,10 +25,6 @@ function LoginContainer() {
   const requestLogin = async () => {
     console.log('로그인 요청');
   };
-
-  useEffect(() => {
-    console.log(userInfo);
-  }, [userInfo]);
 
   // KAKAO 로그인 요청
   const OAuth = () => {
@@ -57,9 +55,12 @@ function LoginContainer() {
           />
 
           <div className={styles['findInfo-box']}>
-            <p>
-              <span>아이디 찾기</span> <span>비밀번호 찾기</span>{' '}
-            </p>
+            <span>
+              <Link to="/findEmail">이메일 찾기</Link>
+            </span>
+            <span>
+              <Link to="/findPassword">비밀번호 찾기</Link>
+            </span>
           </div>
 
           <Button className={styles['login-button']} variant="contained" onClick={requestLogin}>
