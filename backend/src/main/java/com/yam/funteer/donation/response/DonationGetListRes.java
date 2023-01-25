@@ -14,9 +14,8 @@ public class DonationGetListRes extends BaseResponseBody {
 
 	private List<Post>list;
 
-	public static DonationGetListRes of(Integer statusCode,String message,List<Post> list){
+	public static DonationGetListRes of(String message,List<Post> list){
 		DonationGetListRes res=new DonationGetListRes();
-		res.setStatusCode(statusCode);
 		res.setMessage(message);
 		res.setList(list);
 
