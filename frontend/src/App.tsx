@@ -12,6 +12,7 @@ import { increment, decrement } from './store/slices/counterSlice';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import FindPassword from './pages/FindPassword';
 import MemberSignUp from './pages/MemberSignUp';
+import TeamSignUp from './pages/TeamSignUp';
 
 function App() {
   return (
@@ -22,7 +23,8 @@ function App() {
       <Navbar />
       <Routes>
         <Route index element={<MainPage />} />
-        <Route path={Paths.memberSignUp} element={<MemberSignUp />} />
+        <Route path={Paths.signUp.member} element={<MemberSignUp />} />
+        <Route path={Paths.signUp.team} element={<TeamSignUp />} />
         <Route path={Paths.team} element={<TeamPage />} />
         <Route path={Paths.service} element={<ServiceDetail />} />
         <Route path={Paths.login} element={<Login />} />
