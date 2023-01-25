@@ -17,6 +17,7 @@ import com.yam.funteer.post.TargetMoneyType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,4 +37,5 @@ public class TargetMoney {
 	private TargetMoneyType targetMoneyType;
 	private @NotNull Long amount;
 	private @NotBlank String description;
+
 }

@@ -1,10 +1,13 @@
 package com.yam.funteer.funding.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
-import org.springframework.web.multipart.MultipartFile;
+import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.funding.entity.TargetMoney;
+import com.yam.funteer.user.entity.Team;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,8 +20,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FundingRequest {
 
-	// @NotNull
-	// private Team team;
+	@NotNull
+	private Team team;
 
 	@NotNull
 	private String title;
@@ -29,9 +32,7 @@ public class FundingRequest {
 	@NotNull
 	private LocalDateTime endDate;
 	private LocalDateTime postDate;
-	private MultipartFile thumbnail;
-
-	private MultipartFile multipartFile;
+	private Attach thumbnail;
 
 	@NotNull
 	private int amount1;
