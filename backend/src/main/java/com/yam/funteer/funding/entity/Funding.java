@@ -1,22 +1,46 @@
 package com.yam.funteer.funding.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import java.time.LocalDateTime;
+import java.util.List;
 
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.post.entity.Post;
+import com.yam.funteer.post.entity.PostHashtag;
+import com.yam.funteer.user.entity.Team;
+
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Entity
-@Getter
+@Table(name="funding")
+@Getter @SuperBuilder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor
+public class Funding extends Post {
+	@ManyToOne
+	@JoinColumn(name = "category_id")
+	private Category category;
+	@ManyToOne
+	@JoinColumn(name = "team_id")
+	private Team team;
+	private LocalDateTime startDate;
+	private LocalDateTime endDate;
+	private String rejectComment;
 
-public class Funding {
+	public void setHashtags(List<PostHashtag> postHashtagList) {
+	}
 
-	@Id @GeneratedValue
-	Long id;
+	public void update(FundingRequest data) {
+	}
 
-	private String title;
-
-	private String content;
-
+	public void setEnd(LocalDateTime endDate) {
+	}
 }
