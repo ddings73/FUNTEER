@@ -1,14 +1,10 @@
 package com.yam.funteer.funding.dto;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
 import org.springframework.web.multipart.MultipartFile;
-
-import com.yam.funteer.post.entity.Hashtag;
-import com.yam.funteer.post.entity.PostHashtag;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

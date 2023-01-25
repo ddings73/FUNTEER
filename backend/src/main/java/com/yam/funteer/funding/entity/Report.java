@@ -2,37 +2,31 @@ package com.yam.funteer.funding.entity;
 
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
-import com.yam.funteer.post.entity.Post;
-
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
+@Table(name = "report")
 @Getter
-@Setter
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Builder
-public class Report {
+public class Report{
 
-	@Id @GeneratedValue
-	@Column(name = "report_id")
+	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
+	@OneToOne
+	@JoinColumn(name = "funding_id")
+	private Funding funding;
 	private String content;
-
-	private LocalDateTime date;
-
-	@OneToOne(mappedBy = "report")
-	private Post post;
+	private LocalDateTime regDate;
 }

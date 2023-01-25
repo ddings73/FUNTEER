@@ -1,29 +1,28 @@
 package com.yam.funteer.post;
 
-import com.yam.funteer.common.CommonCode;
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
-@Getter
-@ToString
-@AllArgsConstructor
-public enum PostType implements CommonCode {
+@Getter @ToString
+@RequiredArgsConstructor
+public enum PostType{
+	DONATION_ACTIVE("모금_진행"),
+	DONATION_CLOSE("모금_종료"),
 
-	D00("모금"), D01("모금 활성화"),D02("모금 비활성화"),
-	D10("펀딩"), D11("펀딩 승인 대기"), D12("펀딩 승인 거부"), D13("펀딩 승인 완료"),
-	D14("펀딩 진행중"), D15("펀딩 기간 연장 함"), D16("펀딩 완료"), D17("펀딩 실패"), D18("봉사 종료");
+	FUNDING_WAIT("펀딩_승인_대기"),
+	FUNDING_REJECT("펀딩_승인_거부"),
+	FUNDING_ACCEPT("펀딩_승인_완료"),
+	FUNDING_IN_PROGRESS("펀딩_진행중"),
+	FUNDING_EXTEND("펀딩_연장"),
+	FUNDING_COMPLETE("펀딩_완료"),
+	FUNDING_FAIL("펀딩_실패"),
 
-	private String description;
+	REPORT_WAIT("보고서_승인대기"),
+	REPORT_ACCEPT("보고서_승인완료"),
+	REPORT_REJECT("보고서_승인거부");
 
-	@Override
-	public String getCode() {
-		return null;
-	}
 
-	@Override
-	public String getDescription() {
-		return null;
-	}
+
+	private final String description;
 }

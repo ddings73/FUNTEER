@@ -1,9 +1,10 @@
 package com.yam.funteer.user.member.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yam.funteer.user.member.dto.CreateMemberRequest;
-import com.yam.funteer.user.member.service.MemberService;
-import com.yam.funteer.user.member.service.MemberServiceImpl;
+import com.yam.funteer.user.controller.MemberController;
+import com.yam.funteer.user.dto.CreateMemberRequest;
+import com.yam.funteer.user.service.MemberService;
+
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

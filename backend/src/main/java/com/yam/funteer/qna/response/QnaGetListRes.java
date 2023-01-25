@@ -2,8 +2,7 @@ package com.yam.funteer.qna.response;
 
 import java.util.List;
 
-import com.yam.funteer.BaseResponseBody;
-import com.yam.funteer.donation.response.DonationGetListRes;
+import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.post.entity.Post;
 
 import lombok.Getter;
