@@ -9,14 +9,10 @@ import lombok.Setter;
 @Setter
 @Getter
 public class DonationGetDetailRes extends BaseResponseBody {
-	private Post post;
 
-	public static DonationGetDetailRes of (Integer statusCode, String message, Post post) {
+	public static DonationGetDetailRes of ( String message) {
 		DonationGetDetailRes res = new DonationGetDetailRes();
-		res.setStatusCode(statusCode);
 		res.setMessage(message);
-		res.setPost(post);
-
 		return res;
 	}
 }
