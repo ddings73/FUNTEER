@@ -16,6 +16,8 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.sun.istack.NotNull;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.user.UserType;
@@ -51,5 +53,12 @@ public class User {
 	private Long money;
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
-	private UserType status;
+	private UserType userType;
+
+	public void signOut(UserType userType){
+		this.userType = userType;
+	}
+	public boolean validatePassword(PasswordEncoder passwordEncoder, String password){
+		return passwordEncoder.matches(password, this.password);
+	}
 }

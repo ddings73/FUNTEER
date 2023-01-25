@@ -9,10 +9,10 @@ import org.springframework.security.core.GrantedAuthority;
 @RequiredArgsConstructor
 public enum UserType implements GrantedAuthority {
     NORMAL(ROLES.USER, "일반"),
-    NORMAL_RESIGN(null,"일반_탈퇴"),
     KAKAO(ROLES.USER,"카카오"),
     TEAM_AWAIT(null,"단체_대기"),
     TEAM(null,"단체_승인"),
+    NORMAL_RESIGN(null,"일반_탈퇴"),
     TEAM_RESIGN(null,"단체_탈퇴"),
     ADMIN(ROLES.ADMIN, "관리자");
 

@@ -1,44 +1,34 @@
 package com.yam.funteer.user.service;
 
 import com.yam.funteer.exception.UserNotFoundException;
-import com.yam.funteer.user.dto.LoginRequest;
-import com.yam.funteer.user.dto.LoginResponse;
-import com.yam.funteer.user.entity.Member;
-import com.yam.funteer.user.repository.MemberRepository;
-import com.yam.funteer.user.entity.Team;
-import com.yam.funteer.user.repository.TeamRepository;
+import com.yam.funteer.user.dto.request.LoginRequest;
+import com.yam.funteer.user.dto.response.LoginResponse;
+import com.yam.funteer.user.entity.User;
+import com.yam.funteer.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService{
 
     private final PasswordEncoder passwordEncoder;
-    private final MemberRepository memberRepository;
-    private final TeamRepository teamRepository;
+    private final UserRepository userRepository;
 
     @Override
     public LoginResponse processLogin(LoginRequest loginRequest) {
-        return loginRequest.isTeam() ? teamLogin(loginRequest) : memberLogin(loginRequest);
-    }
-
-    private LoginResponse memberLogin(LoginRequest loginRequest){
-        Optional<Member> findMember = memberRepository.findByEmail(loginRequest.getEmail());
-        Member member = findMember.orElseThrow(UserNotFoundException::new);
-
-        validatePassword(loginRequest.getPassword(), member.getPassword());
-        return LoginResponse.of(member, null, null);
-    }
-    private LoginResponse teamLogin(LoginRequest loginRequest){
-        Optional<Team> fineTeam = teamRepository.findByEmail(loginRequest.getEmail());
-        Team team = fineTeam.orElseThrow(UserNotFoundException::new);
-
-        validatePassword(loginRequest.getPassword(), team.getPassword());
-        return LoginResponse.of(team, null, null);
+        Optional<User> findUser = userRepository.findByEmail(loginRequest.getEmail());
+        User user = findUser.orElseThrow(UserNotFoundException::new);
+        validatePassword(loginRequest.getPassword(), user.getPassword());
+        return LoginResponse.of(user, null, null);
     }
 
     private void validatePassword(String p1, String p2){

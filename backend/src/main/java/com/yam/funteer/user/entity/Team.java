@@ -1,6 +1,7 @@
 package com.yam.funteer.user.entity;
 
 import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.user.UserType;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -17,5 +18,7 @@ public class Team extends User{
     @ManyToOne
     @JoinColumn(name = "team_banner")
     private Attach banner;
-
+    public void signOut(){
+        super.signOut(UserType.TEAM_RESIGN);
+    }
 }
