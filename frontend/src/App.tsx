@@ -8,6 +8,7 @@ import ErrorPage from './pages/ErrorPage';
 import { increment, decrement } from './store/slices/counterSlice';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import FindPassword from './pages/FindPassword';
+import MemberSignUp from './pages/MemberSignUp';
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
      */
     <Routes>
       <Route path={Paths.index} element={<div>메인페이지 입니다.</div>} />
+      <Route path={Paths.memberSignUp} element={<MemberSignUp />} />
       <Route path={Paths.login} element={<Login />} />
       <Route path={Paths.findEmail.index} element={<FindEmail />} />
       <Route path={Paths.findPassword.index} element={<FindPassword />} />

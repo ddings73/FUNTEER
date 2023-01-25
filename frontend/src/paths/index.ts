@@ -11,4 +11,5 @@ export const Paths = {
     reset: 'findPassword/reset',
   },
   charge: '/charge',
+  memberSignUp: '/member/signup',
 };
