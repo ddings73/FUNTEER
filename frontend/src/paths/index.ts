@@ -3,4 +3,6 @@ export const Paths = {
   charger: '/charger',
   login: '/login',
   error: '/error',
+  team: '/team',
+  service: '/service',
 };

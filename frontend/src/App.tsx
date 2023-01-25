@@ -1,7 +1,8 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Paths } from './paths';
-import { MainPage, Login, ErrorPage } from './pages/index';
+import { MainPage, Login, ErrorPage, TeamPage, ServiceDetail } from './pages/index';
+import Navbar from './components/Navbar';
 
 // redux
 // eslint-disable-next-line
@@ -13,12 +14,16 @@ function App() {
   return (
     /**
      * path = 이동할 경로 , element = 렌더링할 페이지
-     */
-    <Routes>
-      <Route path={Paths.main} element={<MainPage />} />
-      <Route path={Paths.login} element={<Login />} />
-      <Route path="/*" element={<ErrorPage />} />
-    </Routes>
+     */ <>
+      <Navbar />
+      <Routes>
+        <Route index element={<MainPage />} />
+        <Route path={Paths.login} element={<Login />} />
+        <Route path={Paths.team} element={<TeamPage />} />
+        <Route path="/*" element={<ErrorPage />} />
+        <Route path={Paths.service} element={<ServiceDetail />} />
+      </Routes>
+    </>
   );
 }
 

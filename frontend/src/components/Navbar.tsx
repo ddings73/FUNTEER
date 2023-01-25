@@ -15,6 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+import { Link } from 'react-router-dom';
 import styles from './Navbar.module.scss';
 /* 이미지 import */
 import logoImg from '../assets/images/FunteerLogo.png';
@@ -77,13 +78,16 @@ function ResponsiveAppBar() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Desktop 구조 */}
-          <img className={styles.logoImg} src={logoImg} alt="logoImg" />
+          <Link to="/">
+            <img className={styles.logoImg} src={logoImg} alt="logoImg" />
+          </Link>
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
               <MenuIcon className={styles.iconBtn} sx={{ display: { xs: 'flex', md: 'none' } }} />
             </IconButton>
 
             <Menu
+              className={styles.navItems}
               id="menu-appbar"
               anchorEl={anchorElNav}
               anchorOrigin={{

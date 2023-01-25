@@ -12,6 +12,11 @@
       display: none;
     }
   }
+  & .navItems {
+    @media (max-width: 975px) {
+      display: none;
+    }
+  }
 }
 
 .logoImg {
