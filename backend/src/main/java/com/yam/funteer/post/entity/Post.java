@@ -7,16 +7,20 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-
+import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.entity.Report;
+import com.yam.funteer.post.PostType;
 import com.yam.funteer.user.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -72,11 +76,25 @@ public class Post {
 	@Column(name="post_end")
 	private LocalDateTime end;
 
-//	@Enumerated
-//	@Column(nullable = false,name="post_code")
-//	private GroupCode code;
+	@Enumerated
+	@Column(nullable = false,name="post_type")
+	private PostType postType;
 
 	@Column( name="post_reject")
 	private String reject;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "category_id")
+	private Category categoryList;
+
+	@OneToMany(mappedBy = "post")
+	private List<TargetMoney> targetMoney;
+
+	@OneToOne
+	@JoinColumn(name = "report_id")
+	private Report report;
+
+	public void update(FundingRequest data) {
+		this.date = data.getPostDate();
+	}
 }

@@ -30,4 +30,11 @@ public class Hashtag {
 
 	@OneToMany(mappedBy = "hashtag")
 	private List<PostHashtag>postHashtagList=new ArrayList<>();
+
+	public Hashtag() {
+	}
+	public Hashtag(String name) {
+		this.name = name;
+	}
+
 }
