@@ -3,7 +3,6 @@ package com.yam.funteer.post.entity;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
-import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -22,12 +21,12 @@ import lombok.Setter;
 public class PostHashtag {
 	@Id
 	@ManyToOne
-	@JoinColumn(name="post_id")
+	//@JoinColumn(name="post_id")
 	private Post post;
 
 	@Id
 	@ManyToOne
-	@JoinColumn(name="hashtag_id")
+	//@JoinColumn(name="hashtag_id")
 	private Hashtag hashtag;
 
 }

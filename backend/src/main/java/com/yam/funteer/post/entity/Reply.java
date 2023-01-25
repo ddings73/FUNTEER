@@ -1,14 +1,13 @@
 package com.yam.funteer.post.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import lombok.AllArgsConstructor;
@@ -21,21 +20,20 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="hashtag")
-public class Hashtag {
-	@Id
-	@Column(name="hashtag_id")
+@Table(name="reply")
+public class Reply {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Id
+	@Column(name="reply_id")
 	private Long id;
 
-	@Column(name="hashtag_name")
-	private String name;
+	@Column(name="reply_content")
+	private String content;
 
-	@OneToMany(mappedBy = "hashtag")
-	private List<PostHashtag> postHashtagList=new ArrayList<>();
+	@Column(name="date")
+	private LocalDateTime date;
 
-	public Hashtag(String name) {
-		this.name = name;
-	}
+	@ManyToOne
+	private Post post;
 
 }
