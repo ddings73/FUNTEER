@@ -12,12 +12,14 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name="post_hashtag")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Setter
+@NoArgsConstructor
 @AllArgsConstructor
 public class PostHashtag {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,4 +32,9 @@ public class PostHashtag {
 	@ManyToOne
 	@JoinColumn(name = "hashtag_id")
 	private Hashtag hashtag;
+
+	public PostHashtag(Post post, Hashtag hashtag) {
+		this.post = post;
+		this.hashtag = hashtag;
+	}
 }
