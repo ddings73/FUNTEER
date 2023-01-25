@@ -92,7 +92,7 @@ public class FundingController {
 	}
 
 	@ApiOperation(value = "펀딩 응원 댓글", notes = "펀딩 게시글에 응원 댓글을 작성한다.")
-	@PostMapping("/{fundingId}/reply")
+	@PostMapping("/{fundingId}/commnet")
 	public ResponseEntity<?> createFundingComment(@PathVariable Long fundingId, @RequestBody FundingCommentRequest data) {
 		fundingService.createFundingComment(data);
 		return ResponseEntity.ok("CommentCreated Well !");
