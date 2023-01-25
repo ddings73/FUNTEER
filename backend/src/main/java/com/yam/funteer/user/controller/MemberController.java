@@ -1,8 +1,9 @@
 package com.yam.funteer.user.controller;
 
+import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.user.UserType;
-import com.yam.funteer.user.dto.MemberProfileResponse;
-import com.yam.funteer.user.dto.SelectMemberRequest;
+import com.yam.funteer.user.dto.response.MemberProfileResponse;
+import com.yam.funteer.user.dto.request.BaseUserRequest;
 import com.yam.funteer.user.service.MemberService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -17,7 +18,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import com.yam.funteer.user.dto.CreateMemberRequest;
+import com.yam.funteer.user.dto.request.CreateMemberRequest;
 
 import java.util.List;
 
@@ -37,15 +38,12 @@ public class MemberController {
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PostMapping
-	public ResponseEntity<String> signupMember(@Validated @RequestBody CreateMemberRequest createMemberRequest, BindingResult bindingResult){
-		if(bindingResult.hasErrors()){
-			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-			fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));
-			return ResponseEntity.badRequest().body("잘못된 입력입니다.");
-		}
+	public ResponseEntity<? extends BaseResponseBody> signupMember(@Validated @RequestBody CreateMemberRequest createMemberRequest, BindingResult bindingResult){
+		validateBinding(bindingResult);
 
+		log.info("회원가입 시작");
 		memberService.signupMember(createMemberRequest);
-		return ResponseEntity.ok("회원가입이 완료되었습니다.");
+		return ResponseEntity.ok(BaseResponseBody.of("회원가입이 완료되었습니다."));
 	}
 	@ApiOperation(value = "회원 탈퇴", notes = "<strong>비밀번호</strong>를 이용하여 검증한다.")
 	@ApiResponses({
@@ -54,27 +52,20 @@ public class MemberController {
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@DeleteMapping
-	public ResponseEntity<String> signoutMember(@Validated @RequestBody SelectMemberRequest selectMemberRequest, BindingResult bindingResult){
-		if(bindingResult.hasErrors()){
-			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-			fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));
-			return ResponseEntity.badRequest().body("잘못된 입력입니다.");
-		}
+	public ResponseEntity<? extends BaseResponseBody> signoutMember(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
+		validateBinding(bindingResult);
 
-		log.info("회원탈퇴 시작");
-		memberService.signoutMember(selectMemberRequest);
-		return ResponseEntity.ok("회원 탈퇴가 완료되었습니다.");
+		log.info("회원탈퇴 시작=> {}", baseUserRequest);
+		memberService.signoutMember(baseUserRequest);
+
+		return ResponseEntity.ok(BaseResponseBody.of("회원 탈퇴가 완료되었습니다."));
 	}
 
 
 	@Secured(UserType.ROLES.USER)
 	@GetMapping("/account")
-	public ResponseEntity getMemberInfo(@Validated @RequestBody SelectMemberRequest selectMemberRequest, BindingResult bindingResult){
-		if(bindingResult.hasErrors()){
-			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-			fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));
-			return ResponseEntity.badRequest().body("잘못된 입력입니다.");
-		}
+	public ResponseEntity<? extends BaseResponseBody> getMemberInfo(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
+		validateBinding(bindingResult);
 
 		log.info("회원정보 조회 시작");
 
@@ -83,32 +74,31 @@ public class MemberController {
 
 	@Secured(UserType.ROLES.USER)
 	@PutMapping("/account")
-	public ResponseEntity modifyAccount(@Validated @RequestBody SelectMemberRequest selectMemberRequest, BindingResult bindingResult){
-		if(bindingResult.hasErrors()){
-			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-			fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));
-			return ResponseEntity.badRequest().build();
-		}
+	public ResponseEntity<? extends BaseResponseBody> modifyAccount(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
+		validateBinding(bindingResult);
 
 		return null;
 	}
 
 	@GetMapping("/profile")
-	public ResponseEntity<MemberProfileResponse> getMemberProfile(@Validated @RequestBody SelectMemberRequest selectMemberRequest, BindingResult bindingResult){
-		if(bindingResult.hasErrors()){
-			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-			fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));
-			return ResponseEntity.badRequest().build();
-		}
+	public ResponseEntity<? extends BaseResponseBody> getMemberProfile(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
+		validateBinding(bindingResult);
 
 		log.info("회원 프로필 조회 시작");
-		MemberProfileResponse memberProfile = memberService.getMemberProfile(selectMemberRequest);
+		MemberProfileResponse memberProfile = memberService.getMemberProfile(baseUserRequest);
 		return ResponseEntity.ok(memberProfile);
 	}
 
 	@PutMapping("/profile")
-	public ResponseEntity modifyProfile(){
+	public ResponseEntity<? extends BaseResponseBody> modifyProfile(){
 		return null;
 	}
 
+	public void validateBinding(BindingResult bindingResult){
+		if(bindingResult.hasErrors()){
+			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+			fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));
+			throw new IllegalArgumentException();
+		}
+	}
 }

@@ -1,4 +1,4 @@
-package com.yam.funteer.user.dto;
+package com.yam.funteer.user.dto.response;
 
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.user.entity.Member;

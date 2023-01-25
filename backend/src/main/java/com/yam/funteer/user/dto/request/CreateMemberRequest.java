@@ -1,4 +1,4 @@
-package com.yam.funteer.user.dto;
+package com.yam.funteer.user.dto.request;
 
 import com.yam.funteer.user.UserType;
 import com.yam.funteer.user.entity.Member;
@@ -41,7 +41,7 @@ public class CreateMemberRequest {
                 .name(name)
                 .phone(phone)
                 .nickname(nickname)
-                .status(UserType.NORMAL)
+                .userType(UserType.NORMAL)
                 .money(0L)
                 .display(true)
                 .regDate(LocalDateTime.now())

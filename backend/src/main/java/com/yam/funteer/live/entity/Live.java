@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.yam.funteer.funding.entity.Funding;
+import com.yam.funteer.user.entity.Member;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -28,6 +29,11 @@ public class Live {
 	@ManyToOne
 	@JoinColumn(name = "funding_id")
 	private Funding funding;
+
+	@ManyToOne
+	@JoinColumn(name = "member_id")
+	private Member member;
+	
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 	private String sessionId;

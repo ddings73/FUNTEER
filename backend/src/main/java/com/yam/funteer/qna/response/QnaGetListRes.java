@@ -13,9 +13,8 @@ import lombok.Setter;
 public class QnaGetListRes extends BaseResponseBody {
 	private List<Post>list;
 
-	public static QnaGetListRes of(Integer statusCode,String message,List<Post> list){
+	public static QnaGetListRes of(String message,List<Post> list){
 		QnaGetListRes res=new QnaGetListRes();
-		res.setStatusCode(statusCode);
 		res.setMessage(message);
 		res.setList(list);
 

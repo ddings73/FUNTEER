@@ -11,9 +11,8 @@ import lombok.Setter;
 public class QnaRegisterRes extends BaseResponseBody {
 	private Post post;
 
-	public static QnaRegisterRes of(Integer statusCode,String message,Post post){
+	public static QnaRegisterRes of(String message,Post post){
 		QnaRegisterRes res=new QnaRegisterRes();
-		res.setStatusCode(statusCode);
 		res.setMessage(message);
 		res.setPost(post);
 

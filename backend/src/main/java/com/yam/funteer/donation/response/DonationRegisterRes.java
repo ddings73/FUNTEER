@@ -11,9 +11,8 @@ import lombok.Setter;
 public class DonationRegisterRes extends BaseResponseBody {
 	private Post post;
 
-	public static DonationRegisterRes of(Integer statusCode,String message, Post post){
+	public static DonationRegisterRes of(String message, Post post){
 		DonationRegisterRes res=new DonationRegisterRes();
-		res.setStatusCode(statusCode);
 		res.setMessage(message);
 		res.setPost(post);
 

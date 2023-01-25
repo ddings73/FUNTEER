@@ -1,8 +1,8 @@
 package com.yam.funteer.user.controller;
 
-import com.yam.funteer.user.dto.LoginResponse;
+import com.yam.funteer.user.dto.response.LoginResponse;
 import com.yam.funteer.user.service.LoginService;
-import com.yam.funteer.user.dto.LoginRequest;
+import com.yam.funteer.user.dto.request.LoginRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
