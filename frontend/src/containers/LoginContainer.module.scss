@@ -17,16 +17,24 @@
       display: flex;
       flex-direction: column;
       min-height: 500px;
-      padding: 10px;
+      padding: 0 20px;
       border-radius: 10px;
 
       & .findInfo-box {
         text-align: right;
-
         & span {
-          font-size: 0.8rem;
-          color: #707070;
-          cursor: pointer;
+          & a {
+            text-decoration: none;
+            font-size: 0.8rem;
+            color: #707070;
+            cursor: pointer;
+            padding: 0 5px;
+            transition: all 0.2s;
+
+            &:hover {
+              color: $primary;
+            }
+          }
         }
       }
 
