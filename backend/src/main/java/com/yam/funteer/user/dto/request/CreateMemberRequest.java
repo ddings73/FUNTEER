@@ -41,7 +41,7 @@ public class CreateMemberRequest {
                 .name(name)
                 .phone(phone)
                 .nickname(nickname)
-                .status(UserType.NORMAL)
+                .userType(UserType.NORMAL)
                 .money(0L)
                 .display(true)
                 .regDate(LocalDateTime.now())

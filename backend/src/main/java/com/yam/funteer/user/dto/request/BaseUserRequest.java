@@ -1,4 +1,4 @@
-package com.yam.funteer.user.dto;
+package com.yam.funteer.user.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,13 +8,13 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class SelectMemberRequest {
+public class SelectUserRequest {
 
     @NotNull
-    private Long memberId;
+    private Long userId;
     private String password;
 
     public Optional<String> getPassword(){

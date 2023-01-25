@@ -1,7 +1,7 @@
-package com.yam.funteer.user.member.service;
+package com.yam.funteer.user.service;
 
 import com.yam.funteer.user.UserType;
-import com.yam.funteer.user.dto.CreateMemberRequest;
+import com.yam.funteer.user.dto.request.CreateMemberRequest;
 import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.repository.MemberRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +36,7 @@ class MemberServiceImplTest {
 
         Member member = requestDto.toEntity();
         assertNotNull(member);
-        assertEquals(UserType.NORMAL, member.getStatus());
+        assertEquals(UserType.NORMAL, member.getUserType());
         assertEquals(0L, member.getMoney());
     }
 
