@@ -2,14 +2,12 @@
 @import '../styles/variable.scss';
 
 .container {
-  // border: 2px solid red;
   width: 98%;
   min-height: 100vh;
   display: flex;
   justify-content: center;
 
   .contents {
-    // border: 2px solid green;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -37,13 +35,17 @@
       align-items: center;
       margin: 0 1rem;
       padding: 0.5rem;
-      // border: 2px solid red;
       min-width: 250px;
       width: 50%;
 
-      .certification-button {
-        background-color: $primary;
+      .auth-button {
+        background-color: $error;
         margin: 0.5rem 0 0.3rem 0;
+        min-width: 40px;
+      }
+
+      .not-shadow {
+        box-shadow: none;
       }
 
       & p {
@@ -65,6 +67,31 @@
         max-width: 350px;
         width: 100%;
         box-shadow: 1.5px 1.5px 2px rgba(1, 1, 1, 0.1);
+      }
+
+      .auth-input-div {
+        display: flex;
+        box-shadow: none;
+        align-items: center;
+
+        .auth-number-input {
+          height: 20px;
+          border: 0.5px solid rgba(1, 1, 1, 0.5);
+          border-radius: 5px;
+          padding: 5px;
+        }
+
+        .auth-check-button {
+          margin-left: 0.5rem;
+          font-size: 0.75rem;
+          background-color: $error;
+        }
+      }
+
+      .authed-email {
+        font-size: 1.25rem;
+        color: grey;
+        margin-bottom: 1.5rem;
       }
     }
   }
