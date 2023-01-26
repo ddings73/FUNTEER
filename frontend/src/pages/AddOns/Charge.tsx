@@ -1,5 +1,5 @@
 import React from 'react';
-import ChargeContainer from '../containers/AddOns/ChargeContainer';
+import ChargeContainer from '../../containers/AddOns/ChargeContainer';
 
 function Charge() {
   return <ChargeContainer />;
