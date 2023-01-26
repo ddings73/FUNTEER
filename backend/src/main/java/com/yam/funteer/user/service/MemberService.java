@@ -12,5 +12,5 @@ public interface MemberService {
     MemberProfileResponse getMemberProfile(BaseUserRequest baseUserRequest);
 
     void followTeam(FollowRequest followRequest);
-
+    void likeFunding(Long fundingId, Long memberId);
 }
