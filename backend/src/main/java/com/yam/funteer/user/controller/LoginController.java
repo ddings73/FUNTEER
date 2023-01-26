@@ -18,9 +18,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class LoginController {
-
     private final LoginService loginService;
-    @GetMapping("/login")
+    @GetMapping("login")
     public ResponseEntity<LoginResponse> loginUser(@ModelAttribute LoginRequest loginRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();

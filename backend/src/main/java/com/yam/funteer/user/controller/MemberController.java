@@ -2,6 +2,7 @@ package com.yam.funteer.user.controller;
 
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.user.UserType;
+import com.yam.funteer.user.dto.request.FollowRequest;
 import com.yam.funteer.user.dto.response.MemberProfileResponse;
 import com.yam.funteer.user.dto.request.BaseUserRequest;
 import com.yam.funteer.user.service.MemberService;
@@ -94,6 +95,17 @@ public class MemberController {
 		return null;
 	}
 
+	@ApiOperation(value = "팀 팔로우", notes = "teamId와 memberId를 이용하여 팔로우를 진행합니다")
+	public ResponseEntity<? extends BaseResponseBody> followTeam(@Validated @RequestBody FollowRequest followRequest, BindingResult bindingResult){
+		if(bindingResult.hasErrors()){
+			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+			fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));
+			throw new IllegalArgumentException();
+		}
+
+		memberService.followTeam(followRequest);
+		return ResponseEntity.ok(BaseResponseBody.of("팔로우가 완료되었습니다."));
+	}
 	public void validateBinding(BindingResult bindingResult){
 		if(bindingResult.hasErrors()){
 			List<FieldError> fieldErrors = bindingResult.getFieldErrors();

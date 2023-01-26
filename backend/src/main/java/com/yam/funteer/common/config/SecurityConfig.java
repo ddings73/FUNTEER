@@ -24,10 +24,14 @@ public class SecurityConfig{
         http
                 .httpBasic().disable() // rest api 이므로 비활성
                 .csrf().disable() // rest api 이므로 csrf 공격관련 옵션 비활성
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 사용하니 session 생성 X
-                .and().authorizeRequests()
-                    .anyRequest().permitAll()
-                .and().oauth2Login()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // JWT 사용하니 session 생성 X
+
+        http
+                .authorizeRequests()
+                    .anyRequest().permitAll(); // 임시
+
+        http
+                .oauth2Login()
                     .successHandler(successHandler) // oAuth 로그인 성공 시 동작할 핸들러
                     .userInfoEndpoint().userService(oAuth2UserService);
         // ...

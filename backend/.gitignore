@@ -4,8 +4,6 @@ build/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/
-!**/src/main/resources/application-local.yml
-!**/src/main/resources/application-test.yml
 
 ### STS ###
 .apt_generated
@@ -19,7 +17,7 @@ bin/
 !**/src/main/**/bin/
 !**/src/test/**/bin/
 
-### IntelliJ IDEA ###
+### IntelliJ IDEA ###\
 .idea
 *.iws
 *.iml
@@ -38,3 +36,5 @@ out/
 ### VS Code ###
 .vscode/
 /src/main/resources/static/
+application-local.yml
+application-test.yml
