@@ -1,22 +1,21 @@
-package com.yam.funteer.common.security.service;
+package com.yam.funteer.common.security;
 
 import com.yam.funteer.common.security.Token;
-import com.yam.funteer.user.UserType;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+
+import org.springframework.stereotype.Component;
 
 import java.util.Base64;
 import java.util.Date;
 
 import javax.annotation.PostConstruct;
 
-@Service
-public class TokenService {
+@Component
+public class JwtProvider {
 
     private String secretKey = "jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk";
 
