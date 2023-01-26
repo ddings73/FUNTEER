@@ -1,0 +1,10 @@
+diff a/frontend/src/containers/Accounts/MemberSignUpContainer.module.scss b/frontend/src/containers/Accounts/MemberSignUpContainer.module.scss	(rejected hunks)
+@@ -50,7 +50,7 @@
+         margin: 0.5rem 0 0.3rem 0;
+         min-width: 40px;
+ 
+-        @media screen and (max-width: 450px) {
++        @include mobile {
+           font-size: 0.75rem;
+         }
+       }
