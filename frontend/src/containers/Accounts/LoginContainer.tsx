@@ -1,17 +1,16 @@
 import { Button, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { requestSignIn } from '../../api/user';
+import { UserSignInType } from '../../types/user';
 import styles from './LoginContainer.module.scss';
 
-type UserLoginType = {
-  email: string;
-  password: string;
-};
 
 function LoginContainer() {
-  const [userInfo, setUserInfo] = useState<UserLoginType>({
+  const [userInfo, setUserInfo] = useState<UserSignInType>({
     email: '',
     password: '',
+    type:"ROLE_USER"
   });
   const navigate = useNavigate();
 
@@ -22,8 +21,15 @@ function LoginContainer() {
     setUserInfo({ ...userInfo, [name]: value });
   };
 
-  const requestLogin = async () => {
-    console.log('로그인 요청');
+  const requestEmailLogin = async () => {
+
+    try{
+       const response = await requestSignIn(userInfo)
+    }
+    catch(error){
+      console.error(error);
+      
+    }
   };
 
   // KAKAO 로그인 요청
@@ -63,7 +69,7 @@ function LoginContainer() {
             </span>
           </div>
 
-          <Button className={styles['login-button']} variant="contained" onClick={requestLogin}>
+          <Button className={styles['login-button']} variant="contained" onClick={requestEmailLogin}>
             이메일로 로그인하기
           </Button>
 
