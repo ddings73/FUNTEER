@@ -150,10 +150,10 @@ function MemberSignUpContainer() {
             )}
 
             <p>비밀번호</p>
-            <TextField name="password" margin="dense" placeholder="비밀번호을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <TextField name="password" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
             <p>비밀번호 확인</p>
-            <TextField name="passwordCheck" margin="dense" placeholder="비밀번호을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <TextField name="passwordCheck" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
             <p>닉네임</p>
             <TextField name="nickname" margin="dense" placeholder="닉네임을 입력해주세요." variant="outlined" onChange={onChangeHandler} />

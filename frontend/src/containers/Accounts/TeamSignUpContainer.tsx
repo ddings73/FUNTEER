@@ -170,10 +170,10 @@ function TeamSignUpContainer() {
             )}
 
             <p>비밀번호</p>
-            <TextField name="password" margin="dense" placeholder="비밀번호을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <TextField name="password" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
             <p>비밀번호 확인</p>
-            <TextField name="passwordCheck" margin="dense" placeholder="비밀번호을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <TextField name="passwordCheck" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
             <p>대표자 연락처</p>
             <TextField name="phone" margin="dense" placeholder="휴대폰 번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
