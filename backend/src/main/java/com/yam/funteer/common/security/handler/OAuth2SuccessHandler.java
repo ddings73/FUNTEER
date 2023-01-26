@@ -2,10 +2,8 @@ package com.yam.funteer.common.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yam.funteer.common.security.Token;
-import com.yam.funteer.common.security.service.TokenService;
+import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.user.UserType;
-import com.yam.funteer.user.dto.request.CreateMemberRequest;
-import com.yam.funteer.user.service.MemberService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +23,7 @@ import java.io.PrintWriter;
 @Component @Slf4j
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
-    private final TokenService tokenService;
+    private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper;
     // private final MemberService memberService;
 
@@ -37,7 +35,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String email = (String) oAuth2User.getAttributes().get("email");
         String role = UserType.KAKAO.getAuthority();
-        Token token = tokenService.generateToken(email, role);
+        Token token = jwtProvider.generateToken(email, role);
         log.info("token=> {}", token);
 
         writeTokenResponse(response, token);

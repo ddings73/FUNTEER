@@ -2,6 +2,7 @@ package com.yam.funteer.user.dto.response;
 
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.BaseResponseBody;
+import com.yam.funteer.common.security.Token;
 import com.yam.funteer.user.entity.User;
 
 import lombok.*;
@@ -17,11 +18,9 @@ public class LoginResponse extends BaseResponseBody {
     private String userType;
 
     // token 두개
-    private String accessToken;
-    private String refreshToken;
+    private Token token;
 
-    public static LoginResponse of(User user, String accessToken, String refreshToken){
-        return new LoginResponse(user.getId(), user.getName(), user.getProfileImg(), user.getUserType().name()
-            , accessToken, refreshToken);
+    public static LoginResponse of(User user, Token token){
+        return new LoginResponse(user.getId(), user.getName(), user.getProfileImg(), user.getUserType().name(), token);
     }
 }
