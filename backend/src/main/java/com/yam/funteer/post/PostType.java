@@ -20,9 +20,10 @@ public enum PostType{
 
 	REPORT_WAIT("보고서_승인대기"),
 	REPORT_ACCEPT("보고서_승인완료"),
-	REPORT_REJECT("보고서_승인거부");
+	REPORT_REJECT("보고서_승인거부"),
 
-
+	QNA("QnA"),
+	FAQ("FAQ");
 
 	private final String description;
 }
