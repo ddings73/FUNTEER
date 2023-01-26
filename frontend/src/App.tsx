@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Paths } from './paths';
-import { MainPage, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge } from './pages/index';
+import { MainPage, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge, Donation } from './pages/index';
 import Navbar from './components/Navbar';
 import ErrorPage from './pages/ErrorPage';
 
@@ -28,6 +28,7 @@ function App() {
         <Route path={Paths.team} element={<TeamPage />} />
         <Route path={Paths.service} element={<ServiceDetail />} />
         <Route path={Paths.login} element={<Login />} />
+        <Route path={Paths.donation} element={<Donation />} />
         <Route path={Paths.findEmail.index} element={<FindEmail />} />
         <Route path={Paths.findPassword.index} element={<FindPassword />} />
         <Route path={Paths.findPassword.reset} element={<ResetPassword />} />

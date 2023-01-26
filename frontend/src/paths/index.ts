@@ -5,6 +5,7 @@ export const Paths = {
   error: '/error',
   team: '/team',
   service: '/service',
+  donation: '/donation',
   findEmail: {
     index: 'findEmail/',
   },
