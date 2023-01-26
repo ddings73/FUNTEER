@@ -2,7 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 
-function AppContainer() {
+function ServicePages() {
   return (
     <div>
       <Navbar />
@@ -11,4 +11,4 @@ function AppContainer() {
   );
 }
 
-export default AppContainer;
+export default ServicePages;

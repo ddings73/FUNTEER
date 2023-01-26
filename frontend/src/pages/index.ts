@@ -15,4 +15,4 @@ export { default as SignUp } from './SignUp';
 export { default as MemberSignUp } from './Accounts/MemberSignUp';
 export { default as TeamSignUp } from './Accounts/TeamSignUp';
 
-export { default as Admin } from './Admin/AdminMain';
+export { default as AdminMain } from './Admin/AdminMain';
