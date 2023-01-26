@@ -1,12 +1,12 @@
 import React from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import styles from './TeamPageContainer.module.scss';
-import f1 from '../assets/images/teamProfile/김진호.jpg';
-import f2 from '../assets/images/teamProfile/백준봉.jpg';
-import f3 from '../assets/images/teamProfile/김승섭.jpg';
-import b1 from '../assets/images/teamProfile/김보경.jpg';
-import b2 from '../assets/images/teamProfile/안명수.jpg';
-import b3 from '../assets/images/teamProfile/김송빈.jpg';
+import f1 from '../../assets/images/teamProfile/김진호.jpg';
+import f2 from '../../assets/images/teamProfile/백준봉.jpg';
+import f3 from '../../assets/images/teamProfile/김승섭.jpg';
+import b1 from '../../assets/images/teamProfile/김보경.jpg';
+import b2 from '../../assets/images/teamProfile/안명수.jpg';
+import b3 from '../../assets/images/teamProfile/김송빈.jpg';
 
 type memberType = { name: string; dev: string; memo: string; profile: string };
 const members: memberType[] = [
