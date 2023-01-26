@@ -105,6 +105,11 @@ function TeamSignUpContainer() {
   /** 단체 회원가입 요청 */
   const requestTeamSignUp = () => {
     /** 유효성 검사 */
+    if (!checkEmailAuth) {
+      alert('이메일 인증을 완료해주세요.');
+      return;
+    }
+
     const isEmpty = Object.values(TeamSignUpInfo).some((value) => value === '' || value === null);
 
     if (isEmpty) {
