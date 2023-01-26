@@ -8,15 +8,19 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.Base64;
 import java.util.Date;
+
+import javax.annotation.PostConstruct;
 
 @Service
 public class TokenService {
 
-    private final String secretKey;
+    private String secretKey = "jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk";
 
-    public TokenService(@Value("${jwt.secret}") String secretKey) {
-        this.secretKey = secretKey;
+    @PostConstruct
+    protected void init(){
+        this.secretKey = Base64.getEncoder().encodeToString(this.secretKey.getBytes());
     }
 
     public Token generateToken(String email, String role) {
