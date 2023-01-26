@@ -1,4 +1,4 @@
-package com.yam.funteer.donation.request;
+package com.yam.funteer.donation.dto.request;
 
 import com.yam.funteer.user.entity.User;
 

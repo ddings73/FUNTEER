@@ -4,8 +4,8 @@ import java.util.List;
 
 import com.yam.funteer.donation.entity.Donation;
 import com.yam.funteer.donation.exception.DonationNotFoundException;
-import com.yam.funteer.donation.request.DonationJoinReq;
-import com.yam.funteer.donation.request.DonationRegisterReq;
+import com.yam.funteer.donation.dto.request.DonationJoinReq;
+import com.yam.funteer.donation.dto.request.DonationRegisterReq;
 import com.yam.funteer.pay.entity.Payment;
 
 public interface DonationService {
