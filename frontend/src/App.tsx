@@ -1,11 +1,12 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Paths } from './paths';
-import { MainPage, SignUp, MemberSignUp, TeamSignUp, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge, Donation, Admin } from './pages/index';
+import { MainPage, SignUp, MemberSignUp, TeamSignUp, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge, Donation, AdminMain } from './pages/index';
 import Navbar from './components/Navbar';
 import ErrorPage from './pages/AddOns/ErrorPage';
 import AdminSideBar from './components/AdminSideBar';
-import AppContainer from './pages/AppContainer';
+import ServicePages from './pages/ServicePages';
+import AdminPages from './pages/AdminPages';
 
 // redux
 // eslint-disable-next-line
@@ -21,7 +22,7 @@ function App() {
      */
     <Routes>
       {/** 서비스 */}
-      <Route path={Paths.main} element={<AppContainer />}>
+      <Route path={Paths.main} element={<ServicePages />}>
         <Route index element={<MainPage />} />
         <Route path={Paths.signUp.index} element={<SignUp />} />
         <Route path={Paths.signUp.member} element={<MemberSignUp />} />
@@ -37,8 +38,8 @@ function App() {
         <Route path="/*" element={<ErrorPage />} />
       </Route>
       {/** 관리자 */}
-      <Route path={Paths.admin.main} element={<AdminSideBar />}>
-        <Route index element={<Admin />} />
+      <Route path={Paths.admin.main} element={<AdminPages />}>
+        <Route index element={<AdminMain />} />
       </Route>
     </Routes>
   );

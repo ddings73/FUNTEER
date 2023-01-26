@@ -2,12 +2,7 @@ import React from 'react';
 import { Outlet } from 'react-router-dom';
 
 function AdminSideBar() {
-  return (
-    <div>
-      AdminSideBar
-      <Outlet />
-    </div>
-  );
+  return <div>AdminSideBar</div>;
 }
 
 export default AdminSideBar;
