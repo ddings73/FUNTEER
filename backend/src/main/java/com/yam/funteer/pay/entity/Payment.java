@@ -1,8 +1,7 @@
-package com.yam.funteer.pay.Entity;
+package com.yam.funteer.pay.entity;
 
 import java.time.LocalDateTime;
 
-import javax.naming.Name;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,13 +15,14 @@ import com.yam.funteer.user.entity.Member;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "payment")
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Payment {
