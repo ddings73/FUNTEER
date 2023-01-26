@@ -15,7 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import { Link } from 'react-router-dom';
+import { Link, Outlet } from 'react-router-dom';
 import styles from './Navbar.module.scss';
 /* 이미지 import */
 import logoImg from '../assets/images/FunteerLogo.png';
@@ -179,6 +179,7 @@ function ResponsiveAppBar() {
           </Box>
         </Toolbar>
       </Container>
+      <Outlet />
     </AppBar>
   );
 }

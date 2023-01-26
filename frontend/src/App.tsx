@@ -1,9 +1,10 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Paths } from './paths';
-import { MainPage, SignUp, MemberSignUp, TeamSignUp, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge, Donation } from './pages/index';
+import { MainPage, SignUp, MemberSignUp, TeamSignUp, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge, Donation, AdminMain } from './pages/index';
 import Navbar from './components/Navbar';
 import ErrorPage from './pages/ErrorPage';
+import AdminSideBar from './components/AdminSideBar';
 
 // redux
 // eslint-disable-next-line
@@ -15,11 +16,11 @@ import FindPassword from './pages/FindPassword';
 function App() {
   return (
     /**
-     * path = 이동할 경로 , element = 렌더링할 페이지
+     * path: 이동할 경로, element: 렌더링할 페이지
      */
-    <>
-      <Navbar />
-      <Routes>
+    <Routes>
+      {/** 서비스 */}
+      <Route path={Paths.main} element={<Navbar />}>
         <Route index element={<MainPage />} />
         <Route path={Paths.signUp.index} element={<SignUp />} />
         <Route path={Paths.signUp.member} element={<MemberSignUp />} />
@@ -33,8 +34,12 @@ function App() {
         <Route path={Paths.findPassword.reset} element={<ResetPassword />} />
         <Route path={Paths.charge} element={<Charge />} />
         <Route path="/*" element={<ErrorPage />} />
-      </Routes>
-    </>
+      </Route>
+      {/** 관리자 */}
+      <Route path={Paths.admin.main} element={<AdminSideBar />}>
+        <Route index element={<AdminMain />} />
+      </Route>
+    </Routes>
   );
 }
 
