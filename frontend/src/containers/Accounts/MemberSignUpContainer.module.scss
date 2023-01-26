@@ -2,7 +2,7 @@
 @import '../../styles/variable.scss';
 
 .container {
-  width: 98%;
+  width: 100%;
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -13,8 +13,8 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    width: 98%;
-    max-width: 1430px;
+    width: 100%;
+    max-width: 1160px;
 
     .title {
       font-weight: bold;
