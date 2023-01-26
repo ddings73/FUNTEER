@@ -1,7 +1,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Paths } from './paths';
-import { MainPage, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge, Donation } from './pages/index';
+import { MainPage, SignUp, MemberSignUp, TeamSignUp, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge, Donation } from './pages/index';
 import Navbar from './components/Navbar';
 import ErrorPage from './pages/ErrorPage';
 
@@ -11,8 +11,6 @@ import { increment, decrement } from './store/slices/counterSlice';
 // eslint-disable-next-line
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import FindPassword from './pages/FindPassword';
-import MemberSignUp from './pages/MemberSignUp';
-import TeamSignUp from './pages/TeamSignUp';
 
 function App() {
   return (
@@ -23,6 +21,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route index element={<MainPage />} />
+        <Route path={Paths.signUp.index} element={<SignUp />} />
         <Route path={Paths.signUp.member} element={<MemberSignUp />} />
         <Route path={Paths.signUp.team} element={<TeamSignUp />} />
         <Route path={Paths.team} element={<TeamPage />} />

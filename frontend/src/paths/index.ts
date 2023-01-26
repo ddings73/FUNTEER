@@ -15,6 +15,7 @@ export const Paths = {
   },
   charge: '/charge',
   signUp: {
+    index: 'signup',
     member: 'signup/member',
     team: 'signup/team',
   },
