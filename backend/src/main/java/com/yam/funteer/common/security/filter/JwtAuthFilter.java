@@ -1,6 +1,8 @@
 package com.yam.funteer.common.security.filter;
 
-import com.yam.funteer.common.security.service.TokenService;
+import com.yam.funteer.common.security.JwtProvider;
+import com.yam.funteer.user.UserType;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,15 +21,15 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public class JwtAuthFilter extends GenericFilterBean {
 
-    private final TokenService tokenService;
+    private final JwtProvider jwtProvider;
 
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         String token = ((HttpServletRequest) request).getHeader("Auth");
-        if(token != null && tokenService.verifyToken(token)){
-            String email = tokenService.getEmail(token);
+        if(jwtProvider.verifyToken(token)){
+            String email = jwtProvider.getEmail(token);
 
             Authentication auth = new UsernamePasswordAuthenticationToken(null, "",
-                    Arrays.asList(new SimpleGrantedAuthority("ROLE_USER")));
+                    Arrays.asList(new SimpleGrantedAuthority(UserType.ROLES.USER)));
             SecurityContextHolder.getContext().setAuthentication(auth);
         }
 

@@ -7,11 +7,14 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
 @Entity
@@ -24,9 +27,21 @@ public class Follow {
 	private Long id;
 	@ManyToOne
 	@JoinColumn(name = "member_id")
-	private Member member;
+	private @NotNull Member member;
 	@ManyToOne
 	@JoinColumn(name = "team_id")
-	private Team team;
+	private @NotNull Team team;
 	private boolean follow;
+
+	public void toggle(){
+		this.follow = !this.follow;
+	}
+	private Follow(Member member, Team team){
+		this.member = member;
+		this.team = team;
+		this.follow = true;
+	}
+	public static Follow of(Member member, Team team){
+		return new Follow(member, team);
+	}
 }
