@@ -179,7 +179,6 @@ function ResponsiveAppBar() {
           </Box>
         </Toolbar>
       </Container>
-      <Outlet />
     </AppBar>
   );
 }

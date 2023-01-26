@@ -5,6 +5,7 @@ import { MainPage, SignUp, MemberSignUp, TeamSignUp, Login, TeamPage, ServiceDet
 import Navbar from './components/Navbar';
 import ErrorPage from './pages/AddOns/ErrorPage';
 import AdminSideBar from './components/AdminSideBar';
+import AppContainer from './pages/AppContainer';
 
 // redux
 // eslint-disable-next-line
@@ -20,7 +21,7 @@ function App() {
      */
     <Routes>
       {/** 서비스 */}
-      <Route path={Paths.main} element={<Navbar />}>
+      <Route path={Paths.main} element={<AppContainer />}>
         <Route index element={<MainPage />} />
         <Route path={Paths.signUp.index} element={<SignUp />} />
         <Route path={Paths.signUp.member} element={<MemberSignUp />} />
