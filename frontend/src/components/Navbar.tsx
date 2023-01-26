@@ -74,16 +74,24 @@ function ResponsiveAppBar() {
   }));
 
   return (
-    <AppBar className={styles.appBar} position="static">
+    <AppBar className={styles.appBar} position="fixed">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           {/* Desktop 구조 */}
           <Link to="/">
             <img className={styles.logoImg} src={logoImg} alt="logoImg" />
           </Link>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
-              <MenuIcon className={styles.iconBtn} sx={{ display: { xs: 'flex', md: 'none' } }} />
+          <Box sx={{ flexGrow: 1 }} className={styles.menuBox}>
+            <IconButton
+              className={styles.iconBtn}
+              size="large"
+              aria-label="account of current user"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              onClick={handleOpenNavMenu}
+              color="inherit"
+            >
+              <MenuIcon />
             </IconButton>
 
             <Menu
@@ -106,7 +114,7 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
+                <MenuItem key={page} onClick={handleCloseNavMenu} className={styles.menuItem}>
                   <Typography textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
@@ -122,10 +130,11 @@ function ResponsiveAppBar() {
               flexGrow: 1,
               display: { md: 'none' },
             }}
+            className={styles.mobBox}
           >
             <img className={styles.logoImgMobile} src={logoImg} alt="logoImgMobile" />
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', ml: 20, mr: 20 }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', margin: '0 3%' }}>
             {pages.map((page) => (
               <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }} className={styles.menuBtn}>
                 {page}
