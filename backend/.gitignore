@@ -37,4 +37,4 @@ out/
 .vscode/
 /src/main/resources/static/
 application-local.yml
-application-test.yml\
+application-test.yml
