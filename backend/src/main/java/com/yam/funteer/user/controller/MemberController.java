@@ -92,6 +92,7 @@ public class MemberController {
 		);
 	}
 
+
 	@ApiOperation(value = "회원정보 수정", notes = "회원의 비밀번호를 수정합니다.")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
@@ -122,6 +123,7 @@ public class MemberController {
 		return ResponseEntity.ok(memberProfile);
 	}
 
+
 	@ApiOperation(value = "개인회원 프로필 수정", notes = "개인회원의 닉네임, 프로필이미지를 수정할 수 있다")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
@@ -133,6 +135,7 @@ public class MemberController {
 	public ResponseEntity modifyProfile(@Validated @ModelAttribute("userInfo") UpdateProfileRequest UpdateProfileRequest){
 		return ResponseEntity.ok().build();
 	}
+
 
 	@ApiOperation(value = "마일리지 조회", notes = "현재 회원의 마알리지 정보를 조회할 수 있다")
 	@ApiResponses({
@@ -161,6 +164,7 @@ public class MemberController {
 		return ResponseEntity.ok().build();
 	}
 
+
 	@ApiOperation(value = "팀 팔로우", notes = "그룹회원번호와 개인회원번호를 이용하여 단체에 대한 팔로우를 진행합니다")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
@@ -175,7 +179,8 @@ public class MemberController {
 		memberService.followTeam(followRequest);
 		return ResponseEntity.ok().build();
 	}
-	
+
+
 	@ApiOperation(value = "펀딩 게시글 찜하기", notes = "펀딩번호와 개인회원번호를 받아서 게시글에 대한 찜을 진행")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
@@ -188,6 +193,7 @@ public class MemberController {
 		memberService.wishFunding(fundingId, memberId);
 		return ResponseEntity.ok().build();
 	}
+
 
 	@ApiOperation(value = "이메일 찾기", notes = "전화번호 인증을 통해서 회원 이메일을 돌려받을 수 있다")
 	@ApiResponses({
@@ -202,6 +208,7 @@ public class MemberController {
 		map.put("email", "kim@ssafy.com");
 		return ResponseEntity.ok(map);
 	}
+
 
 	@ApiOperation(value = "비밀번호 찾기", notes = "이메일 인증을 통해서 임시 비밀번호를 받을 수 있다")
 	@ApiResponses({

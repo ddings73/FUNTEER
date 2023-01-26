@@ -1,7 +1,7 @@
 package com.yam.funteer.user.service;
 
 import com.yam.funteer.common.security.Token;
-import com.yam.funteer.common.security.service.JwtProvider;
+import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.user.dto.request.LoginRequest;
 import com.yam.funteer.user.dto.response.LoginResponse;
@@ -29,6 +29,7 @@ public class LoginServiceImpl implements LoginService{
     public LoginResponse processLogin(LoginRequest loginRequest) {
         Optional<User> findUser = userRepository.findByEmail(loginRequest.getEmail());
         User user = findUser.orElseThrow(UserNotFoundException::new);
+
         validatePassword(loginRequest.getPassword(), user.getPassword());
 
         String role = user.getUserType().getAuthority();
