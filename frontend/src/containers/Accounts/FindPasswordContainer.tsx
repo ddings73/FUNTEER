@@ -1,7 +1,7 @@
 import { Button, TextField } from '@mui/material';
 import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { secondsToMinutes, secondsToSeconds } from '../utils/timer';
+import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
 import styles from './FindPasswordContainer.module.scss';
 
 type UserLoginType = {
