@@ -22,7 +22,7 @@ class OAuth2Attribute {
                               Map<String, Object> attributes) {
         switch (provider) {
             case "kakao":
-                return ofKakao("email", attributes);
+                return ofKakao(attributeKey, attributes);
             default:
                 throw new RuntimeException();
         }

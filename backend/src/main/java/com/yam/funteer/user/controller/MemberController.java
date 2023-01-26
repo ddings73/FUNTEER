@@ -46,6 +46,7 @@ public class MemberController {
 		memberService.signupMember(createMemberRequest);
 		return ResponseEntity.ok(BaseResponseBody.of("회원가입이 완료되었습니다."));
 	}
+
 	@ApiOperation(value = "회원 탈퇴", notes = "<strong>비밀번호</strong>를 이용하여 검증한다.")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
@@ -81,31 +82,37 @@ public class MemberController {
 		return null;
 	}
 
+	@ApiOperation(value = "개인회원 프로필 조회", notes = "id를 사용해 조회할 수 있다")
 	@GetMapping("/profile")
 	public ResponseEntity<? extends BaseResponseBody> getMemberProfile(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
 		validateBinding(bindingResult);
 
-		log.info("회원 프로필 조회 시작");
 		MemberProfileResponse memberProfile = memberService.getMemberProfile(baseUserRequest);
 		return ResponseEntity.ok(memberProfile);
 	}
 
+	@ApiOperation(value = "개인회원 프로필 수정", notes = "닉네임, 프로필이미지를 수정할 수 있다")
 	@PutMapping("/profile")
 	public ResponseEntity<? extends BaseResponseBody> modifyProfile(){
 		return null;
 	}
 
 	@ApiOperation(value = "팀 팔로우", notes = "teamId와 memberId를 이용하여 팔로우를 진행합니다")
+	@PutMapping("/follow")
 	public ResponseEntity<? extends BaseResponseBody> followTeam(@Validated @RequestBody FollowRequest followRequest, BindingResult bindingResult){
-		if(bindingResult.hasErrors()){
-			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-			fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));
-			throw new IllegalArgumentException();
-		}
+		validateBinding(bindingResult);
 
 		memberService.followTeam(followRequest);
-		return ResponseEntity.ok(BaseResponseBody.of("팔로우가 완료되었습니다."));
+		return ResponseEntity.ok().build();
 	}
+	
+	@ApiOperation(value = "펀딩 게시글 찜하기", notes = "fundingId와 memberId를 받아서 게시글에 대한 찜을 진행")
+	@PutMapping("/like/{fundingId}")
+	public ResponseEntity<? extends BaseResponseBody> wishFunding(@PathVariable("fundingId") Long fundingId, @RequestBody Long memberId){
+		memberService.wishFunding(fundingId, memberId);
+		return ResponseEntity.ok().build();
+	}
+
 	public void validateBinding(BindingResult bindingResult){
 		if(bindingResult.hasErrors()){
 			List<FieldError> fieldErrors = bindingResult.getFieldErrors();
