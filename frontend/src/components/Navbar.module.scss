@@ -34,7 +34,7 @@ $Desktop-max-size: 1001px;
 .logoImg {
   width: 150px;
   padding-top: 10px;
-  @media (max-width: $Desktop-max-size) {
+  @media (max-width: 900px) {
     display: none;
   }
 }
