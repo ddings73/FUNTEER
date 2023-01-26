@@ -13,16 +13,13 @@ import javax.persistence.Table;
 import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.user.entity.Member;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.yam.funteer.user.entity.User;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "payment")
-@Getter
-@Builder
+@Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Payment {
@@ -33,8 +30,8 @@ public class Payment {
 	@JoinColumn(name = "post_id")
 	private Post post;
 	@ManyToOne
-	@JoinColumn(name = "member_id")
-	private Member member;
+	@JoinColumn(name = "user_id")
+	private User user;
 	private Long amount;
 	private LocalDateTime payDate;
 }
