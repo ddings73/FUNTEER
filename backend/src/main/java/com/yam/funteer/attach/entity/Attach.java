@@ -13,6 +13,7 @@ import javax.persistence.Table;
 
 import com.yam.funteer.attach.FileType;
 
+import io.swagger.annotations.ApiOperation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
