@@ -71,6 +71,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = findMember.orElseThrow(UserNotFoundException::new);
 
         long followCnt = followRepository.countAllByMember(member);
+        long wishCnt = wishRepository.countAllByMember(member);
 
         MemberProfileResponse memberProfileResponse = MemberProfileResponse.of(member);
         return memberProfileResponse;
@@ -91,7 +92,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void likeFunding(Long fundingId, Long memberId) {
+    public void wishFunding(Long fundingId, Long memberId) {
         Optional<Member> findMember = memberRepository.findById(memberId);
         Optional<Funding> findFunding = fundingRepository.findById(fundingId);
         Member member = findMember.orElseThrow(UserNotFoundException::new);

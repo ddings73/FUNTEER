@@ -10,4 +10,6 @@ import com.yam.funteer.user.entity.Wish;
 
 public interface WishRepository extends JpaRepository<Wish, Long> {
 	Optional<Wish> findByMemberAndFunding(Member member, Funding funding);
+
+	long countAllByMember(Member member);
 }

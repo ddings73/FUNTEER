@@ -46,6 +46,7 @@ public class MemberController {
 		memberService.signupMember(createMemberRequest);
 		return ResponseEntity.ok(BaseResponseBody.of("회원가입이 완료되었습니다."));
 	}
+
 	@ApiOperation(value = "회원 탈퇴", notes = "<strong>비밀번호</strong>를 이용하여 검증한다.")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
@@ -107,9 +108,8 @@ public class MemberController {
 	
 	@ApiOperation(value = "펀딩 게시글 찜하기", notes = "fundingId와 memberId를 받아서 게시글에 대한 찜을 진행")
 	@PutMapping("/like/{fundingId}")
-	public ResponseEntity<? extends BaseResponseBody> likeFunding(@PathVariable("fundingId") Long fundingId, @RequestBody Long memberId){
-
-		memberService.likeFunding(fundingId, memberId);
+	public ResponseEntity<? extends BaseResponseBody> wishFunding(@PathVariable("fundingId") Long fundingId, @RequestBody Long memberId){
+		memberService.wishFunding(fundingId, memberId);
 		return ResponseEntity.ok().build();
 	}
 
