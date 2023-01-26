@@ -12,7 +12,6 @@ type MemberSingUpType = {
   nickname: string;
   phone: string;
   accountNumber: string;
-  authNumber: string;
 };
 
 function MemberSignUpContainer() {
@@ -25,13 +24,19 @@ function MemberSignUpContainer() {
     nickname: '',
     phone: '',
     accountNumber: '',
-    authNumber: '',
   });
+
+  /** 인증 번호 */
+  const [authNumber, setAuthNumber] = useState<string>('');
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     setMemberSignUpInfo({ ...memberSignUpInfo, [name]: value });
+  };
+
+  const onAuthNumberChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthNumber(e.target.value);
   };
 
   /** 이메일 인증 버튼에 표시되는 텍스트 */
@@ -88,6 +93,24 @@ function MemberSignUpContainer() {
 
   /** 개인 회원가입 요청 */
   const requestMemberSignUp = () => {
+    /** 유효성 검사 */
+    if (!checkEmailAuth) {
+      alert('이메일 인증을 완료해주세요.');
+      return;
+    }
+
+    const isEmpty = Object.values(memberSignUpInfo).some((value) => value === '' || value === null);
+
+    if (isEmpty) {
+      alert('모든 정보를 입력해주세요.');
+      return;
+    }
+
+    if (memberSignUpInfo.password !== memberSignUpInfo.passwordCheck) {
+      alert('비밀번호와 비밀번호 확인 값이 다릅니다.');
+      return;
+    } // 유효성 검사 끝
+
     console.log('개인 회원가입 정보', memberSignUpInfo);
     console.log('개인 회원가입 요청');
   };
@@ -113,7 +136,13 @@ function MemberSignUpContainer() {
             )}
             {emailAuthButtonPushed && (
               <div className={styles['auth-input-div']}>
-                <input type="text" name="authNumber" placeholder="인증번호를 입력해주세요." className={styles['auth-number-input']} onChange={onChangeHandler} />
+                <input
+                  type="text"
+                  name="authNumber"
+                  placeholder="인증번호를 입력해주세요."
+                  className={styles['auth-number-input']}
+                  onChange={onAuthNumberChangeHandler}
+                />
                 <Button className={styles['auth-check-button']} variant="contained" onClick={checkAuthNumber}>
                   인증
                 </Button>
