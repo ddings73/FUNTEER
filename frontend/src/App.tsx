@@ -1,9 +1,9 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import { Paths } from './paths';
-import { MainPage, SignUp, MemberSignUp, TeamSignUp, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge, Donation, AdminMain } from './pages/index';
+import { MainPage, SignUp, MemberSignUp, TeamSignUp, Login, TeamPage, ServiceDetail, FindEmail, ResetPassword, Charge, Donation, Admin } from './pages/index';
 import Navbar from './components/Navbar';
-import ErrorPage from './pages/ErrorPage';
+import ErrorPage from './pages/AddOns/ErrorPage';
 import AdminSideBar from './components/AdminSideBar';
 
 // redux
@@ -11,7 +11,7 @@ import AdminSideBar from './components/AdminSideBar';
 import { increment, decrement } from './store/slices/counterSlice';
 // eslint-disable-next-line
 import { useAppDispatch, useAppSelector } from './store/hooks';
-import FindPassword from './pages/FindPassword';
+import FindPassword from './pages/Accounts/FindPassword';
 
 function App() {
   return (
@@ -37,7 +37,7 @@ function App() {
       </Route>
       {/** 관리자 */}
       <Route path={Paths.admin.main} element={<AdminSideBar />}>
-        <Route index element={<AdminMain />} />
+        <Route index element={<Admin />} />
       </Route>
     </Routes>
   );
