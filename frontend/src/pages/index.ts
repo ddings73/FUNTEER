@@ -14,3 +14,5 @@ export { default as Charge } from './Charge';
 export { default as SignUp } from './SignUp';
 export { default as MemberSignUp } from './MemberSignUp';
 export { default as TeamSignUp } from './TeamSignUp';
+
+export { default as Admin } from './Admin/AdminMain';
