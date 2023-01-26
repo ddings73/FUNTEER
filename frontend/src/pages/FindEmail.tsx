@@ -1,5 +1,5 @@
 import React from 'react';
-import FindEmailContainer from '../containers/FindEmailContainer';
+import FindEmailContainer from '../containers/Accounts/FindEmailContainer';
 
 function FindEmail() {
   return <FindEmailContainer />;

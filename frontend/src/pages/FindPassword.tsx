@@ -1,5 +1,5 @@
 import React from 'react';
-import FindPasswordContainer from '../containers/FindPasswordContainer';
+import FindPasswordContainer from '../containers/Accounts/FindPasswordContainer';
 
 function FindPassword() {
   return <FindPasswordContainer />;

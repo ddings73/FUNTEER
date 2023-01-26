@@ -1,5 +1,5 @@
 import React from 'react';
-import TeamSignUpContainer from '../containers/TeamSignUpContainer';
+import TeamSignUpContainer from '../containers/Accounts/TeamSignUpContainer';
 
 function TeamSignUp() {
   return <TeamSignUpContainer />;

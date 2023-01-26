@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from './ErrorPageContainer.module.scss';
-import fzf from '../assets/images/404temp.png';
+import fzf from '../../assets/images/404temp.png';
 
 function ErrorPageContainer() {
   return (

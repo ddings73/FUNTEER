@@ -1,38 +1,37 @@
 import React, { useState } from 'react';
 import { Button, TextField } from '@mui/material';
 // import axios from 'axios';
-import styles from './TeamSignUpContainer.module.scss';
-import { secondsToMinutes, secondsToSeconds } from '../utils/timer';
+import styles from './MemberSignUpContainer.module.scss';
+import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
 
-type TeamSingUpType = {
+type MemberSingUpType = {
   name: string;
   email: string;
   password: string;
   passwordCheck: string;
+  nickname: string;
   phone: string;
+  accountNumber: string;
+  authNumber: string;
 };
 
-function TeamSignUpContainer() {
+function MemberSignUpContainer() {
   /** 회원가입 정보 */
-  const [TeamSignUpInfo, setTeamSignUpInfo] = useState<TeamSingUpType>({
+  const [memberSignUpInfo, setMemberSignUpInfo] = useState<MemberSingUpType>({
     name: '',
     email: '',
     password: '',
     passwordCheck: '',
+    nickname: '',
     phone: '',
+    accountNumber: '',
+    authNumber: '',
   });
-
-  /** 인증 번호 */
-  const [authNumber, setAuthNumber] = useState<string>('');
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    setTeamSignUpInfo({ ...TeamSignUpInfo, [name]: value });
-  };
-
-  const onAuthNumberChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAuthNumber(e.target.value);
+    setMemberSignUpInfo({ ...memberSignUpInfo, [name]: value });
   };
 
   /** 이메일 인증 버튼에 표시되는 텍스트 */
@@ -87,60 +86,23 @@ function TeamSignUpContainer() {
      * } */
   };
 
-  const [vmsFiles, setVmsFiles] = useState<FileList | null>(null);
-  const [performFiles, setPerformFiles] = useState<FileList | null>(null);
-
-  const onVmsChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setVmsFiles(e.target.files);
-    }
-  };
-
-  const onPerformChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setPerformFiles(e.target.files);
-    }
-  };
-
-  /** 단체 회원가입 요청 */
-  const requestTeamSignUp = () => {
-    /** 유효성 검사 */
-    const isEmpty = Object.values(TeamSignUpInfo).some((value) => value === '' || value === null);
-
-    if (isEmpty) {
-      alert('모든 정보를 입력해주세요.');
-      return;
-    }
-
-    if (vmsFiles && performFiles) {
-      const formData = new FormData();
-      formData.append('file', vmsFiles[0]);
-      formData.append('file', performFiles[0]);
-    } else {
-      alert('필수 파일을 첨부해주세요.');
-      return;
-    }
-
-    if (TeamSignUpInfo.password !== TeamSignUpInfo.passwordCheck) {
-      alert('비밀번호와 비밀번호 확인 값이 다릅니다.');
-      return;
-    } // 유효성 검사 끝
-
-    console.log('단체 회원가입 정보', TeamSignUpInfo);
-    console.log('단체 회원가입 요청');
+  /** 개인 회원가입 요청 */
+  const requestMemberSignUp = () => {
+    console.log('개인 회원가입 정보', memberSignUpInfo);
+    console.log('개인 회원가입 요청');
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
-        <h1 className={styles.title}>단체 회원가입</h1>
+        <h1 className={styles.title}>개인 회원가입</h1>
         <div className={styles['form-div']}>
           <div id="form-div-inner">
-            <p>단체명</p>
+            <p>이름</p>
             <TextField name="name" margin="dense" placeholder="이름을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
             <p>이메일</p>
-            {checkEmailAuth && <p className={styles['authed-email']}>{TeamSignUpInfo.email}</p>}
+            {checkEmailAuth && <p className={styles['authed-email']}>{memberSignUpInfo.email}</p>}
             {!checkEmailAuth && (
               <div className={styles['not-shadow']}>
                 <TextField name="email" margin="dense" placeholder="이메일을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
@@ -151,13 +113,7 @@ function TeamSignUpContainer() {
             )}
             {emailAuthButtonPushed && (
               <div className={styles['auth-input-div']}>
-                <input
-                  type="text"
-                  name="authNumber"
-                  placeholder="인증번호를 입력해주세요."
-                  className={styles['auth-number-input']}
-                  onChange={onAuthNumberChangeHandler}
-                />
+                <input type="text" name="authNumber" placeholder="인증번호를 입력해주세요." className={styles['auth-number-input']} onChange={onChangeHandler} />
                 <Button className={styles['auth-check-button']} variant="contained" onClick={checkAuthNumber}>
                   인증
                 </Button>
@@ -170,25 +126,16 @@ function TeamSignUpContainer() {
             <p>비밀번호 확인</p>
             <TextField name="passwordCheck" margin="dense" placeholder="비밀번호을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
-            <p>대표자 연락처</p>
+            <p>닉네임</p>
+            <TextField name="nickname" margin="dense" placeholder="닉네임을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+
+            <p>휴대폰 번호</p>
             <TextField name="phone" margin="dense" placeholder="휴대폰 번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
-            <hr />
+            <p>계좌번호</p>
+            <TextField name="accountNumber" margin="dense" placeholder="계좌번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
-            <label htmlFor="file">
-              <p>VMS 위촉 임명장</p>
-              <input type="file" name="file" id="file" onChange={onVmsChangeHandler} />
-            </label>
-            <p className={styles.comment}>VMS에 인증된 봉사 단체인지 확인합니다.</p>
-
-            <label htmlFor="file">
-              <p>봉사 실적</p>
-              <input type="file" name="file" id="file" onChange={onPerformChangeHandler} />
-            </label>
-            <p className={styles.comment}>펀딩 진행 시 1년 이내의 봉사 실적이 필요합니다.</p>
-
-            <p className={styles['last-comment']}>가입 승인 시 인증된 이메일 주소로 메일을 보내드립니다.</p>
-            <Button className={styles['signup-button']} variant="contained" onClick={requestTeamSignUp}>
+            <Button className={styles['signup-button']} variant="contained" onClick={requestMemberSignUp}>
               회원가입
             </Button>
           </div>
@@ -198,4 +145,4 @@ function TeamSignUpContainer() {
   );
 }
 
-export default TeamSignUpContainer;
+export default MemberSignUpContainer;
