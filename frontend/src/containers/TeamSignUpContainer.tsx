@@ -10,7 +10,6 @@ type TeamSingUpType = {
   password: string;
   passwordCheck: string;
   phone: string;
-  authNumber: string;
 };
 
 function TeamSignUpContainer() {
@@ -21,13 +20,19 @@ function TeamSignUpContainer() {
     password: '',
     passwordCheck: '',
     phone: '',
-    authNumber: '',
   });
+
+  /** 인증 번호 */
+  const [authNumber, setAuthNumber] = useState<string>('');
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     setTeamSignUpInfo({ ...TeamSignUpInfo, [name]: value });
+  };
+
+  const onAuthNumberChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthNumber(e.target.value);
   };
 
   /** 이메일 인증 버튼에 표시되는 텍스트 */
@@ -99,6 +104,28 @@ function TeamSignUpContainer() {
 
   /** 단체 회원가입 요청 */
   const requestTeamSignUp = () => {
+    /** 유효성 검사 */
+    const isEmpty = Object.values(TeamSignUpInfo).some((value) => value === '' || value === null);
+
+    if (isEmpty) {
+      alert('모든 정보를 입력해주세요.');
+      return;
+    }
+
+    if (vmsFiles && performFiles) {
+      const formData = new FormData();
+      formData.append('file', vmsFiles[0]);
+      formData.append('file', performFiles[0]);
+    } else {
+      alert('필수 파일을 첨부해주세요.');
+      return;
+    }
+
+    if (TeamSignUpInfo.password !== TeamSignUpInfo.passwordCheck) {
+      alert('비밀번호와 비밀번호 확인 값이 다릅니다.');
+      return;
+    } // 유효성 검사 끝
+
     console.log('단체 회원가입 정보', TeamSignUpInfo);
     console.log('단체 회원가입 요청');
   };
@@ -124,7 +151,13 @@ function TeamSignUpContainer() {
             )}
             {emailAuthButtonPushed && (
               <div className={styles['auth-input-div']}>
-                <input type="text" name="authNumber" placeholder="인증번호를 입력해주세요." className={styles['auth-number-input']} onChange={onChangeHandler} />
+                <input
+                  type="text"
+                  name="authNumber"
+                  placeholder="인증번호를 입력해주세요."
+                  className={styles['auth-number-input']}
+                  onChange={onAuthNumberChangeHandler}
+                />
                 <Button className={styles['auth-check-button']} variant="contained" onClick={checkAuthNumber}>
                   인증
                 </Button>
