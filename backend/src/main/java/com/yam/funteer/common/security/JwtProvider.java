@@ -1,4 +1,4 @@
-package com.yam.funteer.common.security.service;
+package com.yam.funteer.common.security;
 
 import com.yam.funteer.common.security.Token;
 

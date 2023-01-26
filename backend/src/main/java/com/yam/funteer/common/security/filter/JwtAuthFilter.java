@@ -1,6 +1,6 @@
 package com.yam.funteer.common.security.filter;
 
-import com.yam.funteer.common.security.service.JwtProvider;
+import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.user.UserType;
 
 import lombok.RequiredArgsConstructor;
