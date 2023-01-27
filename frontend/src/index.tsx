@@ -23,8 +23,14 @@ import {
   Charge,
   Donation,
   ErrorPage,
-  AdminMain,
-  AdminMember,
+  MyBadges,
+  EditProfile,
+  MyDonates,
+  MyFavors,
+  MyFollows,
+  MyFunding,
+  MyFunteerDonate,
+  MyPage,
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -37,6 +43,7 @@ const router = createBrowserRouter([
         index: true,
         element: <MainPage />,
       },
+      /* Accounts Routes */
       {
         path: 'login',
         element: <Login />,
@@ -50,25 +57,33 @@ const router = createBrowserRouter([
         element: <FindPassword />,
       },
       {
-        path: 'findPassword/reset',
+        path: 'resetPassword',
         element: <ResetPassword />,
       },
       {
         path: 'signup',
         element: <SignUp />,
+        children: [
+          {
+            path: 'teamSignUp',
+            element: <TeamSignUp />,
+          },
+          {
+            path: 'MemberSignUp',
+            element: <MemberSignUp />,
+          },
+        ],
       },
-      {
-        path: 'signup/team',
-        element: <TeamSignUp />,
-      },
-      {
-        path: 'signup/member',
-        element: <MemberSignUp />,
-      },
+      /* Add-on Routes */
       {
         path: 'donation',
         element: <Donation />,
       },
+      {
+        path: 'charge',
+        element: <Charge />,
+      },
+      /* Service Routes */
       {
         path: 'service',
         element: <ServiceDetail />,
@@ -77,26 +92,46 @@ const router = createBrowserRouter([
         path: 'team',
         element: <TeamPage />,
       },
+      /* MyPage Routes */
       {
-        path: 'charge',
-        element: <Charge />,
+        path: 'myPage',
+        element: <MyPage />,
+      },
+      {
+        path: 'editProfile',
+        element: <EditProfile />,
+      },
+      {
+        path: 'myFunding',
+        element: <MyFunding />,
+      },
+      {
+        path: 'myFunteerDonate',
+        element: <MyFunteerDonate />,
+      },
+      {
+        path: 'myDonates',
+        element: <MyDonates />,
+      },
+      {
+        path: 'myBadges',
+        element: <MyBadges />,
+      },
+      {
+        path: 'myFavors',
+        element: <MyFavors />,
+      },
+      {
+        path: 'myFollow',
+        element: <MyFollows />,
       },
     ],
   },
   {
-    path: 'admin',
+    path: '/admin',
     element: <AdminRoot />,
     errorElement: <ErrorPage />,
-    children: [
-      {
-        path: 'main',
-        element: <AdminMain />,
-      },
-      {
-        path: 'member',
-        element: <AdminMember />,
-      },
-    ],
+    children: [],
   },
 ]);
 

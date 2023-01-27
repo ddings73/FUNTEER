@@ -5,11 +5,12 @@ import { requestSignIn } from '../../api/user';
 import { UserSignInType } from '../../types/user';
 import styles from './LoginContainer.module.scss';
 
+
 function LoginContainer() {
   const [userInfo, setUserInfo] = useState<UserSignInType>({
     email: '',
     password: '',
-    type: 'NORMAL',
+    type:"ROLE_USER"
   });
   const navigate = useNavigate();
 
@@ -21,11 +22,13 @@ function LoginContainer() {
   };
 
   const requestEmailLogin = async () => {
-    try {
-      const response = await requestSignIn(userInfo);
-      console.log(response);
-    } catch (error) {
+
+    try{
+       const response = await requestSignIn(userInfo)
+    }
+    catch(error){
       console.error(error);
+      
     }
   };
 
