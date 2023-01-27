@@ -11,7 +11,7 @@ function App() {
     /**
      * path: 이동할 경로, element: 렌더링할 페이지
      */
-    <div></div>
+    <div />
   );
 }
 

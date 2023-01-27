@@ -1,14 +1,7 @@
 module.exports = {
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'prettier'],
-  extends: [
-    'airbnb',
-    'plugin:import/errors',
-    'plugin:import/warnings',
-    'plugin:prettier/recommended',
-    'plugin:@typescript-eslint/recommended',
-    'prettier',
-  ],
+  extends: ['airbnb', 'plugin:import/errors', 'plugin:import/warnings', 'plugin:prettier/recommended', 'plugin:@typescript-eslint/recommended', 'prettier'],
   rules: {
     'linebreak-style': 0,
     'import/prefer-default-export': 0,
@@ -21,5 +14,6 @@ module.exports = {
     'react/prop-types': 0,
     'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
     'jsx-a11y/no-noninteractive-element-interactions': 0,
+    'no-param-reassign': 0,
   },
 };

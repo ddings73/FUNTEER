@@ -39,9 +39,6 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-jwt:
-  secret: and0LUUyMDQtZnVudGVlcmJ1ay1qd3QtRTIwNC1mdW50ZWVyYnVrLWp3dC1FMjA0LWZ1bnRlZXJidWstand0LUUyMDQtZnVudGVlcmJ1ay1qd3QtRTIwNC1mdW50ZWVyYnVrLWp3dC1FMjA0LWZ1bnRlZXJidWstand0LUUyMDQtZnVudGVlcmJ1ay1qd3QtRTIwNC1mdW50ZWVyYnVr
-
 
 logging:
   level:

@@ -1,4 +1,6 @@
-package com.yam.funteer.post;
+package com.yam.funteer.common.code;
+
+import com.yam.funteer.common.code.TypeModel;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -6,7 +8,7 @@ import lombok.ToString;
 
 @Getter @ToString
 @RequiredArgsConstructor
-public enum PostType{
+public enum PostType implements TypeModel {
 	DONATION_ACTIVE("모금_진행"),
 	DONATION_CLOSE("모금_종료"),
 
@@ -20,9 +22,15 @@ public enum PostType{
 
 	REPORT_WAIT("보고서_승인대기"),
 	REPORT_ACCEPT("보고서_승인완료"),
-	REPORT_REJECT("보고서_승인거부");
+	REPORT_REJECT("보고서_승인거부"),
 
-
+	QNA("QnA"),
+	FAQ("FAQ");
 
 	private final String description;
+
+	@Override
+	public String getKey() {
+		return name();
+	}
 }

@@ -25,7 +25,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService = new DefaultOAuth2UserService();
 
-        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest);
+        OAuth2User oAuth2User = oAuth2UserService.loadUser(userRequest); // accessToken으로 카카오 서버에서 유저정보 받아오기
 
         ClientRegistration clientRegistration = userRequest.getClientRegistration();
 
@@ -35,8 +35,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
                 .getUserInfoEndpoint()
                 .getUserNameAttributeName();
 
-        log.info("provider=> {}", provider); // kakao
-        log.info("attributeKey=> {}", attributeKey); // id
+        log.info("provider => {}", provider); // kakao
+        log.info("attributeKey => {}", attributeKey); // id
 
         OAuth2Attribute oAuth2Attribute = OAuth2Attribute.of(provider, attributeKey, oAuth2User.getAttributes());
 
