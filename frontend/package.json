@@ -19,6 +19,7 @@
     "@types/react-redux": "^7.1.25",
     "axios": "^1.2.5",
     "dotenv": "^16.0.3",
+    "http-proxy-middleware": "^2.0.6",
     "node-sass": "^8.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -65,5 +66,6 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "prettier": "^2.8.3"
-  }
+  },
+  "proxy": "http://i8e204.p.ssafy.io:8080"
 }
