@@ -5,15 +5,27 @@
   font-style: normal;
 }
 
+$Desktop-max-size: 1001px;
+
 .appBar {
+  // position: fixed;
+  height: 80px;
+  display: flex;
   background-color: rgb(255, 255, 255) !important;
   & .noti {
-    @media (max-width: 900px) {
+    @media (max-width: $Desktop-max-size) {
+      display: none;
+    }
+  }
+  & .menuBox {
+    width: 5%;
+    @media (max-width: 1000px) {
       display: none;
     }
   }
   & .navItems {
-    @media (max-width: 975px) {
+    display: none;
+    @media (max-width: $Desktop-max-size) {
       display: none;
     }
   }
@@ -21,6 +33,7 @@
 
 .logoImg {
   width: 150px;
+  padding-top: 10px;
   @media (max-width: 900px) {
     display: none;
   }
@@ -28,8 +41,9 @@
 .logoImgMobile {
   width: 150px;
   display: none;
-  @media (max-width: 900px) {
+  @media (max-width: $Desktop-max-size) {
     display: flex;
+    margin-top: 15px;
   }
 }
 
@@ -38,9 +52,13 @@
   font-size: larger !important;
   color: black !important;
   transition: 0.5s !important;
+  margin: 5%;
   &:hover {
     color: rgb(226, 128, 82) !important;
-    scale: 1.3 !important;
+  }
+
+  @media (max-width: 1350px) {
+    margin: 0;
   }
 }
 
@@ -48,7 +66,11 @@
   color: black;
   transition: 0.5s;
   display: none;
-  @media (max-width: 900px) {
-    display: block;
+  @media (max-width: 900) {
+    display: flex;
   }
+}
+.mobBox {
+  display: flex;
+  justify-content: center;
 }

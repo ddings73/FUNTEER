@@ -75,7 +75,7 @@ public class MemberController {
 		@ApiResponse(code = 400, message = "잘못된 요청정보"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@Secured("ROLE_USER")
+	// @Secured("ROLE_USER")
 	@GetMapping("/account")
 	public ResponseEntity<AccountResponse> getMemberInfo(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
 		validateBinding(bindingResult);
@@ -94,7 +94,7 @@ public class MemberController {
 		@ApiResponse(code = 400, message = "잘못된 요청정보"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@Secured("ROLE_USER")
+	// @Secured("ROLE_USER")
 	@PutMapping("/account")
 	public ResponseEntity modifyAccount(@Validated @ModelAttribute("updateInfo") BaseUserRequest baseUserRequest, BindingResult bindingResult){
 		validateBinding(bindingResult);
