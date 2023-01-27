@@ -1,6 +1,6 @@
 package com.yam.funteer.user.service;
 
-import com.yam.funteer.user.UserType;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.dto.request.CreateMemberRequest;
 import com.yam.funteer.user.entity.Follow;
 import com.yam.funteer.user.entity.Member;

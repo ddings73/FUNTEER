@@ -1,6 +1,6 @@
 package com.yam.funteer.user.dto.request;
 
-import com.yam.funteer.user.UserType;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.Member;
 import lombok.*;
 

@@ -3,7 +3,7 @@ package com.yam.funteer.user.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 
-import com.yam.funteer.user.UserType;
+import com.yam.funteer.common.code.UserType;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;

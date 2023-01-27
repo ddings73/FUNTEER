@@ -3,7 +3,6 @@ package com.yam.funteer.common.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yam.funteer.common.security.Token;
 import com.yam.funteer.common.security.JwtProvider;
-import com.yam.funteer.user.UserType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,8 +33,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 
         String email = (String) oAuth2User.getAttributes().get("email");
-        String role = UserType.KAKAO.getAuthority();
-        Token token = jwtProvider.generateToken(email, role);
+        Token token = jwtProvider.generateToken(email, "ROLE_USER");
         log.info("token=> {}", token);
 
         writeTokenResponse(response, token);

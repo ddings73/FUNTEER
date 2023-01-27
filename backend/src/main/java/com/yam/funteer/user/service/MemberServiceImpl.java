@@ -6,7 +6,6 @@ import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.user.dto.request.CreateMemberRequest;
-import com.yam.funteer.user.dto.request.FollowRequest;
 import com.yam.funteer.user.dto.response.MemberProfileResponse;
 import com.yam.funteer.user.dto.request.BaseUserRequest;
 import com.yam.funteer.user.entity.Follow;
@@ -78,9 +77,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void followTeam(FollowRequest followRequest) {
-        Optional<Member> findMember = memberRepository.findById(followRequest.getMemberId());
-        Optional<Team> findTeam = teamRepository.findById(followRequest.getTeamId());
+    public void followTeam(Long teamId, Long memberId) {
+        Optional<Member> findMember = memberRepository.findById(memberId);
+        Optional<Team> findTeam = teamRepository.findById(teamId);
         Member member = findMember.orElseThrow(UserNotFoundException::new);
         Team team = findTeam.orElseThrow(UserNotFoundException::new);
 

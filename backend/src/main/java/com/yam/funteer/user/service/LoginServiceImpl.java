@@ -32,8 +32,7 @@ public class LoginServiceImpl implements LoginService{
 
         validatePassword(loginRequest.getPassword(), user.getPassword());
 
-        String role = user.getUserType().getAuthority();
-        Token token = jwtProvider.generateToken(user.getEmail(), role);
+        Token token = jwtProvider.generateToken(user.getEmail(), "ROLE_USER");
         return LoginResponse.of(user, token);
     }
 
