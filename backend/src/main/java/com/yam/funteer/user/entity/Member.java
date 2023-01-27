@@ -13,9 +13,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends User{
+	@Column(unique = true)
 	private @NotBlank String nickname;
 	private boolean display;
-
 	public void toggleDisplay(){
 		this.display = !this.display;
 	}
