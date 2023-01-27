@@ -23,6 +23,8 @@ import {
   Charge,
   Donation,
   ErrorPage,
+  AdminMain,
+  AdminMember,
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -56,7 +58,7 @@ const router = createBrowserRouter([
         element: <SignUp />,
       },
       {
-        path: 'signup/teamSignUp',
+        path: 'signup/team',
         element: <TeamSignUp />,
       },
       {
@@ -82,10 +84,19 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: '/admin',
+    path: 'admin',
     element: <AdminRoot />,
     errorElement: <ErrorPage />,
-    children: [],
+    children: [
+      {
+        path: 'main',
+        element: <AdminMain />,
+      },
+      {
+        path: 'member',
+        element: <AdminMember />,
+      },
+    ],
   },
 ]);
 
