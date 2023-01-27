@@ -1,0 +1,16 @@
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+
+  .left {
+    width: 40%;
+    background-color: red;
+  }
+  .right {
+    width: 60%;
+    background-color: blue;
+  }
+}
