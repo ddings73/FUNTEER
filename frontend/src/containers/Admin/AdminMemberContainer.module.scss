@@ -11,14 +11,14 @@
   .contents {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     width: 100%;
     max-width: 1160px;
 
-    & h1 {
-      font-size: 50px;
+    .title {
+      font-size: 3rem;
       font-weight: bold;
+      margin: 5rem;
     }
   }
 }

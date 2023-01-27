@@ -1,0 +1,40 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+.sidebar {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #363740;
+
+  .logo {
+    width: 70%;
+    margin: 2rem auto;
+  }
+
+  .menu-active {
+    display: block;
+    background-color: $primary;
+    box-shadow: 0px 1px 20px rgba(1, 1, 1, 0.7);
+  }
+
+  .menu-inactive {
+    display: block;
+    background-color: #363740;
+  }
+
+  & a {
+    text-decoration: none;
+  }
+
+  .list-item {
+    margin-bottom: 1rem;
+  }
+
+  & span {
+    font-family: NanumSquareRound;
+    color: white;
+    font-weight: bold;
+    font-size: 1.125rem;
+  }
+}
