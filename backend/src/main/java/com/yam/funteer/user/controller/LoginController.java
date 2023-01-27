@@ -1,8 +1,5 @@
 package com.yam.funteer.user.controller;
 
-import com.yam.funteer.common.BaseResponseBody;
-import com.yam.funteer.user.UserType;
-import com.yam.funteer.user.dto.request.BaseUserRequest;
 import com.yam.funteer.user.dto.response.LoginResponse;
 import com.yam.funteer.user.service.LoginService;
 import com.yam.funteer.user.dto.request.LoginRequest;
@@ -14,14 +11,14 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -40,8 +37,8 @@ public class LoginController {
         @ApiResponse(code = 401, message = "사용자 인증 실패"),
         @ApiResponse(code = 500, message = "서버 에러")
     })
-    @GetMapping("login")
-    public ResponseEntity<LoginResponse> loginUser(@ModelAttribute LoginRequest loginRequest, BindingResult bindingResult){
+    @PostMapping("/login")
+    public ResponseEntity<LoginResponse> loginUser(@Validated @RequestBody LoginRequest loginRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
             fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));

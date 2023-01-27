@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.sun.istack.NotNull;
 import com.yam.funteer.attach.entity.Attach;
-import com.yam.funteer.user.UserType;
+import com.yam.funteer.common.code.UserType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

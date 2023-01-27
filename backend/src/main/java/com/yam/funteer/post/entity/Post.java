@@ -17,7 +17,7 @@ import javax.persistence.Table;
 
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.post.PostGroup;
-import com.yam.funteer.post.PostType;
+import com.yam.funteer.common.code.PostType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

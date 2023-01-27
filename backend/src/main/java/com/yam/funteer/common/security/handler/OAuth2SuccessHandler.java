@@ -3,7 +3,6 @@ package com.yam.funteer.common.security.handler;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yam.funteer.common.security.Token;
 import com.yam.funteer.common.security.JwtProvider;
-import com.yam.funteer.user.UserType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

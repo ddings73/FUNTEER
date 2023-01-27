@@ -3,7 +3,7 @@ package com.yam.funteer.user.dto.response;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.common.security.Token;
-import com.yam.funteer.user.UserType;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.User;
 
 import lombok.*;
