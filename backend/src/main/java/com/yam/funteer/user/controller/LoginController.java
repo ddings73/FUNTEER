@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -36,7 +37,7 @@ public class LoginController {
         @ApiResponse(code = 401, message = "사용자 인증 실패"),
         @ApiResponse(code = 500, message = "서버 에러")
     })
-    @GetMapping("/login")
+    @PostMapping("/login")
     public ResponseEntity<LoginResponse> loginUser(@Validated @RequestBody LoginRequest loginRequest, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
