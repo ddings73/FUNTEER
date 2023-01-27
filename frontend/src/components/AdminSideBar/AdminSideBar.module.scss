@@ -1,0 +1,24 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+.sidebar {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background-color: #363740;
+  color: white;
+
+  & img {
+    width: 70%;
+    margin: 2rem auto;
+  }
+
+  & li {
+    margin-bottom: 1rem;
+  }
+
+  & span {
+    font-family: NanumSquareRound;
+    font-weight: bold;
+  }
+}
