@@ -19,8 +19,6 @@ import { Link, Outlet } from 'react-router-dom';
 import styles from './Navbar.module.scss';
 /* 이미지 import */
 import logoImg from '../assets/images/FunteerLogo.png';
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { isLoginState, setUserLoginState } from '../store/slices/userSlice';
 
 // type MenuSets = { name: string; items: string[] };
 // const menuItems: MenuSets[] = [
@@ -51,10 +49,6 @@ const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내�
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
-
-  // 로그인 상태
-  const isLogin = useAppSelector(isLoginState);
-  console.log(isLogin);
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
