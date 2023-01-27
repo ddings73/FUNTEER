@@ -9,7 +9,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Token {
-    private String token;
+    private String accessToken;
     private String refreshToken;
 
 }

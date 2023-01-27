@@ -29,4 +29,6 @@ public interface FundingService {
 	FundingReportResponse updateFundingReport(Long fundingId, FundingReportResponse data);
 
 	void createFundingComment(FundingCommentRequest data);
+
+	List<FundingListResponse> findAllFunding();
 }

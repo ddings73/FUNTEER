@@ -20,8 +20,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class FundingRequest {
 
-	@NotNull
-	private Team team;
+	// @NotNull
+	// private Team team;
 
 	@NotNull
 	private String title;
@@ -34,21 +34,21 @@ public class FundingRequest {
 	private LocalDateTime postDate;
 	private Attach thumbnail;
 
-	@NotNull
-	private int amount1;
-	@NotNull
-	private String description1;
-
-	@NotNull
-	private int amount2;
-	@NotNull
-	private String description2;
-
-	@NotNull
-	private int amount3;
-	@NotNull
-	private String description3;
-
-	private String hashtags;
+	// @NotNull
+	// private int amount1;
+	// @NotNull
+	// private String description1;
+	//
+	// @NotNull
+	// private int amount2;
+	// @NotNull
+	// private String description2;
+	//
+	// @NotNull
+	// private int amount3;
+	// @NotNull
+	// private String description3;
+	//
+	// private String hashtags;
 
 }

@@ -1,9 +1,9 @@
 package com.yam.funteer.post;
 
-import java.util.Collections;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
+import com.yam.funteer.common.code.PostType;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -28,6 +28,12 @@ public enum PostGroup {
 		PostType.REPORT_WAIT,
 		PostType.REPORT_REJECT,
 		PostType.REPORT_ACCEPT
+	)),
+
+	ETC(List.of(
+		PostType.QNA,
+		PostType.FAQ
 	));
+
 	private final List<PostType> typeList;
 }

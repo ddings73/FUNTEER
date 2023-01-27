@@ -9,4 +9,7 @@ public interface MemberService {
     void signupMember(CreateMemberRequest requestDto);
     void signoutMember(BaseUserRequest baseUserRequest);
     MemberProfileResponse getMemberProfile(BaseUserRequest baseUserRequest);
+
+    void followTeam(Long teamId, Long memberId);
+    void wishFunding(Long fundingId, Long memberId);
 }
