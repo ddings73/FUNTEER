@@ -1,7 +1,5 @@
 package com.yam.funteer.common.code;
 
-import com.yam.funteer.common.code.TypeModel;
-
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
@@ -25,6 +23,7 @@ public enum PostType implements TypeModel {
 	REPORT_REJECT("보고서_승인거부"),
 
 	QNA("QnA"),
+	NOTICE("공지사항"),
 	FAQ("FAQ");
 
 	private final String description;
@@ -33,4 +32,7 @@ public enum PostType implements TypeModel {
 	public String getKey() {
 		return name();
 	}
+
 }
+
+
