@@ -2,6 +2,8 @@ package com.yam.funteer.post;
 
 import java.util.List;
 
+import com.yam.funteer.common.code.PostType;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;

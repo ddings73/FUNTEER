@@ -1,15 +1,16 @@
-package com.yam.funteer.user;
+package com.yam.funteer.common.code;
 
 import io.swagger.annotations.ApiModel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
-import org.springframework.security.core.GrantedAuthority;
+
+import com.yam.funteer.common.code.TypeModel;
 
 @ApiModel
 @Getter @ToString
 @RequiredArgsConstructor
-public enum UserType {
+public enum UserType implements TypeModel {
     NORMAL("일반"),
     KAKAO("카카오"),
     TEAM_WAIT("단체_대기"),
@@ -20,4 +21,8 @@ public enum UserType {
 
     private final String description;
 
+    @Override
+    public String getKey() {
+        return name();
+    }
 }
