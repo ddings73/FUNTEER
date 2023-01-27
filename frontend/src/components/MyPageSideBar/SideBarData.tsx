@@ -14,42 +14,42 @@ type SideBarDataType = {
 export const SideBarData: SideBarDataType[] = [
   {
     title: '프로필 정보',
-    path: '/overview',
+    path: '/myPage',
     icon: <AiIcons.AiFillHome />,
   },
   {
     title: '개인정보 수정',
-    path: '/edit',
+    path: '/editProfile',
     icon: <BsIcons.BsFillPersonFill />,
   },
   {
     title: '펀딩 내역',
-    path: '/myfunds',
+    path: '/myFunding',
     icon: <BiIcons.BiReceipt />,
   },
   {
     title: '자체 기부 내역',
-    path: '/selfdonates',
+    path: '/myFunteerDonate',
     icon: <FaIcons.FaMoneyBillWave />,
   },
   {
     title: '도네이션 내역',
-    path: '/mydonates',
+    path: '/myDonates',
     icon: <BiIcons.BiDonateHeart />,
   },
   {
     title: '획득한 뱃지',
-    path: '/mybadges',
+    path: '/myBadges',
     icon: <SlIcons.SlBadge />,
   },
   {
     title: '찜 목록',
-    path: '/myfavors',
+    path: '/myFavors',
     icon: <AiIcons.AiOutlineStar />,
   },
   {
     title: '팔로우 목록',
-    path: '/follows',
+    path: '/myFollow',
     icon: <AiIcons.AiOutlineHeart />,
   },
 ];
