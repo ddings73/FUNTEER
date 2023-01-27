@@ -41,6 +41,12 @@ public class FundingController {
 		return ResponseEntity.ok(fundingService.findApprovedFunding(keyword, hashTag, category));
 	}
 
+	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
+	@GetMapping("/test")
+	public ResponseEntity<List<FundingListResponse>> findAllFunding() {
+		return ResponseEntity.ok(fundingService.findAllFunding());
+	}
+
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
 	@PostMapping("/")
 	public  ResponseEntity<?> createFunding(@RequestBody FundingRequest data) {
