@@ -4,6 +4,7 @@ import com.yam.funteer.common.security.handler.OAuth2SuccessHandler;
 import com.yam.funteer.common.security.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,6 +31,8 @@ public class SecurityConfig{
 
         http
                 .authorizeRequests()
+                .mvcMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .antMatchers("/api/v1/**").permitAll()
                     .anyRequest().permitAll(); // 임시
 
         http
