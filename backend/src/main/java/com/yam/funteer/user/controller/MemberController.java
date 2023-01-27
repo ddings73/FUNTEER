@@ -1,6 +1,5 @@
 package com.yam.funteer.user.controller;
 
-import com.yam.funteer.user.UserType;
 import com.yam.funteer.user.dto.request.ChargeRequest;
 import com.yam.funteer.user.dto.request.UpdateProfileRequest;
 import com.yam.funteer.user.dto.response.AccountResponse;

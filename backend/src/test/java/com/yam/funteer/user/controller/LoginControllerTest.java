@@ -1,7 +1,7 @@
 package com.yam.funteer.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yam.funteer.user.UserType;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.dto.request.LoginRequest;
 import com.yam.funteer.user.dto.response.LoginResponse;
 import com.yam.funteer.user.service.LoginService;
@@ -11,13 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(LoginController.class)

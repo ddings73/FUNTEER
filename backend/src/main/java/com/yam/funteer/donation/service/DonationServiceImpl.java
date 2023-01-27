@@ -17,8 +17,8 @@ import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
 
 import com.yam.funteer.post.PostGroup;
-import com.yam.funteer.post.PostType;
-import com.yam.funteer.user.UserType;
+import com.yam.funteer.common.code.PostType;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.UserRepository;
 
