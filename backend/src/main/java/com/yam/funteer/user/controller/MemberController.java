@@ -1,16 +1,13 @@
 package com.yam.funteer.user.controller;
 
-import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.user.UserType;
 import com.yam.funteer.user.dto.request.ChargeRequest;
-import com.yam.funteer.user.dto.request.FollowRequest;
 import com.yam.funteer.user.dto.request.UpdateProfileRequest;
 import com.yam.funteer.user.dto.response.AccountResponse;
 import com.yam.funteer.user.dto.response.MemberProfileResponse;
 import com.yam.funteer.user.dto.request.BaseUserRequest;
 import com.yam.funteer.user.service.MemberService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -24,7 +21,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.user.dto.request.CreateMemberRequest;
 
@@ -80,7 +76,7 @@ public class MemberController {
 		@ApiResponse(code = 400, message = "잘못된 요청정보"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@Secured(UserType.ROLES.USER)
+	@Secured("ROLE_USER")
 	@GetMapping("/account")
 	public ResponseEntity<AccountResponse> getMemberInfo(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
 		validateBinding(bindingResult);
@@ -99,7 +95,7 @@ public class MemberController {
 		@ApiResponse(code = 400, message = "잘못된 요청정보"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@Secured(UserType.ROLES.USER)
+	@Secured("ROLE_USER")
 	@PutMapping("/account")
 	public ResponseEntity modifyAccount(@Validated @ModelAttribute("updateInfo") BaseUserRequest baseUserRequest, BindingResult bindingResult){
 		validateBinding(bindingResult);
@@ -173,10 +169,8 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/follow")
-	public ResponseEntity followTeam(@Validated @RequestBody FollowRequest followRequest, BindingResult bindingResult){
-		validateBinding(bindingResult);
-
-		memberService.followTeam(followRequest);
+	public ResponseEntity followTeam(@RequestBody Long teamId, @RequestBody Long memberId){
+		memberService.followTeam(teamId, memberId);
 		return ResponseEntity.ok().build();
 	}
 

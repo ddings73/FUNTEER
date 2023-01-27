@@ -22,8 +22,10 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .httpBasic().disable() // rest api 이므로 비활성
-                .csrf().disable() // rest api 이므로 csrf 공격관련 옵션 비활성
+                .logout().disable()
+                .formLogin().disable()
+                .httpBasic().disable()
+                .csrf().disable() // csrf 공격관련 옵션 비활성
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS); // JWT 사용하니 session 생성 X
 
         http

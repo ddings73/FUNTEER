@@ -34,8 +34,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 
         String email = (String) oAuth2User.getAttributes().get("email");
-        String role = UserType.KAKAO.getAuthority();
-        Token token = jwtProvider.generateToken(email, role);
+        Token token = jwtProvider.generateToken(email, "ROLE_USER");
         log.info("token=> {}", token);
 
         writeTokenResponse(response, token);
