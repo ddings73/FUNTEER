@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios,{AxiosInstance} from "axios";
 
 export const http: AxiosInstance = axios.create({
   baseURL: 'https://localhost:8080/api/v1',
