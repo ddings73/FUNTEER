@@ -15,38 +15,18 @@ import MenuItem from '@mui/material/MenuItem';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import { Link, Outlet } from 'react-router-dom';
+import { Link, Outlet, NavLink } from 'react-router-dom';
 import styles from './Navbar.module.scss';
+import NavDataSettings from './NavbarSettingsData';
 /* 이미지 import */
 import logoImg from '../assets/images/FunteerLogo.png';
 
-// type MenuSets = { name: string; items: string[] };
-// const menuItems: MenuSets[] = [
-//   {
-//     name: 'serviceIntro',
-//     items: ['temp1', 'temp2', 'temp3'],
-//   },
-//   {
-//     name: 'funds',
-//     items: ['temp1', 'temp2', 'temp3'],
-//   },
-//   {
-//     name: 'charities',
-//     items: ['temp1', 'temp2', 'temp3'],
-//   },
-//   {
-//     name: 'liveShow',
-//     items: ['temp1', 'temp2', 'temp3'],
-//   },
-//   {
-//     name: 'helps',
-//     items: ['temp1', 'temp2', 'temp3'],
-//   },
-// ];
 const pages = ['서비스소개', '펀딩서비스', '기부서비스', '라이브방송', '고객센터'];
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
 
 function ResponsiveAppBar() {
+  const insertedToken = localStorage.getItem('access_token');
+
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
 
@@ -75,7 +55,7 @@ function ResponsiveAppBar() {
 
   return (
     <AppBar className={styles.appBar} position="fixed">
-      <Container maxWidth="xl">
+      <Container className={styles.appContainer} maxWidth="xl">
         <Toolbar disableGutters>
           {/* Desktop 구조 */}
           <Link to="/">
@@ -149,33 +129,45 @@ function ResponsiveAppBar() {
           </IconButton>
 
           <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
+            <div style={{ display: 'flex' }}>
+              <button className={styles.accountBtn} type="button">
+                로그인
+              </button>{' '}
+              <button className={styles.accountBtn} type="button">
+                회원가입
+              </button>
+            </div>
+            <div style={{ display: 'none' }}>
+              <Tooltip title="Open settings">
+                <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                  <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                </IconButton>
+              </Tooltip>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {NavDataSettings.map((data) => (
+                  <NavLink to={data.path} className={styles.navlinks}>
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography textAlign="center">{data.title}</Typography>
+                    </MenuItem>
+                  </NavLink>
+                ))}
+              </Menu>
+            </div>
           </Box>
         </Toolbar>
       </Container>
