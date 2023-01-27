@@ -51,20 +51,17 @@ const router = createBrowserRouter([
         path: 'findPassword/reset',
         element: <ResetPassword />,
       },
-
       {
         path: 'signup',
         element: <SignUp />,
-        children: [
-          {
-            path: 'teamSignUp',
-            element: <TeamSignUp />,
-          },
-          {
-            path: 'MemberSignUp',
-            element: <MemberSignUp />,
-          },
-        ],
+      },
+      {
+        path: 'signup/teamSignUp',
+        element: <TeamSignUp />,
+      },
+      {
+        path: 'signup/member',
+        element: <MemberSignUp />,
       },
       {
         path: 'donation',

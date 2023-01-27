@@ -66,6 +66,5 @@
     "eslint-plugin-react": "^7.28.0",
     "eslint-plugin-react-hooks": "^4.3.0",
     "prettier": "^2.8.3"
-  },
-  "proxy": "http://i8e204.p.ssafy.io:8080"
+  }
 }
