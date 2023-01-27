@@ -22,14 +22,14 @@ import com.yam.funteer.funding.dto.FundingRequest;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/funding")
+@Api(tags ={"펀딩"})
 public class FundingController {
 
 	private final FundingService fundingService;
@@ -39,6 +39,12 @@ public class FundingController {
 	public ResponseEntity<List<FundingListResponse>> findApprovedFunding(@RequestParam String keyword, @RequestParam
 		String category, @RequestParam String hashTag) {
 		return ResponseEntity.ok(fundingService.findApprovedFunding(keyword, hashTag, category));
+	}
+
+	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
+	@GetMapping("/test")
+	public ResponseEntity<List<FundingListResponse>> findAllFunding() {
+		return ResponseEntity.ok(fundingService.findAllFunding());
 	}
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
