@@ -23,11 +23,13 @@ import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/funding")
+@RequestMapping("/funding")
 public class FundingController {
 
 	private final FundingService fundingService;

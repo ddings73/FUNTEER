@@ -45,7 +45,7 @@ public class TeamServiceImpl implements TeamService{
 		Optional<Team> findTeam = teamRepository.findById(baseUserRequest.getUserId());
 		Team team = findTeam.orElseThrow(UserNotFoundException::new);
 		List<Funding> fundingList = new ArrayList<>(); // fundingRepository.findAllByTeamId(team.getId());
-		long followerCnt = followRepository.countAllByTeamId(team.getId());
+		long followerCnt = followRepository.countAllByTeam(team);
 
 		return TeamProfileResponse.of(team, fundingList, followerCnt);
 	}

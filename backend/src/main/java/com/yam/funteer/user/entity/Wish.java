@@ -31,4 +31,17 @@ public class Wish {
 	@JoinColumn(name = "member_id")
 	private Member member;
 	private boolean checked;
+
+	private Wish(Member member, Funding funding){
+		this.member = member;
+		this.funding = funding;
+		this.checked = true;
+	}
+	public static Wish of(Member member, Funding funding) {
+		return new Wish(member, funding);
+	}
+
+	public void toggle() {
+		this.checked = !this.checked;
+	}
 }
