@@ -15,10 +15,7 @@ import { UserSignInType } from '../../types/user';
 import { requestSignIn } from '../../api/user';
 import { useAppDispatch } from '../../store/hooks';
 import { openModal } from '../../store/slices/modalSlice';
-
-
-
-
+import { setUserLoginState } from '../../store/slices/userSlice';
 
 
 
@@ -52,6 +49,8 @@ function LoginContainer() {
        if(response.status === 200){
         const {data} = response
         localStorage.setItem("token",JSON.stringify(data.token))        
+        dispatch(setUserLoginState(true))
+        navigate("/")
        }
     }
     catch(error){
