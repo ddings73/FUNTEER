@@ -93,7 +93,7 @@ public class MemberServiceImpl implements MemberService {
 
         Optional<Attach> memberProfile = member.getProfileImg();
         memberProfile.ifPresent(attach -> {
-            awsS3Uploader.delete(attach.getPath());
+            awsS3Uploader.delete(attach.getPath(), "/user");
             attachRepository.delete(attach);
         });
 
@@ -129,7 +129,7 @@ public class MemberServiceImpl implements MemberService {
         Team team = findTeam.orElseThrow(UserNotFoundException::new);
 
         Optional<Follow> findFollow = followRepository.findByMemberAndTeam(member, team);
-        findFollow.ifPresentOrElse(follow -> follow.toggle(), ()->{
+        findFollow.ifPresentOrElse(Follow::toggle, ()->{
             Follow newFollow = Follow.of(member, team);
             followRepository.save(newFollow);
         });
@@ -144,7 +144,7 @@ public class MemberServiceImpl implements MemberService {
         Funding funding = findFunding.orElseThrow(IllegalArgumentException::new);
 
         Optional<Wish> findWish = wishRepository.findByMemberAndFunding(member, funding);
-        findWish.ifPresentOrElse(wish -> wish.toggle(), ()->{
+        findWish.ifPresentOrElse(Wish::toggle, ()->{
             Wish newWish = Wish.of(member, funding);
             wishRepository.save(newWish);
         });
