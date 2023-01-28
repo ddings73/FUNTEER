@@ -7,19 +7,24 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
-import com.yam.funteer.donation.entity.Donation;
-import com.yam.funteer.donation.exception.DonationNotFoundException;
-import com.yam.funteer.donation.repository.DonationRepository;
-import com.yam.funteer.donation.request.DonationJoinReq;
-import com.yam.funteer.donation.request.DonationRegisterReq;
-import com.yam.funteer.exception.UserNotFoundException;
-import com.yam.funteer.pay.entity.Payment;
-import com.yam.funteer.pay.repository.PaymentRepository;
-
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.code.UserType;
+import com.yam.funteer.donation.entity.Donation;
+import com.yam.funteer.donation.exception.DonationNotFoundException;
+import com.yam.funteer.donation.repository.DonationRepository;
+import com.yam.funteer.donation.dto.request.DonationJoinReq;
+import com.yam.funteer.donation.dto.request.DonationRegisterReq;
+import com.yam.funteer.exception.UserNotFoundException;
+
+import com.yam.funteer.pay.entity.Payment;
+import com.yam.funteer.pay.repository.PaymentRepository;
+
+
+;
+import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.User;
+import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -32,18 +37,20 @@ public class DonationServiceImpl implements DonationService{
 	private final PaymentRepository paymentRepository;
 	private final DonationRepository donationRepository;
 	private final UserRepository userRepository;
+	private final MemberRepository memberRepository;
 
 	public List<Donation> donationGetList() {
-		return donationRepository.findAllByPostGroup(PostGroup.DONATION);
+		return donationRepository.findAllByPostGroup(PostGroup
+			.DONATION);
 	}
 
-	public Donation donationGetDetail(Long postId) {
-
-		return donationRepository.findById(postId).get();
+	public Donation donationGetDetail(Long postId) throws DonationNotFoundException {
+		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException("찾으시는 게시물이 존재하지 않습니다."));
+		return donation;
 	}
 
 	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq)throws DonationNotFoundException {
-		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
+		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException("찾으시는 게시물이 존재하지 않습니다."));
 		User user=userRepository.findById(donationJoinReq.getUserId()).orElseThrow(()->new UserNotFoundException());
 		Payment payment=Payment.builder()
 			.user(user)
@@ -71,7 +78,7 @@ public class DonationServiceImpl implements DonationService{
 				.build();
 
 			donationRepository.save(donation);
-		}
+		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
 
@@ -80,13 +87,13 @@ public class DonationServiceImpl implements DonationService{
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Donation donation = donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
 			donationRepository.delete(donation);
-		}
+		}else throw new IllegalArgumentException();
 	}
 
 
 	public void donationModify(Long postId, DonationRegisterReq donationModifyReq) throws DonationNotFoundException {
 
-		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
+		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException("찾으시는 게시물이 없습니다."));
 
 		User user = userRepository.findById(donationModifyReq.getUserId())
 			.orElseThrow(() -> new UserNotFoundException());
@@ -101,7 +108,7 @@ public class DonationServiceImpl implements DonationService{
 				.regDate(LocalDateTime.now())
 				.build();
 			donationRepository.save(donation);
-		}
+		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 }
 
