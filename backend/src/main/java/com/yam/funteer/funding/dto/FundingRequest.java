@@ -25,8 +25,8 @@ public class FundingRequest {
 	@NotNull
 	private Long categoryId;
 
-	// @NotNull
-	// private Long teamId;
+	@NotNull
+	private Long teamId;
 
 	@NotNull
 	private String title;

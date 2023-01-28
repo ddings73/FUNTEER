@@ -11,8 +11,10 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.nimbusds.jose.proc.SecurityContext;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.funding.dto.FundingCommentRequest;
@@ -34,6 +36,7 @@ import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.post.repository.CategoryRepository;
 import com.yam.funteer.post.repository.HashTagRepository;
 import com.yam.funteer.post.repository.PostHashtagRepository;
+import com.yam.funteer.user.entity.Team;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -67,9 +70,6 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingDetailResponse createFunding(FundingRequest data) throws IOException {
-		// s3 변환
-		String thumbnailUrl = awsS3Uploader.upload(data.getThumbnail(), "/thumbnails");
-		System.out.println(data.getHashtags());
 
 		// category 들고오기
 		Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
@@ -85,7 +85,6 @@ public class FundingServiceImpl implements FundingService{
 		Funding funding = Funding.builder()
 			.title(data.getTitle())
 			.category(category)
-			.thumbnail(thumbnailUrl)
 			.content(data.getContent())
 			.startDate(startDate)
 			.endDate(endDate)
@@ -96,6 +95,11 @@ public class FundingServiceImpl implements FundingService{
 			.build();
 
 		Funding savedPost = fundingRepository.save(funding);
+
+		// s3 변환
+		String thumbnailUrl = awsS3Uploader.upload(data.getThumbnail(), "/thumbnails/" + savedPost.getId());
+
+		savedPost.setThumbnail(thumbnailUrl);
 
 		addTargetMoney(data, funding);
 		List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
@@ -169,13 +173,35 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new NullPointerException());
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
+
+		// 기존 파일 삭제, 새로운 파일 추가
+		awsS3Uploader.delete("/thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
+		String thumbnailUrl = awsS3Uploader.upload(data.getThumbnail(), "/thumbnails/"+fundingId);
+
+		Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
+
+		addTargetMoney(data, funding);
+		List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
+		List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
+		addPostHashtags(funding, hashtags);
+
+		LocalDateTime startDate = LocalDateTime.parse(data.getStartDate(),
+			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 		LocalDateTime endDate = LocalDateTime.parse(data.getEndDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
-		if (funding.getPostType() == PostType.FUNDING_WAIT) {
-			funding.update(data);
+		if (funding.getPostType() == PostType.FUNDING_REJECT) {
+			funding.setStartDate(startDate);
+			funding.setEndDate(endDate);
+			funding.setContent(data.getContent());
+			funding.setTitle(data.getTitle());
+			funding.setCategory(category);
+			funding.setThumbnail(thumbnailUrl);
+			funding.setPostType(PostType.FUNDING_WAIT);
+			funding.setRegDate(LocalDateTime.now());
+
 		} else if (funding.getPostType() == PostType.FUNDING_IN_PROGRESS) {
 			funding.setEndDate(endDate);
 		} else {
@@ -187,6 +213,7 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public void deleteFunding(Long fundingId) throws FundingNotFoundException {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
+		awsS3Uploader.delete("/thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
 		fundingRepository.delete(funding);
 	}
 
