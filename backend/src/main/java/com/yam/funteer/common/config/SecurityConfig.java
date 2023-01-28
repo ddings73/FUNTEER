@@ -23,7 +23,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true)
 @RequiredArgsConstructor
 public class SecurityConfig{
     private final JwtProvider jwtProvider;
@@ -32,7 +31,7 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors()
+            .cors().configurationSource(corsConfigurationSource())
                 .and()
             .httpBasic().disable()
             .csrf().disable()
