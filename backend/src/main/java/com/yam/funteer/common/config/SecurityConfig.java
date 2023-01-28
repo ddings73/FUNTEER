@@ -58,8 +58,8 @@ public class SecurityConfig{
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-//        configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedOrigin("https://i8e204.p.ssafy.io");
+        configuration.addAllowedOriginPattern("*");
+//        configuration.addAllowedOrigin("https://i8e204.p.ssafy.io");
         configuration.setAllowedMethods(Arrays.asList("HEAD","POST","GET","DELETE","PUT"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
