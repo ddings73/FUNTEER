@@ -2,4 +2,56 @@
 @import '../../styles/variable.scss';
 
 .paperContainer {
+  min-width: 250px;
+  height: 100vh;
+  box-sizing: border-box;
+  overflow: hidden;
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  background: #f4f4f4 !important;
+  & .menuList {
+    margin-top: 17px;
+    width: 100%;
+    font-family: 'NanumSquare';
+    font-weight: 900;
+    color: #9b9b9b;
+
+    & .menuItem {
+      width: 100%;
+      padding: 25px 0;
+      display: flex;
+      align-items: center;
+      margin-left: 18px;
+      & .menuIcon {
+        justify-content: flex-end;
+        margin-right: 20px;
+        font-size: 25px;
+        opacity: 0.8;
+      }
+    }
+  }
+  @media (max-width: 900px) {
+    display: none;
+  }
+}
+
+.NavActive {
+  width: 100%;
+  display: block;
+  color: white;
+  background-color: #ec994b;
+  text-decoration: none;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  & .menuItem {
+    & .menuIcon {
+      color: white;
+    }
+  }
+}
+
+.NavInActive {
+  display: block;
+  text-decoration: none;
+  color: #9b9b9b;
 }

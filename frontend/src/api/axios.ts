@@ -1,5 +1,6 @@
 import axios,{AxiosInstance} from "axios";
 
-export const customAxios:AxiosInstance = axios.create({
-    baseURL:"http://i8e204.p.ssafy.io:8080/api/v1"
-})
+export const http: AxiosInstance = axios.create({
+  baseURL: 'https://i8e204.p.ssafy.io/api/v1',
+  withCredentials: true,
+});

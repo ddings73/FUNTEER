@@ -16,7 +16,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.yam.funteer.attach.entity.Attach;
-import com.yam.funteer.post.PostGroup;
+import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 
 import lombok.AccessLevel;
