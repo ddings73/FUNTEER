@@ -58,8 +58,12 @@ public class SecurityConfig{
 
         configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("https://i8e204.p.ssafy.io:3000");
-        configuration.addAllowedHeader("*");
-        configuration.addAllowedMethod("*");
+        configuration.addAllowedMethod(HttpMethod.GET);
+        configuration.addAllowedMethod(HttpMethod.POST);
+        configuration.addAllowedMethod(HttpMethod.PUT);
+        configuration.addAllowedMethod(HttpMethod.DELETE);
+        configuration.addAllowedMethod(HttpMethod.HEAD);
+        configuration.addAllowedMethod(HttpMethod.OPTIONS);
         configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
