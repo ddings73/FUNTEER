@@ -121,15 +121,9 @@ function ResponsiveAppBar() {
               </Button>
             ))}
           </Box>
-          {/* badgeContent에 알림 변수 위치 */}
-          <IconButton aria-label="notifi" className={styles.noti}>
-            <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
-              <NotificationsNoneIcon fontSize="large" />
-            </StyledBadge>
-          </IconButton>
 
           <Box sx={{ flexGrow: 0 }}>
-            <div style={{ display: 'flex' }}>
+            <div style={{ display: 'none' }}>
               <button className={styles.accountBtn} type="button">
                 로그인
               </button>{' '}
@@ -137,7 +131,12 @@ function ResponsiveAppBar() {
                 회원가입
               </button>
             </div>
-            <div style={{ display: 'none' }}>
+            <div style={{ display: 'flex' }}>
+              <IconButton aria-label="notifi" className={styles.noti}>
+                <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
+                  <NotificationsNoneIcon fontSize="large" />
+                </StyledBadge>
+              </IconButton>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
