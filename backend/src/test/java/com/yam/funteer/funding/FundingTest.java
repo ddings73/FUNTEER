@@ -40,39 +40,6 @@ public class FundingTest {
 	@Test
 	@WithMockUser(roles="USER")
 	void createFundingTest() {
-
-		// Hashtag hashtag1 = new Hashtag("1");
-		// Hashtag hashtag2 = new Hashtag("2");
-		//
-		// PostHashtag postHashtag = new PostHashtag();
-		// PostHashtag postHashtag2 = new PostHashtag();
-		//
-		// postHashtag.setHashtag(hashtag1);
-		// postHashtag2.setHashtag(hashtag2);
-		//
-		// List<PostHashtag> hashtags = new ArrayList<>();
-		// hashtags.add(postHashtag);
-		// hashtags.add(postHashtag2);
-
-		FundingRequest fundingRequest = FundingRequest.builder()
-			.title("test")
-			.content("test")
-			.startDate(LocalDateTime.now())
-			.endDate(LocalDateTime.now())
-			.postDate(LocalDateTime.now())
-			.amount1(100)
-			.description1("test1")
-			.amount2(200)
-			.description2("test2")
-			.amount3(300)
-			.description3("test3")
-			.hashtags("#1#2#3")
-			.build();
-
-		Funding funding = fundingService.createFunding(fundingRequest);
-
-		Funding funding1 = fundingRepository.findById(funding.getId()).orElseThrow(() -> new IllegalArgumentException());
-
-		Assertions.assertThat(funding1.getId()).isEqualTo(funding.getId());
+		FundingRequest fundingRequest = new FundingRequest()
 	}
 }
