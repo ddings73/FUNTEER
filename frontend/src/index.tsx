@@ -8,7 +8,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
 /*  */
-import {theme} from './theme/theme'
+import { theme } from './theme/theme';
 import UserRoot from './roots/UserRoot';
 import AdminRoot from './roots/AdminRoot';
 import {
@@ -35,6 +35,7 @@ import {
   MyPage,
   AdminMain,
   AdminMember,
+  AdminTeam,
   FundingList,
 } from './pages/index';
 
@@ -146,6 +147,10 @@ const router = createBrowserRouter([
       {
         path: 'member',
         element: <AdminMember />,
+      },
+      {
+        path: 'team',
+        element: <AdminTeam />,
       },
     ],
   },
