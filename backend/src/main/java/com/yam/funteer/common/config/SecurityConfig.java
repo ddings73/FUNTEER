@@ -15,6 +15,9 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @EnableWebSecurity
 @EnableMethodSecurity(securedEnabled = true)
@@ -35,6 +38,8 @@ public class SecurityConfig{
             .antMatchers("/admin", "/member", "/team").authenticated()
             .anyRequest().permitAll()
                 .and()
+            .cors()
+            .and()
             .addFilterBefore(new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
             // .oauth2Login()
             // .successHandler(successHandler) // oAuth 로그인 성공 시 동작할 핸들러
@@ -47,6 +52,20 @@ public class SecurityConfig{
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
     }
 
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOrigin("http://localhost:3000");
+        configuration.addAllowedOrigin("https://localhost:3000");
+        configuration.addAllowedHeader("*");
+        configuration.addAllowedMethod("*");
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
+    }
 //    @Bean
 //    public WebSecurityCustomizer webSecurityCustomizer(WebSecurity web) {
 //        return (web) -> web.ignoring().antMatchers("/resources/**");
