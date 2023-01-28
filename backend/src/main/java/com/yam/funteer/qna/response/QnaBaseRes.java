@@ -1,24 +1,24 @@
 package com.yam.funteer.qna.response;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
-import com.yam.funteer.common.BaseResponseBody;
-import com.yam.funteer.post.entity.Post;
+import com.yam.funteer.qna.entity.Qna;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
-public class QnaGetListRes extends BaseResponseBody {
-	private List<Post>list;
+public class QnaBaseRes {
+	private Long id;
+	private Long userId;
+	private String title;
+	private String content;
+	private LocalDateTime regDate;
 
-	public static QnaGetListRes of(String message,List<Post> list){
-		QnaGetListRes res=new QnaGetListRes();
-		res.setMessage(message);
-		res.setList(list);
-
-		return res;
+	public QnaBaseRes(Qna entity) {
+		this.id = entity.getId();
+		this.userId=entity.getUser().getId();
+		this.title=entity.getTitle();
+		this.content=entity.getContent();
+		this.regDate=entity.getRegDate();
 	}
-
 }

@@ -3,21 +3,20 @@ package com.yam.funteer.qna.response;
 import java.time.LocalDateTime;
 
 import com.yam.funteer.qna.entity.Qna;
+import com.yam.funteer.qna.entity.Reply;
 
 import lombok.Getter;
 
 @Getter
-public class QnaBaseRes {
+public class ReplyBaseRes {
 	private Long id;
-	private Long userId;
-	private String title;
+	private Long qnaId;
 	private String content;
 	private LocalDateTime regDate;
 
-	public QnaBaseRes(Qna entity) {
+	public ReplyBaseRes(Reply entity) {
 		this.id = entity.getId();
-		this.userId=entity.getUser().getId();
-		this.title=entity.getTitle();
+		this.qnaId=entity.getQna().getId();
 		this.content=entity.getContent();
 		this.regDate=entity.getRegDate();
 	}
