@@ -38,6 +38,7 @@ public class SecurityConfig{
                 .and()
             .authorizeRequests()
             .mvcMatchers(HttpMethod.POST, "/member", "/team").permitAll()
+            .mvcMatchers(HttpMethod.GET, "/member/**/profile", "/team/**/profile").permitAll()
             .antMatchers("/admin", "/member", "/team").authenticated()
             .anyRequest().permitAll()
                 .and()
