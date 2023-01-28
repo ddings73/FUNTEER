@@ -1,6 +1,7 @@
 package com.yam.funteer.funding.entity;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.persistence.Entity;
@@ -74,7 +75,4 @@ public class Funding extends Post {
 		this.rejectComment = rejectComment;
 	}
 
-	public void update(FundingRequest data) {
-
-	}
 }
