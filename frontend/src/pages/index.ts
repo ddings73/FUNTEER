@@ -25,3 +25,6 @@ export { default as MyFavors } from './MyPage/MyFavors';
 export { default as MyFollows } from './MyPage/MyFollows';
 export { default as MyFunding } from './MyPage/MyFunding';
 export { default as MyFunteerDonate } from './MyPage/MyFunteerDonate';
+
+
+export {default as FundingList} from './Funding/FundingList'
