@@ -1,14 +1,15 @@
 package com.yam.funteer.common.security;
 
-import com.yam.funteer.common.security.Token;
 
+import com.yam.funteer.user.entity.User;
 import io.jsonwebtoken.*;
 
+import io.jsonwebtoken.security.SignatureException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -17,8 +18,9 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
-@Component
+@Component @Slf4j
 public class JwtProvider {
 
     private String secretKey = "jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk";
@@ -38,9 +40,12 @@ public class JwtProvider {
 
         long now = new Date().getTime();
 
+        SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
+        User user = securityUser.getUser();
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName()) // 이름으로 서명
                 .claim("auth", authorities) // 권한
+                .claim("id", user.getId())
                 .setExpiration(new Date(now + accessPeriod)) // 만료기간
                 .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
                 .compact();
@@ -68,7 +73,7 @@ public class JwtProvider {
                         .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        UserDetails principal = new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
@@ -91,11 +96,33 @@ public class JwtProvider {
 
     public boolean verifyById(Long id, String bearerToken){
         if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")){
-            String token = bearerToken.substring(7);
-            Integer tkId = (Integer) parseClaims(token).get("ID");
+            String token = resolveToken(bearerToken);
+            Integer tkId = (Integer) parseClaims(token).get("id");
+
             return id.longValue() == tkId.longValue();
         }
 
         return false;
+    }
+
+    public String resolveToken(String bearerToken){
+        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")){
+            String token = bearerToken.substring(7);
+            try {
+                verifyToken(token);
+                return token;
+            } catch (IllegalArgumentException e) {
+                log.error("an error occured during getting username from token", e);
+                // JwtException (custom exception) 예외 발생시키기
+                throw new JwtException("유효하지 않은 토큰");
+            } catch (ExpiredJwtException e) {
+                log.warn("the token is expired and not valid anymore", e);
+                throw new JwtException("토큰 기한 만료");
+            } catch(SignatureException e){
+                log.error("Authentication Failed. Username or Password not valid.");
+                throw new JwtException("사용자 인증 실패");
+            }
+        }
+        return null;
     }
 }
