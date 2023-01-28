@@ -32,6 +32,9 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
+            .cors()
+            .configurationSource(corsConfigurationSource())
+                .and()
             .httpBasic().disable()
             .csrf().disable()
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 사용하니 session 생성 X
@@ -40,9 +43,6 @@ public class SecurityConfig{
             .mvcMatchers(HttpMethod.POST, "/member", "/team").permitAll()
             .antMatchers("/admin", "/member", "/team").authenticated()
             .anyRequest().permitAll()
-                .and()
-            .cors()
-            .configurationSource(corsConfigurationSource())
                 .and()
             .addFilterBefore(new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
             // .oauth2Login()
