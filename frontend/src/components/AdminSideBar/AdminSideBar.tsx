@@ -25,6 +25,7 @@ export default function PermanentDrawerLeft() {
       }}
       variant="permanent"
       anchor="left"
+      className={styles.drawer}
     >
       <div className={styles.sidebar}>
         <img src={logo} alt="FUNTEER" className={styles.logo} />
