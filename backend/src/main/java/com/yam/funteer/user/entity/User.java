@@ -1,6 +1,7 @@
 package com.yam.funteer.user.entity;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -47,7 +48,7 @@ public class User {
 	private @NotNull String name;
 	private @NotNull String phone;
 	@OneToOne
-	@JoinColumn(name = "member_profile")
+	@JoinColumn(name = "profile_id")
 	private Attach profileImg;
 	private LocalDateTime regDate;
 	private Long money;
@@ -55,10 +56,21 @@ public class User {
 	@Column(nullable = false)
 	private UserType userType;
 
+	public Optional<Attach> getProfileImg(){
+		return Optional.ofNullable(this.profileImg);
+	}
+
+	public void updateProfile(Attach profileImg){
+		this.profileImg = profileImg;
+	}
+	public void changePassword(String password){
+		this.password = password;
+	}
 	public void signOut(UserType userType){
 		this.userType = userType;
 	}
-	public boolean validatePassword(PasswordEncoder passwordEncoder, String password){
-		return passwordEncoder.matches(password, this.password);
+	public void validatePassword(PasswordEncoder passwordEncoder, String password){
+		if(!passwordEncoder.matches(password, this.password))
+			throw new IllegalArgumentException();
 	}
 }
