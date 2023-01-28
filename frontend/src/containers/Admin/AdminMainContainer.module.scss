@@ -12,5 +12,10 @@
     align-items: center;
     width: 100%;
     max-width: 1160px;
+
+    & h1 {
+      font-size: 3rem;
+      font-weight: bold;
+    }
   }
 }

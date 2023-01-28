@@ -3,37 +3,34 @@ import { Button, TextField } from '@mui/material';
 // import axios from 'axios';
 import styles from './MemberSignUpContainer.module.scss';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
-
-type MemberSingUpType = {
-  name: string;
-  email: string;
-  password: string;
-  passwordCheck: string;
-  nickname: string;
-  phone: string;
-  accountNumber: string;
-};
+import { memberSignUpType } from '../../types/user';
+import { requestMemberSignUp } from '../../api/user';
 
 function MemberSignUpContainer() {
   /** 회원가입 정보 */
-  const [memberSignUpInfo, setMemberSignUpInfo] = useState<MemberSingUpType>({
+  const [memberSignUpInfo, setMemberSignUpInfo] = useState<memberSignUpType>({
     name: '',
     email: '',
     password: '',
-    passwordCheck: '',
     nickname: '',
     phone: '',
-    accountNumber: '',
   });
-
-  /** 인증 번호 */
-  const [authNumber, setAuthNumber] = useState<string>('');
 
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
     setMemberSignUpInfo({ ...memberSignUpInfo, [name]: value });
   };
+
+  /** 비밀번호 확인 */
+  const [passwordCheck, setPasswordCheck] = useState<string>('second');
+
+  const onPasswordCheckChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPasswordCheck(e.target.value);
+  };
+
+  /** 인증 번호 */
+  const [authNumber, setAuthNumber] = useState<string>('');
 
   const onAuthNumberChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAuthNumber(e.target.value);
@@ -56,10 +53,14 @@ function MemberSignUpContainer() {
 
     setEmailAuthButtonPushed(true);
 
-    let time = 180;
+    let time = 8;
     let minute;
     let second;
     const timer = setInterval(() => {
+      if (checkEmailAuth) {
+        clearInterval(timer);
+      }
+
       minute = Math.floor(secondsToMinutes(time));
       second = secondsToSeconds(time);
 
@@ -92,7 +93,7 @@ function MemberSignUpContainer() {
   };
 
   /** 개인 회원가입 요청 */
-  const requestMemberSignUp = () => {
+  const requestSignUp = async () => {
     /** 유효성 검사 */
     if (!checkEmailAuth) {
       alert('이메일 인증을 완료해주세요.');
@@ -106,13 +107,19 @@ function MemberSignUpContainer() {
       return;
     }
 
-    if (memberSignUpInfo.password !== memberSignUpInfo.passwordCheck) {
+    if (memberSignUpInfo.password !== passwordCheck) {
       alert('비밀번호와 비밀번호 확인 값이 다릅니다.');
       return;
     } // 유효성 검사 끝
 
     console.log('개인 회원가입 정보', memberSignUpInfo);
-    console.log('개인 회원가입 요청');
+
+    try {
+      const response = await requestMemberSignUp(memberSignUpInfo);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -153,7 +160,7 @@ function MemberSignUpContainer() {
             <TextField name="password" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
             <p>비밀번호 확인</p>
-            <TextField name="passwordCheck" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <TextField name="passwordCheck" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onPasswordCheckChangeHandler} />
 
             <p>닉네임</p>
             <TextField name="nickname" margin="dense" placeholder="닉네임을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
@@ -161,10 +168,10 @@ function MemberSignUpContainer() {
             <p>휴대폰 번호</p>
             <TextField name="phone" margin="dense" placeholder="휴대폰 번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
-            <p>계좌번호</p>
-            <TextField name="accountNumber" margin="dense" placeholder="계좌번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            {/* <p>계좌번호</p>
+            <TextField name="accountNumber" margin="dense" placeholder="계좌번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} /> */}
 
-            <Button className={styles['signup-button']} variant="contained" onClick={requestMemberSignUp}>
+            <Button className={styles['signup-button']} variant="contained" onClick={requestSignUp}>
               회원가입
             </Button>
           </div>

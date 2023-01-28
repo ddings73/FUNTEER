@@ -33,6 +33,8 @@ import {
   MyFunding,
   MyFunteerDonate,
   MyPage,
+  AdminMain,
+  AdminMember,
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -65,16 +67,14 @@ const router = createBrowserRouter([
       {
         path: 'signup',
         element: <SignUp />,
-        children: [
-          {
-            path: 'teamSignUp',
-            element: <TeamSignUp />,
-          },
-          {
-            path: 'MemberSignUp',
-            element: <MemberSignUp />,
-          },
-        ],
+      },
+      {
+        path: 'signup/team',
+        element: <TeamSignUp />,
+      },
+      {
+        path: 'signup/member',
+        element: <MemberSignUp />,
       },
       /* Add-on Routes */
       {
@@ -133,7 +133,16 @@ const router = createBrowserRouter([
     path: '/admin',
     element: <AdminRoot />,
     errorElement: <ErrorPage />,
-    children: [],
+    children: [
+      {
+        path: 'main',
+        element: <AdminMain />,
+      },
+      {
+        path: 'member',
+        element: <AdminMember />,
+      },
+    ],
   },
 ]);
 

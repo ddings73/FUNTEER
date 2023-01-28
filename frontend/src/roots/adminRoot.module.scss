@@ -1,16 +1,6 @@
-.container {
+.admin-page {
   width: 100%;
   min-height: 100vh;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-
-  .left {
-    width: 40%;
-    background-color: red;
-  }
-  .right {
-    width: 60%;
-    background-color: blue;
-  }
+  display: grid;
+  grid-template-columns: 280px 1fr;
 }
