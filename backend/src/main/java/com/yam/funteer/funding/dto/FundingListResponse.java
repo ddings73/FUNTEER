@@ -25,6 +25,8 @@ public class FundingListResponse {
 
 	private LocalDateTime postDate;
 
+	private String thumbnail;
+
 	public static FundingListResponse from(Funding funding) {
 		return FundingListResponse.builder()
 			.title(funding.getTitle())
@@ -32,6 +34,7 @@ public class FundingListResponse {
 			.startDate(funding.getStartDate())
 			.endDate(funding.getEndDate())
 			.postDate(funding.getRegDate())
+			.thumbnail(funding.getThumbnail())
 			.build();
 	}
 }
