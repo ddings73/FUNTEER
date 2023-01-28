@@ -23,6 +23,14 @@ import {
   Charge,
   Donation,
   ErrorPage,
+  MyBadges,
+  EditProfile,
+  MyDonates,
+  MyFavors,
+  MyFollows,
+  MyFunding,
+  MyFunteerDonate,
+  MyPage,
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -35,6 +43,7 @@ const router = createBrowserRouter([
         index: true,
         element: <MainPage />,
       },
+      /* Accounts Routes */
       {
         path: 'login',
         element: <Login />,
@@ -46,12 +55,10 @@ const router = createBrowserRouter([
       {
         path: 'findPassword',
         element: <FindPassword />,
-        children: [
-          {
-            path: 'ResetPassword',
-            element: <ResetPassword />,
-          },
-        ],
+      },
+      {
+        path: 'resetPassword',
+        element: <ResetPassword />,
       },
       {
         path: 'signup',
@@ -67,10 +74,16 @@ const router = createBrowserRouter([
           },
         ],
       },
+      /* Add-on Routes */
       {
         path: 'donation',
         element: <Donation />,
       },
+      {
+        path: 'charge',
+        element: <Charge />,
+      },
+      /* Service Routes */
       {
         path: 'service',
         element: <ServiceDetail />,
@@ -79,9 +92,38 @@ const router = createBrowserRouter([
         path: 'team',
         element: <TeamPage />,
       },
+      /* MyPage Routes */
       {
-        path: 'charge',
-        element: <Charge />,
+        path: 'myPage',
+        element: <MyPage />,
+      },
+      {
+        path: 'editProfile',
+        element: <EditProfile />,
+      },
+      {
+        path: 'myFunding',
+        element: <MyFunding />,
+      },
+      {
+        path: 'myFunteerDonate',
+        element: <MyFunteerDonate />,
+      },
+      {
+        path: 'myDonates',
+        element: <MyDonates />,
+      },
+      {
+        path: 'myBadges',
+        element: <MyBadges />,
+      },
+      {
+        path: 'myFavors',
+        element: <MyFavors />,
+      },
+      {
+        path: 'myFollow',
+        element: <MyFollows />,
       },
     ],
   },

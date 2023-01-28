@@ -47,7 +47,7 @@ function FindPasswordContainer() {
   };
 
   const handleResetPassword = () => {
-    navigate(`${pathname}/reset`);
+    navigate('/resetPassword');
   };
   return (
     <div className={styles.container}>
