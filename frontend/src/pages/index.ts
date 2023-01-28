@@ -16,6 +16,7 @@ export { default as ServiceDetail } from './Service/ServiceDetail';
 
 export { default as AdminMain } from './Admin/AdminMain';
 export { default as AdminMember } from './Admin/AdminMember';
+export { default as AdminTeam } from './Admin/AdminTeam';
 
 export { default as MyPage } from './MyPage/MyPage';
 export { default as EditProfile } from './MyPage/EditProfile';
