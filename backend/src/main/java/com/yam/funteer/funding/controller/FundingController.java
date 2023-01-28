@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
@@ -19,6 +21,7 @@ import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
 
@@ -49,9 +52,9 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
 	@PostMapping("/")
-	public  ResponseEntity<?> createFunding(@RequestBody FundingRequest data) {
-		fundingService.createFunding(data);
-		return ResponseEntity.ok().build();
+	public  ResponseEntity<?> createFunding(FundingRequest data) throws IOException {
+		FundingDetailResponse funding = fundingService.createFunding(data);
+		return ResponseEntity.ok(funding);
 	}
 
 	@ApiOperation(value = "펀딩 상세 조회", notes = "펀딩 게시글 상세를 조회한다.")

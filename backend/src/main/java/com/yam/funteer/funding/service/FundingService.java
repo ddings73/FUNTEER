@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.service;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.yam.funteer.funding.dto.FundingCommentRequest;
@@ -14,7 +15,7 @@ import com.yam.funteer.funding.exception.FundingNotFoundException;
 public interface FundingService {
 	List<FundingListResponse> findApprovedFunding(String keyword, String category, String hashTag);
 
-	Funding createFunding(FundingRequest data);
+	FundingDetailResponse createFunding(FundingRequest data) throws IOException;
 
 	FundingDetailResponse findFundingById(Long id);
 
