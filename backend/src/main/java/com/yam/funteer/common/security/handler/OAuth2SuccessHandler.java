@@ -33,10 +33,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
 
         String email = (String) oAuth2User.getAttributes().get("email");
-        Token token = jwtProvider.generateToken(email, "ROLE_USER");
-        log.info("token=> {}", token);
+//        Token token = jwtProvider.generateToken(email, "ROLE_USER");
+//        log.info("token=> {}", token);
 
-        writeTokenResponse(response, token);
+//        writeTokenResponse(response, token);
     }
 
     private void writeTokenResponse(HttpServletResponse response, Token token) throws IOException {

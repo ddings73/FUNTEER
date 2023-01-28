@@ -35,7 +35,6 @@ public class LoginController {
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공"),
         @ApiResponse(code = 400, message = "잘못된 요청 값"),
-        @ApiResponse(code = 401, message = "사용자 인증 실패"),
         @ApiResponse(code = 500, message = "서버 에러")
     })
     @PostMapping("/login")

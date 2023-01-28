@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import com.yam.funteer.user.dto.request.CreateAccountRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -25,20 +26,27 @@ import com.yam.funteer.user.repository.TeamRepository;
 @RequiredArgsConstructor
 public class TeamServiceImpl implements TeamService{
 
-	private final TeamRepository teamRepository;
 	// private final FundingRepository fundingRepository;
 	private final FollowRepository followRepository;
+	private final TeamRepository teamRepository;
 	private final PasswordEncoder passwordEncoder;
+
 	@Override
-	public void signoutTeam(BaseUserRequest baseUserRequest) {
+	public void createAccountWithOutProfile(CreateAccountRequest request) {
+		Optional<Team> findTeam = teamRepository.findByEmail(request.getEmail());
+
+	}
+
+	@Override
+	public void setAccountSignOut(BaseUserRequest baseUserRequest) {
 		Optional<Team> findTeam = teamRepository.findById(baseUserRequest.getUserId());
 		Team team = findTeam.orElseThrow(UserNotFoundException::new);
 		String password = baseUserRequest.getPassword().orElseThrow(IllegalArgumentException::new);
 
-		if(!team.validatePassword(passwordEncoder, password))
-			throw new IllegalArgumentException();
+		team.validatePassword(passwordEncoder, password);
 		team.signOut();
 	}
+
 
 	@Override
 	public TeamProfileResponse getTeamProfile(BaseUserRequest baseUserRequest) {

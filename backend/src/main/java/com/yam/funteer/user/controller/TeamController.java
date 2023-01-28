@@ -28,7 +28,7 @@ public class TeamController {
         , BindingResult bindingResult){
         validateBinding(bindingResult);
 
-        teamService.signoutTeam(baseUserRequest);
+        teamService.setAccountSignOut(baseUserRequest);
         return ResponseEntity.ok(BaseResponseBody.of("회원탈퇴에 성공하였습니다."));
     }
 

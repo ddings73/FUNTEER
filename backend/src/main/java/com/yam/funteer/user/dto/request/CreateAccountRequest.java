@@ -1,20 +1,23 @@
 package com.yam.funteer.user.dto.request;
 
+import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.Member;
+import com.yam.funteer.user.entity.Team;
 import lombok.*;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 @Getter @Setter @Builder
 @NoArgsConstructor
 @AllArgsConstructor @ToString
-public class CreateMemberRequest {
+public class CreateAccountRequest {
 
     @Email(message = "이메일 형식이 올바르지 않습니다.")
     @NotBlank(message = "이메일은 필수 입력 값입니다.")
@@ -34,17 +37,40 @@ public class CreateMemberRequest {
     @NotBlank(message = "닉네임은 필수 입력 값입니다.")
     private String nickname;
 
-    public Member toEntity(){
+    @NotNull
+    private UserType userType;
+
+    private Attach vmsFile;
+    private Attach performFile;
+    private String description;
+    public boolean isTeam(){
+        return userType.equals(UserType.TEAM);
+    }
+
+    public Member toMember(){
         return Member.builder()
                 .email(email)
                 .password(password)
                 .name(name)
                 .phone(phone)
                 .nickname(nickname)
-                .userType(UserType.NORMAL)
+                .userType(userType)
                 .money(0L)
                 .display(true)
                 .regDate(LocalDateTime.now())
+                .build();
+    }
+
+    public Team toTeam(){
+        return Team.builder()
+                .email(email)
+                .password(password)
+                .name(name)
+                .phone(phone)
+                .userType(userType)
+                .money(0L)
+                .regDate(LocalDateTime.now())
+                .discription(description)
                 .build();
     }
 

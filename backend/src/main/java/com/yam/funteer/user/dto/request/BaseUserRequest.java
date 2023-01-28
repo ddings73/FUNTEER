@@ -3,11 +3,12 @@ package com.yam.funteer.user.dto.request;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
-@Getter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class BaseUserRequest {
@@ -17,6 +18,6 @@ public class BaseUserRequest {
     private String password;
 
     public Optional<String> getPassword(){
-        return Optional.of(password);
+        return Optional.ofNullable(password);
     }
 }
