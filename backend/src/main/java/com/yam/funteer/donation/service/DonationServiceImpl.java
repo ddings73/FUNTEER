@@ -51,9 +51,9 @@ public class DonationServiceImpl implements DonationService{
 
 	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq)throws DonationNotFoundException {
 		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException("찾으시는 게시물이 존재하지 않습니다."));
-		Member member=memberRepository.findById(donationJoinReq.getUserId()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(donationJoinReq.getUserId()).orElseThrow(()->new UserNotFoundException());
 		Payment payment=Payment.builder()
-			.member(member)
+			.user(user)
 			.amount(donationJoinReq.getPaymentAmount())
 			.post(donation)
 			.payDate(LocalDateTime.now())
