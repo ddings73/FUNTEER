@@ -10,7 +10,7 @@ function LoginContainer() {
   const [userInfo, setUserInfo] = useState<UserSignInType>({
     email: '',
     password: '',
-    type:"ROLE_USER"
+    type:"NORMAL"
   });
   const navigate = useNavigate();
 

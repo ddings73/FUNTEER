@@ -12,6 +12,7 @@ $Desktop-max-size: 1001px;
   height: 80px;
   display: flex;
   background-color: rgb(255, 255, 255) !important;
+  justify-content: center;
   & .noti {
     @media (max-width: $Desktop-max-size) {
       display: none;
@@ -43,7 +44,9 @@ $Desktop-max-size: 1001px;
   display: none;
   @media (max-width: $Desktop-max-size) {
     display: flex;
+    align-items: flex-start;
     margin-top: 15px;
+    width: 150px;
   }
 }
 
@@ -73,4 +76,20 @@ $Desktop-max-size: 1001px;
 .mobBox {
   display: flex;
   justify-content: center;
+}
+
+.navlinks {
+  color: rgb(77, 77, 77);
+  display: block;
+  text-decoration: none;
+}
+.accountBtn {
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 30px;
+  margin-right: 20px;
+}
+.appContainer {
+  padding: 0;
 }
