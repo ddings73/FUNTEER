@@ -63,16 +63,14 @@ const router = createBrowserRouter([
       {
         path: 'signup',
         element: <SignUp />,
-        children: [
-          {
-            path: 'teamSignUp',
-            element: <TeamSignUp />,
-          },
-          {
-            path: 'MemberSignUp',
-            element: <MemberSignUp />,
-          },
-        ],
+      },
+      {
+        path: 'signup/team',
+        element: <TeamSignUp />,
+      },
+      {
+        path: 'signup/member',
+        element: <MemberSignUp />,
       },
       /* Add-on Routes */
       {
