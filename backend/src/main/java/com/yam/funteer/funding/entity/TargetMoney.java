@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import net.minidev.json.annotate.JsonIgnore;
+
 import com.yam.funteer.common.code.TargetMoneyType;
 
 import lombok.AccessLevel;
@@ -34,7 +36,13 @@ public class TargetMoney {
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
 	private TargetMoneyType targetMoneyType;
-	private @NotNull Long amount;
+	private @NotNull int amount;
 	private @NotBlank String description;
 
+	public TargetMoney(Funding funding, TargetMoneyType targetMoneyType, int amount, String description) {
+		this.funding = funding;
+		this.targetMoneyType = targetMoneyType;
+		this.amount = amount;
+		this.description = description;
+	}
 }
