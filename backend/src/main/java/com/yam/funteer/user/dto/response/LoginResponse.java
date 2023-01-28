@@ -15,13 +15,16 @@ public class LoginResponse extends BaseResponseBody {
 
     private Long userId;
     private String username;
-    private Attach profileImg;
+    private String profileImgUrl;
     private UserType userType;
-
-    // token 두개
     private Token token;
 
     public static LoginResponse of(User user, Token token){
-        return new LoginResponse(user.getId(), user.getName(), user.getProfileImg(), user.getUserType(), token);
+        String path = null;
+        if(user.getProfileImg().isPresent()){
+            path = user.getProfileImg().get().getPath();
+        }
+
+        return new LoginResponse(user.getId(), user.getName(), path, user.getUserType(), token);
     }
 }
