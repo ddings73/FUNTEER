@@ -1,4 +1,4 @@
-package com.yam.funteer.post;
+package com.yam.funteer.common.code;
 
 import java.util.List;
 
@@ -32,7 +32,8 @@ public enum PostGroup {
 
 	ETC(List.of(
 		PostType.QNA,
-		PostType.FAQ
+		PostType.FAQ,
+		PostType.NOTICE
 	));
 
 	private final List<PostType> typeList;

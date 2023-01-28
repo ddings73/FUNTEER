@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { BrowserRouter, createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { ThemeProvider } from '@emotion/react';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
 /*  */
+import {theme} from './theme/theme'
 import UserRoot from './roots/UserRoot';
 import AdminRoot from './roots/AdminRoot';
 import {
