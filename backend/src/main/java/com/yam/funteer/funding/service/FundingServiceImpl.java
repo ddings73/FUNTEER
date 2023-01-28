@@ -200,6 +200,8 @@ public class FundingServiceImpl implements FundingService{
 			funding.setCategory(category);
 			funding.setThumbnail(thumbnailUrl);
 			funding.setPostType(PostType.FUNDING_WAIT);
+			funding.setRegDate(LocalDateTime.now());
+
 		} else if (funding.getPostType() == PostType.FUNDING_IN_PROGRESS) {
 			funding.setEndDate(endDate);
 		} else {
