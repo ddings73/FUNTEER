@@ -19,7 +19,7 @@ public interface FundingService {
 
 	FundingDetailResponse findFundingById(Long id);
 
-	// FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception;
+	FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception;
 
 	void deleteFunding(Long fundingId) throws FundingNotFoundException;
 

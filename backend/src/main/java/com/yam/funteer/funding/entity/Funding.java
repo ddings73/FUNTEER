@@ -57,10 +57,12 @@ public class Funding extends Post {
 	}
 
 	public void setCategory(Category category) {
+
 		this.category = category;
 	}
 
 	public void setTeam(Team team) {
+
 		this.team = team;
 	}
 
@@ -70,5 +72,9 @@ public class Funding extends Post {
 
 	public void setRejectComment(String rejectComment) {
 		this.rejectComment = rejectComment;
+	}
+
+	public void update(FundingRequest data) {
+
 	}
 }
