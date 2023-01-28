@@ -28,6 +28,7 @@ import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
+import com.yam.funteer.funding.repository.TargetMoneyRepository;
 import com.yam.funteer.post.entity.Hashtag;
 import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.post.repository.CategoryRepository;
@@ -166,18 +167,22 @@ public class FundingServiceImpl implements FundingService{
 		return fundingDetailResponse;
 	}
 
-	// @Override
-	// public FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception {
-	// 	Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new NullPointerException());
-	// 	if (funding.getPostType() == PostType.FUNDING_WAIT) {
-	// 		funding.update(data);
-	// 	} else if (funding.getPostType() == PostType.FUNDING_IN_PROGRESS) {
-	// 		funding.setEnd(data.getEndDate());
-	// 	} else {
-	// 		throw new Exception("no");
-	// 	}
-	// 	return FundingDetailResponse.from(funding);
-	// }
+	@Override
+	public FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception {
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new NullPointerException());
+
+		LocalDateTime endDate = LocalDateTime.parse(data.getEndDate(),
+			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
+		if (funding.getPostType() == PostType.FUNDING_WAIT) {
+			funding.update(data);
+		} else if (funding.getPostType() == PostType.FUNDING_IN_PROGRESS) {
+			funding.setEndDate(endDate);
+		} else {
+			throw new Exception("no");
+		}
+		return FundingDetailResponse.from(funding);
+	}
 
 	@Override
 	public void deleteFunding(Long fundingId) throws FundingNotFoundException {
