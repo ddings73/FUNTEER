@@ -16,7 +16,7 @@ import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
 
-import com.yam.funteer.post.PostGroup;
+import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.User;

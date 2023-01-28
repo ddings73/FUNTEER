@@ -1,11 +1,13 @@
 import React from 'react';
+import { Outlet } from 'react-router-dom';
+import AdminSideBar from '../components/AdminSideBar/AdminSideBar';
 import styles from './adminRoot.module.scss';
 
 function AdminRoot() {
   return (
-    <div className={styles.container}>
-      <div className={styles.left} />
-      <div className={styles.right} />
+    <div className={styles['admin-page']}>
+      <AdminSideBar />
+      <Outlet />
     </div>
   );
 }
