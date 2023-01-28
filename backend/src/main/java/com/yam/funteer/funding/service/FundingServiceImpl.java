@@ -17,7 +17,7 @@ import com.yam.funteer.funding.dto.FundingRequest;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.repository.FundingRepository;
-import com.yam.funteer.post.PostGroup;
+import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.post.entity.Hashtag;
 
