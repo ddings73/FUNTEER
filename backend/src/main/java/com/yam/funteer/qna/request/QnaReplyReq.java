@@ -5,9 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class QnaTeamRegisterReq {
-	private Long teamId;
-	private String title;
+public class QnaReplyReq {
+	private Long userId;
 	private String content;
-	private String password;
 }
