@@ -1,5 +1,5 @@
-@import '../../styles/reset.scss';
-@import '../../styles/variable.scss';
+@import '../../../styles/reset.scss';
+@import '../../../styles/variable.scss';
 
 .container {
   width: 100%;
@@ -82,6 +82,30 @@
         & img {
           width: 40px;
           height: auto;
+        }
+
+        .small-font {
+          font-size: 0.9rem;
+        }
+
+        .withdraw-btn {
+          width: 25px;
+          height: 25px;
+          padding: auto auto;
+          border: none;
+          border-radius: 100%;
+          background-color: $error;
+          color: white;
+          font-weight: bold;
+          box-shadow: none;
+
+          &:hover {
+            cursor: pointer;
+          }
+
+          &:active {
+            background-color: $primary;
+          }
         }
       }
     }

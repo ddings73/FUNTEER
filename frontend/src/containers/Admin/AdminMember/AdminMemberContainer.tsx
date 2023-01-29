@@ -25,12 +25,16 @@ function AdminMemberContainer() {
     return filter;
   });
 
-  const onMemberStateChangeHandler = (e: SelectChangeEvent) => {
-    console.log('개인 회원 상태 변경 요청');
-    window.location.reload();
+  // const onMemberStateChangeHandler = (e: SelectChangeEvent) => {
+  //   console.log('개인 회원 상태 변경 요청');
+  //   window.location.reload();
+  // };
+
+  const onClickWithdrawBtnHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
+    console.log('회원 탈퇴 처리');
   };
 
-  const test = Object.values(MemberState);
+  const memberStateSet = Object.values(MemberState);
 
   return (
     <div className={styles.container}>
@@ -39,7 +43,7 @@ function AdminMemberContainer() {
         <div className={styles['search-div']}>
           <TextField label="회원 검색" variant="outlined" className={styles['search-input']} onChange={onMemberSearchInputChangeHandler} />
           <Select value={memberStateFilter} onChange={onMemberStateFilterChangeHandler} sx={{ height: '40px' }}>
-            {test.map((state) => (
+            {memberStateSet.map((state) => (
               <MenuItem key={state} value={state}>
                 {state}
               </MenuItem>
@@ -54,6 +58,7 @@ function AdminMemberContainer() {
           <li>이메일</li>
           <li>잔액</li>
           <li>상태</li>
+          <li>탈퇴 처리</li>
         </ul>
         {filtedMembers.map((data) => (
           <ul key={data.nickname} className={styles['list-line']}>
@@ -69,20 +74,26 @@ function AdminMemberContainer() {
               </div>
             </li>
             <li>
-              <p>{data.phone}</p>
+              <p className={styles['small-font']}>{data.phone}</p>
             </li>
             <li>
-              <p>{data.email}</p>
+              <p className={styles['small-font']}>{data.email}</p>
             </li>
             <li>
               <p>{data.money}</p>
             </li>
             <li>
-              <Select value={data.memberState} onChange={onMemberStateChangeHandler} sx={{ height: '30px' }}>
+              <p>{data.memberState}</p>
+              {/* <Select value={data.memberState} onChange={onMemberStateChangeHandler} sx={{ height: '30px' }}>
                 <MenuItem value={MemberState.Normal}>{MemberState.Normal}</MenuItem>
                 <MenuItem value={MemberState.Dormant}>{MemberState.Dormant}</MenuItem>
                 <MenuItem value={MemberState.Withdrawn}>{MemberState.Withdrawn}</MenuItem>
-              </Select>
+              </Select> */}
+            </li>
+            <li>
+              <button type="button" className={styles['withdraw-btn']} onClick={onClickWithdrawBtnHandler}>
+                X
+              </button>
             </li>
           </ul>
         ))}
