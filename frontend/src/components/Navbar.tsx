@@ -1,5 +1,6 @@
 import * as React from 'react';
-// import { useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
+// Material UI Imports
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,17 +16,29 @@ import MenuItem from '@mui/material/MenuItem';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
+/*eslint-disable*/
+/*기타 Imports */
 import { Link, Outlet, NavLink } from 'react-router-dom';
 import styles from './Navbar.module.scss';
 import NavDataSettings from './NavbarSettingsData';
 /* 이미지 import */
 import logoImg from '../assets/images/FunteerLogo.png';
+/*로그인 Import */
+import { useAppDispatch } from '../store/hooks';
+import userSlice, { isLoginState, setUserLoginState } from '../store/slices/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import { title } from 'process';
+import { userInfo } from 'os';
+import NavbarMenuData from './NavbarMenuData';
 
-const pages = ['서비스소개', '펀딩서비스', '기부서비스', '라이브방송', '고객센터'];
+const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
 
 function ResponsiveAppBar() {
-  const insertedToken = localStorage.getItem('access_token');
+  const [isLogin, setIsLogin] = useState(false);
+  const insertedToken = localStorage.getItem('token');
+  const dispatch = useAppDispatch();
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -52,6 +65,10 @@ function ResponsiveAppBar() {
       padding: '0 4px',
     },
   }));
+
+  useEffect(() => {}, [isLoginState]);
+
+  // console.log('로그인임?', isLogin);
 
   return (
     <AppBar className={styles.appBar} position="fixed">
@@ -94,8 +111,8 @@ function ResponsiveAppBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu} className={styles.menuItem}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem key={page.title} onClick={handleCloseNavMenu} className={styles.menuItem}>
+                  {page.title}
                 </MenuItem>
               ))}
             </Menu>
@@ -114,30 +131,33 @@ function ResponsiveAppBar() {
           >
             <img className={styles.logoImgMobile} src={logoImg} alt="logoImgMobile" />
           </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', alignItems: 'center', margin: '0 2%' }}>
+          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'flex-end', alignItems: 'center', margin: '0 2%' }} className={styles.pageBox}>
             {pages.map((page) => (
-              <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block', ml: 2 }} className={styles.menuBtn}>
-                {page}
+              <Button key={page.title} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block', ml: 2 }} className={styles.menuBtn}>
+                {page.title}
               </Button>
             ))}
           </Box>
-          {/* badgeContent에 알림 변수 위치 */}
-          <IconButton aria-label="notifi" className={styles.noti}>
-            <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
-              <NotificationsNoneIcon fontSize="large" />
-            </StyledBadge>
-          </IconButton>
 
           <Box sx={{ flexGrow: 0 }}>
-            <div style={{ display: 'flex' }}>
-              <button className={styles.accountBtn} type="button">
-                로그인
-              </button>{' '}
-              <button className={styles.accountBtn} type="button">
-                회원가입
-              </button>
+            <div style={{ display: insertedToken === null ? 'flex' : 'none' }}>
+              <NavLink to="/Login">
+                <button className={styles.accountBtn} type="button">
+                  로그인
+                </button>
+              </NavLink>
+              <NavLink to="/signup">
+                <button className={styles.accountBtn} type="button">
+                  회원가입
+                </button>
+              </NavLink>
             </div>
-            <div style={{ display: 'none' }}>
+            <div style={{ display: insertedToken === null ? 'none' : 'flex' }}>
+              <IconButton aria-label="notifi" className={styles.noti}>
+                <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
+                  <NotificationsNoneIcon fontSize="large" />
+                </StyledBadge>
+              </IconButton>
               <Tooltip title="Open settings">
                 <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
                   <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />

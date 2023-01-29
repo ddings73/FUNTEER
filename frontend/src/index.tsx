@@ -35,6 +35,7 @@ import {
   MyPage,
   AdminMain,
   AdminMember,
+  LogOut,
   AdminTeam,
   FundingList,
 } from './pages/index';
@@ -77,6 +78,10 @@ const router = createBrowserRouter([
       {
         path: 'signup/member',
         element: <MemberSignUp />,
+      },
+      {
+        path: 'logout',
+        element: <LogOut />,
       },
       /* Add-on Routes */
       {
@@ -151,6 +156,21 @@ const router = createBrowserRouter([
       {
         path: 'team',
         element: <AdminTeam />,
+      },
+    ],
+  },
+  {
+    path: '/admin',
+    element: <AdminRoot />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: 'main',
+        element: <AdminMain />,
+      },
+      {
+        path: 'member',
+        element: <AdminMember />,
       },
     ],
   },
