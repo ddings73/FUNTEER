@@ -11,10 +11,8 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import com.nimbusds.jose.proc.SecurityContext;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.funding.dto.FundingCommentRequest;
@@ -36,7 +34,6 @@ import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.post.repository.CategoryRepository;
 import com.yam.funteer.post.repository.HashTagRepository;
 import com.yam.funteer.post.repository.PostHashtagRepository;
-import com.yam.funteer.user.entity.Team;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -152,7 +149,7 @@ public class FundingServiceImpl implements FundingService{
 			}else{
 				hashtags.add(oneByName.get());
 			}
-		};
+		}
 		return hashtags;
 
 	}
@@ -175,24 +172,26 @@ public class FundingServiceImpl implements FundingService{
 	public FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
 
-		// 기존 파일 삭제, 새로운 파일 추가
-		awsS3Uploader.delete("/thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
-		String thumbnailUrl = awsS3Uploader.upload(data.getThumbnail(), "/thumbnails/"+fundingId);
-
-		Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
-
-		addTargetMoney(data, funding);
-		List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
-		List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
-		addPostHashtags(funding, hashtags);
-
-		LocalDateTime startDate = LocalDateTime.parse(data.getStartDate(),
-			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 		LocalDateTime endDate = LocalDateTime.parse(data.getEndDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 		if (funding.getPostType() == PostType.FUNDING_REJECT) {
+
+			// 기존 파일 삭제, 새로운 파일 추가
+			awsS3Uploader.delete("/thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
+			String thumbnailUrl = awsS3Uploader.upload(data.getThumbnail(), "/thumbnails/"+fundingId);
+
+			Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
+
+			addTargetMoney(data, funding);
+			List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
+			List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
+			addPostHashtags(funding, hashtags);
+
+			LocalDateTime startDate = LocalDateTime.parse(data.getStartDate(),
+			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
 			funding.setStartDate(startDate);
 			funding.setEndDate(endDate);
 			funding.setContent(data.getContent());
