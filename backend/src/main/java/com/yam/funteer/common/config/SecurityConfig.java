@@ -2,6 +2,7 @@ package com.yam.funteer.common.config;
 
 import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.common.security.filter.JwtAuthFilter;
+import com.yam.funteer.common.security.handler.JwtExceptionFilter;
 import com.yam.funteer.common.security.handler.OAuth2SuccessHandler;
 import com.yam.funteer.common.security.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,9 +25,13 @@ import java.util.Arrays;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig{
+
     private final JwtProvider jwtProvider;
+    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtExceptionFilter jwtExceptionFilter;
     private final OAuth2SuccessHandler successHandler;
     private final CustomOAuth2UserService oAuth2UserService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
@@ -42,8 +47,9 @@ public class SecurityConfig{
             .antMatchers("/admin", "/member", "/team").authenticated()
             .anyRequest().permitAll()
                 .and()
-            .addFilterBefore(new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
-            // .oauth2Login()
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class);
+        // .oauth2Login()
             // .successHandler(successHandler) // oAuth 로그인 성공 시 동작할 핸들러
             // .userInfoEndpoint().userService(oAuth2UserService);
         return http.build();

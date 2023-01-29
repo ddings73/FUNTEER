@@ -18,7 +18,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
 
 @Component @Slf4j
 public class JwtProvider {
@@ -113,7 +112,6 @@ public class JwtProvider {
                 return token;
             } catch (IllegalArgumentException e) {
                 log.error("an error occured during getting username from token", e);
-                // JwtException (custom exception) 예외 발생시키기
                 throw new JwtException("유효하지 않은 토큰");
             } catch (ExpiredJwtException e) {
                 log.warn("the token is expired and not valid anymore", e);
