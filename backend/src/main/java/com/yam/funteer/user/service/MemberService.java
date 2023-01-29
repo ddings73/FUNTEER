@@ -12,7 +12,7 @@ public interface MemberService {
     void updateProfile(UpdateProfileRequest request);
 
     MemberAccountResponse getAccount(Long userId);
-    void updateAccount(UpdateAccountRequest request);
+    void updateAccount(BaseUserRequest request);
 
     void followTeam(Long teamId, Long memberId);
     void wishFunding(Long fundingId, Long memberId);

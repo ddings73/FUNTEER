@@ -107,9 +107,9 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/account")
-	public void modifyAccount(@Validated @RequestBody UpdateAccountRequest updateAccountRequest, BindingResult bindingResult) {
+	public void modifyAccount(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult) {
 		validateBinding(bindingResult);
-		memberService.updateAccount(updateAccountRequest);
+		memberService.updateAccount(baseUserRequest);
 	}
 
 	/**
@@ -173,43 +173,6 @@ public class MemberController {
 		memberService.wishFunding(fundingId, memberId);
 		return ResponseEntity.ok().build();
 	}
-
-
-	/**
-	 * TODO 전화번호 인증 필요
-	 */
-	@ApiOperation(value = "이메일 찾기", notes = "전화번호 인증을 통해서 회원 이메일을 돌려받을 수 있다")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "성공"),
-		@ApiResponse(code = 400, message = "잘못된 요청정보"),
-		@ApiResponse(code = 401, message = "사용자 인증실패"),
-		@ApiResponse(code = 500, message = "서버 에러")
-	})
-	@GetMapping("/forget/email") // 대기
-	public ResponseEntity<Map<String, String>> forgetEmail(){
-		HashMap<String, String> map = new HashMap<>();
-		map.put("email", "kim@ssafy.com");
-		return ResponseEntity.ok(map);
-	}
-
-
-	/**
-	 * TODO 이메일 인증 필요
-	 */
-	@ApiOperation(value = "비밀번호 찾기", notes = "이메일 인증을 통해서 임시 비밀번호를 받을 수 있다")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "성공"),
-		@ApiResponse(code = 400, message = "잘못된 요청정보"),
-		@ApiResponse(code = 401, message = "사용자 인증실패"),
-		@ApiResponse(code = 500, message = "서버 에러"),
-	})
-	@GetMapping("/forget/pw") // 대기
-	public ResponseEntity<Map<String, String>> forgetPassword(){
-		HashMap<String, String> map = new HashMap<>();
-		map.put("tmpPassword", "Q123qwe23@@!");
-		return ResponseEntity.ok(map);
-	}
-
 
 	@ApiIgnore
 	public void validateBinding(BindingResult bindingResult){
