@@ -8,7 +8,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
 /*  */
-import {theme} from './theme/theme'
+import { theme } from './theme/theme';
 import UserRoot from './roots/UserRoot';
 import AdminRoot from './roots/AdminRoot';
 import {
@@ -35,6 +35,7 @@ import {
   MyPage,
   AdminMain,
   AdminMember,
+  LogOut,
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -75,6 +76,10 @@ const router = createBrowserRouter([
       {
         path: 'signup/member',
         element: <MemberSignUp />,
+      },
+      {
+        path: 'logout',
+        element: <LogOut />,
       },
       /* Add-on Routes */
       {
@@ -126,6 +131,21 @@ const router = createBrowserRouter([
       {
         path: 'myFollow',
         element: <MyFollows />,
+      },
+    ],
+  },
+  {
+    path: '/admin',
+    element: <AdminRoot />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: 'main',
+        element: <AdminMain />,
+      },
+      {
+        path: 'member',
+        element: <AdminMember />,
       },
     ],
   },
