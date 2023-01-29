@@ -1,6 +1,5 @@
 package com.yam.funteer.common.security.service;
 
-import com.yam.funteer.common.security.SecurityUser;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.UserRepository;
