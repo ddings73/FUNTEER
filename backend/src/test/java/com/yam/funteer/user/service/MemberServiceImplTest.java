@@ -1,7 +1,7 @@
 package com.yam.funteer.user.service;
 
 import com.yam.funteer.common.code.UserType;
-import com.yam.funteer.user.dto.request.CreateMemberRequest;
+import com.yam.funteer.user.dto.request.CreateAccountRequest;
 import com.yam.funteer.user.entity.Follow;
 import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
@@ -36,7 +36,7 @@ class MemberServiceImplTest {
     @Test
     @DisplayName("MemberRequestDto to Entity 테스트")
     void requestToEntityTest(){
-        CreateMemberRequest requestDto = CreateMemberRequest.builder()
+        CreateAccountRequest requestDto = CreateAccountRequest.builder()
                 .email("kim@ssafy.com")
                 .name("김싸피")
                 .nickname("SSAFY")
@@ -44,7 +44,7 @@ class MemberServiceImplTest {
                 .phone("010-1234-5678")
                 .build();
 
-        Member member = requestDto.toEntity();
+        Member member = requestDto.toMember();
         assertNotNull(member);
         assertEquals(UserType.NORMAL, member.getUserType());
         assertEquals(0L, member.getMoney());
@@ -53,7 +53,7 @@ class MemberServiceImplTest {
     @Test
     @DisplayName("이메일로 회원 찾기 테스트")
     void findByEmailTest(){
-        CreateMemberRequest requestDto = CreateMemberRequest.builder()
+        CreateAccountRequest requestDto = CreateAccountRequest.builder()
                 .email("kim@ssafy.com")
                 .name("김싸피")
                 .nickname("SSAFY")
@@ -61,7 +61,7 @@ class MemberServiceImplTest {
                 .phone("010-1234-5678")
                 .build();
 
-        Member member = requestDto.toEntity();
+        Member member = requestDto.toMember();
 
         Optional<Member> byEmail = memberRepository.findByEmail(requestDto.getEmail());
         assertTrue(byEmail.isEmpty());

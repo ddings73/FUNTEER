@@ -5,10 +5,19 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.yam.funteer.post.entity.Post;
-import com.yam.funteer.post.repository.PostRepository;
-import com.yam.funteer.qna.request.QnaMemberRegisterReq;
-import com.yam.funteer.qna.request.QnaTeamRegisterReq;
+import com.yam.funteer.common.code.UserType;
+import com.yam.funteer.exception.UserNotFoundException;
+
+import com.yam.funteer.qna.entity.Qna;
+import com.yam.funteer.qna.entity.Reply;
+import com.yam.funteer.qna.exception.QnaNotFoundException;
+import com.yam.funteer.qna.repository.QnaRepository;
+import com.yam.funteer.qna.repository.ReplyRepository;
+import com.yam.funteer.qna.request.QnaRegisterReq;
+import com.yam.funteer.qna.request.QnaReplyReq;
+import com.yam.funteer.qna.response.QnaBaseRes;
+import com.yam.funteer.user.entity.User;
+import com.yam.funteer.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -16,83 +25,51 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class QnaServiceImpl implements QnaService {
 
-	private final PostRepository postRepository;
+	private final QnaRepository qnaRepository;
+	private final UserRepository userRepository;
+	private final ReplyRepository replyRepository;
 
-	// public List<Post> qnaGetList(GroupCode postcode,GroupCode membercode)
-	public List<Post> qnaGetList(){
-		// return postRepository.findAllByCodeAndCode(postcode,membercode);
-		return postRepository.findAll();
+	@Override
+	public List<Qna> qnaGetList(UserType userType) {
+		return qnaRepository.findAllByUserType(userType);
+	}
+
+	@Override
+	public void qnaRegister(QnaRegisterReq qnaRegisterReq) {
+		User user=userRepository.findById(qnaRegisterReq.getUserId()).orElseThrow(()->new UserNotFoundException());
+		qnaRepository.save(qnaRegisterReq.toEntity(user));
 	}
 
 
-	public Post qnaTeamRegister(QnaTeamRegisterReq qnaRegisterReq) {
-		// Post post=new Post();
-		// post.setContent(qnaRegisterReq.getContent());
-		// post.setTitle(qnaRegisterReq.getTitle());
-		// post.setPassword(qnaRegisterReq.getPassword());
-		// post.setDate(LocalDateTime.now());
-		// post.setHit(Long.valueOf(0));
-
-		// Team team=new Team();
-		// team.setId(qnaRegisterReq.getTeamId());
-		//
-		//post.setTeam(qnaRegisterReq.getTeam());
-
-		// return postRepository.save(post);
+	@Override
+	public QnaBaseRes qnaGetDetail(Long qnaId, Long userId) throws QnaNotFoundException {
+		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
+		if (qna.getUser().getId()==userId) {
+			return new QnaBaseRes(qna);
+		}
 		return null;
 	}
 
-
-	public Post qnaMemberRegister(QnaMemberRegisterReq qnaRegisterReq) {
-		// Post post=new Post();
-		// post.setContent(qnaRegisterReq.getContent());
-		// post.setTitle(qnaRegisterReq.getTitle());
-		// post.setPassword(qnaRegisterReq.getPassword());
-		// post.setDate(LocalDateTime.now());
-		// post.setHit(Long.valueOf(0));
-
-		// Member member=new Member();
-		// member.setId(qnaRegisterReq.getMemberId());
-		//
-		// post.setMember();
-
-		// return postRepository.save(post);
-		return null;
+	@Override
+	public void qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq) throws QnaNotFoundException {
+		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
+		User user=userRepository.findById(qnaRegisterReq.getUserId()).orElseThrow(()->new UserNotFoundException());
+		if(qnaRegisterReq.getUserId()==qna.getUser().getId()) {
+			qnaRepository.save(qnaRegisterReq.toEntity(user,qnaId));
+		}
 	}
 
+	@Override
+	public void qnaDelete(Long postId,Long userId) throws QnaNotFoundException{
+		Qna qna = qnaRepository.findById(postId).orElseThrow(() -> new QnaNotFoundException());
 
-	public Post qnaGetDetail(Long id) {
-		return postRepository.findById(id).get();
+		if(qna.getUser().getId()==userId) {
+			qnaRepository.deleteById(postId);
+			Reply reply=replyRepository.findByQna(qna);
+			if(reply!=null){
+				replyRepository.delete(reply);
+			}
+		}
 	}
 
-
-	public Post qnaTeamModify(Long id,QnaTeamRegisterReq qnaTeamModifyReq) {
-		Post post=postRepository.findById(id).get();
-
-		// if(post.getTeam().getId()==qnaTeamModifyReq.getTeamId()) {
-		// 	post.setTitle(qnaTeamModifyReq.getTitle());
-		// 	post.setPassword(qnaTeamModifyReq.getPassword());
-		// 	post.setContent(qnaTeamModifyReq.getContent());
-		// 	post.setDate(LocalDateTime.now());
-
-			return postRepository.save(post);
-		// }
-		// return post;
-	}
-
-	public Post qnaMemberModify(Long id,QnaMemberRegisterReq qnaMemberModifyReq) {
-
-		Post post=postRepository.findById(id).get();
-
-		// if(post.getMember().getId()==qnaMemberModifyReq.getMemberId()) {
-
-			// post.setTitle(qnaMemberModifyReq.getTitle());
-			// post.setPassword(qnaMemberModifyReq.getPassword());
-			// post.setContent(qnaMemberModifyReq.getContent());
-			// post.setDate(LocalDateTime.now());
-
-			return postRepository.save(post);
-		// }
-		// return post;
-	}
 }

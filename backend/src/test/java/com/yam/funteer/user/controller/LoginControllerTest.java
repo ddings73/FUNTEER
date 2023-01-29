@@ -35,7 +35,6 @@ class LoginControllerTest {
     void LoginTest01() throws Exception {
         LoginRequest loginRequest = new LoginRequest();
         loginRequest.setEmail("kim@ssafy.com");
-        loginRequest.setType(UserType.NORMAL);
         loginRequest.setPassword("Qwer1234@");
 
         LoginResponse loginResponse = new LoginResponse();
