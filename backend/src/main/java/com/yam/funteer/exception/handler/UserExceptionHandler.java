@@ -34,7 +34,7 @@ public class UserExceptionHandler {
     public ResponseEntity<BaseResponseBody> handleIllegalArgumentException(IllegalArgumentException ex){
         log.info("IllegalArgumentException => {}", ex.getMessage());
         return ResponseEntity.badRequest()
-            .body(BaseResponseBody.of("비정상적인 입력 혹은 제공된 데이터가 부족합니다."));
+            .body(BaseResponseBody.of(ex.getMessage()));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
