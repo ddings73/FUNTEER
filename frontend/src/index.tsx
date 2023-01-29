@@ -37,6 +37,7 @@ import {
   AdminMember,
   AdminTeam,
   FundingList,
+  AdminTeamDeny,
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -130,9 +131,9 @@ const router = createBrowserRouter([
         element: <MyFollows />,
       },
       {
-        path:"/funding",
-        element:<FundingList/>
-      }
+        path: '/funding',
+        element: <FundingList />,
+      },
     ],
   },
   {
@@ -151,6 +152,10 @@ const router = createBrowserRouter([
       {
         path: 'team',
         element: <AdminTeam />,
+      },
+      {
+        path: 'team/deny/:vn', // vn: vms 위촉 번호
+        element: <AdminTeamDeny />,
       },
     ],
   },

@@ -25,7 +25,7 @@ mobile : 425px
 */
 
 $primary: rgba(236, 153, 75, 1);
-$second: rgba(236, 153, 75, 1);
+$second: rgba(230, 117, 10, 1);
 $error: rgba(211, 79, 4, 1);
 
 /*
@@ -33,8 +33,6 @@ $error: rgba(211, 79, 4, 1);
 */
 @mixin desktop {
   @media (min-width: 1160px) {
- 
-
     @content;
   }
 }
@@ -44,7 +42,6 @@ $error: rgba(211, 79, 4, 1);
 */
 @mixin tablet {
   @media (min-width: 768px) and (max-width: 1160px) {
-
     @content;
   }
 }
@@ -54,27 +51,24 @@ $error: rgba(211, 79, 4, 1);
 */
 @mixin mobile {
   @media (max-width: 768px) {
-
     @content;
   }
 }
 
-
-@include desktop(){
+@include desktop() {
   html {
     font-size: 16px;
   }
 }
 
-@include tablet(){
+@include tablet() {
   html {
     font-size: 14px;
   }
 }
 
-@include mobile(){
+@include mobile() {
   html {
     font-size: 12px;
   }
-
 }
