@@ -8,5 +8,8 @@ import com.yam.funteer.user.dto.response.TokenInfo;
 public interface LoginService {
     LoginResponse processLogin(LoginRequest loginRequest);
 
+    void processLogOut();
+
     TokenInfo regenerateToken(TokenRequest tokenRequest);
+
 }
