@@ -1,7 +1,7 @@
 package com.yam.funteer.common.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yam.funteer.common.security.Token;
+import com.yam.funteer.user.entity.Token;
 import com.yam.funteer.common.security.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,6 @@ import java.io.PrintWriter;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtProvider jwtProvider;
     private final ObjectMapper objectMapper;
-    // private final MemberService memberService;
 
 
     @Override
@@ -39,15 +38,15 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 //        writeTokenResponse(response, token);
     }
 
-    private void writeTokenResponse(HttpServletResponse response, Token token) throws IOException {
-        response.setContentType(MediaType.TEXT_XML_VALUE);
-
-        response.addHeader("Auth", token.getAccessToken());
-        response.addHeader("Refresh", token.getRefreshToken());
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-
-        PrintWriter writer = response.getWriter();
-        writer.println(objectMapper.writeValueAsString(token));
-        writer.flush();
-    }
+//    private void writeTokenResponse(HttpServletResponse response, Token token) throws IOException {
+//        response.setContentType(MediaType.TEXT_XML_VALUE);
+//
+//        response.addHeader("Auth", token.getAccessToken());
+//        response.addHeader("Refresh", token.getRefreshToken());
+//        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+//
+//        PrintWriter writer = response.getWriter();
+//        writer.println(objectMapper.writeValueAsString(token));
+//        writer.flush();
+//    }
 }

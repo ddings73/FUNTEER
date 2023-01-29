@@ -73,10 +73,10 @@ public class MemberController {
 	})
 	@GetMapping("/{userId}/account")
 	public ResponseEntity<MemberAccountResponse> getInfo(@PathVariable Long userId, @RequestHeader String authorization){
-		if(jwtProvider.verifyById(userId, authorization)) {
-			MemberAccountResponse response = memberService.getAccount(userId);
-			return ResponseEntity.ok(response);
-		}
+//		if(jwtProvider.verifyById(userId, authorization)) {
+//			MemberAccountResponse response = memberService.getAccount(userId);
+//			return ResponseEntity.ok(response);
+//		}
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 	}
 
