@@ -1,10 +1,10 @@
 import React from 'react';
-import profile1 from '../../assets/images/teamProfile/김보경.jpg';
-import profile2 from '../../assets/images/teamProfile/김송빈.jpg';
-import profile3 from '../../assets/images/teamProfile/김승섭.jpg';
-import profile4 from '../../assets/images/teamProfile/김진호.jpg';
-import profile5 from '../../assets/images/teamProfile/백준봉.jpg';
-import profile6 from '../../assets/images/teamProfile/안명수.jpg';
+import profile1 from '../../../assets/images/teamProfile/김보경.jpg';
+import profile2 from '../../../assets/images/teamProfile/김송빈.jpg';
+import profile3 from '../../../assets/images/teamProfile/김승섭.jpg';
+import profile4 from '../../../assets/images/teamProfile/김진호.jpg';
+import profile5 from '../../../assets/images/teamProfile/백준봉.jpg';
+import profile6 from '../../../assets/images/teamProfile/안명수.jpg';
 
 export enum MemberState {
   Normal = '정상',
