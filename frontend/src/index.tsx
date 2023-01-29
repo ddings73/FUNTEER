@@ -38,6 +38,7 @@ import {
   LogOut,
   AdminTeam,
   FundingList,
+  CreateFunding,
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -137,6 +138,9 @@ const router = createBrowserRouter([
       {
         path:"/funding",
         element:<FundingList/>
+      },{
+        path:"/funding/create",
+        element:<CreateFunding/>
       }
     ],
   },
