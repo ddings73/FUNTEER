@@ -1,5 +1,6 @@
 package com.yam.funteer.user.service;
 
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.user.dto.request.TokenRequest;
@@ -53,6 +54,11 @@ public class LoginServiceImpl implements LoginService{
         tokenRepository.save(token);
 
         User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(UserNotFoundException::new);
+        if(user.isResign()){
+            throw new IllegalArgumentException("탈퇴한 회원입니다");
+        }else if(user.getUserType().equals(UserType.TEAM_WAIT)){
+            throw new IllegalArgumentException("가입 대기중인 회원입니다");
+        }
 
         return LoginResponse.of(user, tokenInfo);
     }
