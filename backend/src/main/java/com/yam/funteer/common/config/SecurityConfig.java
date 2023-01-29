@@ -1,7 +1,10 @@
 package com.yam.funteer.common.config;
 
+import com.yam.funteer.common.security.JwtAuthenticationEntryPoint;
 import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.common.security.filter.JwtAuthFilter;
+import com.yam.funteer.common.security.handler.JwtAccessDeniedHandler;
+import com.yam.funteer.common.security.handler.JwtExceptionFilter;
 import com.yam.funteer.common.security.handler.OAuth2SuccessHandler;
 import com.yam.funteer.common.security.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,26 +27,38 @@ import java.util.Arrays;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig{
+
     private final JwtProvider jwtProvider;
+    private final JwtAuthFilter jwtAuthFilter;
+    private final JwtExceptionFilter jwtExceptionFilter;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
+
     private final OAuth2SuccessHandler successHandler;
     private final CustomOAuth2UserService oAuth2UserService;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .cors().configurationSource(corsConfigurationSource())
-                .and()
-            .httpBasic().disable()
-            .csrf().disable()
-            .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 사용하니 session 생성 X
-                .and()
-            .authorizeRequests()
-            .mvcMatchers(HttpMethod.POST, "/member", "/team").permitAll()
-            .mvcMatchers(HttpMethod.GET, "/member/**/profile", "/team/**/profile").permitAll()
-            .antMatchers("/admin", "/member", "/team").authenticated()
-            .anyRequest().permitAll()
-                .and()
-            .addFilterBefore(new JwtAuthFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
-            // .oauth2Login()
+                .cors().configurationSource(corsConfigurationSource())
+            .and()
+                .httpBasic().disable()
+                .csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 사용하니 session 생성 X
+            .and()
+                .exceptionHandling()
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+                .accessDeniedHandler(jwtAccessDeniedHandler)
+            .and()
+                .authorizeRequests()
+                .mvcMatchers(HttpMethod.POST, "/member", "/team").permitAll()
+                .mvcMatchers(HttpMethod.GET, "/member/**/profile", "/team/**/profile").permitAll()
+                .antMatchers("/admin", "/member", "/team").authenticated()
+                .anyRequest().permitAll()
+            .and()
+                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class);
+        // .oauth2Login()
             // .successHandler(successHandler) // oAuth 로그인 성공 시 동작할 핸들러
             // .userInfoEndpoint().userService(oAuth2UserService);
         return http.build();

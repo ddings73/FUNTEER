@@ -1,14 +1,17 @@
 package com.yam.funteer.common.security;
 
-import com.yam.funteer.common.security.Token;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yam.funteer.user.dto.response.TokenInfo;
+import com.yam.funteer.user.entity.User;
 import io.jsonwebtoken.*;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -17,12 +20,14 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
-@Component
+@Component @Slf4j
+@RequiredArgsConstructor
 public class JwtProvider {
-
     private String secretKey = "jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk";
-
+    private static final String AUTHORITIES_KEY = "auth";
+    private static final String BEARER_TYPE = "Bearer";
     private final long accessPeriod = 1000L * 60L * 60L; // 10분
     private final long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
     @PostConstruct
@@ -30,27 +35,29 @@ public class JwtProvider {
         this.secretKey = Base64.getEncoder().encodeToString(this.secretKey.getBytes());
     }
 
-    public Token generateToken(Authentication authentication) {
+    public TokenInfo generateToken(Authentication authentication) {
         // 권한 가져오기
         String authorities  = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        long now = new Date().getTime();
+        Date now = new Date();
 
         String accessToken = Jwts.builder()
-                .setSubject(authentication.getName()) // 이름으로 서명
-                .claim("auth", authorities) // 권한
-                .setExpiration(new Date(now + accessPeriod)) // 만료기간
+                .setSubject(authentication.getName())
+                .claim(AUTHORITIES_KEY, authorities) // 권한
+                .setExpiration(new Date(now.getTime() + accessPeriod)) // 만료기간
                 .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
                 .compact();
         String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + refreshPeriod)) // 만료기간
+                .setSubject(authentication.getName())
+                .setExpiration(new Date(now.getTime() + refreshPeriod)) // 만료기간
                 .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
                 .compact();
 
-        return new Token(accessToken, refreshToken);
+        return TokenInfo.of(BEARER_TYPE, accessToken, refreshToken);
     }
+
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
     public Authentication getAuthentication(String accessToken) {
@@ -58,7 +65,7 @@ public class JwtProvider {
         Claims claims = parseClaims(accessToken);
 
         if (claims.get("auth") == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+            throw new JwtException("권한 정보가 없는 토큰입니다.");
         }
 
         // 클레임에서 권한 정보 가져오기
@@ -68,34 +75,32 @@ public class JwtProvider {
                         .collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        UserDetails principal = new org.springframework.security.core.userdetails.User(claims.getSubject(), "", authorities);
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
 
+    public boolean validateToken(String token) {
+        try {
+            Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
+            return true;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            log.info("잘못된 JWT 서명입니다.");
+        } catch (ExpiredJwtException e) {
+            log.info("만료된 JWT 토큰입니다.");
+        } catch (UnsupportedJwtException e) {
+            log.info("지원되지 않는 JWT 토큰입니다.");
+        } catch (IllegalArgumentException e) {
+            log.info("JWT 토큰이 잘못되었습니다.");
+        }
+        return false;
+    }
+
     // claim 파싱
-    private Claims parseClaims(String token){
+    private Claims parseClaims(String accessToken){
         return Jwts.parserBuilder()
                 .setSigningKey(secretKey).build()
-                .parseClaimsJws(token)
+                .parseClaimsJws(accessToken)
                 .getBody();
-    }
-    
-    // 토큰 검증
-    public boolean verifyToken(String token) {
-        if(token == null) return false;
-        return parseClaims(token).getExpiration()
-                    .after(new Date());
-    }
-
-
-    public boolean verifyById(Long id, String bearerToken){
-        if(StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")){
-            String token = bearerToken.substring(7);
-            Integer tkId = (Integer) parseClaims(token).get("ID");
-            return id.longValue() == tkId.longValue();
-        }
-
-        return false;
     }
 }
