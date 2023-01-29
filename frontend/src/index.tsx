@@ -36,6 +36,8 @@ import {
   AdminMain,
   AdminMember,
   LogOut,
+  AdminTeam,
+  FundingList,
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -132,6 +134,10 @@ const router = createBrowserRouter([
         path: 'myFollow',
         element: <MyFollows />,
       },
+      {
+        path:"/funding",
+        element:<FundingList/>
+      }
     ],
   },
   {
@@ -146,6 +152,10 @@ const router = createBrowserRouter([
       {
         path: 'member',
         element: <AdminMember />,
+      },
+      {
+        path: 'team',
+        element: <AdminTeam />,
       },
     ],
   },

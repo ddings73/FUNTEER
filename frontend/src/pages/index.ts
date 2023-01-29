@@ -17,6 +17,7 @@ export { default as ServiceDetail } from './Service/ServiceDetail';
 
 export { default as AdminMain } from './Admin/AdminMain';
 export { default as AdminMember } from './Admin/AdminMember';
+export { default as AdminTeam } from './Admin/AdminTeam';
 
 export { default as MyPage } from './MyPage/MyPage';
 export { default as EditProfile } from './MyPage/EditProfile';
@@ -26,3 +27,6 @@ export { default as MyFavors } from './MyPage/MyFavors';
 export { default as MyFollows } from './MyPage/MyFollows';
 export { default as MyFunding } from './MyPage/MyFunding';
 export { default as MyFunteerDonate } from './MyPage/MyFunteerDonate';
+
+
+export {default as FundingList} from './Funding/FundingList'
