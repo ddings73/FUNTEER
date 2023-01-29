@@ -60,8 +60,11 @@ public class User {
 		return Optional.ofNullable(this.profileImg);
 	}
 
-	public void updateProfile(Attach profileImg){
+	protected void updateProfile(Attach profileImg){
 		this.profileImg = profileImg;
+	}
+	public void charge(Long amount) {
+		this.money += amount;
 	}
 	public void changePassword(String password){
 		this.password = password;
@@ -69,6 +72,7 @@ public class User {
 	public void signOut(UserType userType){
 		this.userType = userType;
 	}
+	public boolean isResign(){return this.userType.equals(UserType.NORMAL_RESIGN) || this.userType.equals(UserType.TEAM_RESIGN);}
 	public void validatePassword(PasswordEncoder passwordEncoder, String password){
 		if(!passwordEncoder.matches(password, this.password))
 			throw new IllegalArgumentException();
