@@ -6,7 +6,7 @@ import com.yam.funteer.user.dto.response.MemberProfileResponse;
 
 public interface MemberService {
 
-    void createAccountWithOutProfile(CreateAccountRequest request);
+    void createAccountWithOutProfile(CreateMemberRequest request);
     void setAccountSignOut(BaseUserRequest baseUserRequest);
     MemberProfileResponse getProfile(Long userId);
     void updateProfile(UpdateProfileRequest request);
@@ -14,8 +14,8 @@ public interface MemberService {
     MemberAccountResponse getAccount(Long userId);
     void updateAccount(BaseUserRequest request);
 
-    void followTeam(Long teamId, Long memberId);
-    void wishFunding(Long fundingId, Long memberId);
+    void followTeam(FollowRequest followRequest);
+    void wishFunding(WishRequest wishRequest);
 
     void chargeMileage(ChargeRequest chargeRequest);
 }

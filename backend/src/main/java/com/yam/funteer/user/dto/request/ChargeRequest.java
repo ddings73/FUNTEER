@@ -6,12 +6,16 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChargeRequest extends BaseUserRequest{
+public class ChargeRequest{
+
+	@NotNull
+	private Long userId;
 	private Long amount;
 	public Charge toEntity(Member member){
 		return Charge.builder()

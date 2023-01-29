@@ -38,11 +38,11 @@ public class MemberController {
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PostMapping
-	public ResponseEntity signUpMember(@Validated @RequestBody CreateAccountRequest createAccountRequest, BindingResult bindingResult){
+	public ResponseEntity signUpMember(@Validated @RequestBody CreateMemberRequest createMemberRequest, BindingResult bindingResult){
 		validateBinding(bindingResult);
 
 		log.info("회원가입 시작 =>");
-		memberService.createAccountWithOutProfile(createAccountRequest);
+		memberService.createAccountWithOutProfile(createMemberRequest);
 		return ResponseEntity.ok().build();
 	}
 
@@ -155,8 +155,9 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/follow")
-	public ResponseEntity followTeam(@RequestBody Long teamId, @RequestBody Long memberId){
-		memberService.followTeam(teamId, memberId);
+	public ResponseEntity followTeam(@Validated @RequestBody FollowRequest followRequest, BindingResult bindingResult){
+		validateBinding(bindingResult);
+		memberService.followTeam(followRequest);
 		return ResponseEntity.ok().build();
 	}
 
@@ -168,9 +169,10 @@ public class MemberController {
 		@ApiResponse(code = 401, message = "사용자 인증실패"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@PutMapping("/like/{fundingId}")
-	public ResponseEntity wishFunding(@PathVariable("fundingId") Long fundingId, @RequestBody Long memberId){
-		memberService.wishFunding(fundingId, memberId);
+	@PutMapping("/like")
+	public ResponseEntity wishFunding(@Validated @RequestBody WishRequest wishRequest, BindingResult bindingResult){
+		validateBinding(bindingResult);
+		memberService.wishFunding(wishRequest);
 		return ResponseEntity.ok().build();
 	}
 

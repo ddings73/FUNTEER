@@ -41,7 +41,7 @@ public class MemberServiceImpl implements MemberService {
 
 
     @Override
-    public void createAccountWithOutProfile(CreateAccountRequest request) {
+    public void createAccountWithOutProfile(CreateMemberRequest request) {
         Optional<Member> findMember = memberRepository.findByEmail(request.getEmail());
         findMember.ifPresent(member -> {
             throw new EmailDuplicateException();
@@ -131,11 +131,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void followTeam(Long teamId, Long memberId) {
-        Optional<Member> findMember = memberRepository.findById(memberId);
+    public void followTeam(FollowRequest followRequest) {
+        Optional<Member> findMember = memberRepository.findById(followRequest.getMemberId());
         Member member = findMember.orElseThrow(UserNotFoundException::new);
 
-        Optional<Team> findTeam = teamRepository.findById(teamId);
+        Optional<Team> findTeam = teamRepository.findById(followRequest.getTeamId());
         Team team = findTeam.orElseThrow(UserNotFoundException::new);
 
         Optional<Follow> findFollow = followRepository.findByMemberAndTeam(member, team);
@@ -146,11 +146,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void wishFunding(Long fundingId, Long memberId) {
-        Optional<Member> findMember = memberRepository.findById(memberId);
+    public void wishFunding(WishRequest wishRequest) {
+        Optional<Member> findMember = memberRepository.findById(wishRequest.getMemberId());
         Member member = findMember.orElseThrow(UserNotFoundException::new);
 
-        Optional<Funding> findFunding = fundingRepository.findById(fundingId);
+        Optional<Funding> findFunding = fundingRepository.findById(wishRequest.getFundingId());
         Funding funding = findFunding.orElseThrow(IllegalArgumentException::new);
 
         Optional<Wish> findWish = wishRepository.findByMemberAndFunding(member, funding);

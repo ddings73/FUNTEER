@@ -17,7 +17,9 @@ import java.time.LocalDateTime;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UpdateProfileRequest extends BaseUserRequest{
+public class UpdateProfileRequest{
+	@NotNull
+	private Long userId;
 	private @NotBlank String nickname;
 	private @NotNull MultipartFile profileImg;
 	private boolean display;
