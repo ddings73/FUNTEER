@@ -11,10 +11,12 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
+import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
 import com.yam.funteer.funding.dto.FundingListResponse;
@@ -29,11 +31,15 @@ import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.repository.TargetMoneyRepository;
+import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.post.entity.Hashtag;
 import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.post.repository.CategoryRepository;
+import com.yam.funteer.post.repository.CommentRepository;
 import com.yam.funteer.post.repository.HashTagRepository;
 import com.yam.funteer.post.repository.PostHashtagRepository;
+import com.yam.funteer.user.entity.Member;
+import com.yam.funteer.user.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +49,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
+	private final MemberRepository memberRepository;
 	private final CategoryRepository categoryRepository;
 
 	private final FundingRepository fundingRepository;
@@ -51,6 +58,8 @@ public class FundingServiceImpl implements FundingService{
 	private final AwsS3Uploader awsS3Uploader;
 
 	private final PostHashtagRepository postHashtagRepository;
+
+	private final CommentRepository commentRepository;
 
 	@Override
 	public List<FundingListResponse> findApprovedFunding(String keyword, String category, String hashTag) {
@@ -173,10 +182,12 @@ public class FundingServiceImpl implements FundingService{
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
 
 
+
 		LocalDateTime endDate = LocalDateTime.parse(data.getEndDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 		if (funding.getPostType() == PostType.FUNDING_REJECT) {
+
 
 			// 기존 파일 삭제, 새로운 파일 추가
 			awsS3Uploader.delete("/thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
@@ -184,10 +195,20 @@ public class FundingServiceImpl implements FundingService{
 
 			Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
-			addTargetMoney(data, funding);
+			// 수정 필요
+			setTargetMoney(data, funding);
+
+			List<PostHashtag> postHashtagList = funding.getHashtags();
+			for (PostHashtag postHashtag : postHashtagList) {
+				postHashtagRepository.delete(postHashtag);
+			}
+
 			List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
 			List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
+
 			addPostHashtags(funding, hashtags);
+
+
 
 			LocalDateTime startDate = LocalDateTime.parse(data.getStartDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -207,6 +228,24 @@ public class FundingServiceImpl implements FundingService{
 			throw new Exception("no");
 		}
 		return FundingDetailResponse.from(funding);
+	}
+
+	private static void setTargetMoney(FundingRequest data, Funding funding) {
+		List<TargetMoney> targetMoneyList = funding.getTargetMoneyList();
+
+		for (TargetMoney targetMoney : targetMoneyList) {
+			targetMoney.setAmount(data.getAmount1());
+			targetMoney.setDescription(data.getDescription1());
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_ONE);
+
+			targetMoney.setAmount(data.getAmount2());
+			targetMoney.setDescription(data.getDescription2());
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_TWO);
+
+			targetMoney.setAmount(data.getAmount3());
+			targetMoney.setDescription(data.getDescription3());
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_THREE);
+		}
 	}
 
 	@Override
@@ -233,7 +272,12 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public void createFundingComment(FundingCommentRequest data) {
+		Funding funding = fundingRepository.findById(data.getFundingId()).orElseThrow();
+		String userName = SecurityUtil.getCurrentUsername().orElseThrow();
+		Member member = memberRepository.findByEmail(userName).orElseThrow();
 
+		Comment comment = new Comment(funding, member, data.getContent());
+		commentRepository.save(comment);
 	}
 
 }

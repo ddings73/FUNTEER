@@ -1,5 +1,7 @@
 package com.yam.funteer.funding.dto;
 
+import com.yam.funteer.user.entity.Member;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -9,5 +11,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class FundingCommentRequest {
 
-	private String test1;
+	private Long fundingId;
+	private String content;
 }
