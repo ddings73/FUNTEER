@@ -38,11 +38,11 @@ public class MemberController {
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PostMapping
-	public ResponseEntity signUpMember(@Validated @RequestBody CreateAccountRequest createAccountRequest, BindingResult bindingResult){
+	public ResponseEntity signUpMember(@Validated @RequestBody CreateMemberRequest createMemberRequest, BindingResult bindingResult){
 		validateBinding(bindingResult);
 
 		log.info("회원가입 시작 =>");
-		memberService.createAccountWithOutProfile(createAccountRequest);
+		memberService.createAccountWithOutProfile(createMemberRequest);
 		return ResponseEntity.ok().build();
 	}
 
@@ -54,15 +54,37 @@ public class MemberController {
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@DeleteMapping
-	public ResponseEntity signOutMember(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
-		validateBinding(bindingResult);
-
-		log.info("회원탈퇴 시작 => {}", baseUserRequest);
+	public ResponseEntity signOutMember(@RequestBody BaseUserRequest baseUserRequest){
 		memberService.setAccountSignOut(baseUserRequest);
-
 		return ResponseEntity.ok().build();
 	}
 
+	@ApiOperation(value = "개인회원 프로필 조회", notes = "ID를 이용하여 프로필을 조회할 수 있다")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 400, message = "잘못된 요청정보"),
+			@ApiResponse(code = 401, message = "사용자 인증실패"),
+			@ApiResponse(code = 500, message = "서버 에러")
+	})
+	@GetMapping("/{userId}/profile")
+	public ResponseEntity<MemberProfileResponse> getMemberProfile(@PathVariable Long userId) {
+		MemberProfileResponse memberProfile = memberService.getProfile(userId);
+		return ResponseEntity.ok(memberProfile);
+	}
+
+
+	@ApiOperation(value = "개인회원 프로필 수정", notes = "개인회원의 닉네임, 프로필이미지를 수정할 수 있다")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 400, message = "잘못된 요청정보"),
+			@ApiResponse(code = 401, message = "사용자 인증실패"),
+			@ApiResponse(code = 500, message = "서버 에러")
+	})
+	@PutMapping("/profile")
+	public void modifyProfile(@Validated @ModelAttribute UpdateProfileRequest updateProfileRequest, BindingResult bindingResult){
+		validateBinding(bindingResult);
+		memberService.updateProfile(updateProfileRequest);
+	}
 
 	@ApiOperation(value = "회원정보 조회", notes = "회원의 개인정보( 이메일, 이름, 전화번호 )를 조회합니다.")
 	@ApiResponses({
@@ -72,66 +94,28 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/{userId}/account")
-	public ResponseEntity<MemberAccountResponse> getInfo(@PathVariable Long userId, @RequestHeader String authorization){
-//		if(jwtProvider.verifyById(userId, authorization)) {
-//			MemberAccountResponse response = memberService.getAccount(userId);
-//			return ResponseEntity.ok(response);
-//		}
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+	public ResponseEntity<MemberAccountResponse> getInfo(@PathVariable Long userId){
+		MemberAccountResponse account = memberService.getAccount(userId);
+		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(account);
 	}
 
 
-	/**
-	 * TODO 파일업로드 필요
-	 */
 	@ApiOperation(value = "회원정보 수정", notes = "회원의 비밀번호를 수정합니다.")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
 		@ApiResponse(code = 400, message = "잘못된 요청정보"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@PostMapping("/account")
-	public void modifyAccount(@Validated @RequestBody UpdateAccountRequest updateAccountRequest, BindingResult bindingResult) {
+	@PutMapping("/account")
+	public void modifyAccount(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult) {
 		validateBinding(bindingResult);
-		memberService.updateAccount(updateAccountRequest);
+		memberService.updateAccount(baseUserRequest);
 	}
-
-
-	@ApiOperation(value = "개인회원 프로필 조회", notes = "ID를 이용하여 프로필을 조회할 수 있다")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "성공"),
-		@ApiResponse(code = 400, message = "잘못된 요청정보"),
-		@ApiResponse(code = 401, message = "사용자 인증실패"),
-		@ApiResponse(code = 500, message = "서버 에러")
-	})
-	@GetMapping("/{userId}/profile")
-	public ResponseEntity<MemberProfileResponse> getMemberProfile(@PathVariable Long userId) {
-		MemberProfileResponse memberProfile = memberService.getProfile(userId);
-		return ResponseEntity.ok(memberProfile);
-	}
-
 
 	/**
-	 * TODO 파일업로드 완료 / 수정확인 필요
+	 * TODO 미구현, 마일리지를 프로필 조회때 같이 가져오는게 아니었나?
 	 */
-	@ApiOperation(value = "개인회원 프로필 수정", notes = "개인회원의 닉네임, 프로필이미지를 수정할 수 있다")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "성공"),
-		@ApiResponse(code = 400, message = "잘못된 요청정보"),
-		@ApiResponse(code = 401, message = "사용자 인증실패"),
-		@ApiResponse(code = 500, message = "서버 에러")
-	})
-	@PostMapping("/profile")
-	public void modifyProfile(@Validated @ModelAttribute UpdateProfileRequest updateProfileRequest, BindingResult bindingResult){
-		validateBinding(bindingResult);
-		memberService.updateProfile(updateProfileRequest);
-	}
-
-
-	/**
-	 * TODO 미구현
-	 */
-	@ApiOperation(value = "마일리지 조회", notes = "현재 회원의 마알리지 정보를 조회할 수 있다")
+	@ApiOperation(value = "마일리지 조회", notes = "주어진 회원의 마알리지 정보를 조회할 수 있다")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
 		@ApiResponse(code = 400, message = "잘못된 요청정보"),
@@ -146,7 +130,7 @@ public class MemberController {
 
 
 	/**
-	 * TODO 미구현
+	 * TODO 어느정도 구현
 	 */
 	@ApiOperation(value = "마일리지 충전", notes = "현재 회원의 마알리지를 충전할 수 있다")
 	@ApiResponses({
@@ -155,9 +139,10 @@ public class MemberController {
 		@ApiResponse(code = 401, message = "사용자 인증실패"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@GetMapping("/charge")
-	public ResponseEntity getMileage(@Validated @RequestBody ChargeRequest chargeRequest, BindingResult bindingResult){
+	@PostMapping("/charge")
+	public ResponseEntity chargeMileage(@Validated @RequestBody ChargeRequest chargeRequest, BindingResult bindingResult){
 		validateBinding(bindingResult);
+		memberService.chargeMileage(chargeRequest);
 		return ResponseEntity.ok().build();
 	}
 
@@ -170,8 +155,9 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/follow")
-	public ResponseEntity followTeam(@RequestBody Long teamId, @RequestBody Long memberId){
-		memberService.followTeam(teamId, memberId);
+	public ResponseEntity followTeam(@Validated @RequestBody FollowRequest followRequest, BindingResult bindingResult){
+		validateBinding(bindingResult);
+		memberService.followTeam(followRequest);
 		return ResponseEntity.ok().build();
 	}
 
@@ -183,48 +169,12 @@ public class MemberController {
 		@ApiResponse(code = 401, message = "사용자 인증실패"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@PutMapping("/like/{fundingId}")
-	public ResponseEntity wishFunding(@PathVariable("fundingId") Long fundingId, @RequestBody Long memberId){
-		memberService.wishFunding(fundingId, memberId);
+	@PutMapping("/like")
+	public ResponseEntity wishFunding(@Validated @RequestBody WishRequest wishRequest, BindingResult bindingResult){
+		validateBinding(bindingResult);
+		memberService.wishFunding(wishRequest);
 		return ResponseEntity.ok().build();
 	}
-
-
-	/**
-	 * TODO 전화번호 인증 필요
-	 */
-	@ApiOperation(value = "이메일 찾기", notes = "전화번호 인증을 통해서 회원 이메일을 돌려받을 수 있다")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "성공"),
-		@ApiResponse(code = 400, message = "잘못된 요청정보"),
-		@ApiResponse(code = 401, message = "사용자 인증실패"),
-		@ApiResponse(code = 500, message = "서버 에러")
-	})
-	@GetMapping("/forget/email") // 대기
-	public ResponseEntity<Map<String, String>> forgetEmail(){
-		HashMap<String, String> map = new HashMap<>();
-		map.put("email", "kim@ssafy.com");
-		return ResponseEntity.ok(map);
-	}
-
-
-	/**
-	 * TODO 이메일 인증 필요
-	 */
-	@ApiOperation(value = "비밀번호 찾기", notes = "이메일 인증을 통해서 임시 비밀번호를 받을 수 있다")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "성공"),
-		@ApiResponse(code = 400, message = "잘못된 요청정보"),
-		@ApiResponse(code = 401, message = "사용자 인증실패"),
-		@ApiResponse(code = 500, message = "서버 에러"),
-	})
-	@GetMapping("/forget/pw") // 대기
-	public ResponseEntity<Map<String, String>> forgetPassword(){
-		HashMap<String, String> map = new HashMap<>();
-		map.put("tmpPassword", "Q123qwe23@@!");
-		return ResponseEntity.ok(map);
-	}
-
 
 	@ApiIgnore
 	public void validateBinding(BindingResult bindingResult){

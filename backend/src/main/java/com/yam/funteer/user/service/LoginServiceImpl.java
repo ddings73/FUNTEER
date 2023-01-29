@@ -1,5 +1,7 @@
 package com.yam.funteer.user.service;
 
+import com.yam.funteer.common.code.UserType;
+import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.user.dto.request.TokenRequest;
 import com.yam.funteer.user.dto.response.TokenInfo;
@@ -11,6 +13,7 @@ import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.TokenRepository;
 import com.yam.funteer.user.repository.UserRepository;
 
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
@@ -51,22 +54,33 @@ public class LoginServiceImpl implements LoginService{
         tokenRepository.save(token);
 
         User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(UserNotFoundException::new);
+        if(user.isResign()){
+            throw new IllegalArgumentException("탈퇴한 회원입니다");
+        }else if(user.getUserType().equals(UserType.TEAM_WAIT)){
+            throw new IllegalArgumentException("가입 대기중인 회원입니다");
+        }
 
         return LoginResponse.of(user, tokenInfo);
     }
 
     @Override
+    public void processLogOut() {
+        Long userId = SecurityUtil.getCurrentUserId().orElseThrow();
+        tokenRepository.deleteById(userId);
+    }
+
+    @Override
     public TokenInfo regenerateToken(TokenRequest tokenRequest) {
         if(!jwtProvider.validateToken(tokenRequest.getRefreshToken())){
-            throw new RuntimeException("Refresh Token이 유효하지 않습니다.");
+            throw new JwtException("Refresh Token이 유효하지 않습니다.");
         }
 
         Authentication authentication = jwtProvider.getAuthentication(tokenRequest.getAccessToken());
         Token token = tokenRepository.findById(Long.valueOf(authentication.getName()))
-                .orElseThrow(()->new RuntimeException("로그아웃 된 사용자입니다."));
+                .orElseThrow(()->new JwtException("로그아웃 된 사용자입니다."));
 
         if (!token.getRefreshToken().equals(tokenRequest.getRefreshToken())) {
-            throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+            throw new JwtException("토큰의 유저 정보가 일치하지 않습니다.");
         }
 
         TokenInfo tokenInfo = jwtProvider.generateToken(authentication);

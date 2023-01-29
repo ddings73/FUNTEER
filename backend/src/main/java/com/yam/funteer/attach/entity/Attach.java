@@ -13,6 +13,7 @@ import javax.persistence.Table;
 
 import com.yam.funteer.attach.FileType;
 
+import com.yam.funteer.user.dto.request.UpdateProfileRequest;
 import io.swagger.annotations.ApiOperation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -40,4 +41,9 @@ public class Attach {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private FileType fileType;
+
+	public void update(UpdateProfileRequest request, String filename) {
+		this.name = request.getProfileImg().getOriginalFilename();
+		this.path = filename;
+	}
 }
