@@ -92,6 +92,7 @@ public class MemberServiceImpl implements MemberService {
                 attach.update(request, filename);
             }, () ->{
                 Attach saveImg = request.getAttach(filename);
+                attachRepository.save(saveImg);
                 member.update(request, saveImg);
             });
         } catch (Exception e){
@@ -112,7 +113,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void updateAccount(UpdateAccountRequest request) {
         Long userId = request.getUserId();
-
+        validateSameUser(userId);
+        
         Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         String originPassword = request.getPassword().orElseThrow(()->{
             throw new IllegalArgumentException("패스워드는 필수 입력 값입니다.");
