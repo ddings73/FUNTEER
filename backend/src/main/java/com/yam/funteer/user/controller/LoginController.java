@@ -30,8 +30,8 @@ public class LoginController {
 
     @ApiOperation(value = "로그인", notes = "<strong>이메일, 패스워드</strong>는 필수입력 값입니다.")
     @ApiResponses({
-        @ApiResponse(code = HttpServletResponse.SC_OK, message = "성공"),
-        @ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "잘못된 요청 값, 아이디 혹은 비밀번호가 다르거나 데이터가 다 오지않음"),
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 400, message = "잘못된 요청 값, 아이디 혹은 비밀번호가 다르거나 데이터가 다 오지않음"),
         @ApiResponse(code = 500, message = "서버 에러")
     })
     @PostMapping("/login")
@@ -57,6 +57,12 @@ public class LoginController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "엑세스토큰 재발급 요청")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청 값, 아이디 혹은 비밀번호가 다르거나 데이터가 다 오지않음"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
     @PostMapping("/refresh")
     public ResponseEntity<TokenInfo> regenToken(@RequestBody TokenRequest tokenRequest){
         TokenInfo TokenInfo = loginService.regenerateToken(tokenRequest);
