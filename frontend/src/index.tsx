@@ -38,7 +38,11 @@ import {
   LogOut,
   AdminTeam,
   FundingList,
+<<<<<<< frontend/src/index.tsx
+  CreateFunding,
+=======
   AdminTeamDeny,
+>>>>>>> frontend/src/index.tsx
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -136,9 +140,13 @@ const router = createBrowserRouter([
         element: <MyFollows />,
       },
       {
-        path: '/funding',
-        element: <FundingList />,
-      },
+        path:"/funding",
+        element:<FundingList/>
+      },{
+        path:"/funding/create",
+        element:<CreateFunding/>
+      }
+
     ],
   },
   {
