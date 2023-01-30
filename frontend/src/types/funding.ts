@@ -3,17 +3,18 @@ export type FundingElementType = {
 };
 
 export interface FundingInterface {
-  thumbnail: string;
+  thumbnail: Blob;
   title: string;
   fundingDescription: string;
-  category?: string;
-  content: string;
+  categoryId: number;
+  content: string | undefined;
   startDate: string;
+  hashtags:string
   endDate: string;
-  amount1: string;
+  amount1: number;
   description1: string;
-  amount2: string;
+  amount2: number;
   description2: string;
-  amount3: string;
+  amount3: number;
   description3: string;
 }
