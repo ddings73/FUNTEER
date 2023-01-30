@@ -7,9 +7,9 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.qna.entity.Qna;
+import com.yam.funteer.user.entity.User;
 
 public interface QnaRepository extends JpaRepository<Qna,Long> {
-	@Query("select q from Qna q where q.user.userType=?1")
-	List<Qna>findAllByUserType(UserType userType);
+	List<Qna>findAllByUser(User user);
 
 }

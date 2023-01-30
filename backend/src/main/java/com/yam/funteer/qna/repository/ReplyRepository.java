@@ -7,4 +7,5 @@ import com.yam.funteer.qna.entity.Reply;
 
 public interface ReplyRepository extends JpaRepository<Reply,Long> {
 	Reply findByQna(Qna qna);
+	Integer countAllByQna(Qna qna);
 }

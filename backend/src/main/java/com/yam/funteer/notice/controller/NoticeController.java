@@ -37,12 +37,10 @@ public class NoticeController {
 
 	@ApiOperation(value = "notice 등록")
 	@PostMapping("")
-	public ResponseEntity<?>NoticeRegister( NoticeRegistReq noticeRegistReq) throws IOException {
+	public ResponseEntity<?>NoticeRegister( NoticeRegistReq noticeRegistReq){
 		return ResponseEntity.ok(noticeService.noticeRegister(noticeRegistReq));
 	}
 
-	//@RequestPart(value = "donationRegisterReq") DonationRegisterReq donationRegisterReq,
-	// 		@RequestPart (value = "files",required = false)List<MultipartFile>files
 
 	@ApiOperation(value="notice 상세")
 	@GetMapping("/{postId}")
@@ -52,8 +50,7 @@ public class NoticeController {
 
 	@ApiOperation(value = "notice 수정")
 	@PutMapping("/{postId}")
-	public ResponseEntity<?>NoticeModify(@PathVariable Long postId, NoticeRegistReq noticeRegistReq) throws
-		IOException {
+	public ResponseEntity<?>NoticeModify(@PathVariable Long postId, NoticeRegistReq noticeRegistReq) {
 		return ResponseEntity.ok(noticeService.noticeModify(postId,noticeRegistReq));
 	}
 

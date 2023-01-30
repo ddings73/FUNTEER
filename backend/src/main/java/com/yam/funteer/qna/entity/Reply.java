@@ -31,7 +31,7 @@ public class Reply {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne(cascade=CascadeType.DETACH)
 	@JoinColumn(name = "qna_id")
 	private Qna qna;
 	private @NotBlank String content;
