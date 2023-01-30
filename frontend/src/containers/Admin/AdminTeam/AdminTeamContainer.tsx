@@ -45,8 +45,12 @@ function AdminTeamContainer() {
   /** dn이 변하면 해당 팀에게 사유를 안내하기 위한 페이지로 이동 */
   useEffect(() => {
     if (dn) {
-      const deniedTeamUrl = 'deny/'.concat(dn);
-      navigate(deniedTeamUrl);
+      // const deniedTeamUrl = `deny/${dn}`;
+      navigate(`deny/${dn}`, {
+        state: {
+          dn,
+        },
+      });
     }
   }, [dn]);
 
