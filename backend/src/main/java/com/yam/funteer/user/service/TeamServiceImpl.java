@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.entity.TeamAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
@@ -14,6 +15,7 @@ import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
+import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -123,6 +125,30 @@ public class TeamServiceImpl implements TeamService{
 		team.update(profile, banner, description);
 	}
 
+	@Override
+	public TeamAccountResponse getTeamAccount(Long userId) {
+		Team team = validateSameUser(SecurityUtil.getCurrentUserId(), userId);
+
+		if(team.isResignOrWait()){
+			throw new IllegalArgumentException("탈퇴하였거나 가입 대기중인 회원입니다.");
+		}
+
+		List<TeamAttach> teamAttaches = teamAttachRepository.findAllByTeamId(team.getId());
+		TeamAccountResponse response = TeamAccountResponse.of(team);
+
+		teamAttaches.forEach(teamAttach -> {
+			Attach attach = teamAttach.getAttach();
+			FileType fileType = attach.getFileType();
+			if(fileType.equals(FileType.VMS)){
+				response.setVmsFileUrl(attach.getPath());
+			}else if(fileType.equals(FileType.PERFORM)){
+				response.setPerformFileUrl(attach.getPath());
+			}
+		});
+
+		return response;
+	}
+
 	private void updateBannerOrProfile(String filename, String path, Attach attach){
 		if(attach.getId() == null){
 			attachRepository.save(attach);
@@ -132,8 +158,7 @@ public class TeamServiceImpl implements TeamService{
 	}
 
 	private Team validateSameUser(Long i1, Long i2){
-		if(i1 != i2)
-			throw new IllegalArgumentException("동일 회원만 접근할 수 있습니다");
+		if(i1 != i2) throw new IllegalArgumentException("동일 회원만 접근할 수 있습니다");
 
 		return teamRepository.findById(i1).orElseThrow(UserNotFoundException::new);
 	}

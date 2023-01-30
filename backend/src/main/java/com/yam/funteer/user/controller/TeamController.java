@@ -6,6 +6,7 @@ import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.user.dto.request.BaseUserRequest;
 import com.yam.funteer.user.dto.request.team.CreateTeamRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
+import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
 import com.yam.funteer.user.dto.response.team.TeamProfileResponse;
 import com.yam.funteer.user.service.TeamService;
 
@@ -84,6 +85,19 @@ public class TeamController {
     public void modifyProfile(@Validated @ModelAttribute UpdateTeamProfileRequest request, BindingResult bindingResult){
         validateBinding(bindingResult);
         teamService.updateProfile(request);
+    }
+
+    @ApiOperation(value = "단체회원 개인정보 조회", notes = "ID를 이용하여 개인정보 조회할 수 있다")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청정보"),
+            @ApiResponse(code = 401, message = "사용자 인증실패"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
+    @GetMapping("/{userId}/account")
+    public ResponseEntity<TeamAccountResponse> getAccountInfo(@PathVariable Long userId){
+        TeamAccountResponse teamAccount = teamService.getTeamAccount(userId);
+        return ResponseEntity.ok(teamAccount);
     }
 
 
