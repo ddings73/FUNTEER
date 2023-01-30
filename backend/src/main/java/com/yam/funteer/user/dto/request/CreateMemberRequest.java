@@ -1,5 +1,6 @@
 package com.yam.funteer.user.dto.request;
 
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.Member;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -22,7 +23,7 @@ public class CreateMemberRequest extends CreateAccountRequest{
                 .name(name)
                 .phone(phone)
                 .nickname(nickname)
-                .userType(userType)
+                .userType(UserType.NORMAL)
                 .money(0L)
                 .display(true)
                 .regDate(LocalDateTime.now())

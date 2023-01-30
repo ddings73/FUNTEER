@@ -35,7 +35,7 @@ public class CreateTeamRequest extends CreateAccountRequest{
                 .password(password)
                 .name(name)
                 .phone(phone)
-                .userType(userType)
+                .userType(UserType.TEAM_WAIT)
                 .money(0L)
                 .regDate(LocalDateTime.now())
                 .discription(description)
