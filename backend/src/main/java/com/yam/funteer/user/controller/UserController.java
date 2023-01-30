@@ -1,7 +1,7 @@
 package com.yam.funteer.user.controller;
 
 import com.yam.funteer.user.dto.request.EmailConfirmRequest;
-import com.yam.funteer.user.service.EmailService;
+import com.yam.funteer.mail.service.EmailService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -17,7 +17,6 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Api(tags = {"회원 공통"})
 public class UserController {
-    private final EmailService emailService;
 
     /**
      * TODO 전화번호 인증 필요
@@ -51,18 +50,5 @@ public class UserController {
     public ResponseEntity forgetPassword(@RequestBody EmailConfirmRequest emailConfirmRequest){
 
         return ResponseEntity.ok().build();
-    }
-
-    @ApiOperation(value = "이메일 보내기", notes = "입력받은 메일로 인증코드를 보낸다")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "성공"),
-            @ApiResponse(code = 500, message = "서버 에러")
-    })
-    @PostMapping("/mail/send")
-    public ResponseEntity<Map<String, String>> emailSend(@RequestParam String email) throws Exception {
-        String confirmCode = emailService.sendSimpleMessage(email);
-        Map<String, String> map = new HashMap<>();
-        map.put("confirmCode", confirmCode);
-        return ResponseEntity.ok(map);
     }
 }

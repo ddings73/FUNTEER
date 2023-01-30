@@ -1,4 +1,4 @@
-package com.yam.funteer.user.service;
+package com.yam.funteer.mail.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.MailException;

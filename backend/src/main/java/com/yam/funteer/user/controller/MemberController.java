@@ -26,8 +26,6 @@ import java.util.Map;
 @RequiredArgsConstructor @Slf4j
 @Api(tags ={"일반회원"})
 public class MemberController {
-
-	private final JwtProvider jwtProvider;
 	private final MemberService memberService;
 
 	@ApiOperation(value = "회원 가입", notes = "<strong>이메일, 패스워드, 이름, 닉네임, 전화번호</strong>은 필수입력 값이다.")

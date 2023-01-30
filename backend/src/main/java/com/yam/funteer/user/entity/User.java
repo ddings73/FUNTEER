@@ -56,10 +56,11 @@ public class User {
 	@Column(nullable = false)
 	private UserType userType;
 
+
+
 	public Optional<Attach> getProfileImg(){
 		return Optional.ofNullable(this.profileImg);
 	}
-
 	protected void updateProfile(Attach profileImg){
 		this.profileImg = profileImg;
 	}
