@@ -65,7 +65,7 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     public void processLogOut() {
-        Long userId = SecurityUtil.getCurrentUserId().orElseThrow();
+        Long userId = SecurityUtil.getCurrentUserId();
         tokenRepository.deleteById(userId);
     }
 

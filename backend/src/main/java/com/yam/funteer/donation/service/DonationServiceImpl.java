@@ -83,7 +83,7 @@ public class DonationServiceImpl implements DonationService{
 
 	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq)throws DonationNotFoundException {
 		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException("찾으시는 게시물이 존재하지 않습니다."));
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Payment payment=Payment.builder()
 			.user(user)
 			.amount(donationJoinReq.getPaymentAmount())
@@ -97,7 +97,7 @@ public class DonationServiceImpl implements DonationService{
 	}
 
 	public DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq,List<MultipartFile>files) throws IOException {
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Donation donation=donationRepository.save(donationRegisterReq.toEntity());
@@ -119,7 +119,7 @@ public class DonationServiceImpl implements DonationService{
 
 
 	public void donationDelete(Long postId) throws DonationNotFoundException{
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Donation donation = donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
 			donationRepository.delete(donation);
@@ -131,7 +131,7 @@ public class DonationServiceImpl implements DonationService{
 		DonationNotFoundException, IOException {
 		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException("찾으시는 게시물이 없습니다."));
 
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Donation donation=donationRepository.save(donationModifyReq.toEntity(postId));
 

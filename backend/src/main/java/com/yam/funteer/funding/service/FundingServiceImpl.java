@@ -329,7 +329,7 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public void createFundingComment(Long fundingId, FundingCommentRequest data) {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
-		Optional<Long> userId = SecurityUtil.getCurrentUserId();
+		Long userId = SecurityUtil.getCurrentUserId();
 		Member member = memberRepository.findById(userId).orElseThrow();
 
 		Comment comment = new Comment(funding, member, data.getContent());
@@ -347,7 +347,7 @@ public class FundingServiceImpl implements FundingService{
 
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new IllegalArgumentException());
 
-		Optional<Long> memberId = SecurityUtil.getCurrentUserId();
+		Long memberId = SecurityUtil.getCurrentUserId();
 		Member member = memberRepository.findById(memberId).orElseThrow();
 
 		try {

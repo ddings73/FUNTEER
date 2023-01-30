@@ -59,7 +59,7 @@ public class NoticeServiceImpl implements NoticeService{
 
 	@Override
 	public NoticeBaseRes noticeRegister(NoticeRegistReq noticeRegistReq) throws IOException {
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		List<MultipartFile>files=noticeRegistReq.getFiles();
 		if(user.getUserType().equals(UserType.ADMIN)){
 			List<String>paths=new ArrayList<>();
@@ -82,7 +82,7 @@ public class NoticeServiceImpl implements NoticeService{
 	@Override
 	public NoticeBaseRes noticeModify(Long postId, NoticeRegistReq noticeRegistReq) throws IOException {
 		Post postOrigin=postRepository.findById(postId).orElseThrow();
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(postOrigin);
 			for(PostAttach postAttach:postAttachList){
@@ -111,7 +111,7 @@ public class NoticeServiceImpl implements NoticeService{
 
 	@Override
 	public void noticeDelete(Long postId) {
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException());
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(post);

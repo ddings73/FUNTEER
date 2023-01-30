@@ -1,7 +1,7 @@
 package com.yam.funteer.exception.handler;
 
 import com.yam.funteer.common.BaseResponseBody;
-import com.yam.funteer.exception.EmailDuplicateException;
+import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import io.jsonwebtoken.JwtException;
 import org.springframework.http.HttpStatus;
@@ -16,11 +16,11 @@ import lombok.extern.slf4j.Slf4j;
 @RestControllerAdvice("com.yam.funteer.user")
 public class UserExceptionHandler {
 
-    @ExceptionHandler(EmailDuplicateException.class)
-    public ResponseEntity<BaseResponseBody> handleEmailDuplicateException(EmailDuplicateException ex){
-        log.info("EmailDuplicateException => {}", ex.getMessage());
+    @ExceptionHandler(DuplicateInfoException.class)
+    public ResponseEntity<BaseResponseBody> handleDuplicateInfoException(DuplicateInfoException ex){
+        log.info("DuplicateInfoException => {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT)
-            .body(BaseResponseBody.of("중복 이메일입니다."));
+            .body(BaseResponseBody.of(ex.getMessage()));
     }
 
     @ExceptionHandler(UserNotFoundException.class)

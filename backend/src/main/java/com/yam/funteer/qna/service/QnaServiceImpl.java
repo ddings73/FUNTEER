@@ -55,7 +55,7 @@ public class QnaServiceImpl implements QnaService {
 
 	@Override
 	public void qnaRegister(QnaRegisterReq qnaRegisterReq,List<MultipartFile>files) throws IOException {
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Qna qna=qnaRepository.save(qnaRegisterReq.toEntity(user));
 		for(MultipartFile file:files){
 			String fileUrl = awsS3Uploader.upload(file,"/qna");
@@ -73,7 +73,7 @@ public class QnaServiceImpl implements QnaService {
 	@Override
 	public QnaBaseRes qnaGetDetail(Long qnaId) throws QnaNotFoundException {
 		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if (qna.getUser().getId()==user.getId()) {
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
 			List<String>attachList=new ArrayList<>();
@@ -92,7 +92,7 @@ public class QnaServiceImpl implements QnaService {
 		QnaNotFoundException,
 		IOException {
 		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getId()==qna.getUser().getId()) {
 			qnaRepository.save(qnaRegisterReq.toEntity(user,qnaId));
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
@@ -118,7 +118,7 @@ public class QnaServiceImpl implements QnaService {
 	@Override
 	public void qnaDelete(Long postId) throws QnaNotFoundException{
 		Qna qna = qnaRepository.findById(postId).orElseThrow(() -> new QnaNotFoundException());
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(qna.getUser().getId()==user.getId()) {
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
 			for(PostAttach postAttach:postAttachList){

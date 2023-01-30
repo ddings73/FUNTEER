@@ -1,6 +1,5 @@
 package com.yam.funteer.user.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -12,8 +11,7 @@ import com.yam.funteer.attach.entity.TeamAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
-import com.yam.funteer.exception.EmailDuplicateException;
-import com.yam.funteer.user.dto.request.CreateAccountRequest;
+import com.yam.funteer.exception.DuplicateInfoException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,7 +45,7 @@ public class TeamServiceImpl implements TeamService{
 	public void createAccountWithOutProfile(CreateTeamRequest request) {
 		Optional<Team> findTeam = teamRepository.findByEmail(request.getEmail());
 		findTeam.ifPresent(team -> {
-			throw new EmailDuplicateException();
+			throw new DuplicateInfoException("이메일이 중복됩니다");
 		});
 
 		request.encryptPassword(passwordEncoder);

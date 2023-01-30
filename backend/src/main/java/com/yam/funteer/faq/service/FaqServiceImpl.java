@@ -46,7 +46,7 @@ public class FaqServiceImpl implements  FaqService{
 
 	@Override
 	public FaqBaseRes faqRegister(FaqRegisterReq faqRegisterReq) {
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
 		if(user.getUserType().equals(UserType.ADMIN)){
 			Post post=postRepository.save(faqRegisterReq.toEntity());
@@ -57,7 +57,7 @@ public class FaqServiceImpl implements  FaqService{
 
 	@Override
 	public FaqBaseRes faqModify(Long postId,FaqRegisterReq faqRegisterReq) {
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Post postOrigin=postRepository.findById(postId).orElseThrow();
 		if(user.getUserType().equals(UserType.ADMIN)){
 			Post post=postRepository.save(faqRegisterReq.toEntity(postOrigin.getId()));
@@ -68,7 +68,7 @@ public class FaqServiceImpl implements  FaqService{
 
 	@Override
 	public void faqDelete(Long postId) {
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Post post=postRepository.findById(postId).orElseThrow();
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			postRepository.deleteById(postId);

@@ -1,11 +1,10 @@
 package com.yam.funteer.user.service;
 
-import com.yam.funteer.attach.FileUtil;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.security.SecurityUtil;
-import com.yam.funteer.exception.EmailDuplicateException;
+import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
@@ -18,13 +17,13 @@ import com.yam.funteer.user.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Service @Slf4j
@@ -47,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
     public void createAccountWithOutProfile(CreateMemberRequest request) {
         Optional<Member> findMember = memberRepository.findByEmail(request.getEmail());
         findMember.ifPresent(member -> {
-            throw new EmailDuplicateException();
+            throw new DuplicateInfoException("이메일이 중복됩니다.");
         });
 
         request.encryptPassword(passwordEncoder);
@@ -57,7 +56,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void setAccountSignOut(BaseUserRequest request) {
-        Long userId = SecurityUtil.getCurrentUserId().orElseThrow();
+        Long userId = SecurityUtil.getCurrentUserId();
         String password = request.getPassword()
                 .orElseThrow(() -> new IllegalArgumentException("패스워드를 입력해주세요"));
 
@@ -175,7 +174,7 @@ public class MemberServiceImpl implements MemberService {
 
 
     private void validateSameUser(Long userId){
-        Long nowId = SecurityUtil.getCurrentUserId().orElseGet(null);
+        Long nowId = SecurityUtil.getCurrentUserId();
         if(nowId == null || userId != nowId){
             throw new IllegalArgumentException("동일 회원만 접근할 수 있습니다");
         }

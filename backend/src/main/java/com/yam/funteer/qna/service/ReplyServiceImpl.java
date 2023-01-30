@@ -31,7 +31,7 @@ public class ReplyServiceImpl implements ReplyService{
 	@Override
 	public ReplyBaseRes replyGetDetail(Long replyId) {
 		Reply reply=replyRepository.findById(replyId).orElseThrow(()->new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
 		Long qnaUserId=reply.getQna().getUser().getId();
 		if(qnaUserId==user.getId()||user.getUserType().equals(UserType.ADMIN)){
@@ -42,7 +42,7 @@ public class ReplyServiceImpl implements ReplyService{
 	@Override
 	public void replyRegister(Long qnaId, QnaReplyReq qnaReplyReq) throws QnaNotFoundException {
 		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			replyRepository.save(qnaReplyReq.toEntity(qna));
 		}else throw new  IllegalArgumentException("접근 권한이 없습니다.");
@@ -51,7 +51,7 @@ public class ReplyServiceImpl implements ReplyService{
 	@Override
 	public void replyModify(Long replyId,QnaReplyReq qnaReplyReq) throws QnaNotFoundException {
 		Reply reply=replyRepository.findById(replyId).orElseThrow(()->new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Qna qna=qnaRepository.findById(reply.getQna().getId()).orElseThrow(()->new QnaNotFoundException());
 
 		if(user.getUserType().equals(UserType.ADMIN)) {
@@ -62,7 +62,7 @@ public class ReplyServiceImpl implements ReplyService{
 	@Override
 	public void replyDelete(Long replyId) {
 		Reply reply=replyRepository.findById(replyId).orElseThrow(()->new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			replyRepository.delete(reply);
