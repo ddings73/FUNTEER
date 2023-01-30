@@ -41,6 +41,7 @@ import {
   CreateFunding,
   AdminTeamDeny,
   AdminFunding,
+  CustomerCenter,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -150,6 +151,10 @@ const router = createBrowserRouter([
       {
         path: '/funding/detail',
         element: <FundingDetail />,
+      },
+      {
+        path: '/cc',
+        element: <CustomerCenter />,
       },
       {
         path: '/test',
