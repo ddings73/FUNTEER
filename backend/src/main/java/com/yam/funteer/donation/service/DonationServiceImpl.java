@@ -74,7 +74,7 @@ public class DonationServiceImpl implements DonationService{
 
 			if(postAttachList.size()>0) {
 				for (PostAttach postAttach : postAttachList) {
-					attachList.add(attachRepository.findById(postAttach.getAttach().getId()).orElseThrow().getPath());
+					attachList.add(postAttach.getAttach().getPath());
 				}
 			}
 		}
@@ -137,7 +137,7 @@ public class DonationServiceImpl implements DonationService{
 
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donation);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("/donation",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("/donation/",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
