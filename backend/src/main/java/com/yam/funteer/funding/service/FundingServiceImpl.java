@@ -11,7 +11,6 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.common.aws.AwsS3Uploader;
@@ -23,14 +22,19 @@ import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.dto.TakeFundingRequest;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.TargetMoney;
+import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
+import com.yam.funteer.funding.exception.InsufficientBalanceException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.repository.TargetMoneyRepository;
+import com.yam.funteer.pay.entity.Payment;
+import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.post.entity.Hashtag;
 import com.yam.funteer.post.entity.PostHashtag;
@@ -38,8 +42,11 @@ import com.yam.funteer.post.repository.CategoryRepository;
 import com.yam.funteer.post.repository.CommentRepository;
 import com.yam.funteer.post.repository.HashTagRepository;
 import com.yam.funteer.post.repository.PostHashtagRepository;
+import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.Member;
+import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.MemberRepository;
+import com.yam.funteer.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,6 +56,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
+	private final PaymentRepository paymentRepository;
 	private final MemberRepository memberRepository;
 	private final CategoryRepository categoryRepository;
 
@@ -62,9 +70,12 @@ public class FundingServiceImpl implements FundingService{
 	private final CommentRepository commentRepository;
 
 	@Override
-	public List<FundingListResponse> findApprovedFunding(String keyword, String category, String hashTag) {
-
-		return null;
+	public List<FundingListResponse> findInProgressFunding() {
+		List<Funding> fundingListInProgress = fundingRepository.findAllByPostType(PostType.FUNDING_IN_PROGRESS);
+		List<FundingListResponse> collect = fundingListInProgress.stream()
+			.map(funding -> FundingListResponse.from(funding))
+			.collect(Collectors.toList());
+		return collect;
 	}
 
 	@Override
@@ -96,6 +107,7 @@ public class FundingServiceImpl implements FundingService{
 			.endDate(endDate)
 			.regDate(LocalDateTime.now())
 			.hit(0)
+			.currentFundingAmount(0L)
 			.postGroup(PostGroup.FUNDING)
 			.postType(PostType.FUNDING_WAIT)
 			.build();
@@ -208,8 +220,6 @@ public class FundingServiceImpl implements FundingService{
 
 			addPostHashtags(funding, hashtags);
 
-
-
 			LocalDateTime startDate = LocalDateTime.parse(data.getStartDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
@@ -271,13 +281,56 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public void createFundingComment(FundingCommentRequest data) {
+	public void createFundingComment(Long fundingId, FundingCommentRequest data) {
 		Funding funding = fundingRepository.findById(data.getFundingId()).orElseThrow();
-		String userName = SecurityUtil.getCurrentUsername().orElseThrow();
-		Member member = memberRepository.findByEmail(userName).orElseThrow();
+		Optional<Long> userId = SecurityUtil.getCurrentUserId();
+		Member member = memberRepository.findById(userId).orElseThrow();
 
 		Comment comment = new Comment(funding, member, data.getContent());
 		commentRepository.save(comment);
+	}
+
+	@Override
+	public void deleteFundingComment(Long commentId) throws CommentNotFoundException{
+		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException());
+		commentRepository.delete(comment);
+	}
+
+	@Override
+	public void takeFunding(Long fundingId, TakeFundingRequest data) {
+
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new IllegalArgumentException());
+
+		Optional<Long> memberId = SecurityUtil.getCurrentUserId();
+		Member member = memberRepository.findById(memberId).orElseThrow();
+
+		try {
+
+			if (member.getMoney() < data.getAmount()) {
+				throw new InsufficientBalanceException("잔액 부족");
+			}
+
+			Payment payment = Payment.builder()
+				.amount(data.getAmount())
+				.post(funding)
+				.payDate(LocalDateTime.now())
+				.user(member)
+				.build();
+
+			paymentRepository.save(payment);
+
+			member.setMoney(member.getMoney() - data.getAmount());
+			funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + data.getAmount());
+
+		} catch ( InsufficientBalanceException e) {
+
+			String message = e.getMessage();
+			e.printStackTrace();
+
+		}
+
+
+
 	}
 
 }

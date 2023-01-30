@@ -39,6 +39,8 @@ public class Funding extends Post {
 	private LocalDateTime endDate;
 	private String rejectComment;
 
+	private Long currentFundingAmount;
+
 	public void setTargetMoneyList(List<TargetMoney> targetMoneyList) {
 		this.targetMoneyList = targetMoneyList;
 	}
@@ -75,4 +77,7 @@ public class Funding extends Post {
 		this.rejectComment = rejectComment;
 	}
 
+	public void setCurrentFundingAmount(Long amount) {
+		this.currentFundingAmount = amount;
+	}
 }

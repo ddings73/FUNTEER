@@ -73,4 +73,9 @@ public class User {
 		if(!passwordEncoder.matches(password, this.password))
 			throw new IllegalArgumentException();
 	}
+
+	public void setMoney(long amount) {
+		this.money = amount;
+	}
+
 }
