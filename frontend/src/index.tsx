@@ -41,6 +41,7 @@ import {
   CreateFunding,
   AdminTeamDeny,
   AdminFunding,
+  CustomerCenter,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 
@@ -150,6 +151,10 @@ const router = createBrowserRouter([
         path: '/funding/detail',
         element: <FundingDetail />,
       },
+      {
+        path: '/cc',
+        element: <CustomerCenter />,
+      },
     ],
   },
   {
@@ -176,21 +181,6 @@ const router = createBrowserRouter([
       {
         path: 'funding',
         element: <AdminFunding />,
-      },
-    ],
-  },
-  {
-    path: '/admin',
-    element: <AdminRoot />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: 'main',
-        element: <AdminMain />,
-      },
-      {
-        path: 'member',
-        element: <AdminMember />,
       },
     ],
   },
