@@ -1,14 +1,6 @@
 package com.yam.funteer.funding.dto;
 
-import java.time.LocalDateTime;
-import java.util.List;
-
 import javax.validation.constraints.NotNull;
-
-import org.springframework.web.multipart.MultipartFile;
-
-import com.yam.funteer.attach.entity.Attach;
-import com.yam.funteer.funding.entity.TargetMoney;
 import com.yam.funteer.user.entity.Team;
 
 import lombok.AllArgsConstructor;

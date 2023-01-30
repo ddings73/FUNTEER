@@ -45,10 +45,10 @@ public class FundingDetailResponse {
 			targetMoneyResponses.add(TargetMoneyResponse.from(tm));
 		}
 
-		List<CommentResponse> commentResponses = new ArrayList<>();
-		for (Comment cm : funding.getComments()) {
-			commentResponses.add(CommentResponse.from(cm));
-		}
+		// List<CommentResponse> commentResponses = new ArrayList<>();
+		// for (Comment cm : funding.getComments()) {
+		// 	commentResponses.add(CommentResponse.from(cm));
+		// }
 
 		return FundingDetailResponse.builder()
 			.fundingId(funding.getId())
@@ -61,7 +61,7 @@ public class FundingDetailResponse {
 			.targetMonies(targetMoneyResponses)
 			.postHashtagList(HashtagResponse.from(funding.getHashtags()))
 			.thumbnail(funding.getThumbnail())
-			.comments(commentResponses)
+			// .comments(commentResponses)
 			.build();
 	}
 
