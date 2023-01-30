@@ -85,10 +85,10 @@ public class MemberServiceImpl implements MemberService {
 
         MultipartFile profileImg = request.getProfileImg();
         try {
-            String filename = awsS3Uploader.upload(profileImg, "/user");
+            String filename = awsS3Uploader.upload(profileImg, "user");
             Optional<Attach> memberProfile = member.getProfileImg();
             memberProfile.ifPresentOrElse(attach -> {
-                awsS3Uploader.delete(attach.getPath(), "/user");
+                awsS3Uploader.delete(attach.getPath(), "user");
                 attach.update(request, filename);
             }, () ->{
                 Attach saveImg = request.getAttach(filename);

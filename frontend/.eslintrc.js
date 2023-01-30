@@ -15,5 +15,7 @@ module.exports = {
     'react/jsx-filename-extension': [2, { extensions: ['.js', '.jsx', '.ts', '.tsx'] }],
     'jsx-a11y/no-noninteractive-element-interactions': 0,
     'no-param-reassign': 0,
+    'react/jsx-props-no-spreading': [1, { custom: 'ignore' }], // props spreading을 허용하지 않는 규칙 해
   },
+  
 };

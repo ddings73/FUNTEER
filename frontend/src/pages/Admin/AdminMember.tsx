@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminMemberContainer from '../../containers/Admin/AdminMemberContainer';
+import AdminMemberContainer from '../../containers/Admin/AdminMember/AdminMemberContainer';
 
 function AdminMember() {
   return (

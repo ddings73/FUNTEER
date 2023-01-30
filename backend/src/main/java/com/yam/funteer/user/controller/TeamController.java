@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = {"단체 회원"})
 public class TeamController {
     private final TeamService teamService;
-    @ApiOperation(value = "회원 가입", notes = "<strong>이메일, 패스워드, 이름, 닉네임, 전화번호</strong>은 필수입력 값이다.")
+    @ApiOperation(value = "회원 가입", notes = "<strong>이메일, 패스워드, 이름, 닉네임, 전화번호, 인증파일</strong>은 필수입력 값이다.")
     @ApiResponses({
         @ApiResponse(code = 200, message = "성공"),
         @ApiResponse(code = 400, message = "잘못된 요청정보"),
@@ -42,7 +42,7 @@ public class TeamController {
     public ResponseEntity signUpMember(@Validated @RequestBody CreateTeamRequest createTeamRequest, BindingResult bindingResult){
         validateBinding(bindingResult);
 
-        log.info("회원가입 시작 =>");
+        log.info("단체 회원가입 시작 =>");
         teamService.createAccountWithOutProfile(createTeamRequest);
         return ResponseEntity.ok().build();
     }

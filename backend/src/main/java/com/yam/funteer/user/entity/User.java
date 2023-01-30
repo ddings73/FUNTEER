@@ -44,9 +44,9 @@ public class User {
 	@Email
 	@Column(unique = true)
 	private @NotNull String email;
-	private @NotNull String password;
+	private String password;
 	private @NotNull String name;
-	private @NotNull String phone;
+	private String phone;
 	@OneToOne
 	@JoinColumn(name = "profile_id")
 	private Attach profileImg;
@@ -55,8 +55,6 @@ public class User {
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
 	private UserType userType;
-
-
 
 	public Optional<Attach> getProfileImg(){
 		return Optional.ofNullable(this.profileImg);

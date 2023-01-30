@@ -1,16 +1,21 @@
 import React from 'react';
-import styles from './MyPageContainer.module.scss';
+import styles from './MyFundingContainer.module.scss';
 import SideBarList from '../../components/MyPageSideBar/SideBarList';
+import LongCard from '../../components/Cards/LongCard';
 
-export function MyPageContainer() {
+export function MyFundingContainer() {
   return (
     <div className={styles.bodyContainer}>
       <SideBarList />
       <div className={styles.contentContainer}>
-        <div className={styles.contentBox}>중앙</div>
+        <div className={styles.backBox}>
+          <div className={styles.contentBox}>
+            <LongCard />
+          </div>
+        </div>
       </div>
     </div>
   );
 }
 
-export default MyPageContainer;
+export default MyFundingContainer;
