@@ -21,9 +21,12 @@ import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.dto.TakeFundingRequest;
 import com.yam.funteer.funding.entity.Funding;
+import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
+import com.yam.funteer.post.repository.CommentRepository;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -39,10 +42,28 @@ public class FundingController {
 
 	@ApiOperation(value = "진행중인 펀딩 리스트 조회", notes = "진행중인 펀딩 리스트를 조회한다.")
 	@GetMapping("/")
-	public ResponseEntity<List<FundingListResponse>> findApprovedFunding(@RequestParam String keyword, @RequestParam
-		String category, @RequestParam String hashTag) {
-		return ResponseEntity.ok(fundingService.findApprovedFunding(keyword, hashTag, category));
+	public ResponseEntity<List<FundingListResponse>> findInProgressFunding() {
+		return ResponseEntity.ok(fundingService.findInProgressFunding());
 	}
+
+	// @ApiOperation(value = "종료된 펀딩 리스트 조회", notes = "종료된 펀딩 리스트를 조회한다.")
+	// @GetMapping("/")
+	// public ResponseEntity<List<FundingListResponse>> findCompleteFunding() {
+	// 	return ResponseEntity.ok(fundingService.findCompleteFunding());
+	// }
+	//
+	// @ApiOperation(value = "카테고리별 진행중인 펀딩 리스트 조회", notes = "카테고리별 진행중인 펀딩 리스트를 조회한다.")
+	// @GetMapping("/")
+	// public ResponseEntity<List<FundingListResponse>> findInProgressFundingByCategory() {
+	// 	return ResponseEntity.ok(fundingService.findInProgressFundingByCategory());
+	// }
+	//
+	// @ApiOperation(value = "검색 키워드로 진행중인 펀딩 리스트 조회", notes = "검색 키워드로 진행중인 펀딩 리스트를 조회한다.")
+	// @GetMapping("/")
+	// public ResponseEntity<List<FundingListResponse>> findInProgressFundingByKeyword() {
+	// 	return ResponseEntity.ok(fundingService.findInProgressFundingByKeyword());
+	// }
+	//
 
 	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
 	@GetMapping("/test")
@@ -98,14 +119,22 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 참여", notes = "회원이 펀딩에 참여한다.")
 	@PostMapping("/{fundingId}/pay")
-	public ResponseEntity<?> takeFunding(@PathVariable Long fundingId) {
+	public ResponseEntity<?> takeFunding(@PathVariable Long fundingId, TakeFundingRequest data) {
+		fundingService.takeFunding(fundingId, data);
 		return null;
 	}
 
 	@ApiOperation(value = "펀딩 응원 댓글", notes = "펀딩 게시글에 응원 댓글을 작성한다.")
-	@PostMapping("/{fundingId}/commnet")
+	@PostMapping("/{fundingId}/comment")
 	public ResponseEntity<?> createFundingComment(@PathVariable Long fundingId, @RequestBody FundingCommentRequest data) {
-		fundingService.createFundingComment(data);
+		fundingService.createFundingComment(fundingId, data);
 		return ResponseEntity.ok("CommentCreated Well !");
+	}
+
+	@ApiOperation(value = "펀딩 댓글 삭제", notes = "펀딩 게시글의 댓글을 삭제한다.")
+	@DeleteMapping("/comment/{commentId}")
+	public ResponseEntity<?> deleteFundingComment(@PathVariable Long commentId) throws CommentNotFoundException {
+		fundingService.deleteFundingComment(commentId);
+		return ResponseEntity.ok("삭제 완료");
 	}
 }
