@@ -73,8 +73,8 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
 	@PostMapping("/")
-	public  ResponseEntity<?> createFunding(FundingRequest data) throws IOException {
-		FundingDetailResponse funding = fundingService.createFunding(data);
+	public  ResponseEntity<?> createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException {
+		FundingDetailResponse funding = fundingService.createFunding(thumbnail, data);
 		return ResponseEntity.ok(funding);
 	}
 
@@ -86,9 +86,9 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다. (D12: 승인 거절 시 게시글 전체 수정 가능 / D14: 진행중일때 기간 1회 수정 가능 / D15: 진행중, 수정 불가능")
 	@PutMapping("/{fundingId}")
-	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId,
+	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, MultipartFile thumbnail,
 		FundingRequest data) throws Exception {
-		return ResponseEntity.ok(fundingService.updateFunding(fundingId, data));
+		return ResponseEntity.ok(fundingService.updateFunding(fundingId, thumbnail, data));
 	}
 
 	@ApiOperation(value = "펀딩 게시글 삭제", notes = "펀딩 게시글을 삭제한다.")

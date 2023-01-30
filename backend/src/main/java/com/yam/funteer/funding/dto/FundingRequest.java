@@ -26,9 +26,6 @@ public class FundingRequest {
 	private Long categoryId;
 
 	@NotNull
-	private Long teamId;
-
-	@NotNull
 	private String title;
 	@NotNull
 	private String content;
@@ -37,7 +34,11 @@ public class FundingRequest {
 	@NotNull
 	private String endDate;
 
-	private MultipartFile thumbnail;
+	@NotNull
+	private String fundingDescription;
+
+	// @NotNull
+	// private MultipartFile thumbnail;
 
 	@NotNull
 	private int amount1;

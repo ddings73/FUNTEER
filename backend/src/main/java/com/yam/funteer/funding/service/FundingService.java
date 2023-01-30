@@ -3,6 +3,7 @@ package com.yam.funteer.funding.service;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.web.multipart.MultipartFile;
 import org.yaml.snakeyaml.tokens.CommentToken;
 
 import com.yam.funteer.funding.dto.FundingCommentRequest;
@@ -19,11 +20,11 @@ import com.yam.funteer.funding.exception.FundingNotFoundException;
 public interface FundingService {
 	List<FundingListResponse> findInProgressFunding();
 
-	FundingDetailResponse createFunding(FundingRequest data) throws IOException;
+	FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException;
 
 	FundingDetailResponse findFundingById(Long id);
 
-	FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception;
+	FundingDetailResponse updateFunding(Long fundingId, MultipartFile thumbnail, FundingRequest data) throws Exception;
 
 	void deleteFunding(Long fundingId) throws FundingNotFoundException;
 

@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
@@ -44,8 +45,10 @@ import com.yam.funteer.post.repository.HashTagRepository;
 import com.yam.funteer.post.repository.PostHashtagRepository;
 import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.Member;
+import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.MemberRepository;
+import com.yam.funteer.user.repository.TeamRepository;
 import com.yam.funteer.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -56,6 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
+	private final TeamRepository teamRepository;
 	private final PaymentRepository paymentRepository;
 	private final MemberRepository memberRepository;
 	private final CategoryRepository categoryRepository;
@@ -86,10 +90,14 @@ public class FundingServiceImpl implements FundingService{
 
 
 	@Override
-	public FundingDetailResponse createFunding(FundingRequest data) throws IOException {
+	public FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException {
 
 		// category 들고오기
 		Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
+
+		// // Team
+		// Optional<Long> currentUserId = SecurityUtil.getCurrentUserId();
+		// Team team = teamRepository.findById(currentUserId).orElseThrow();
 
 		// time 변환
 		LocalDateTime startDate = LocalDateTime.parse(data.getStartDate(),
@@ -100,6 +108,7 @@ public class FundingServiceImpl implements FundingService{
 
 		// 펀딩 생성
 		Funding funding = Funding.builder()
+			// .team(team)
 			.title(data.getTitle())
 			.category(category)
 			.content(data.getContent())
@@ -110,12 +119,13 @@ public class FundingServiceImpl implements FundingService{
 			.currentFundingAmount(0L)
 			.postGroup(PostGroup.FUNDING)
 			.postType(PostType.FUNDING_WAIT)
+			.fundingDescription(data.getFundingDescription())
 			.build();
 
 		Funding savedPost = fundingRepository.save(funding);
 
 		// s3 변환
-		String thumbnailUrl = awsS3Uploader.upload(data.getThumbnail(), "/thumbnails/" + savedPost.getId());
+		String thumbnailUrl = awsS3Uploader.upload(thumbnail, "/thumbnails/" + savedPost.getId());
 
 		savedPost.setThumbnail(thumbnailUrl);
 
@@ -190,10 +200,8 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception {
+	public FundingDetailResponse updateFunding(Long fundingId, MultipartFile thumbnail, FundingRequest data) throws Exception {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
-
-
 
 		LocalDateTime endDate = LocalDateTime.parse(data.getEndDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -203,7 +211,7 @@ public class FundingServiceImpl implements FundingService{
 
 			// 기존 파일 삭제, 새로운 파일 추가
 			awsS3Uploader.delete("/thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
-			String thumbnailUrl = awsS3Uploader.upload(data.getThumbnail(), "/thumbnails/"+fundingId);
+			String thumbnailUrl = awsS3Uploader.upload(thumbnail, "/thumbnails/"+fundingId);
 
 			Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
