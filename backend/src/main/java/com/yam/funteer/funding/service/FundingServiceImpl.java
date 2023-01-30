@@ -32,6 +32,7 @@ import com.yam.funteer.funding.entity.TargetMoney;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.exception.InsufficientBalanceException;
+import com.yam.funteer.funding.exception.NotFoundHashtagException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
@@ -168,9 +169,19 @@ public class FundingServiceImpl implements FundingService{
 		savedPost.setThumbnail(thumbnailUrl);
 
 		addTargetMoney(data, funding);
-		List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
-		List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
-		addPostHashtags(funding, hashtags);
+
+		try {
+			if (data.getHashtags() == null) {
+				throw new NotFoundHashtagException();
+			}
+			List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
+			List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
+			addPostHashtags(funding, hashtags);
+
+		} catch (NotFoundHashtagException e) {
+			e.printStackTrace();
+		}
+
 
 		return FundingDetailResponse.from(savedPost);
 
@@ -351,7 +362,6 @@ public class FundingServiceImpl implements FundingService{
 		Member member = memberRepository.findById(memberId).orElseThrow();
 
 		try {
-
 			if (member.getMoney() < data.getAmount()) {
 				throw new InsufficientBalanceException("잔액 부족");
 			}
@@ -369,7 +379,6 @@ public class FundingServiceImpl implements FundingService{
 			funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + data.getAmount());
 
 		} catch ( InsufficientBalanceException e) {
-
 			String message = e.getMessage();
 			e.printStackTrace();
 

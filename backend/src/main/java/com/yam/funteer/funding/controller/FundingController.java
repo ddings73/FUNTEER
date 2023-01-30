@@ -77,7 +77,7 @@ public class FundingController {
 
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
-	@PostMapping("/")
+	@PostMapping("")
 	public  ResponseEntity<?> createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException {
 		FundingDetailResponse funding = fundingService.createFunding(thumbnail, data);
 		return ResponseEntity.ok(funding);
