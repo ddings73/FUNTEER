@@ -1,11 +1,10 @@
 package com.yam.funteer.user.service;
 
-import com.yam.funteer.attach.FileUtil;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.security.SecurityUtil;
-import com.yam.funteer.exception.EmailDuplicateException;
+import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
@@ -24,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 
-import java.io.IOException;
 import java.util.Optional;
 
 @Service @Slf4j
@@ -47,7 +45,7 @@ public class MemberServiceImpl implements MemberService {
     public void createAccountWithOutProfile(CreateMemberRequest request) {
         Optional<Member> findMember = memberRepository.findByEmail(request.getEmail());
         findMember.ifPresent(member -> {
-            throw new EmailDuplicateException();
+            throw new DuplicateInfoException("이메일이 중복됩니다.");
         });
 
         request.encryptPassword(passwordEncoder);

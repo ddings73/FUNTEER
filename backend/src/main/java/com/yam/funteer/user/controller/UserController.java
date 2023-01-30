@@ -1,7 +1,7 @@
 package com.yam.funteer.user.controller;
 
 import com.yam.funteer.user.dto.request.EmailConfirmRequest;
-import com.yam.funteer.mail.service.EmailService;
+import com.yam.funteer.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -17,6 +17,8 @@ import java.util.Map;
 @RequiredArgsConstructor
 @Api(tags = {"회원 공통"})
 public class UserController {
+
+    private final UserService userService;
 
     /**
      * TODO 전화번호 인증 필요
@@ -49,6 +51,43 @@ public class UserController {
     @PutMapping("/forget/pw") // 대기
     public ResponseEntity forgetPassword(@RequestBody EmailConfirmRequest emailConfirmRequest){
 
+        return ResponseEntity.ok().build();
+    }
+
+
+    @ApiOperation(value = "이메일 검증", notes = "이메일이 중복되는지 검사합니다")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 409, message = "이메일 중복 or 잘못된 요청정보"),
+            @ApiResponse(code = 500, message = "서버 에러"),
+    })
+    @GetMapping("/confirm/email")
+    public ResponseEntity confirmEmail(@RequestParam String email){
+        userService.confirmEmail(email);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "이름 검증", notes = "단체명이 중복되는지 검사합니다")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 409, message = "단체명 중복 or 잘못된 요청정보"),
+            @ApiResponse(code = 500, message = "서버 에러"),
+    })
+    @GetMapping("/confirm/name")
+    public ResponseEntity confirmName(@RequestParam String name){
+        userService.confirmName(name);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value = "닉네임 검증", notes = "개인회원의 닉네임이 중복되는지 검사합니다")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 409, message = "닉네임 중복 or 잘못된 요청정보"),
+            @ApiResponse(code = 500, message = "서버 에러"),
+    })
+    @GetMapping("/confirm/nickname")
+    public ResponseEntity confirmNickname(@RequestParam String nickname){
+        userService.confirmNickname(nickname);
         return ResponseEntity.ok().build();
     }
 }
