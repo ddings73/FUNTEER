@@ -7,6 +7,8 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import styles from './CustomerCenter.module.scss';
 import FAQContainer from '../../containers/CustomerCenter/FAQContainer';
+import NoticeContainer from '../../containers/CustomerCenter/NoticeContainer';
+import QuestionContainer from '../../containers/CustomerCenter/QuestionContainer';
 
 interface TabPanelProps {
   children: React.ReactNode;
@@ -74,10 +76,10 @@ export default function CustomerCenter() {
             <FAQContainer />
           </TabPanel>
           <TabPanel value={value} index={1} dir={theme.direction}>
-            공지사항
+            <NoticeContainer />
           </TabPanel>
           <TabPanel value={value} index={2} dir={theme.direction}>
-            1:1 문의
+            <QuestionContainer />
           </TabPanel>
         </Box>
       </div>
