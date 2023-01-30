@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import com.yam.funteer.exception.EmailDuplicateException;
 import com.yam.funteer.user.dto.request.CreateAccountRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.user.dto.request.BaseUserRequest;
+import com.yam.funteer.user.dto.request.CreateTeamRequest;
 import com.yam.funteer.user.dto.response.TeamProfileResponse;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.repository.FollowRepository;
@@ -32,9 +34,15 @@ public class TeamServiceImpl implements TeamService{
 	private final PasswordEncoder passwordEncoder;
 
 	@Override
-	public void createAccountWithOutProfile(CreateAccountRequest request) {
+	public void createAccountWithOutProfile(CreateTeamRequest request) {
 		Optional<Team> findTeam = teamRepository.findByEmail(request.getEmail());
+		findTeam.ifPresent(team -> {
+			throw new EmailDuplicateException();
+		});
 
+		request.encryptPassword(passwordEncoder);
+		Team team = request.toTeam();
+		teamRepository.save(team);
 	}
 
 	@Override
