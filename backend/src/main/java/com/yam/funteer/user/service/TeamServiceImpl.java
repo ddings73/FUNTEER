@@ -1,11 +1,17 @@
 package com.yam.funteer.user.service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.attach.entity.TeamAttach;
+import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.attach.repository.TeamAttachRepository;
+import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.exception.EmailDuplicateException;
 import com.yam.funteer.user.dto.request.CreateAccountRequest;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
@@ -32,6 +39,9 @@ public class TeamServiceImpl implements TeamService{
 	private final FollowRepository followRepository;
 	private final TeamRepository teamRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final AttachRepository attachRepository;
+	private final TeamAttachRepository teamAttachRepository;
+	private final AwsS3Uploader awsS3Uploader;
 
 	@Override
 	public void createAccountWithOutProfile(CreateTeamRequest request) {
@@ -41,8 +51,26 @@ public class TeamServiceImpl implements TeamService{
 		});
 
 		request.encryptPassword(passwordEncoder);
+
 		Team team = request.toTeam();
 		teamRepository.save(team);
+
+
+		request.validateFile();
+		MultipartFile vmsFile = request.getVmsFile();
+		MultipartFile performFile = request.getPerformFile();
+
+		// 저장
+		String vmsFilePath = awsS3Uploader.upload(vmsFile, "teamFile");
+		String performFilePath = awsS3Uploader.upload(performFile, "teamFile");
+
+		List<Attach> attachList = request.getAttachList(vmsFilePath, performFilePath);
+		for(Attach attach : attachList){
+			attachRepository.save(attach);
+			TeamAttach teamAttach = TeamAttach.of(team, attach);
+			teamAttachRepository.save(teamAttach);
+		}
+
 	}
 
 	@Override

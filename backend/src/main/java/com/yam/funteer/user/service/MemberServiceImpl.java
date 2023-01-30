@@ -1,5 +1,6 @@
 package com.yam.funteer.user.service;
 
+import com.yam.funteer.attach.FileUtil;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
@@ -22,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+
+import java.io.IOException;
 import java.util.Optional;
 
 @Service @Slf4j
@@ -83,22 +86,19 @@ public class MemberServiceImpl implements MemberService {
 
         Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
+        request.validateProfileType();
         MultipartFile profileImg = request.getProfileImg();
-        try {
-            String filename = awsS3Uploader.upload(profileImg, "user");
-            Optional<Attach> memberProfile = member.getProfileImg();
-            memberProfile.ifPresentOrElse(attach -> {
-                awsS3Uploader.delete(attach.getPath(), "user");
-                attach.update(request, filename);
-            }, () ->{
-                Attach saveImg = request.getAttach(filename);
-                attachRepository.save(saveImg);
-                member.update(request, saveImg);
-            });
-        } catch (Exception e){
-            log.error(e.getMessage());
-            e.printStackTrace();
-        }
+
+        String filePath = awsS3Uploader.upload(profileImg, "user");
+        Optional<Attach> memberProfile = member.getProfileImg();
+        memberProfile.ifPresentOrElse(attach -> {
+            awsS3Uploader.delete(attach.getPath(), "user");
+            attach.update(request, filePath);
+        }, () ->{
+            Attach saveImg = request.getAttach(filePath);
+            attachRepository.save(saveImg);
+            member.update(request, saveImg);
+        });
     }
 
     @Override

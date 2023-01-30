@@ -51,9 +51,9 @@ public class SecurityConfig{
                 .accessDeniedHandler(jwtAccessDeniedHandler)
             .and()
                 .authorizeRequests()
-                .mvcMatchers(HttpMethod.POST, "/member", "/team").permitAll()
-                .mvcMatchers(HttpMethod.GET, "/member/**/profile", "/team/**/profile").permitAll()
-                .antMatchers("/admin", "/member", "/team").authenticated()
+                .mvcMatchers(HttpMethod.POST, "/member", "/team").permitAll() // 회원가입
+                .mvcMatchers(HttpMethod.GET, "/member/**/profile", "/team/**/profile").permitAll() // 프로필 조회
+                .antMatchers("/admin/**/**", "/member/**/**", "/team/**/**").authenticated()
                 .anyRequest().permitAll()
             .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)

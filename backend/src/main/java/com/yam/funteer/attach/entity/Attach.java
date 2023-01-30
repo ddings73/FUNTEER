@@ -46,4 +46,13 @@ public class Attach {
 		this.name = request.getProfileImg().getOriginalFilename();
 		this.path = filename;
 	}
+
+	public static Attach of(String filename, String path, FileType fileType){
+		return Attach.builder()
+			.name(filename)
+			.fileType(fileType)
+			.path(path)
+			.regDate(LocalDateTime.now())
+			.build();
+	}
 }

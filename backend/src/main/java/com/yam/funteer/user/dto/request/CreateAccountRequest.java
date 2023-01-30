@@ -16,7 +16,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
-@Getter @SuperBuilder
+@Getter @Setter
+@SuperBuilder
 @NoArgsConstructor
 @AllArgsConstructor @ToString
 public class CreateAccountRequest {

@@ -9,6 +9,8 @@ import io.jsonwebtoken.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -26,11 +28,13 @@ import javax.servlet.http.HttpServletRequest;
 @Component @Slf4j
 @RequiredArgsConstructor
 public class JwtProvider {
-    private String secretKey = "jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk-jwt-E204-funteerbuk";
+
+    @Value("${jwt.secret}")
+    private String secretKey;
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
-    private final long accessPeriod = 1000L * 60L * 60L; // 10분
-    private final long refreshPeriod = 1000L * 60L * 60L * 24L * 30L * 3L;
+    private final long accessPeriod = 1000L * 60L * 60L; // 1시간
+    private final long refreshPeriod = 1000L * 60L * 60L * 24L; // 1일
     @PostConstruct
     protected void init(){
         this.secretKey = Base64.getEncoder().encodeToString(this.secretKey.getBytes());

@@ -20,6 +20,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,7 +40,7 @@ public class TeamController {
         @ApiResponse(code = 500, message = "서버 에러")
     })
     @PostMapping
-    public ResponseEntity signUpMember(@Validated @RequestBody CreateTeamRequest createTeamRequest, BindingResult bindingResult){
+    public ResponseEntity signUpTeam(@Validated @ModelAttribute CreateTeamRequest createTeamRequest, BindingResult bindingResult){
         validateBinding(bindingResult);
 
         log.info("단체 회원가입 시작 =>");
