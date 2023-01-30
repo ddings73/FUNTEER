@@ -1,8 +1,9 @@
-package com.yam.funteer.qna.request;
-
+package com.yam.funteer.qna.dto.request;
 
 import java.time.LocalDateTime;
 
+import com.yam.funteer.attach.FileType;
+import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.qna.entity.Qna;
@@ -18,8 +19,6 @@ import lombok.Setter;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class QnaRegisterReq {
-
-	private Long userId;
 	private String title;
 	private String content;
 
@@ -42,6 +41,14 @@ public class QnaRegisterReq {
 			.regDate(LocalDateTime.now())
 			.postGroup(PostGroup.ETC)
 			.postType(PostType.QNA).build();
+	}
+
+	public Attach toAttachEntity(String path,String name){
+		return Attach.builder()
+			.path(path).name(name)
+			.regDate(LocalDateTime.now())
+			.fileType(FileType.OTHER)
+			.build();
 	}
 
 }

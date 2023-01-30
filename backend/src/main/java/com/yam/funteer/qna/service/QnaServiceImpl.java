@@ -1,21 +1,30 @@
 package com.yam.funteer.qna.service;
 
-import java.time.LocalDateTime;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.attach.entity.PostAttach;
+import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.attach.repository.PostAttachRepository;
+import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.UserType;
+import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
 
+import com.yam.funteer.qna.dto.request.QnaRegisterReq;
+import com.yam.funteer.qna.dto.response.QnaBaseRes;
+import com.yam.funteer.qna.dto.response.QnaListRes;
 import com.yam.funteer.qna.entity.Qna;
 import com.yam.funteer.qna.entity.Reply;
 import com.yam.funteer.qna.exception.QnaNotFoundException;
 import com.yam.funteer.qna.repository.QnaRepository;
 import com.yam.funteer.qna.repository.ReplyRepository;
-import com.yam.funteer.qna.request.QnaRegisterReq;
-import com.yam.funteer.qna.request.QnaReplyReq;
-import com.yam.funteer.qna.response.QnaBaseRes;
+
 import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.UserRepository;
 
@@ -28,42 +37,95 @@ public class QnaServiceImpl implements QnaService {
 	private final QnaRepository qnaRepository;
 	private final UserRepository userRepository;
 	private final ReplyRepository replyRepository;
+	private final PostAttachRepository postAttachRepository;
+	private final AttachRepository attachRepository;
+
+	private final AwsS3Uploader awsS3Uploader;
 
 	@Override
-	public List<Qna> qnaGetList(UserType userType) {
-		return qnaRepository.findAllByUserType(userType);
+	public List<QnaListRes> qnaGetList(UserType userType) {
+		List<Qna>qnaList=qnaRepository.findAllByUserType(userType);
+		List<QnaListRes>list=new ArrayList<>();
+		for(Qna qna:qnaList){
+			QnaListRes qnaListRes=new QnaListRes(qna.getId(),qna.getTitle());
+			list.add(qnaListRes);
+		}
+		return list;
 	}
 
 	@Override
-	public void qnaRegister(QnaRegisterReq qnaRegisterReq) {
-		User user=userRepository.findById(qnaRegisterReq.getUserId()).orElseThrow(()->new UserNotFoundException());
-		qnaRepository.save(qnaRegisterReq.toEntity(user));
+	public void qnaRegister(QnaRegisterReq qnaRegisterReq,List<MultipartFile>files) throws IOException {
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		Qna qna=qnaRepository.save(qnaRegisterReq.toEntity(user));
+		for(MultipartFile file:files){
+			String fileUrl = awsS3Uploader.upload(file,"/qna");
+			Attach attach=qnaRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
+			PostAttach postAttach=PostAttach.builder()
+				.attach(attach)
+				.post(qna)
+				.build();
+			attachRepository.save(attach);
+			postAttachRepository.save(postAttach);
+		}
 	}
 
 
 	@Override
-	public QnaBaseRes qnaGetDetail(Long qnaId, Long userId) throws QnaNotFoundException {
+	public QnaBaseRes qnaGetDetail(Long qnaId) throws QnaNotFoundException {
 		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
-		if (qna.getUser().getId()==userId) {
-			return new QnaBaseRes(qna);
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		if (qna.getUser().getId()==user.getId()) {
+			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
+			List<String>attachList=new ArrayList<>();
+			if(postAttachList.size()>0) {
+				for (PostAttach postAttach : postAttachList) {
+					attachList.add(attachRepository.findById(postAttach.getAttach().getId()).orElseThrow().getPath());
+				}
+			}
+			return new QnaBaseRes(qna,attachList);
 		}
 		return null;
 	}
 
 	@Override
-	public void qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq) throws QnaNotFoundException {
+	public void qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq, List<MultipartFile>files) throws
+		QnaNotFoundException,
+		IOException {
 		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
-		User user=userRepository.findById(qnaRegisterReq.getUserId()).orElseThrow(()->new UserNotFoundException());
-		if(qnaRegisterReq.getUserId()==qna.getUser().getId()) {
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		if(user.getId()==qna.getUser().getId()) {
 			qnaRepository.save(qnaRegisterReq.toEntity(user,qnaId));
+			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
+			for(PostAttach postAttach:postAttachList){
+				awsS3Uploader.delete("/qna",postAttach.getAttach().getPath());
+				postAttachRepository.deleteById(postAttach.getId());
+				attachRepository.deleteById(postAttach.getAttach().getId());
+			}
+
+			for(MultipartFile file:files){
+				String fileUrl = awsS3Uploader.upload(file,"/qna");
+				Attach attach=qnaRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
+				PostAttach postAttach=PostAttach.builder()
+					.attach(attach)
+					.post(qna)
+					.build();
+				attachRepository.save(attach);
+				postAttachRepository.save(postAttach);
+			}
 		}
 	}
 
 	@Override
-	public void qnaDelete(Long postId,Long userId) throws QnaNotFoundException{
+	public void qnaDelete(Long postId) throws QnaNotFoundException{
 		Qna qna = qnaRepository.findById(postId).orElseThrow(() -> new QnaNotFoundException());
-
-		if(qna.getUser().getId()==userId) {
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId().orElseThrow()).orElseThrow(()->new UserNotFoundException());
+		if(qna.getUser().getId()==user.getId()) {
+			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
+			for(PostAttach postAttach:postAttachList){
+				awsS3Uploader.delete("/qna",postAttach.getAttach().getPath());
+				postAttachRepository.deleteById(postAttach.getId());
+				attachRepository.deleteById(postAttach.getAttach().getId());
+			}
 			qnaRepository.deleteById(postId);
 			Reply reply=replyRepository.findByQna(qna);
 			if(reply!=null){
@@ -71,5 +133,4 @@ public class QnaServiceImpl implements QnaService {
 			}
 		}
 	}
-
 }
