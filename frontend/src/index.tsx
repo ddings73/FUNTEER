@@ -40,6 +40,7 @@ import {
   FundingList,
   CreateFunding,
   AdminTeamDeny,
+  AdminFunding,
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -166,6 +167,10 @@ const router = createBrowserRouter([
       {
         path: 'team/deny/:dn', // dn: vms 위촉 번호
         element: <AdminTeamDeny />,
+      },
+      {
+        path: 'funding',
+        element: <AdminFunding />,
       },
     ],
   },

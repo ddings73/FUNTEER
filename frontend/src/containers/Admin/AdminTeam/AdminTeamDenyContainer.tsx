@@ -9,7 +9,9 @@ function AdminTeamDenyContainer() {
   const { dn } = useParams();
 
   const onClickBackHandler = () => {
-    navigate(-1);
+    console.log(location);
+
+    navigate('/admin/team');
   };
 
   const onClickSubmitHandler = () => {
