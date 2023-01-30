@@ -38,3 +38,13 @@ export const requestCreateFunding = async (fundingData:FundingInterface) =>{
   
 }
 
+/**
+ * 펀딩 리스트 호출 API
+ * @method GET
+ */
+
+export const requestFundingList = async ()=>{
+  const res = await http.get("funding/")
+  return res;
+}
+

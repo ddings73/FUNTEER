@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from 'react'
+import React,{useState,useEffect, useCallback} from 'react'
 import CountUp from 'react-countup';
 
 import InputLabel from '@mui/material/InputLabel';
@@ -10,30 +10,22 @@ import TextField from '@mui/material/TextField';
 import styles from './FundingListContainer.module.scss'
 
 import FundingListElement from '../../components/Funding/FundingListElement';
+import { FundingElementType } from '../../types/funding';
+import { requestFundingList } from '../../api/funding';
 
-
-
-type AmountType = {
-    funding:number
-    money:number
-}
 
 function FundingListContainer (){
-    const percent:number[] = [
-        70,80,90
-    ]
-    const [count,setCount] = useState<AmountType>({
-        funding:1231,
-        money:12312323
-    })
-    
+    const [fundingList,setFundingList] = useState<FundingElementType[] | undefined>([])
+    const [successFundingCount,setSuccessFundingCount] = useState<number>(0);
+    const [totalFundingAmount,setTotalFundingAmount] =useState<number>(0);
+    const [totalFundingCount,setTotalFundingCount] =useState<number>(0);
+
     const [searchText,setSearchText] = useState<string>("")
 
     const [age, setAge] = React.useState('');
 
     const handleChange = (event: SelectChangeEvent) => {
      console.log(event.target.value);
-     
     };
 
  const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>)=>{
@@ -42,6 +34,25 @@ function FundingListContainer (){
     
  } 
 
+
+ const initFundingList =useCallback(async()=>{
+    try{
+        const {data} =await requestFundingList()
+        console.log(data);
+        
+        setFundingList([...data.fundingListResponses])
+        setSuccessFundingCount(data.successFundingCount)
+        setTotalFundingAmount(data.totalFundingAmount)
+        setTotalFundingCount(data.totalFundingCount)
+    }
+    catch(error){
+        console.log(error);
+    }
+ },[]) 
+
+ useEffect(()=>{
+    initFundingList()
+ },[])
     
     return (
         <div className={styles.container}>
@@ -53,13 +64,13 @@ function FundingListContainer (){
                     <div className={styles['statistic-box']}>
                         <div>
                             <p>
-                            <CountUp start={0} end={count.funding}   separator="," duration={4}/>건 <br/> 봉사 펀딩에 성공했어요.
+                            <CountUp start={0} end={successFundingCount}   separator="," duration={4}/>건 <br/> 봉사 펀딩에 성공했어요.
                             </p>
 
                         </div>
                         <div>
                             <p>
-                            <CountUp start={0} end={count.money} separator="," duration={4}/>원 <br/> 기부에 성공했어요.
+                            <CountUp start={0} end={totalFundingAmount} separator="," duration={4}/>원 <br/> 기부에 성공했어요.
                             </p>
                         </div>
                     </div>
@@ -86,10 +97,13 @@ function FundingListContainer (){
                 </div>
                 <div className={styles['funding-list-box']}>
                     <div className={styles['funding-filter-box']}>
-                        <p>총 <span>250</span>건의 프로젝트가 진행중에 있어요.</p>
+                        <p>총 <span>{totalFundingCount}</span>건의 프로젝트가 진행중에 있어요.</p>
 
                         <div className={styles['funding-list']}>
-                            <FundingListElement/>
+
+                            {fundingList?.map((funding)=>(
+                            <FundingListElement {...funding}/>
+                            ))}
 
                         </div>
                     </div>

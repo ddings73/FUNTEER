@@ -1,6 +1,20 @@
 export type FundingElementType = {
-  title: string;
+  thumbnail:string
+  title:string
+  fundingDescription:string
+  amount:number
+  currentFundingAmount:number
+  startDate:string
+  endDate:string
+  postType:string
+  postDate:string
 };
+
+export interface FundingStatisticType  {
+  successFundingCount:number
+  totalFundingAmount:number
+  totalFundingCount:number
+}
 
 export interface FundingInterface {
   thumbnail: Blob;
@@ -18,3 +32,6 @@ export interface FundingInterface {
   amount3: number;
   description3: string;
 }
+
+
+
