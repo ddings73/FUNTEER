@@ -2,16 +2,18 @@ import React from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import Button from '@mui/material/Button';
 import styles from './AdminTeamDenyContainer.module.scss';
+import { useAppDispatch } from '../../../store/hooks';
+import { closeModal } from '../../../store/slices/fileModalSlice';
 
 function AdminTeamDenyContainer() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { dn } = useParams();
 
   const onClickBackHandler = () => {
-    console.log(location);
-
-    navigate('/admin/team');
+    dispatch(closeModal());
+    navigate(-1);
   };
 
   const onClickSubmitHandler = () => {
