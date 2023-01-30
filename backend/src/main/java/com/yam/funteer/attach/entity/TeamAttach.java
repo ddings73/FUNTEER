@@ -35,8 +35,15 @@ public class TeamAttach {
 	@JoinColumn(name = "team_id")
 	private Team team;
 
-	@Column(nullable = false)
 	private String rejectComment;
-	@Column(nullable = false)
+
 	private boolean confirm;
+
+	public static TeamAttach of(Team team, Attach attach) {
+		return TeamAttach.builder()
+			.team(team)
+			.attach(attach)
+			.confirm(false)
+			.build();
+	}
 }
