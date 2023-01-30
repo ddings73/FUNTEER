@@ -19,6 +19,7 @@ import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
+import com.yam.funteer.funding.dto.FundingListPageResponse;
 import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
@@ -83,9 +84,19 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public List<FundingListResponse> findAllFunding() {
+	public FundingListPageResponse findAllFunding() {
 		List<FundingListResponse> collect = fundingRepository.findAll().stream().map(m -> FundingListResponse.from(m)).collect(Collectors.toList());
-		return collect;
+		List<Funding> successFundingList = fundingRepository.findAllByPostType(PostType.REPORT_ACCEPT);
+
+		int totalFundingCount = collect.size();
+		int successFundingCount = successFundingList.size();
+
+		Long totalFundingAmount = 0L;
+		for (Funding funding : successFundingList) {
+			totalFundingAmount += funding.getCurrentFundingAmount();
+		}
+		FundingListPageResponse fundingListPageResponse = new FundingListPageResponse(collect, totalFundingCount, successFundingCount, totalFundingAmount);
+		return fundingListPageResponse;
 	}
 
 

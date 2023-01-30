@@ -15,8 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
+import com.yam.funteer.funding.dto.FundingListPageResponse;
 import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
@@ -39,6 +41,8 @@ import lombok.RequiredArgsConstructor;
 public class FundingController {
 
 	private final FundingService fundingService;
+	private final AwsS3Uploader awsS3Uploader;
+
 
 	@ApiOperation(value = "진행중인 펀딩 리스트 조회", notes = "진행중인 펀딩 리스트를 조회한다.")
 	@GetMapping("/")
@@ -46,28 +50,16 @@ public class FundingController {
 		return ResponseEntity.ok(fundingService.findInProgressFunding());
 	}
 
-	// @ApiOperation(value = "종료된 펀딩 리스트 조회", notes = "종료된 펀딩 리스트를 조회한다.")
-	// @GetMapping("/")
-	// public ResponseEntity<List<FundingListResponse>> findCompleteFunding() {
-	// 	return ResponseEntity.ok(fundingService.findCompleteFunding());
-	// }
-	//
-	// @ApiOperation(value = "카테고리별 진행중인 펀딩 리스트 조회", notes = "카테고리별 진행중인 펀딩 리스트를 조회한다.")
-	// @GetMapping("/")
-	// public ResponseEntity<List<FundingListResponse>> findInProgressFundingByCategory() {
-	// 	return ResponseEntity.ok(fundingService.findInProgressFundingByCategory());
-	// }
-	//
-	// @ApiOperation(value = "검색 키워드로 진행중인 펀딩 리스트 조회", notes = "검색 키워드로 진행중인 펀딩 리스트를 조회한다.")
-	// @GetMapping("/")
-	// public ResponseEntity<List<FundingListResponse>> findInProgressFundingByKeyword() {
-	// 	return ResponseEntity.ok(fundingService.findInProgressFundingByKeyword());
-	// }
-	//
+	@ApiOperation(value = "펀딩 생성 시 s3에 파일업로드", notes = "펀딩 생성 시 s3에 파일을 업로드 한다.")
+	@PostMapping("/upload")
+	public String upload(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+		String fileName = awsS3Uploader.upload(multipartFile, "FundingDetailFiles");
+		return fileName;
+	}
 
 	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
 	@GetMapping("/test")
-	public ResponseEntity<List<FundingListResponse>> findAllFunding() {
+	public ResponseEntity<FundingListPageResponse> findAllFunding() {
 		return ResponseEntity.ok(fundingService.findAllFunding());
 	}
 
@@ -121,7 +113,7 @@ public class FundingController {
 	@PostMapping("/{fundingId}/pay")
 	public ResponseEntity<?> takeFunding(@PathVariable Long fundingId, TakeFundingRequest data) {
 		fundingService.takeFunding(fundingId, data);
-		return null;
+		return ResponseEntity.ok("펀딩 참여 완료");
 	}
 
 	@ApiOperation(value = "펀딩 응원 댓글", notes = "펀딩 게시글에 응원 댓글을 작성한다.")

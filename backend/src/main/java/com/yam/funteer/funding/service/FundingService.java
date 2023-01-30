@@ -8,6 +8,7 @@ import org.yaml.snakeyaml.tokens.CommentToken;
 
 import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
+import com.yam.funteer.funding.dto.FundingListPageResponse;
 import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
@@ -38,7 +39,7 @@ public interface FundingService {
 
 	void deleteFundingComment(Long commentId) throws CommentNotFoundException;
 
-	List<FundingListResponse> findAllFunding();
+	FundingListPageResponse findAllFunding();
 
 	void takeFunding(Long fundingId, TakeFundingRequest data);
 

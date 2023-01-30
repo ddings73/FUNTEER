@@ -9,4 +9,5 @@ import com.yam.funteer.funding.entity.Funding;
 
 public interface FundingRepository extends JpaRepository<Funding, Long> {
 	List<Funding> findAllByPostType(PostType postType);
+
 }
