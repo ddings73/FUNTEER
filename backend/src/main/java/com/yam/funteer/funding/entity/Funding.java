@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import org.springframework.boot.util.LambdaSafe;
 
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.user.entity.Team;
@@ -56,6 +57,9 @@ public class Funding extends Post {
 
 	@OneToMany(mappedBy = "post")
 	private List<PostHashtag> hashtags;
+
+	@OneToMany(mappedBy = "funding")
+	private List<Comment> comments;
 
 	public void setEndDate(LocalDateTime endDate) {
 		this.endDate = endDate;
