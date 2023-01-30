@@ -1,7 +1,9 @@
-import React from 'react'
+import React,{useMemo} from 'react'
 import styled from 'styled-components'
 import styles from './FundingListElement.module.scss'
-import thumnail from '../../assets/images/funding/funding_thumbnail.png'
+import { FundingElementType } from '../../types/funding'
+import { diffDay } from '../../utils/day'
+import defaultFundingThumbnail from '../../assets/images/funding/funding_thumbnail.png'
 
 
 
@@ -19,29 +21,32 @@ const ProgressBar = styled.div<{gage:number}>`
         }
 `
 
-function FundingListElement (){
-    const percent:number[] = [
-        70,80,90
-    ]
+function FundingListElement (funding:FundingElementType){
+    const {thumbnail,title,startDate,postType,postDate,fundingDescription,endDate,currentFundingAmount,amount} = funding
+
+
+    const enoughMoney = useMemo(() => {
+        return Math.floor((currentFundingAmount/amount) *100)
+    }, [currentFundingAmount,amount])
+    
+
     return (
         <div className={styles['funding-box']}>
-        <img src={thumnail} alt=""/>
-        <p className={styles.title}>가난한 저에게 마우스를 사요주세.</p>
+        <img src={thumbnail || defaultFundingThumbnail} alt="???"/>
+        <p className={styles.title}>{title}</p>
         <p className={styles.content}>
-            지친 사람들의 쉴 곳, 동식물들의 생명이 피어나는 곳 등 다양한 
-             모습으로 우리 곁에 있으며 사계절의 변화를 보여주는 곳. 
-            바로 지역 하천 입니다.</p>
+            {fundingDescription}</p>
 
             <div className={styles['progress-info-box']}>
                 <p className={styles.money}>
-                    <span>90%</span>&nbsp;
-                    <span>1,232,402원</span>
+                    <span>{enoughMoney}%</span>&nbsp;
+                    <span>{currentFundingAmount}원</span>
                 </p>
                 <p className={styles.date}>
-                    12일남음
+                    {diffDay(endDate)}일남음
                 </p>
             </div>
-       <ProgressBar gage={percent[0]}/>
+       <ProgressBar gage={enoughMoney}/>
      </div>
 
     )
