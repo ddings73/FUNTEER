@@ -7,6 +7,8 @@ import java.util.List;
 
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.TargetMoney;
+import com.yam.funteer.funding.exception.NotFoundCommentsException;
+import com.yam.funteer.funding.exception.NotFoundHashtagException;
 import com.yam.funteer.post.entity.Comment;
 
 import lombok.AllArgsConstructor;
@@ -45,24 +47,85 @@ public class FundingDetailResponse {
 			targetMoneyResponses.add(TargetMoneyResponse.from(tm));
 		}
 
-		// List<CommentResponse> commentResponses = new ArrayList<>();
-		// for (Comment cm : funding.getComments()) {
-		// 	commentResponses.add(CommentResponse.from(cm));
-		// }
+		try {
 
-		return FundingDetailResponse.builder()
-			.fundingId(funding.getId())
-			.category(funding.getCategory().getName())
-			.title(funding.getTitle())
-			.content(funding.getContent())
-			.start(funding.getStartDate())
-			.end(funding.getEndDate())
-			.postDate(funding.getRegDate())
-			.targetMonies(targetMoneyResponses)
-			.postHashtagList(HashtagResponse.from(funding.getHashtags()))
-			.thumbnail(funding.getThumbnail())
-			// .comments(commentResponses)
-			.build();
+			if (funding.getComments() == null) {
+				throw new NotFoundCommentsException();
+			}
+
+			if (funding.getHashtags() == null) {
+				throw new NotFoundHashtagException();
+			}
+
+
+			List<CommentResponse> commentResponses = new ArrayList<>();
+			for (Comment cm : funding.getComments()) {
+				commentResponses.add(CommentResponse.from(cm));
+			}
+
+			return FundingDetailResponse.builder()
+				.fundingId(funding.getId())
+				.category(funding.getCategory().getName())
+				.title(funding.getTitle())
+				.content(funding.getContent())
+				.start(funding.getStartDate())
+				.end(funding.getEndDate())
+				.postDate(funding.getRegDate())
+				.targetMonies(targetMoneyResponses)
+				.postHashtagList(HashtagResponse.from(funding.getHashtags()))
+				.thumbnail(funding.getThumbnail())
+				.comments(commentResponses)
+				.build();
+
+		} catch (NotFoundCommentsException e) {
+
+			e.printStackTrace();
+			return FundingDetailResponse.builder()
+				.fundingId(funding.getId())
+				.category(funding.getCategory().getName())
+				.title(funding.getTitle())
+				.content(funding.getContent())
+				.start(funding.getStartDate())
+				.end(funding.getEndDate())
+				.postDate(funding.getRegDate())
+				.targetMonies(targetMoneyResponses)
+				.postHashtagList(HashtagResponse.from(funding.getHashtags()))
+				.thumbnail(funding.getThumbnail())
+				.build();
+
+		} catch (NotFoundHashtagException e) {
+
+			List<CommentResponse> commentResponses = new ArrayList<>();
+			for (Comment cm : funding.getComments()) {
+				commentResponses.add(CommentResponse.from(cm));
+			}
+
+			return FundingDetailResponse.builder()
+				.fundingId(funding.getId())
+				.category(funding.getCategory().getName())
+				.title(funding.getTitle())
+				.content(funding.getContent())
+				.start(funding.getStartDate())
+				.end(funding.getEndDate())
+				.postDate(funding.getRegDate())
+				.targetMonies(targetMoneyResponses)
+				.thumbnail(funding.getThumbnail())
+				.comments(commentResponses)
+				.build();
+
+		}  finally {
+			return FundingDetailResponse.builder()
+				.fundingId(funding.getId())
+				.category(funding.getCategory().getName())
+				.title(funding.getTitle())
+				.content(funding.getContent())
+				.start(funding.getStartDate())
+				.end(funding.getEndDate())
+				.postDate(funding.getRegDate())
+				.targetMonies(targetMoneyResponses)
+				.thumbnail(funding.getThumbnail())
+				.build();
+		}
 	}
 
 }
