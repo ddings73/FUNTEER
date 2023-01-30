@@ -1,0 +1,104 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+.bodyContainer {
+  width: 100%;
+  height: 100vh;
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  & .banner {
+    display: flex;
+    width: 100%;
+    min-height: 350px;
+    background-color: rgb(185, 185, 185);
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    & .bannerContent {
+      width: 1160px;
+      background-color: rgb(136, 136, 136);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      & .bannerTitle {
+        width: 60%;
+        font-size: 100px;
+        background-color: rgb(104, 104, 104);
+      }
+      & .bannerButtonGroup {
+        width: 40%;
+        background-color: rgb(104, 104, 104);
+        margin-top: 15%;
+        display: flex;
+        justify-content: end;
+        & .bannerGrpBtn {
+          margin: 0 3%;
+          width: 100px;
+          height: 30px;
+        }
+        & .bannerBtn {
+          margin: 0 3%;
+          width: 100px;
+          height: 30px;
+        }
+      }
+    }
+  }
+  & .mainContiainer {
+    padding-top: 4%;
+    display: block;
+    min-width: 1160px;
+    height: auto;
+    background-color: rgb(99, 99, 99);
+    text-align: center;
+    & .mainSum {
+      width: 100%;
+      height: 300px;
+      background-color: rgb(161, 161, 161);
+    }
+    & .mainContent {
+      width: 100%;
+      height: 250vh;
+    }
+    & .mainFooter {
+      width: 100%;
+      height: 200px;
+      background-color: rgb(139, 139, 139);
+    }
+    & .mainFooterSum {
+      width: 100%;
+      height: 50px;
+      background-color: rgb(80, 79, 79);
+    }
+    & .mainFooterAttatch {
+      width: 100%;
+      height: 250px;
+      background-color: rgb(124, 124, 124);
+    }
+    & .mainFooterdiv {
+      width: 100%;
+      height: 5px;
+      background-color: rgb(184, 184, 184);
+    }
+
+    & .mainFooterLike {
+      width: 100%;
+      height: 150px;
+      background-color: rgb(63, 63, 63);
+    }
+
+    & .mainCommentSubmit {
+      width: 100%;
+      height: 200px;
+      background-color: rgb(143, 143, 143);
+    }
+
+    & .mainComments {
+      width: 100%;
+      height: 500px;
+      background-color: rgrgb(95, 95, 95);
+    }
+  }
+}

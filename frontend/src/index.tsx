@@ -41,6 +41,7 @@ import {
   CreateFunding,
   AdminTeamDeny,
 } from './pages/index';
+import FundingDetail from './pages/Funding/FundingDetail';
 
 const router = createBrowserRouter([
   {
@@ -143,6 +144,10 @@ const router = createBrowserRouter([
       {
         path: '/funding/create',
         element: <CreateFunding />,
+      },
+      {
+        path: '/funding/detail',
+        element: <FundingDetail />,
       },
     ],
   },
