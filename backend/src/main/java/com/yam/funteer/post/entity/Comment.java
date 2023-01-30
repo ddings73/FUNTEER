@@ -39,4 +39,12 @@ public class Comment {
 
 	private @NotBlank String content;
 	private LocalDateTime regDate;
+
+	public Comment(Funding funding, Member member, String content) {
+		this.funding = funding;
+		this.member = member;
+		this.content = content;
+		this.regDate = LocalDateTime.now();
+
+	}
 }

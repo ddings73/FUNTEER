@@ -1,24 +1,37 @@
 package com.yam.funteer.donation.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.attach.entity.PostAttach;
+import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.attach.repository.PostAttachRepository;
+import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.common.code.PostGroup;
+import com.yam.funteer.common.code.UserType;
+import com.yam.funteer.common.security.SecurityUtil;
+import com.yam.funteer.donation.dto.request.DonationRegisterReq;
+import com.yam.funteer.donation.dto.response.DonationBaseRes;
+import com.yam.funteer.donation.dto.response.DonationListRes;
 import com.yam.funteer.donation.entity.Donation;
 import com.yam.funteer.donation.exception.DonationNotFoundException;
 import com.yam.funteer.donation.repository.DonationRepository;
-import com.yam.funteer.donation.request.DonationJoinReq;
-import com.yam.funteer.donation.request.DonationRegisterReq;
+import com.yam.funteer.donation.dto.request.DonationJoinReq;
+
 import com.yam.funteer.exception.UserNotFoundException;
+
 import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
 
-import com.yam.funteer.common.code.PostGroup;
-import com.yam.funteer.common.code.PostType;
-import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.UserRepository;
 
@@ -32,19 +45,44 @@ public class DonationServiceImpl implements DonationService{
 	private final PaymentRepository paymentRepository;
 	private final DonationRepository donationRepository;
 	private final UserRepository userRepository;
+	private final AwsS3Uploader awsS3Uploader;
+	private final AttachRepository attachRepository;
+	private final PostAttachRepository postAttachRepository;
 
-	public List<Donation> donationGetList() {
-		return donationRepository.findAllByPostGroup(PostGroup.DONATION);
+	public List<DonationListRes> donationGetList() {
+		List<Donation>donations=donationRepository.findAllByPostGroup(PostGroup.DONATION);
+		List<DonationListRes>list;
+		list=donations.stream().map(donation->new DonationListRes(donation)).collect(Collectors.toList());
+
+		return list;
 	}
 
-	public Donation donationGetDetail(Long postId) {
+	public DonationBaseRes donationGetDetail(Long postId) throws DonationNotFoundException {
+		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException("찾으시는 게시물이 존재하지 않습니다."));
 
-		return donationRepository.findById(postId).get();
+		Long currentAmount=Long.valueOf(0);
+
+		List<Payment>paymentList=paymentRepository.findAllByPost(donation);
+
+		for(Payment payment:paymentList){
+			currentAmount+=payment.getAmount();
+		}
+		List<String>attachList=new ArrayList<>();
+		if(postAttachRepository.findAllByPost(donation).size()>0){
+			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donation);
+
+			if(postAttachList.size()>0) {
+				for (PostAttach postAttach : postAttachList) {
+					attachList.add(postAttach.getAttach().getPath());
+				}
+			}
+		}
+		return new DonationBaseRes(donation,currentAmount,attachList);
 	}
 
 	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq)throws DonationNotFoundException {
-		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
-		User user=userRepository.findById(donationJoinReq.getUserId()).orElseThrow(()->new UserNotFoundException());
+		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException("찾으시는 게시물이 존재하지 않습니다."));
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Payment payment=Payment.builder()
 			.user(user)
 			.amount(donationJoinReq.getPaymentAmount())
@@ -57,51 +95,66 @@ public class DonationServiceImpl implements DonationService{
 		return payment;
 	}
 
-	public void donationRegister(DonationRegisterReq donationRegisterReq) {
-		User user=userRepository.findById(donationRegisterReq.getUserId()).orElseThrow(()->new UserNotFoundException());
-		if(user.getUserType().equals(UserType.ADMIN)) {
-			Donation donation = Donation.builder()
-				.content(donationRegisterReq.getContent())
-				.title(donationRegisterReq.getTitle())
-				.regDate(LocalDateTime.now())
-				.hit(0)
-				.amount(donationRegisterReq.getAmount())
-				.postGroup(PostGroup.DONATION)
-				.postType(PostType.DONATION_ACTIVE)
-				.build();
+	public DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq,List<MultipartFile>files) {
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
-			donationRepository.save(donation);
-		}
+		if(user.getUserType().equals(UserType.ADMIN)) {
+			Donation donation=donationRepository.save(donationRegisterReq.toEntity());
+			List<String>attachList=new ArrayList<>();
+			for(MultipartFile file:files){
+				String fileUrl = awsS3Uploader.upload(file,"/donation");
+				Attach attach=donationRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
+				PostAttach postAttach=PostAttach.builder()
+					.attach(attach)
+					.post(donation)
+					.build();
+				attachList.add(fileUrl);
+				attachRepository.save(attach);
+				postAttachRepository.save(postAttach);
+			}
+			return new DonationBaseRes(donation,Long.valueOf(0),attachList);
+		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
 
-	public void donationDelete(Long postId,Long userId) throws DonationNotFoundException{
-		User user=userRepository.findById(userId).orElseThrow(()->new UserNotFoundException());
+	public void donationDelete(Long postId) throws DonationNotFoundException{
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Donation donation = donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
 			donationRepository.delete(donation);
-		}
+		}else throw new IllegalArgumentException();
 	}
 
 
-	public void donationModify(Long postId, DonationRegisterReq donationModifyReq) throws DonationNotFoundException {
+	public DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq,List<MultipartFile>files) throws
+		DonationNotFoundException {
+		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException("찾으시는 게시물이 없습니다."));
 
-		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
+		if(user.getUserType().equals(UserType.ADMIN)) {
+			Donation donation=donationRepository.save(donationModifyReq.toEntity(postId));
 
-		User user = userRepository.findById(donationModifyReq.getUserId())
-			.orElseThrow(() -> new UserNotFoundException());
-		if (user.getUserType().equals(UserType.ADMIN)) {
-			Donation donation = Donation.builder()
-				.id(postId)
-				.amount(donationModifyReq.getAmount())
-				.content(donationModifyReq.getContent())
-				.title(donationModifyReq.getTitle())
-				.postGroup(PostGroup.DONATION)
-				.postType(PostType.DONATION_ACTIVE)
-				.regDate(LocalDateTime.now())
-				.build();
-			donationRepository.save(donation);
-		}
+			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donation);
+			for(PostAttach postAttach:postAttachList){
+				awsS3Uploader.delete("/donation/",postAttach.getAttach().getPath());
+				postAttachRepository.deleteById(postAttach.getId());
+				attachRepository.deleteById(postAttach.getAttach().getId());
+			}
+
+			List<String>attachList=new ArrayList<>();
+			for(MultipartFile file:files){
+				String fileUrl = awsS3Uploader.upload(file,"/donation");
+				Attach attach=donationModifyReq.toAttachEntity(fileUrl,file.getOriginalFilename());
+				PostAttach postAttach=PostAttach.builder()
+					.attach(attach)
+					.post(donation)
+					.build();
+				attachList.add(fileUrl);
+				attachRepository.save(attach);
+				postAttachRepository.save(postAttach);
+			}
+			return new DonationBaseRes(donation,Long.valueOf(0),attachList);
+		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 }
 

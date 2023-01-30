@@ -3,18 +3,12 @@ import { Button, TextField } from '@mui/material';
 // import axios from 'axios';
 import styles from './TeamSignUpContainer.module.scss';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
-
-type TeamSingUpType = {
-  name: string;
-  email: string;
-  password: string;
-  passwordCheck: string;
-  phone: string;
-};
+import { requestEmailDuplConfirm, requestNameDuplConfirm, requestTeamSignUp } from '../../api/user';
+import { teamSignUpType } from '../../types/user';
 
 function TeamSignUpContainer() {
   /** 회원가입 정보 */
-  const [TeamSignUpInfo, setTeamSignUpInfo] = useState<TeamSingUpType>({
+  const [teamSignUpInfo, setTeamSignUpInfo] = useState({
     name: '',
     email: '',
     password: '',
@@ -22,40 +16,92 @@ function TeamSignUpContainer() {
     phone: '',
   });
 
+  /** 이메일 인증 버튼에 표시되는 텍스트 */
+  const [btnText, setButtonText] = useState<string>('이메일 인증하기');
+  /** 단체명 중복 검사 여부 */
+  const [nameDuplConfirmed, setNameDuplConfirmed] = useState<boolean>(false);
+  /** 이메일 중복 검사 여부 */
+  const [emailDuplConfirmed, setEmailDuplConfirmed] = useState<boolean>(false);
+  /** 이메일 인증 버튼을 이미 눌렀는지 확인 */
+  const [emailAuthButtonPushed, setEmailAuthButtonPushed] = useState<boolean>(false);
   /** 인증 번호 */
   const [authNumber, setAuthNumber] = useState<string>('');
+  /** 이메일 인증이 완료되었는지 체크해주는 상태 */
+  const [checkEmailAuth, setCheckEmailAuth] = useState<boolean>(false);
+  /** vms 파일 */
+  const [vmsFiles, setVmsFiles] = useState<FileList | null>(null);
+  /** 실적 파일 */
+  const [performFiles, setPerformFiles] = useState<FileList | null>(null);
 
+  /** 회원가입 정보 입력 */
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+    /** 단체명을 바꿀 경우 중복 체크 다시 필요 */
+    if (name === 'name') {
+      setNameDuplConfirmed(false);
+    }
+    /** 이메일을 바꿀 경우 중복 체크 다시 필요 => 인증까지 완료되면 바꿀 수 없음 */
+    if (name === 'email') {
+      setEmailDuplConfirmed(false);
+    }
 
-    setTeamSignUpInfo({ ...TeamSignUpInfo, [name]: value });
+    setTeamSignUpInfo({ ...teamSignUpInfo, [name]: value });
   };
 
+  /** 단체명 중복 검사 */
+  const onClickNameDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    try {
+      const response = await requestNameDuplConfirm(teamSignUpInfo.name);
+      alert('단체명 중복 체크 완료');
+      setNameDuplConfirmed(true);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  /** 이메일 중복 검사 */
+  const onClickEmailDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    try {
+      const response = await requestEmailDuplConfirm(teamSignUpInfo.email);
+      alert('이메일 중복 체크 완료');
+      setEmailDuplConfirmed(true);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  /** 인증 번호 입력 */
   const onAuthNumberChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setAuthNumber(e.target.value);
   };
 
-  /** 이메일 인증 버튼에 표시되는 텍스트 */
-  const [buttonText, setButtonText] = useState<string>('이메일 인증하기');
-
-  /** 이메일 인증 버튼을 이미 눌렀는지 확인 */
-  const [emailAuthButtonPushed, setEmailAuthButtonPushed] = useState<boolean>(false);
-
-  /** 이메일 인증이 완료되었는지 체크해주는 상태 */
-  const [checkEmailAuth, setCheckEmailAuth] = useState<boolean>(false);
-
   /** 이메일 인증 시간 카운팅 */
   const handleClickAuthEmail = () => {
+    if (!emailDuplConfirmed) {
+      alert('이메일 중복 체크를 먼저 완료해주세요.');
+      return;
+    }
+
     if (emailAuthButtonPushed) {
       return;
     }
 
     setEmailAuthButtonPushed(true);
 
-    let time = 180;
+    let time = 300;
     let minute;
     let second;
     const timer = setInterval(() => {
+      if (checkEmailAuth) {
+        clearInterval(timer);
+      }
+
       minute = Math.floor(secondsToMinutes(time));
       second = secondsToSeconds(time);
 
@@ -67,11 +113,13 @@ function TeamSignUpContainer() {
         clearInterval(timer);
         setButtonText('이메일 인증하기');
         setEmailAuthButtonPushed(false);
+        // setCheckEmailAuth(false);
       }
     }, 1000);
   };
 
-  const checkAuthNumber = () => {
+  /** 이메일 인증 요청 */
+  const checkAuthNumber = async () => {
     alert('이메일 인증이 완료되었습니다.');
     setCheckEmailAuth(true);
     setEmailAuthButtonPushed(false);
@@ -87,52 +135,70 @@ function TeamSignUpContainer() {
      * } */
   };
 
-  const [vmsFiles, setVmsFiles] = useState<FileList | null>(null);
-  const [performFiles, setPerformFiles] = useState<FileList | null>(null);
-
+  /** vms 파일 업로드 */
   const onVmsChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setVmsFiles(e.target.files);
+
+      if (vmsFiles) {
+        console.log(vmsFiles[0]);
+        console.log('vms 파일 타입', typeof vmsFiles[0]);
+      }
     }
   };
 
+  /** 실적 파일 업로드 */
   const onPerformChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setPerformFiles(e.target.files);
     }
+
+    if (performFiles) {
+      console.log(performFiles[0]);
+      console.log('실적 파일 타입', typeof performFiles[0]);
+    }
   };
 
   /** 단체 회원가입 요청 */
-  const requestTeamSignUp = () => {
-    /** 유효성 검사 */
+  const requestSignUp = async () => {
+    // ========================== 유효성 검사 ==============================
+    /** 중복 검사 했는지 */
+    if (!nameDuplConfirmed || !emailDuplConfirmed) {
+      alert('모든 중복 체크를 완료해주세요.');
+      return;
+    }
+    /** 이메일 인증 여부 */
     if (!checkEmailAuth) {
       alert('이메일 인증을 완료해주세요.');
       return;
     }
-
-    const isEmpty = Object.values(TeamSignUpInfo).some((value) => value === '' || value === null);
-
+    /** 모든 정보를 입력 했는지 */
+    const isEmpty = Object.values(teamSignUpInfo).some((value) => value === '' || value === null);
     if (isEmpty) {
       alert('모든 정보를 입력해주세요.');
       return;
     }
-
-    if (vmsFiles && performFiles) {
-      const formData = new FormData();
-      formData.append('file', vmsFiles[0]);
-      formData.append('file', performFiles[0]);
-    } else {
+    /** 필수 파일들을 업로드 했는지 */
+    if (!vmsFiles || !performFiles) {
       alert('필수 파일을 첨부해주세요.');
       return;
     }
-
-    if (TeamSignUpInfo.password !== TeamSignUpInfo.passwordCheck) {
+    /** 비밀번호와 비밀번호 확인 값이 같은지 */
+    if (teamSignUpInfo.password !== teamSignUpInfo.passwordCheck) {
       alert('비밀번호와 비밀번호 확인 값이 다릅니다.');
       return;
-    } // 유효성 검사 끝
+    }
+    // ===================================================================
 
-    console.log('단체 회원가입 정보', TeamSignUpInfo);
-    console.log('단체 회원가입 요청');
+    const newTeamSignUpInfo: teamSignUpType = { ...teamSignUpInfo, vmsFile: vmsFiles[0], performFile: performFiles[0] };
+    console.log('단체 회원가입 정보', newTeamSignUpInfo);
+
+    try {
+      const response = await requestTeamSignUp(newTeamSignUpInfo);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -141,16 +207,30 @@ function TeamSignUpContainer() {
         <h1 className={styles.title}>단체 회원가입</h1>
         <div className={styles['form-div']}>
           <div id="form-div-inner">
-            <p>단체명</p>
+            <p>
+              단체명
+              {!nameDuplConfirmed && (
+                <a href="./" onClick={onClickNameDuplBtnHandler} className={styles['dupl-btn']}>
+                  중복체크
+                </a>
+              )}
+            </p>
             <TextField name="name" margin="dense" placeholder="이름을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
-            <p>이메일</p>
-            {checkEmailAuth && <p className={styles['authed-email']}>{TeamSignUpInfo.email}</p>}
+            <p>
+              이메일
+              {!emailDuplConfirmed && (
+                <a href="./" onClick={onClickEmailDuplBtnHandler} className={styles['dupl-btn']}>
+                  중복체크
+                </a>
+              )}
+            </p>
+            {checkEmailAuth && <p className={styles['authed-email']}>{teamSignUpInfo.email}</p>}
             {!checkEmailAuth && (
               <div className={styles['not-shadow']}>
                 <TextField name="email" margin="dense" placeholder="이메일을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
-                <Button className={styles['auth-button']} variant="contained" onClick={handleClickAuthEmail}>
-                  {buttonText}
+                <Button className={styles['auth-btn']} variant="contained" onClick={handleClickAuthEmail}>
+                  {btnText}
                 </Button>
               </div>
             )}
@@ -163,7 +243,7 @@ function TeamSignUpContainer() {
                   className={styles['auth-number-input']}
                   onChange={onAuthNumberChangeHandler}
                 />
-                <Button className={styles['auth-check-button']} variant="contained" onClick={checkAuthNumber}>
+                <Button className={styles['auth-check-btn']} variant="contained" onClick={checkAuthNumber}>
                   인증
                 </Button>
               </div>
@@ -193,7 +273,7 @@ function TeamSignUpContainer() {
             <p className={styles.comment}>펀딩 진행 시 1년 이내의 봉사 실적이 필요합니다.</p>
 
             <p className={styles['last-comment']}>가입 승인 시 인증된 이메일 주소로 메일을 보내드립니다.</p>
-            <Button className={styles['signup-button']} variant="contained" onClick={requestTeamSignUp}>
+            <Button className={styles['signup-btn']} variant="contained" onClick={requestSignUp}>
               회원가입
             </Button>
           </div>

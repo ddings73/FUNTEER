@@ -1,18 +1,24 @@
 package com.yam.funteer.donation.service;
 
+import java.io.IOException;
 import java.util.List;
 
-import com.yam.funteer.donation.entity.Donation;
+import org.springframework.web.multipart.MultipartFile;
+
+import com.yam.funteer.donation.dto.request.DonationRegisterReq;
+import com.yam.funteer.donation.dto.response.DonationBaseRes;
+import com.yam.funteer.donation.dto.response.DonationListRes;
 import com.yam.funteer.donation.exception.DonationNotFoundException;
-import com.yam.funteer.donation.request.DonationJoinReq;
-import com.yam.funteer.donation.request.DonationRegisterReq;
+import com.yam.funteer.donation.dto.request.DonationJoinReq;
+
 import com.yam.funteer.pay.entity.Payment;
 
 public interface DonationService {
-	List<Donation> donationGetList();
+	List<DonationListRes> donationGetList();
 	Payment donationJoin(Long postId, DonationJoinReq donationJoinReq)throws DonationNotFoundException;
-	Donation donationGetDetail(Long postId);
-	void donationRegister(DonationRegisterReq donationRegisterReq);
+	DonationBaseRes donationGetDetail(Long postId) throws DonationNotFoundException;
+	DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq, List<MultipartFile>files);
 	// void donationDelete(Long postId,Long userId) throws DonationNotFoundException;
-	void donationModify(Long postId, DonationRegisterReq donationModifyReq) throws DonationNotFoundException;
+	DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq,List<MultipartFile>files) throws
+		DonationNotFoundException;
 }

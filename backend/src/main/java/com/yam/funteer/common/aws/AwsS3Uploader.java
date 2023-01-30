@@ -24,14 +24,19 @@ public class AwsS3Uploader {
 
 	private final AmazonS3Client amazonS3Client;
 
-	@Value("${cloud.aws.s3.bucket}")
+	@Value("funteer")
 	public String bucket;
 
-	public String upload(MultipartFile multipartFile, String dirName) throws IOException {
-		File uploadFile = convert(multipartFile)        // 파일 생성
-			.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File convert fail"));
+	public String upload(MultipartFile multipartFile, String dirName) {
+		try {
+			File uploadFile = convert(multipartFile)        // 파일 생성
+				.orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File convert fail"));
 
-		return upload(uploadFile, dirName);
+			return upload(uploadFile, dirName);
+		}catch (IOException e){
+			e.printStackTrace();
+			throw new RuntimeException();
+		}
 	}
 
 	private String upload(File uploadFile, String dirName) {
@@ -72,8 +77,11 @@ public class AwsS3Uploader {
 	}
 
 
-	public void delete(String fileName) {
+	public void delete(String directory, String path) {
+		String[] split = path.split("/");
+		String fileName = split[split.length - 1];
+		System.out.println(fileName);
 		log.info("File Delete : " + fileName);
-		amazonS3Client.deleteObject(bucket, fileName);
+		amazonS3Client.deleteObject(bucket, directory + fileName);
 	}
 }
