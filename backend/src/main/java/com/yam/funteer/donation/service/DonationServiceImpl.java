@@ -95,7 +95,7 @@ public class DonationServiceImpl implements DonationService{
 		return payment;
 	}
 
-	public DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq,List<MultipartFile>files) throws IOException {
+	public DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq,List<MultipartFile>files) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
 		if(user.getUserType().equals(UserType.ADMIN)) {

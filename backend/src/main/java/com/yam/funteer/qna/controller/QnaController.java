@@ -44,10 +44,9 @@ public class QnaController {
 
 	@ApiOperation(value="QnA 등록")
 	@PostMapping("")
-	public ResponseEntity<? extends BaseResponseBody>teamQnaRegister(@RequestPart(value ="qnaRegisterReq" ) QnaRegisterReq qnaRegisterReq,@RequestPart(value = "files",required = false)
-		List<MultipartFile>files) throws IOException {
-		qnaService.qnaRegister(qnaRegisterReq,files);
-		return ResponseEntity.ok(BaseResponseBody.of("Success"));
+	public ResponseEntity<?>teamQnaRegister(@RequestPart(value ="qnaRegisterReq" ) QnaRegisterReq qnaRegisterReq,@RequestPart(value = "files",required = false)
+		List<MultipartFile>files){
+		return ResponseEntity.ok(qnaService.qnaRegister(qnaRegisterReq,files));
 	}
 
 
@@ -61,11 +60,10 @@ public class QnaController {
 
 	@ApiOperation(value="QnA 수정")
 	@PutMapping("/{postId}")
-	public ResponseEntity<? extends BaseResponseBody>teamQnaModify(@PathVariable Long postId, @RequestPart(value ="qnaModifyReq" ) QnaRegisterReq qnaModifyReq,@RequestPart
+	public ResponseEntity<?>teamQnaModify(@PathVariable Long postId, @RequestPart(value ="qnaModifyReq" ) QnaRegisterReq qnaModifyReq,@RequestPart
 		(value = "files",required = false)List<MultipartFile>files) throws
-		QnaNotFoundException, IOException {
-		qnaService.qnaModify(postId,qnaModifyReq,files);
-		return ResponseEntity.ok(BaseResponseBody.of("Success"));
+		QnaNotFoundException {
+		return ResponseEntity.ok(qnaService.qnaModify(postId,qnaModifyReq,files));
 	}
 
 	@ApiOperation(value=" QnA 삭제")
@@ -75,5 +73,6 @@ public class QnaController {
 		qnaService.qnaDelete(postId);
 		return ResponseEntity.ok(BaseResponseBody.of("Success"));
 	}
+
 
 }

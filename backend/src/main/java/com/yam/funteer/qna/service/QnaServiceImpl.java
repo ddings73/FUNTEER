@@ -65,10 +65,10 @@ public class QnaServiceImpl implements QnaService {
 	}
 
 	@Override
-	public void qnaRegister(QnaRegisterReq qnaRegisterReq,List<MultipartFile>files){
+	public QnaBaseRes qnaRegister(QnaRegisterReq qnaRegisterReq,List<MultipartFile>files){
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Qna qna=qnaRepository.save(qnaRegisterReq.toEntity(user));
-
+		List<String>attachList=new ArrayList<>();
 		for(MultipartFile file:files){
 			String fileUrl = awsS3Uploader.upload(file,"/qna");
 			Attach attach=qnaRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
@@ -76,9 +76,10 @@ public class QnaServiceImpl implements QnaService {
 				.attach(attach)
 				.post(qna)
 				.build();
+			attachList.add(fileUrl);
 			attachRepository.save(attach);
 			postAttachRepository.save(postAttach);
-		}
+		}return new QnaBaseRes(qna,attachList);
 	}
 
 
@@ -100,11 +101,11 @@ public class QnaServiceImpl implements QnaService {
 	}
 
 	@Override
-	public void qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq, List<MultipartFile>files) throws
-		QnaNotFoundException,
-		IOException {
+	public QnaBaseRes qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq, List<MultipartFile>files) throws
+		QnaNotFoundException{
 		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
+		List<String>attachList=new ArrayList<>();
 		if(user.getId()==qna.getUser().getId()) {
 			qnaRepository.save(qnaRegisterReq.toEntity(user,qnaId));
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
@@ -121,10 +122,12 @@ public class QnaServiceImpl implements QnaService {
 					.attach(attach)
 					.post(qna)
 					.build();
+				attachList.add(fileUrl);
 				attachRepository.save(attach);
 				postAttachRepository.save(postAttach);
 			}
 		}
+		return new QnaBaseRes(qna,attachList);
 	}
 
 	@Override
