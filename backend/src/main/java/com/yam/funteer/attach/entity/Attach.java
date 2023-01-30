@@ -42,9 +42,9 @@ public class Attach {
 	@Column(nullable = false)
 	private FileType fileType;
 
-	public void update(UpdateProfileRequest request, String filename) {
-		this.name = request.getProfileImg().getOriginalFilename();
-		this.path = filename;
+	public void update(String name, String path) {
+		this.name = name;
+		this.path = path;
 	}
 
 	public static Attach of(String filename, String path, FileType fileType){

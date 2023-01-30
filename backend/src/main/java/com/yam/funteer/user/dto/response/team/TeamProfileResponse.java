@@ -1,8 +1,7 @@
-package com.yam.funteer.user.dto.response;
+package com.yam.funteer.user.dto.response.team;
 
 import java.util.List;
 
-import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.user.entity.Team;
@@ -22,16 +21,20 @@ public class TeamProfileResponse extends BaseResponseBody {
     private Long money;
     private List<Funding> fundingList;
     private long followerCnt;
-    private Attach banner;
+    private String profileImgUrl;
+    private String bannerUrl;
 
     public static TeamProfileResponse of(Team team, List<Funding> fundingList, long follwerCnt){
-        return TeamProfileResponse.builder()
+        TeamProfileResponse response = TeamProfileResponse.builder()
                 .name(team.getName())
-                .description(team.getDiscription())
+                .description(team.getDescription())
                 .money(team.getMoney())
                 .fundingList(fundingList)
                 .followerCnt(follwerCnt)
-                .banner(team.getBanner())
                 .build();
+
+        team.getProfileImg().ifPresent(attach -> response.setProfileImgUrl(attach.getPath()));
+        team.getBanner().ifPresent(attach -> response.setBannerUrl(attach.getPath()));
+        return response;
     }
 }

@@ -1,4 +1,4 @@
-package com.yam.funteer.user.dto.request;
+package com.yam.funteer.user.dto.request.member;
 
 import com.yam.funteer.user.entity.Charge;
 import com.yam.funteer.user.entity.Member;

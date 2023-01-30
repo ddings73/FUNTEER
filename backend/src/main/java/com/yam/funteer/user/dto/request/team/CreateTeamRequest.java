@@ -1,9 +1,10 @@
-package com.yam.funteer.user.dto.request;
+package com.yam.funteer.user.dto.request.team;
 
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.FileUtil;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.code.UserType;
+import com.yam.funteer.user.dto.request.CreateAccountRequest;
 import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
 import lombok.*;
@@ -25,16 +26,13 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CreateTeamRequest extends CreateAccountRequest{
+public class CreateTeamRequest extends CreateAccountRequest {
 
     @NotNull
     private MultipartFile vmsFile;
 
     @NotNull
     private MultipartFile performFile;
-
-    @NotNull
-    private String description;
 
     public Team toTeam(){
         return Team.builder()
@@ -45,7 +43,6 @@ public class CreateTeamRequest extends CreateAccountRequest{
                 .userType(UserType.TEAM_WAIT)
                 .money(0L)
                 .regDate(LocalDateTime.now())
-                .discription(description)
                 .build();
     }
 
