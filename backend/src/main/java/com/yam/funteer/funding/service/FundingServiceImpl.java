@@ -28,6 +28,7 @@ import com.yam.funteer.funding.dto.FundingRequest;
 import com.yam.funteer.funding.dto.TakeFundingRequest;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
+import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.funding.entity.TargetMoney;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
@@ -264,7 +265,6 @@ public class FundingServiceImpl implements FundingService{
 
 			Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
-			// 수정 필요
 			setTargetMoney(data, funding);
 
 			List<PostHashtag> postHashtagList = funding.getHashtags();
@@ -324,6 +324,7 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public void createFundingReport(FundingReportRequest data) {
+
 
 	}
 
