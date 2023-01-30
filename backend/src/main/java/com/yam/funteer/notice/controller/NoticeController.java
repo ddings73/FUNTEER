@@ -1,4 +1,6 @@
-package com.yam.funteer.faq.controller;
+package com.yam.funteer.notice.controller;
+
+import java.io.IOException;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.faq.dto.request.FaqRegisterReq;
 import com.yam.funteer.faq.service.FaqService;
+import com.yam.funteer.notice.dto.request.NoticeRegistReq;
+import com.yam.funteer.notice.service.NoticeService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -21,32 +25,42 @@ import lombok.RequiredArgsConstructor;
 @Api(value = "FAQ",tags = "FAQ")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/faq")
-public class FaqController {
-	private final FaqService faqService;
+@RequestMapping("/notice")
+public class NoticeController {
+	private final NoticeService noticeService;
 
-	@ApiOperation(value = "faq List")
+	@ApiOperation(value = "notice List")
 	@GetMapping("")
-	public ResponseEntity<?>FaqGetList(){
-		return ResponseEntity.ok(faqService.FaqGetList());
+	public ResponseEntity<?>NoticeGetList(){
+		return ResponseEntity.ok(noticeService.noticeGetList());
 	}
 
-	@ApiOperation(value = "faq 등록")
+	@ApiOperation(value = "notice 등록")
 	@PostMapping("")
-	public ResponseEntity<?>FaqRegister(@RequestBody FaqRegisterReq faqRegisterReq){
-		return ResponseEntity.ok(faqService.FaqRegister(faqRegisterReq));
+	public ResponseEntity<?>NoticeRegister( NoticeRegistReq noticeRegistReq) throws IOException {
+		return ResponseEntity.ok(noticeService.noticeRegister(noticeRegistReq));
 	}
 
-	@ApiOperation(value = "faq 수정")
+	//@RequestPart(value = "donationRegisterReq") DonationRegisterReq donationRegisterReq,
+	// 		@RequestPart (value = "files",required = false)List<MultipartFile>files
+
+	@ApiOperation(value="notice 상세")
+	@GetMapping("/{postId}")
+	public ResponseEntity<?>NoticeDetail(@PathVariable Long postId){
+		return ResponseEntity.ok(noticeService.noticeGetDetail(postId));
+	}
+
+	@ApiOperation(value = "notice 수정")
 	@PutMapping("/{postId}")
-	public ResponseEntity<?>FaqModify(@PathVariable Long postId,@RequestBody FaqRegisterReq faqRegisterReq){
-		return ResponseEntity.ok(faqService.FaqModify(postId,faqRegisterReq));
+	public ResponseEntity<?>NoticeModify(@PathVariable Long postId, NoticeRegistReq noticeRegistReq) throws
+		IOException {
+		return ResponseEntity.ok(noticeService.noticeModify(postId,noticeRegistReq));
 	}
 
-	@ApiOperation(value = "faq 삭제")
+	@ApiOperation(value = "notice 삭제")
 	@DeleteMapping("/{postId}")
-	public ResponseEntity<? extends BaseResponseBody>FaqDelete(@PathVariable Long postId){
-		faqService.FaqDelete(postId);
+	public ResponseEntity<? extends BaseResponseBody>NoticeDelete(@PathVariable Long postId){
+		noticeService.noticeDelete(postId);
 		return ResponseEntity.ok(BaseResponseBody.of("Delete Success"));
 	}
 
