@@ -1,0 +1,78 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+.cardContainer {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  & .blogCard {
+    width: 70%;
+    max-height: 200px;
+    box-sizing: border-box;
+    overflow: hidden;
+    border: 3px solid #000;
+    font-size: medium;
+    display: flex;
+    & .cardImage {
+      width: 20%;
+      object-fit: cover;
+    }
+    & .cardDetail {
+      width: 60%;
+      padding: 5%;
+      display: flex;
+      flex-direction: column;
+      padding-right: 0;
+      justify-content: center;
+      & .fundGroup {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 10px;
+      }
+      & .fundInfo {
+        display: flex;
+        align-items: flex-end;
+        & .fundTitle {
+          font-size: 40px;
+          font-weight: 600;
+          margin-right: 10px;
+        }
+      }
+      & .fundGauge {
+        width: 60%;
+        display: flex;
+        margin-top: 5%;
+        align-items: center;
+        font-size: 15px;
+        & .fundLevel {
+          width: auto;
+          margin-bottom: 10px;
+        }
+      }
+      & .barWrapper {
+        display: flex;
+        & .progressBar {
+          width: 60%;
+          background-color: rgb(110, 110, 110);
+          border-radius: 15px;
+          display: flex;
+          padding: 3px;
+          height: 10px;
+          & .status {
+            width: 70%;
+            background-color: rgb(116, 194, 92);
+            color: white;
+            padding: 1%;
+            text-align: right;
+            font-size: 20px;
+            border-radius: 15px;
+          }
+        }
+        & .funStatusNum {
+          width: 10%;
+          margin-left: 10px;
+        }
+      }
+    }
+  }
+}
