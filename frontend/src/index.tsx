@@ -43,6 +43,7 @@ import {
   AdminFunding,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
+import LiveTest from './containers/MyPage/LiveTest';
 
 const router = createBrowserRouter([
   {
@@ -150,6 +151,10 @@ const router = createBrowserRouter([
         path: '/funding/detail',
         element: <FundingDetail />,
       },
+      {
+        path: '/test',
+        element: <LiveTest />,
+      },
     ],
   },
   {
@@ -176,21 +181,6 @@ const router = createBrowserRouter([
       {
         path: 'funding',
         element: <AdminFunding />,
-      },
-    ],
-  },
-  {
-    path: '/admin',
-    element: <AdminRoot />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        path: 'main',
-        element: <AdminMain />,
-      },
-      {
-        path: 'member',
-        element: <AdminMember />,
       },
     ],
   },
