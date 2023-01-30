@@ -2,6 +2,7 @@ package com.yam.funteer.faq.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
@@ -32,10 +33,8 @@ public class FaqServiceImpl implements  FaqService{
 	@Override
 	public List<FaqListRes> faqGetList() {
 		List<Post>faqList=postRepository.findAllByPostType(PostType.FAQ);
-		List<FaqListRes>faqListRes=new ArrayList<>();
-		for(Post faq:faqList){
-			faqListRes.add(new FaqListRes(faq.getId(),faq.getTitle()));
-		}
+		List<FaqListRes>faqListRes;
+		faqListRes=faqList.stream().map(faq->new FaqListRes(faq)).collect(Collectors.toList());
 		return faqListRes;
 	}
 
