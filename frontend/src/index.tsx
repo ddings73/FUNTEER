@@ -3,10 +3,12 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { BrowserRouter, createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { ThemeProvider } from '@emotion/react';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
 /*  */
+import { theme } from './theme/theme';
 import UserRoot from './roots/UserRoot';
 import AdminRoot from './roots/AdminRoot';
 import {
@@ -31,6 +33,13 @@ import {
   MyFunding,
   MyFunteerDonate,
   MyPage,
+  AdminMain,
+  AdminMember,
+  LogOut,
+  AdminTeam,
+  FundingList,
+  CreateFunding,
+  AdminTeamDeny,
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -63,16 +72,18 @@ const router = createBrowserRouter([
       {
         path: 'signup',
         element: <SignUp />,
-        children: [
-          {
-            path: 'teamSignUp',
-            element: <TeamSignUp />,
-          },
-          {
-            path: 'MemberSignUp',
-            element: <MemberSignUp />,
-          },
-        ],
+      },
+      {
+        path: 'signup/team',
+        element: <TeamSignUp />,
+      },
+      {
+        path: 'signup/member',
+        element: <MemberSignUp />,
+      },
+      {
+        path: 'logout',
+        element: <LogOut />,
       },
       /* Add-on Routes */
       {
@@ -125,13 +136,53 @@ const router = createBrowserRouter([
         path: 'myFollow',
         element: <MyFollows />,
       },
+      {
+        path: '/funding',
+        element: <FundingList />,
+      },
+      {
+        path: '/funding/create',
+        element: <CreateFunding />,
+      },
     ],
   },
   {
     path: '/admin',
     element: <AdminRoot />,
     errorElement: <ErrorPage />,
-    children: [],
+    children: [
+      {
+        path: 'main',
+        element: <AdminMain />,
+      },
+      {
+        path: 'member',
+        element: <AdminMember />,
+      },
+      {
+        path: 'team',
+        element: <AdminTeam />,
+      },
+      {
+        path: 'team/deny/:vn', // vn: vms 위촉 번호
+        element: <AdminTeamDeny />,
+      },
+    ],
+  },
+  {
+    path: '/admin',
+    element: <AdminRoot />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        path: 'main',
+        element: <AdminMain />,
+      },
+      {
+        path: 'member',
+        element: <AdminMember />,
+      },
+    ],
   },
 ]);
 

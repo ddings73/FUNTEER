@@ -24,7 +24,7 @@ export const NavDataSettings: NavSettingDataType[] = [
   },
   {
     title: '로그아웃',
-    path: '/myFavors',
+    path: '/logout',
   },
 ];
 

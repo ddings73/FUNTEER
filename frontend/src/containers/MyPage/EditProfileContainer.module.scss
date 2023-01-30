@@ -1,0 +1,88 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+@import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
+
+.bodyContainer {
+  & .contentContainer {
+    margin-top: 60px;
+    margin-left: 250px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    justify-content: flex-start;
+    align-items: center;
+    & .backBox {
+      width: 100%;
+      height: 40%;
+      border-radius: 0 0 5% 5%;
+      background: url('https://media.istockphoto.com/id/1256009727/photo/pink-yellow-and-orange-colors-defocused-abstract-smooth-background-wallpaper.jpg?s=612x612&w=0&k=20&c=yw62XD7snbSlpWp7opOPVWJ7jMT7qRTUQi3ueCs9wmM=');
+      background-size: cover;
+      & .contentBox {
+        display: flex;
+        margin: 15% auto;
+        width: 100%;
+        height: 700px;
+        align-items: center;
+        justify-content: center;
+        font-size: 150px;
+        box-sizing: border-box;
+      }
+    }
+    @media (max-width: 900px) {
+      margin-left: 0;
+    }
+  }
+}
+.main {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  & .profileCard {
+    font-family: 'NanumSquare', sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 400px;
+    width: 100%;
+    border-radius: 25px;
+    padding: 30px;
+    border: 5px solid #ffffff40;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.45);
+    backdrop-filter: blur(15px);
+    box-sizing: border-box;
+    & .formData {
+      width: 100%;
+      height: 100px;
+      & .header {
+        margin-left: 5px;
+        font-size: 15px;
+        font-weight: 600;
+        text-align: start;
+        margin-bottom: 8px;
+      }
+    }
+    & .buttons {
+      display: flex;
+      margin-top: 20px;
+    }
+
+    & .image {
+      position: relative;
+      height: 150px;
+      width: 150px;
+      margin-bottom: 50px;
+      & .profilePic {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+      }
+    }
+  }
+}
