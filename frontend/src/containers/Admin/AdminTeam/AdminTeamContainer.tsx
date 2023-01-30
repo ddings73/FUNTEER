@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import AdminTeamContainerItem, { TeamState } from './AdminTeamContainerItem';
 import { openModal } from '../../../store/slices/fileModalSlice';
-import { useAppDispatch } from '../../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import styles from './AdminTeamContainer.module.scss';
 import { RootState } from '../../../store/store';
 
@@ -40,7 +39,7 @@ function AdminTeamContainer() {
   };
 
   /** dn: 가입 승인 거부된 팀의 위촉번호 */
-  const dn = useSelector((state: RootState) => state.fileModalSlice.deniedNum);
+  const dn = useAppSelector((state: RootState) => state.fileModalSlice.deniedNum);
 
   const goDenyPage = () => {
     navigate(`deny/${dn}`, {
