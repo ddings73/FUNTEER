@@ -17,6 +17,7 @@ import com.yam.funteer.user.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -55,7 +56,7 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void setAccountSignOut(BaseUserRequest request) {
-        Long userId = SecurityUtil.getCurrentUserId().orElseThrow();
+        Long userId = SecurityUtil.getCurrentUserId();
         String password = request.getPassword()
                 .orElseThrow(() -> new IllegalArgumentException("패스워드를 입력해주세요"));
 
@@ -173,7 +174,7 @@ public class MemberServiceImpl implements MemberService {
 
 
     private void validateSameUser(Long userId){
-        Long nowId = SecurityUtil.getCurrentUserId().orElseGet(null);
+        Long nowId = SecurityUtil.getCurrentUserId();
         if(nowId == null || userId != nowId){
             throw new IllegalArgumentException("동일 회원만 접근할 수 있습니다");
         }
