@@ -1,4 +1,4 @@
-package com.yam.funteer.qna.response;
+package com.yam.funteer.qna.dto.response;
 
 import java.time.LocalDateTime;
 

@@ -1,4 +1,4 @@
-package com.yam.funteer.qna.request;
+package com.yam.funteer.qna.dto.request;
 
 import java.time.LocalDateTime;
 
@@ -12,13 +12,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class QnaReplyReq {
-	private Long userId;
 	private String content;
 
 	@Builder
 	public QnaReplyReq(Long userId,String content){
 		this.content=content;
-		this.userId=userId;
 	}
 
 	public Reply toEntity(Qna qna){
@@ -28,5 +26,4 @@ public class QnaReplyReq {
 			.regDate(LocalDateTime.now())
 			.build();
 	}
-
 }

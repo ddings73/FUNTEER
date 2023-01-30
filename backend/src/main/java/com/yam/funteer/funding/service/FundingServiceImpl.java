@@ -1,6 +1,7 @@
 package com.yam.funteer.funding.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -12,28 +13,43 @@ import java.util.stream.Collectors;
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
+import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
+import com.yam.funteer.funding.dto.FundingListPageResponse;
 import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.dto.TakeFundingRequest;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.TargetMoney;
+import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
+import com.yam.funteer.funding.exception.InsufficientBalanceException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.repository.TargetMoneyRepository;
+import com.yam.funteer.pay.entity.Payment;
+import com.yam.funteer.pay.repository.PaymentRepository;
+import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.post.entity.Hashtag;
+import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.post.repository.CategoryRepository;
+import com.yam.funteer.post.repository.CommentRepository;
 import com.yam.funteer.post.repository.HashTagRepository;
 import com.yam.funteer.post.repository.PostHashtagRepository;
+import com.yam.funteer.post.repository.PostRepository;
+import com.yam.funteer.user.entity.Member;
+import com.yam.funteer.user.repository.MemberRepository;
+import com.yam.funteer.user.repository.TeamRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +59,10 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
+	private final PostRepository postRepository;
+	private final TeamRepository teamRepository;
+	private final PaymentRepository paymentRepository;
+	private final MemberRepository memberRepository;
 	private final CategoryRepository categoryRepository;
 
 	private final FundingRepository fundingRepository;
@@ -52,34 +72,81 @@ public class FundingServiceImpl implements FundingService{
 
 	private final PostHashtagRepository postHashtagRepository;
 
-	@Override
-	public List<FundingListResponse> findApprovedFunding(String keyword, String category, String hashTag) {
+	private final CommentRepository commentRepository;
 
-		return null;
-	}
 
 	@Override
-	public List<FundingListResponse> findAllFunding() {
-		List<FundingListResponse> collect = fundingRepository.findAll().stream().map(m -> FundingListResponse.from(m)).collect(Collectors.toList());
+	public List<FundingListResponse> findFundingByKeyword(String keyword) {
+		List<Funding> byTitleContaining = fundingRepository.findByTitleOrContentContaining(keyword, keyword);
+		List<FundingListResponse> collect = byTitleContaining.stream()
+			.map(funding -> FundingListResponse.from(funding))
+			.collect(Collectors.toList());
 		return collect;
 	}
 
+	@Override
+	public List<FundingListResponse> findFundingByHashtag(String hashtag) {
+		Long hashtagId = hashTagRepository.findByName(hashtag).get().getId();
+		List<PostHashtag> byHashtag = postHashtagRepository.findByHashtagId(hashtagId);
+		List<Funding> posts = new ArrayList<>();
+		for (PostHashtag postHashtag : byHashtag) {
+			Optional<Funding> funding = fundingRepository.findById(postHashtag.getPost().getId());
+			posts.add(funding.get());
+		}
+		List<FundingListResponse> collect = posts.stream()
+			.map(funding -> FundingListResponse.from(funding))
+			.collect(Collectors.toList());
+		return collect;
+
+	}
 
 	@Override
-	public FundingDetailResponse createFunding(FundingRequest data) throws IOException {
+	public List<FundingListResponse> findFundingByCategory(Long categoryId) {
+		Category category = categoryRepository.findById(categoryId).orElseThrow();
+		List<Funding> allByCategory = fundingRepository.findAllByCategory(category);
+		List<FundingListResponse> collect = allByCategory.stream()
+			.map(funding -> FundingListResponse.from(funding))
+			.collect(Collectors.toList());
+		return collect;
+	}
+
+	@Override
+	public FundingListPageResponse findAllFunding() {
+		List<FundingListResponse> collect = fundingRepository.findAll().stream().map(m -> FundingListResponse.from(m)).collect(Collectors.toList());
+		List<Funding> successFundingList = fundingRepository.findAllByPostType(PostType.REPORT_ACCEPT);
+
+		int totalFundingCount = collect.size();
+		int successFundingCount = successFundingList.size();
+
+		Long totalFundingAmount = 0L;
+		for (Funding funding : successFundingList) {
+			totalFundingAmount += funding.getCurrentFundingAmount();
+		}
+		FundingListPageResponse fundingListPageResponse = new FundingListPageResponse(collect, totalFundingCount, successFundingCount, totalFundingAmount);
+		return fundingListPageResponse;
+	}
+
+
+	@Override
+	public FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException {
 
 		// category 들고오기
 		Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
-		// time 변환
-		LocalDateTime startDate = LocalDateTime.parse(data.getStartDate(),
-			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		// // Team
+		// Optional<Long> currentUserId = SecurityUtil.getCurrentUserId();
+		// Team team = teamRepository.findById(currentUserId).orElseThrow();
 
-		LocalDateTime endDate = LocalDateTime.parse(data.getEndDate(),
-			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		// time 변환
+		LocalDate startDate = LocalDate.parse(data.getStartDate(),
+			DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+		LocalDate endDate = LocalDate.parse(data.getEndDate(),
+			DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
 		// 펀딩 생성
 		Funding funding = Funding.builder()
+			// .team(team)
 			.title(data.getTitle())
 			.category(category)
 			.content(data.getContent())
@@ -87,14 +154,16 @@ public class FundingServiceImpl implements FundingService{
 			.endDate(endDate)
 			.regDate(LocalDateTime.now())
 			.hit(0)
+			.currentFundingAmount(0L)
 			.postGroup(PostGroup.FUNDING)
 			.postType(PostType.FUNDING_WAIT)
+			.fundingDescription(data.getFundingDescription())
 			.build();
 
 		Funding savedPost = fundingRepository.save(funding);
 
 		// s3 변환
-		String thumbnailUrl = awsS3Uploader.upload(data.getThumbnail(), "/thumbnails/" + savedPost.getId());
+		String thumbnailUrl = awsS3Uploader.upload(thumbnail, "/thumbnails/" + savedPost.getId());
 
 		savedPost.setThumbnail(thumbnailUrl);
 
@@ -169,27 +238,35 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception {
+	public FundingDetailResponse updateFunding(Long fundingId, MultipartFile thumbnail, FundingRequest data) throws Exception {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
 
-
-		LocalDateTime endDate = LocalDateTime.parse(data.getEndDate(),
+		LocalDate endDate = LocalDate.parse(data.getEndDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 		if (funding.getPostType() == PostType.FUNDING_REJECT) {
 
+
 			// 기존 파일 삭제, 새로운 파일 추가
 			awsS3Uploader.delete("/thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
-			String thumbnailUrl = awsS3Uploader.upload(data.getThumbnail(), "/thumbnails/"+fundingId);
+			String thumbnailUrl = awsS3Uploader.upload(thumbnail, "/thumbnails/"+fundingId);
 
 			Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
-			addTargetMoney(data, funding);
+			// 수정 필요
+			setTargetMoney(data, funding);
+
+			List<PostHashtag> postHashtagList = funding.getHashtags();
+			for (PostHashtag postHashtag : postHashtagList) {
+				postHashtagRepository.delete(postHashtag);
+			}
+
 			List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
 			List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
+
 			addPostHashtags(funding, hashtags);
 
-			LocalDateTime startDate = LocalDateTime.parse(data.getStartDate(),
+			LocalDate startDate = LocalDate.parse(data.getStartDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 			funding.setStartDate(startDate);
@@ -207,6 +284,24 @@ public class FundingServiceImpl implements FundingService{
 			throw new Exception("no");
 		}
 		return FundingDetailResponse.from(funding);
+	}
+
+	private static void setTargetMoney(FundingRequest data, Funding funding) {
+		List<TargetMoney> targetMoneyList = funding.getTargetMoneyList();
+
+		for (TargetMoney targetMoney : targetMoneyList) {
+			targetMoney.setAmount(data.getAmount1());
+			targetMoney.setDescription(data.getDescription1());
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_ONE);
+
+			targetMoney.setAmount(data.getAmount2());
+			targetMoney.setDescription(data.getDescription2());
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_TWO);
+
+			targetMoney.setAmount(data.getAmount3());
+			targetMoney.setDescription(data.getDescription3());
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_THREE);
+		}
 	}
 
 	@Override
@@ -232,7 +327,53 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public void createFundingComment(FundingCommentRequest data) {
+	public void createFundingComment(Long fundingId, FundingCommentRequest data) {
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Optional<Long> userId = SecurityUtil.getCurrentUserId();
+		Member member = memberRepository.findById(userId).orElseThrow();
+
+		Comment comment = new Comment(funding, member, data.getContent());
+		commentRepository.save(comment);
+	}
+
+	@Override
+	public void deleteFundingComment(Long commentId) throws CommentNotFoundException{
+		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException());
+		commentRepository.delete(comment);
+	}
+
+	@Override
+	public void takeFunding(Long fundingId, TakeFundingRequest data) {
+
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new IllegalArgumentException());
+
+		Optional<Long> memberId = SecurityUtil.getCurrentUserId();
+		Member member = memberRepository.findById(memberId).orElseThrow();
+
+		try {
+
+			if (member.getMoney() < data.getAmount()) {
+				throw new InsufficientBalanceException("잔액 부족");
+			}
+
+			Payment payment = Payment.builder()
+				.amount(data.getAmount())
+				.post(funding)
+				.payDate(LocalDateTime.now())
+				.user(member)
+				.build();
+
+			paymentRepository.save(payment);
+
+			member.setMoney(member.getMoney() - data.getAmount());
+			funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + data.getAmount());
+
+		} catch ( InsufficientBalanceException e) {
+
+			String message = e.getMessage();
+			e.printStackTrace();
+
+		}
 
 	}
 
