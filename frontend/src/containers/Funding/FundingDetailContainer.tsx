@@ -1,13 +1,36 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
+import { http } from '../../api/axios';
 
+export type IResponse = {
+  id: number;
+  title: string;
+  lstartDate: string;
+  endDate: string;
+  postDate: string;
+  thumbnail: string;
+  amount: number;
+  currentFundingAmount: number;
+  postType: string;
+};
 export function FundingDetailContainer() {
+  const [users, setUsers] = useState(null);
+  const [board, setBoard] = useState<IResponse | null>(null);
+
+  useEffect(() => {
+    const params = { fundingId: 1 };
+    axios.get('https://i8e204.p.ssafy.io/api/v1/funding', { params }).then((response) => {
+      setBoard(response.data.fundingListResponses[6]);
+    });
+  }, []);
+
   return (
     <div className={styles.bodyContainer}>
       <div className={styles.banner}>
         <div className={styles.bannerContent}>
-          <h1 className={styles.bannerTitle}>펀딩 상세 제목</h1>
+          <h1 className={styles.bannerTitle}>{board?.title}</h1>
           <div className={styles.bannerButtonGroup}>
             <button className={styles.bannerGrpBtn} type="button">
               보고서 제출
@@ -26,7 +49,7 @@ export function FundingDetailContainer() {
           {' '}
           <FundSummary />
         </div>
-        <div className={styles.mainContent}>상세 사진</div>
+        <div className={styles.mainContent}>123</div>
         <div className={styles.mainFooter}>푸터</div>
         <div className={styles.mainFooterSum}>▼ 모금액, 이렇게 사용됩니다.</div>
         <div className={styles.mainFooterdiv} />
