@@ -1,6 +1,7 @@
 package com.yam.funteer.user.entity;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -43,11 +44,11 @@ public class User {
 	@Email
 	@Column(unique = true)
 	private @NotNull String email;
-	private @NotNull String password;
+	private String password;
 	private @NotNull String name;
-	private @NotNull String phone;
+	private String phone;
 	@OneToOne
-	@JoinColumn(name = "member_profile")
+	@JoinColumn(name = "profile_id")
 	private Attach profileImg;
 	private LocalDateTime regDate;
 	private Long money;
@@ -55,10 +56,29 @@ public class User {
 	@Column(nullable = false)
 	private UserType userType;
 
+	public Optional<Attach> getProfileImg(){
+		return Optional.ofNullable(this.profileImg);
+	}
+	protected void updateProfile(Attach profileImg){
+		this.profileImg = profileImg;
+	}
+	public void charge(Long amount) {
+		this.money += amount;
+	}
+	public void changePassword(String password){
+		this.password = password;
+	}
 	public void signOut(UserType userType){
 		this.userType = userType;
 	}
-	public boolean validatePassword(PasswordEncoder passwordEncoder, String password){
-		return passwordEncoder.matches(password, this.password);
+	public boolean isResign(){return this.userType.equals(UserType.NORMAL_RESIGN) || this.userType.equals(UserType.TEAM_RESIGN);}
+	public void validatePassword(PasswordEncoder passwordEncoder, String password){
+		if(!passwordEncoder.matches(password, this.password))
+			throw new IllegalArgumentException();
 	}
+
+	public void setMoney(long amount) {
+		this.money = amount;
+	}
+
 }

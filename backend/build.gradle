@@ -25,6 +25,14 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 
+	// 파일 확장자 검증
+	implementation 'org.apache.tika:tika-core:2.6.0'
+
+
+	// mail
+	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.7'
+
+
 	// security
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.security:spring-security-oauth2-client:5.7.5'

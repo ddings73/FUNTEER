@@ -1,42 +1,91 @@
 package com.yam.funteer.user.service;
 
-import com.yam.funteer.common.security.Token;
-import com.yam.funteer.common.security.JwtProvider;
+import com.yam.funteer.common.code.UserType;
+import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
+import com.yam.funteer.user.dto.request.TokenRequest;
+import com.yam.funteer.user.dto.response.TokenInfo;
+import com.yam.funteer.user.entity.Token;
+import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.user.dto.request.LoginRequest;
 import com.yam.funteer.user.dto.response.LoginResponse;
 import com.yam.funteer.user.entity.User;
+import com.yam.funteer.user.repository.TokenRepository;
 import com.yam.funteer.user.repository.UserRepository;
 
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.security.crypto.password.PasswordEncoder;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 import javax.transaction.Transactional;
 
-@Service
+@Service @Slf4j
 @Transactional
 @RequiredArgsConstructor
 public class LoginServiceImpl implements LoginService{
     private final JwtProvider jwtProvider;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
 
     @Override
     public LoginResponse processLogin(LoginRequest loginRequest) {
-        Optional<User> findUser = userRepository.findByEmail(loginRequest.getEmail());
-        User user = findUser.orElseThrow(UserNotFoundException::new);
+        
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
 
-        validatePassword(loginRequest.getPassword(), user.getPassword());
+        // 여기서 실제로 검증
+        // UserDetailsService를 상속받는 bean을 찾아서 loadUserByUsername을 실행함
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
-        Token token = jwtProvider.generateToken(user.getEmail(), "ROLE_USER");
-        return LoginResponse.of(user, token);
+        TokenInfo tokenInfo = jwtProvider.generateToken(authentication); // 검증되면 jwt 만들어서 가져옴
+
+
+        // 생성된 토큰을 DB에 저장함
+        Long userId = Long.valueOf(authentication.getName());
+        Token token = Token.builder()
+                .id(userId)
+                .refreshToken(tokenInfo.getRefreshToken())
+                .build();
+        tokenRepository.save(token);
+
+        User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(UserNotFoundException::new);
+        if(user.isResign()){
+            throw new IllegalArgumentException("탈퇴한 회원입니다");
+        }else if(user.getUserType().equals(UserType.TEAM_WAIT)){
+            throw new IllegalArgumentException("가입 대기중인 회원입니다");
+        }
+
+        return LoginResponse.of(user, tokenInfo);
     }
 
-    private void validatePassword(String p1, String p2){
-        if(!passwordEncoder.matches(p1, p2)) throw new IllegalArgumentException();
+    @Override
+    public void processLogOut() {
+        Long userId = SecurityUtil.getCurrentUserId();
+        tokenRepository.deleteById(userId);
+    }
+
+    @Override
+    public TokenInfo regenerateToken(TokenRequest tokenRequest) {
+        if(!jwtProvider.validateToken(tokenRequest.getRefreshToken())){
+            throw new JwtException("Refresh Token이 유효하지 않습니다.");
+        }
+
+        Authentication authentication = jwtProvider.getAuthentication(tokenRequest.getAccessToken());
+        Token token = tokenRepository.findById(Long.valueOf(authentication.getName()))
+                .orElseThrow(()->new JwtException("로그아웃 된 사용자입니다."));
+
+        if (!token.getRefreshToken().equals(tokenRequest.getRefreshToken())) {
+            throw new JwtException("토큰의 유저 정보가 일치하지 않습니다.");
+        }
+
+        TokenInfo tokenInfo = jwtProvider.generateToken(authentication);
+        token.updateToken(tokenInfo.getRefreshToken());
+        tokenRepository.save(token);
+        return tokenInfo;
     }
 }
