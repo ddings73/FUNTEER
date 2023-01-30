@@ -42,15 +42,18 @@ function AdminTeamContainer() {
   /** dn: 가입 승인 거부된 팀의 위촉번호 */
   const dn = useSelector((state: RootState) => state.fileModalSlice.deniedNum);
 
+  const goDenyPage = () => {
+    navigate(`deny/${dn}`, {
+      state: {
+        dn,
+      },
+    });
+  };
+
   /** dn이 변하면 해당 팀에게 사유를 안내하기 위한 페이지로 이동 */
   useEffect(() => {
     if (dn) {
-      // const deniedTeamUrl = `deny/${dn}`;
-      navigate(`deny/${dn}`, {
-        state: {
-          dn,
-        },
-      });
+      goDenyPage();
     }
   }, [dn]);
 

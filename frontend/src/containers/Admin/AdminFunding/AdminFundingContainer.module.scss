@@ -55,39 +55,27 @@
 
     .list-line {
       width: 100%;
+      height: auto;
       display: flex;
       justify-content: space-around;
       align-items: center;
       background-color: rgba(1, 1, 1, 0.01);
       font-size: 1.125rem;
+      border: none;
       border-bottom: 1px solid rgba(1, 1, 1, 0.05);
       margin: 0.1rem 0;
       padding: 0.5rem 0;
+      font-family: NanumSquareRound;
+
+      &:hover {
+        cursor: pointer;
+        background-color: rgba(1, 1, 1, 0.05);
+      }
 
       & li {
         width: 150px;
         display: flex;
         justify-content: center;
-
-        .file-btn {
-          width: 4.5rem;
-          height: 2.2rem;
-          padding: auto 0;
-          border: none;
-          border-radius: 5px;
-          background-color: $second;
-          color: white;
-          font-size: 1rem;
-
-          &:hover {
-            cursor: pointer;
-            background-color: $error;
-          }
-
-          &:active {
-            background-color: $second;
-          }
-        }
       }
     }
   }
