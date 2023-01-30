@@ -4,15 +4,20 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import net.minidev.json.annotate.JsonIgnore;
 
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.TargetMoney;
+import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.post.entity.Post;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor
@@ -31,10 +36,9 @@ public class FundingListResponse {
 
 	private Long currentFundingAmount;
 
+	private PostType postType;
 
 	private int amount;
-
-	private List<TargetMoney> targetMoneyList;
 
 	private String thumbnail;
 
@@ -49,6 +53,8 @@ public class FundingListResponse {
 			.fundingDescription(funding.getFundingDescription())
 			.currentFundingAmount(funding.getCurrentFundingAmount())
 			.amount(funding.getTargetMoneyList().get(2).getAmount())
+			.postType(funding.getPostType())
 			.build();
+
 	}
 }

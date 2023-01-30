@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
+import com.yam.funteer.funding.dto.FundingListPageResponse;
 import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
@@ -67,7 +68,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
 	@GetMapping("/test")
-	public ResponseEntity<List<FundingListResponse>> findAllFunding() {
+	public ResponseEntity<FundingListPageResponse> findAllFunding() {
 		return ResponseEntity.ok(fundingService.findAllFunding());
 	}
 
