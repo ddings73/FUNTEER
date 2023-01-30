@@ -27,6 +27,7 @@ public class Member extends User{
 			.name(name)
 			.nickname(name)
 			.display(true)
+			.money(0L)
 			.userType(UserType.KAKAO)
 			.regDate(LocalDateTime.now())
 			.build();
