@@ -2,23 +2,13 @@ package com.yam.funteer.funding.dto;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-
-import net.minidev.json.annotate.JsonIgnore;
-
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.entity.Funding;
-import com.yam.funteer.funding.entity.TargetMoney;
-import com.yam.funteer.funding.repository.FundingRepository;
-import com.yam.funteer.post.entity.Post;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.RequiredArgsConstructor;
 
 @Data
 @AllArgsConstructor

@@ -12,6 +12,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.boot.util.LambdaSafe;
+import org.springframework.lang.Nullable;
 
 import com.yam.funteer.funding.dto.FundingRequest;
 import com.yam.funteer.post.entity.Comment;
