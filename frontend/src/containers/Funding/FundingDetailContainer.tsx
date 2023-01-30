@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
 
 export function FundingDetailContainer() {
@@ -21,9 +22,12 @@ export function FundingDetailContainer() {
         </div>
       </div>
       <div className={styles.mainContiainer}>
-        <div className={styles.mainSum}>요약카드</div>
+        <div className={styles.mainSum}>
+          {' '}
+          <FundSummary />
+        </div>
         <div className={styles.mainContent}>상세 사진</div>
-        <div className={styles.mainFooter}>단체소개 카드</div>
+        <div className={styles.mainFooter}>푸터</div>
         <div className={styles.mainFooterSum}>▼ 모금액, 이렇게 사용됩니다.</div>
         <div className={styles.mainFooterdiv} />
         <div className={styles.mainFooterAttatch}>첨부공간</div>
