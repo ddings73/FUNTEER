@@ -22,16 +22,20 @@ public class TeamProfileResponse extends BaseResponseBody {
     private Long money;
     private List<Funding> fundingList;
     private long followerCnt;
-    private Attach banner;
+    private String profileImgUrl;
+    private String bannerUrl;
 
     public static TeamProfileResponse of(Team team, List<Funding> fundingList, long follwerCnt){
-        return TeamProfileResponse.builder()
+        TeamProfileResponse response = TeamProfileResponse.builder()
                 .name(team.getName())
                 .description(team.getDiscription())
                 .money(team.getMoney())
                 .fundingList(fundingList)
                 .followerCnt(follwerCnt)
-                .banner(team.getBanner())
                 .build();
+
+        team.getProfileImg().ifPresent(attach -> response.setProfileImgUrl(attach.getPath()));
+        team.getBanner().ifPresent(attach -> response.setBannerUrl(attach.getPath()));
+        return response;
     }
 }
