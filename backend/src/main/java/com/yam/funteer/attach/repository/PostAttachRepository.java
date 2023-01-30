@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.yam.funteer.attach.entity.PostAttach;
 import com.yam.funteer.post.entity.Post;
 
-public interface java/com/yamPostAttachRepository extends JpaRepository<PostAttach,Long> {
-	List<PostAttach>findAllByPost(Post post);
+public interface PostAttachRepository extends JpaRepository<PostAttach,Long> {
+	List<PostAttach> findAllByPost(Post post);
 }
