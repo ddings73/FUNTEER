@@ -1,6 +1,5 @@
 package com.yam.funteer.user.controller;
 
-import com.yam.funteer.user.dto.request.EmailConfirmRequest;
 import com.yam.funteer.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,7 +48,7 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 에러"),
     })
     @PutMapping("/forget/pw") // 대기
-    public ResponseEntity forgetPassword(@RequestBody EmailConfirmRequest emailConfirmRequest){
+    public ResponseEntity forgetPassword(){
 
         return ResponseEntity.ok().build();
     }

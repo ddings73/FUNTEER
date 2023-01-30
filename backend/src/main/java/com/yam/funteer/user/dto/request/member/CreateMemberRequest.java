@@ -1,6 +1,7 @@
-package com.yam.funteer.user.dto.request;
+package com.yam.funteer.user.dto.request.member;
 
 import com.yam.funteer.common.code.UserType;
+import com.yam.funteer.user.dto.request.CreateAccountRequest;
 import com.yam.funteer.user.entity.Member;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -12,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class CreateMemberRequest extends CreateAccountRequest{
+public class CreateMemberRequest extends CreateAccountRequest {
     @NotBlank(message = "닉네임은 필수 입력 값입니다.")
     protected String nickname;
 

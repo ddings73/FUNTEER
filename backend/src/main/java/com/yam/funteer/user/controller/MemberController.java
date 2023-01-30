@@ -1,9 +1,9 @@
 package com.yam.funteer.user.controller;
 
-import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.user.dto.request.*;
-import com.yam.funteer.user.dto.response.MemberAccountResponse;
-import com.yam.funteer.user.dto.response.MemberProfileResponse;
+import com.yam.funteer.user.dto.request.member.*;
+import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
+import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
 import com.yam.funteer.user.service.MemberService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -17,9 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/member")
@@ -79,9 +77,9 @@ public class MemberController {
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/profile")
-	public void modifyProfile(@Validated @ModelAttribute UpdateProfileRequest updateProfileRequest, BindingResult bindingResult){
+	public void modifyProfile(@Validated @ModelAttribute UpdateMemberProfileRequest request, BindingResult bindingResult){
 		validateBinding(bindingResult);
-		memberService.updateProfile(updateProfileRequest);
+		memberService.updateProfile(request);
 	}
 
 	@ApiOperation(value = "회원정보 조회", notes = "회원의 개인정보( 이메일, 이름, 전화번호 )를 조회합니다.")
@@ -93,7 +91,7 @@ public class MemberController {
 	})
 	@GetMapping("/{userId}/account")
 	public ResponseEntity<MemberAccountResponse> getInfo(@PathVariable Long userId){
-		MemberAccountResponse account = memberService.getAccount(userId);
+		MemberAccountResponse account = memberService.getAccountInfo(userId);
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(account);
 	}
 

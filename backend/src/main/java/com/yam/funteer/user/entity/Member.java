@@ -8,7 +8,7 @@ import javax.validation.constraints.NotBlank;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.code.UserType;
 
-import com.yam.funteer.user.dto.request.UpdateProfileRequest;
+import com.yam.funteer.user.dto.request.member.UpdateMemberProfileRequest;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
@@ -33,10 +33,10 @@ public class Member extends User{
 			.build();
 	}
 
-	public void update(UpdateProfileRequest updateProfileRequest, Attach attach){
-		this.nickname = updateProfileRequest.getNickname();
-		this.display = updateProfileRequest.isDisplay();
-		updateProfile(attach);
+	public void update(String nickname, boolean display, Attach profile){
+		this.nickname = nickname;
+		this.display = display;
+		updateProfile(profile);
 	}
 	public void signOut(){
 		super.signOut(UserType.NORMAL_RESIGN);
