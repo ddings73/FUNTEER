@@ -57,10 +57,10 @@ public class SecurityConfig{
                 .anyRequest().permitAll()
             .and()
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class);
-        // .oauth2Login()
-            // .successHandler(successHandler) // oAuth 로그인 성공 시 동작할 핸들러
-            // .userInfoEndpoint().userService(oAuth2UserService);
+                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
+            .oauth2Login()
+                .successHandler(successHandler) // oAuth 정보를 가져오면 동작할 핸들러
+                .userInfoEndpoint().userService(oAuth2UserService); // 여기서 oAuth 정보를 가져옴
         return http.build();
     }
 

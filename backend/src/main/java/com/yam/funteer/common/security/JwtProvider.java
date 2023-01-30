@@ -2,6 +2,7 @@ package com.yam.funteer.common.security;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.dto.response.TokenInfo;
 import com.yam.funteer.user.entity.User;
 import io.jsonwebtoken.*;
@@ -54,6 +55,26 @@ public class JwtProvider {
                 .setExpiration(new Date(now.getTime() + refreshPeriod)) // 만료기간
                 .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
                 .compact();
+
+        return TokenInfo.of(BEARER_TYPE, accessToken, refreshToken);
+    }
+
+    public TokenInfo generateTokenForOAuth(String userId){
+        String authorities = UserType.KAKAO.getAuthority();
+
+        Date now = new Date();
+
+        String accessToken = Jwts.builder()
+            .setSubject(userId)
+            .claim(AUTHORITIES_KEY, authorities) // 권한
+            .setExpiration(new Date(now.getTime() + accessPeriod)) // 만료기간
+            .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
+            .compact();
+        String refreshToken = Jwts.builder()
+            .setSubject(userId)
+            .setExpiration(new Date(now.getTime() + refreshPeriod)) // 만료기간
+            .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
+            .compact();
 
         return TokenInfo.of(BEARER_TYPE, accessToken, refreshToken);
     }
