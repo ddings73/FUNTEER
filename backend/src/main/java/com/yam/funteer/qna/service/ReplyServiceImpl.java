@@ -29,42 +29,48 @@ public class ReplyServiceImpl implements ReplyService{
 	private final ReplyRepository replyRepository;
 
 	@Override
-	public ReplyBaseRes replyGetDetail(Long replyId) {
-		Reply reply=replyRepository.findById(replyId).orElseThrow(()->new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+	public ReplyBaseRes replyGetDetail(Long qnaId) throws QnaNotFoundException {
+		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-
-		Long qnaUserId=reply.getQna().getUser().getId();
-		if(qnaUserId==user.getId()||user.getUserType().equals(UserType.ADMIN)){
+		Integer number=replyRepository.countAllByQna(qna);
+		if(number>0&&(qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN))){
+			Reply reply=replyRepository.findByQna(qna);
 			return new ReplyBaseRes(reply);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
 	@Override
-	public void replyRegister(Long qnaId, QnaReplyReq qnaReplyReq) throws QnaNotFoundException {
+	public ReplyBaseRes replyRegister(Long qnaId, QnaReplyReq qnaReplyReq) throws QnaNotFoundException {
 		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		if(user.getUserType().equals(UserType.ADMIN)) {
-			replyRepository.save(qnaReplyReq.toEntity(qna));
+		Integer number=replyRepository.countAllByQna(qna);
+		if(user.getUserType().equals(UserType.ADMIN)&&number==0) {
+			Reply reply=replyRepository.save(qnaReplyReq.toEntity(qna));
+			return new ReplyBaseRes(reply);
 		}else throw new  IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
 	@Override
-	public void replyModify(Long replyId,QnaReplyReq qnaReplyReq) throws QnaNotFoundException {
-		Reply reply=replyRepository.findById(replyId).orElseThrow(()->new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+	public ReplyBaseRes replyModify(Long qnaId,QnaReplyReq qnaReplyReq) throws QnaNotFoundException {
+		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
+		Integer number=replyRepository.countAllByQna(qna);
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Qna qna=qnaRepository.findById(reply.getQna().getId()).orElseThrow(()->new QnaNotFoundException());
 
-		if(user.getUserType().equals(UserType.ADMIN)) {
-			reply.update(replyId,qna,qnaReplyReq.getContent(),reply.getRegDate());
+		if(number>0&&(qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN))){
+			Reply reply=replyRepository.findByQna(qna);
+			reply.update(reply.getId(),qna,qnaReplyReq.getContent(),reply.getRegDate());
+			return new ReplyBaseRes(reply);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
 	@Override
-	public void replyDelete(Long replyId) {
-		Reply reply=replyRepository.findById(replyId).orElseThrow(()->new IllegalArgumentException("해당 게시글이 존재하지 않습니다."));
+	public void replyDelete(Long qnaId) throws QnaNotFoundException {
+		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
+		Integer number=replyRepository.countAllByQna(qna);
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
-		if(user.getUserType().equals(UserType.ADMIN)) {
+		if(number>0&&(qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN))){
+			Reply reply=replyRepository.findByQna(qna);
 			replyRepository.delete(reply);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}

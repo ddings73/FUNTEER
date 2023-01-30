@@ -35,7 +35,6 @@ import lombok.RequiredArgsConstructor;
 public class DonationController {
 
 	private final DonationService donationService;
-	private final AwsS3Uploader awsS3Uploader;
 
 	@ApiOperation(value = "도네이션 리스트")
 	@GetMapping("")
@@ -63,7 +62,7 @@ public class DonationController {
 	@ApiOperation(value = "도네이션 등록", notes = "<strong>userId,타이틀,내용,금액 필수<strong>.")
 	@PostMapping("")
 	public ResponseEntity<?> donationRegister(@RequestPart(value = "donationRegisterReq") DonationRegisterReq donationRegisterReq,
-		@RequestPart (value = "files",required = false)List<MultipartFile>files) throws IOException {
+		@RequestPart (value = "files",required = false)List<MultipartFile>files) {
 		return ResponseEntity.ok(donationService.donationRegister(donationRegisterReq,files));
 	}
 
@@ -71,7 +70,7 @@ public class DonationController {
 	@PutMapping("/{postId}")
 	public ResponseEntity<?> donationModify(@PathVariable Long postId,@RequestPart(value ="donationModifyReq" ) DonationRegisterReq donationModifyrReq,
 		@RequestParam (value = "files",required = false) List<MultipartFile>files) throws
-		DonationNotFoundException, IOException {
+		DonationNotFoundException{
 
 		return ResponseEntity.ok(donationService.donationModify(postId,donationModifyrReq,files));
 	}

@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -50,11 +51,9 @@ public class DonationServiceImpl implements DonationService{
 
 	public List<DonationListRes> donationGetList() {
 		List<Donation>donations=donationRepository.findAllByPostGroup(PostGroup.DONATION);
-		List<DonationListRes>list=new ArrayList<>();
-		for(Donation donation:donations){
-			DonationListRes donationListRes=new DonationListRes(donation.getId(),donation.getTitle());
-			list.add(donationListRes);
-		}
+		List<DonationListRes>list;
+		list=donations.stream().map(donation->new DonationListRes(donation)).collect(Collectors.toList());
+
 		return list;
 	}
 
@@ -96,7 +95,7 @@ public class DonationServiceImpl implements DonationService{
 		return payment;
 	}
 
-	public DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq,List<MultipartFile>files) throws IOException {
+	public DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq,List<MultipartFile>files) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
 		if(user.getUserType().equals(UserType.ADMIN)) {
@@ -128,7 +127,7 @@ public class DonationServiceImpl implements DonationService{
 
 
 	public DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq,List<MultipartFile>files) throws
-		DonationNotFoundException, IOException {
+		DonationNotFoundException {
 		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException("찾으시는 게시물이 없습니다."));
 
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
