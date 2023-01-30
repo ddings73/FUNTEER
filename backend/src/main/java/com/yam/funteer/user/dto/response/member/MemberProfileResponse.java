@@ -1,6 +1,5 @@
-package com.yam.funteer.user.dto.response;
+package com.yam.funteer.user.dto.response.member;
 
-import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.user.entity.Member;
 import lombok.*;
@@ -8,7 +7,7 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor @Builder
-public class MemberProfileResponse extends BaseResponseBody {
+public class MemberProfileResponse {
     private boolean display;
     private String nickname;
     private Long money;

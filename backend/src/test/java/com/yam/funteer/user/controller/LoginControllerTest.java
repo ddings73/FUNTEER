@@ -2,11 +2,13 @@ package com.yam.funteer.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yam.funteer.common.code.UserType;
+import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.user.dto.request.LoginRequest;
 import com.yam.funteer.user.dto.response.LoginResponse;
 import com.yam.funteer.user.service.LoginService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -29,6 +31,9 @@ class LoginControllerTest {
 
     @MockBean
     private LoginService loginService;
+
+    @MockBean
+    private JwtProvider jwtProvider;
 
     @Test
     @DisplayName("로그인 정상적인 정보 테스트")

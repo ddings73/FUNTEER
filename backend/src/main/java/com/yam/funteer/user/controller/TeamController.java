@@ -4,8 +4,10 @@ import java.util.List;
 
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.user.dto.request.BaseUserRequest;
-import com.yam.funteer.user.dto.request.CreateMemberRequest;
-import com.yam.funteer.user.dto.request.CreateTeamRequest;
+import com.yam.funteer.user.dto.request.team.CreateTeamRequest;
+import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
+import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
+import com.yam.funteer.user.dto.response.team.TeamProfileResponse;
 import com.yam.funteer.user.service.TeamService;
 
 import io.swagger.annotations.Api;
@@ -19,12 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController @Slf4j
 @RequestMapping("/team")
@@ -48,14 +45,60 @@ public class TeamController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiOperation(value = "단체회원 탈퇴", notes = "<strong>비밀번호</strong>를 이용하여 검증한다.")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청정보"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
     @DeleteMapping
-    public ResponseEntity<? extends BaseResponseBody> signoutTeam(@Validated @RequestBody BaseUserRequest baseUserRequest
+    public ResponseEntity<? extends BaseResponseBody> signOutTeam(@Validated @RequestBody BaseUserRequest baseUserRequest
         , BindingResult bindingResult){
         validateBinding(bindingResult);
 
         teamService.setAccountSignOut(baseUserRequest);
         return ResponseEntity.ok(BaseResponseBody.of("회원탈퇴에 성공하였습니다."));
     }
+
+
+    @ApiOperation(value = "단체회원 프로필 조회", notes = "ID를 이용하여 프로필을 조회할 수 있다")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청정보"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
+    @GetMapping("/{userId}/profile")
+    public ResponseEntity<TeamProfileResponse> getProfile(@PathVariable Long userId){
+        TeamProfileResponse teamProfile = teamService.getTeamProfile(userId);
+        return ResponseEntity.ok(teamProfile);
+    }
+
+    @ApiOperation(value = "단체회원 프로필 수정", notes = "단체회원의 단체설명, 프로필이미지, 배너를 수정할 수 있다")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청정보"),
+            @ApiResponse(code = 401, message = "사용자 인증실패"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
+    @PutMapping("/profile")
+    public void modifyProfile(@Validated @ModelAttribute UpdateTeamProfileRequest request, BindingResult bindingResult){
+        validateBinding(bindingResult);
+        teamService.updateProfile(request);
+    }
+
+    @ApiOperation(value = "단체회원 개인정보 조회", notes = "ID를 이용하여 개인정보 조회할 수 있다")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "성공"),
+            @ApiResponse(code = 400, message = "잘못된 요청정보"),
+            @ApiResponse(code = 401, message = "사용자 인증실패"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
+    @GetMapping("/{userId}/account")
+    public ResponseEntity<TeamAccountResponse> getAccountInfo(@PathVariable Long userId){
+        TeamAccountResponse teamAccount = teamService.getTeamAccount(userId);
+        return ResponseEntity.ok(teamAccount);
+    }
+
 
     public void validateBinding(BindingResult bindingResult){
         if(bindingResult.hasErrors()){

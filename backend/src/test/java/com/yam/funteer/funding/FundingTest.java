@@ -40,7 +40,7 @@ public class FundingTest {
 	@Test
 	@WithMockUser(roles="USER")
 	void createFundingTest() {
-		FundingRequest fundingRequest = new FundingRequest()
+		FundingRequest fundingRequest = new FundingRequest();
 	}
 
 }

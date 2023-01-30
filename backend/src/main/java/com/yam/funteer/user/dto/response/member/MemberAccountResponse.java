@@ -1,4 +1,4 @@
-package com.yam.funteer.user.dto.response;
+package com.yam.funteer.user.dto.response.member;
 
 import com.yam.funteer.common.BaseResponseBody;
 
@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MemberAccountResponse extends BaseResponseBody {
+public class MemberAccountResponse {
 	private String email;
 	private String name;
 	private String phone;
