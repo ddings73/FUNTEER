@@ -3,6 +3,7 @@ package com.yam.funteer.qna.controller;
 import javax.transaction.Transactional;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -14,9 +15,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yam.funteer.common.BaseResponseBody;
+import com.yam.funteer.qna.dto.request.QnaReplyReq;
 import com.yam.funteer.qna.exception.QnaNotFoundException;
-import com.yam.funteer.qna.request.QnaReplyReq;
 import com.yam.funteer.qna.service.ReplyService;
+import com.yam.funteer.user.entity.User;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,15 +33,15 @@ public class ReplyController {
 	private final ReplyService replyService;
 
 	@ApiOperation(value="답변 상세글")
-	@GetMapping("reply/{replyId}")
-	public ResponseEntity<? extends BaseResponseBody> replyGetDetail(@PathVariable Long replyId,@RequestParam Long userId) throws
+	@GetMapping("/reply/{replyId}")
+	public ResponseEntity<? extends BaseResponseBody> replyGetDetail(@PathVariable Long replyId) throws
 		QnaNotFoundException {
-		replyService.replyGetDetail(replyId,userId);
+		replyService.replyGetDetail(replyId);
 		return ResponseEntity.ok(BaseResponseBody.of("Success"));
 	}
 
 	@ApiOperation(value="답변 등록")
-	@PostMapping("qna/{qnaId}/reply")
+	@PostMapping("/qna/{qnaId}/reply")
 	public ResponseEntity<? extends BaseResponseBody> replyRegister(@PathVariable Long qnaId,@RequestBody QnaReplyReq qnaReplyReq) throws
 		QnaNotFoundException {
 		replyService.replyRegister(qnaId,qnaReplyReq);
@@ -47,7 +49,7 @@ public class ReplyController {
 	}
 
 	@ApiOperation(value="답변 수정")
-	@PutMapping("reply/{replyId}")
+	@PutMapping("/reply/{replyId}")
 	public ResponseEntity<? extends BaseResponseBody> replyModify(@PathVariable Long replyId,@RequestBody QnaReplyReq qnaReplyReq) throws
 		QnaNotFoundException {
 		replyService.replyModify(replyId,qnaReplyReq);
@@ -55,9 +57,9 @@ public class ReplyController {
 	}
 
 	@ApiOperation(value = "답변 삭제")
-	@DeleteMapping("reply/{replyId}")
-	public ResponseEntity<? extends BaseResponseBody> replyDelete(@PathVariable Long replyId,@RequestParam Long userId) {
-		replyService.replyDelete(replyId,userId);
+	@DeleteMapping("/reply/{replyId}")
+	public ResponseEntity<? extends BaseResponseBody> replyDelete(@PathVariable Long replyId) {
+		replyService.replyDelete(replyId);
 		return ResponseEntity.ok(BaseResponseBody.of("Success"));
 	}
 
