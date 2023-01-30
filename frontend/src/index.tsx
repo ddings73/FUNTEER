@@ -38,6 +38,11 @@ import {
   LogOut,
   AdminTeam,
   FundingList,
+<<<<<<< frontend/src/index.tsx
+  CreateFunding,
+=======
+  AdminTeamDeny,
+>>>>>>> frontend/src/index.tsx
 } from './pages/index';
 
 const router = createBrowserRouter([
@@ -137,7 +142,11 @@ const router = createBrowserRouter([
       {
         path:"/funding",
         element:<FundingList/>
+      },{
+        path:"/funding/create",
+        element:<CreateFunding/>
       }
+
     ],
   },
   {
@@ -156,6 +165,10 @@ const router = createBrowserRouter([
       {
         path: 'team',
         element: <AdminTeam />,
+      },
+      {
+        path: 'team/deny/:vn', // vn: vms 위촉 번호
+        element: <AdminTeamDeny />,
       },
     ],
   },
