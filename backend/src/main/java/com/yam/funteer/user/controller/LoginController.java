@@ -51,7 +51,7 @@ public class LoginController {
         @ApiResponse(code = 200, message = "성공"),
         @ApiResponse(code = 500, message = "서버 에러")
     })
-    @DeleteMapping("/logout")
+    @DeleteMapping("/out")
     public ResponseEntity logout(){
         loginService.processLogOut();
         return ResponseEntity.ok().build();
