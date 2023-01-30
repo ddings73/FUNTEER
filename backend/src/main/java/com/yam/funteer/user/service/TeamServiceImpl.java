@@ -61,19 +61,16 @@ public class TeamServiceImpl implements TeamService{
 		MultipartFile performFile = request.getPerformFile();
 
 		// 저장
-		try {
-			String vmsFilePath = awsS3Uploader.upload(vmsFile, "teamFile");
-			String performFilePath = awsS3Uploader.upload(performFile, "teamFile");
+		String vmsFilePath = awsS3Uploader.upload(vmsFile, "teamFile");
+		String performFilePath = awsS3Uploader.upload(performFile, "teamFile");
 
-			List<Attach> attachList = request.getAttachList(vmsFilePath, performFilePath);
-			for(Attach attach : attachList){
-				attachRepository.save(attach);
-				TeamAttach teamAttach = TeamAttach.of(team, attach);
-				teamAttachRepository.save(teamAttach);
-			}
-		} catch (IOException e) {
-			throw new RuntimeException(e);
+		List<Attach> attachList = request.getAttachList(vmsFilePath, performFilePath);
+		for(Attach attach : attachList){
+			attachRepository.save(attach);
+			TeamAttach teamAttach = TeamAttach.of(team, attach);
+			teamAttachRepository.save(teamAttach);
 		}
+
 	}
 
 	@Override

@@ -88,21 +88,17 @@ public class MemberServiceImpl implements MemberService {
 
         request.validateProfileType();
         MultipartFile profileImg = request.getProfileImg();
-        try {
-            String filePath = awsS3Uploader.upload(profileImg, "user");
-            Optional<Attach> memberProfile = member.getProfileImg();
-            memberProfile.ifPresentOrElse(attach -> {
-                awsS3Uploader.delete(attach.getPath(), "user");
-                attach.update(request, filePath);
-            }, () ->{
-                Attach saveImg = request.getAttach(filePath);
-                attachRepository.save(saveImg);
-                member.update(request, saveImg);
-            });
-        } catch (IOException e){
-            log.error(e.getMessage());
-            e.printStackTrace();
-        }
+
+        String filePath = awsS3Uploader.upload(profileImg, "user");
+        Optional<Attach> memberProfile = member.getProfileImg();
+        memberProfile.ifPresentOrElse(attach -> {
+            awsS3Uploader.delete(attach.getPath(), "user");
+            attach.update(request, filePath);
+        }, () ->{
+            Attach saveImg = request.getAttach(filePath);
+            attachRepository.save(saveImg);
+            member.update(request, saveImg);
+        });
     }
 
     @Override
