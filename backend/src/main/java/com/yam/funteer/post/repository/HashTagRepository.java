@@ -8,4 +8,6 @@ import com.yam.funteer.post.entity.Hashtag;
 
 public interface HashTagRepository extends JpaRepository<Hashtag, Long> {
 	Optional<Hashtag> findOneByName(String name);
+
+	Optional<Hashtag> findByName(String hashtag);
 }

@@ -32,6 +32,7 @@ import com.yam.funteer.post.repository.CommentRepository;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -43,11 +44,28 @@ public class FundingController {
 	private final FundingService fundingService;
 	private final AwsS3Uploader awsS3Uploader;
 
-
-	@ApiOperation(value = "진행중인 펀딩 리스트 조회", notes = "진행중인 펀딩 리스트를 조회한다.")
+	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
 	@GetMapping("/")
-	public ResponseEntity<List<FundingListResponse>> findInProgressFunding() {
-		return ResponseEntity.ok(fundingService.findInProgressFunding());
+	public ResponseEntity<FundingListPageResponse> findAllFunding() {
+		return ResponseEntity.ok(fundingService.findAllFunding());
+	}
+
+	@ApiOperation(value = "펀딩 검색 조회", notes = "검색을 통해 제목과 내용에 키워드가 포함된 펀딩을 조회한다.")
+	@GetMapping("/search")
+	public ResponseEntity<List<FundingListResponse>> findFundingByKeyword(@RequestParam String keyword) {
+		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword));
+	}
+
+	@ApiOperation(value = "해시태그별 펀딩 조회", notes = "해시태그별 펀딩 목록을 조회한다.")
+	@GetMapping("/hasgtag")
+	private ResponseEntity<List<FundingListResponse>> findFundingByHashtag(@RequestParam String hashtag) {
+		return ResponseEntity.ok(fundingService.findFundingByHashtag(hashtag));
+	}
+
+	@ApiOperation(value = "카테고리별 펀딩 리스트 조회", notes = "카테고리별 펀딩 리스트를 조회한다.")
+	@GetMapping("/category/{categoryId}")
+	public ResponseEntity<List<FundingListResponse>> findFundingByCategory(@PathVariable Long categoryId) {
+		return ResponseEntity.ok(fundingService.findFundingByCategory(categoryId));
 	}
 
 	@ApiOperation(value = "펀딩 생성 시 s3에 파일업로드", notes = "펀딩 생성 시 s3에 파일을 업로드 한다.")
@@ -57,11 +75,6 @@ public class FundingController {
 		return fileName;
 	}
 
-	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
-	@GetMapping("/test")
-	public ResponseEntity<FundingListPageResponse> findAllFunding() {
-		return ResponseEntity.ok(fundingService.findAllFunding());
-	}
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
 	@PostMapping("/")

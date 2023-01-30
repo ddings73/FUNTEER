@@ -1,6 +1,7 @@
 package com.yam.funteer.funding.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -39,6 +40,7 @@ import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.post.entity.Hashtag;
+import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.post.repository.CategoryRepository;
 import com.yam.funteer.post.repository.CommentRepository;
@@ -46,11 +48,8 @@ import com.yam.funteer.post.repository.HashTagRepository;
 import com.yam.funteer.post.repository.PostHashtagRepository;
 import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.Member;
-import com.yam.funteer.user.entity.Team;
-import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
-import com.yam.funteer.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -60,6 +59,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
+	private final PostRepository postRepository;
 	private final TeamRepository teamRepository;
 	private final PaymentRepository paymentRepository;
 	private final MemberRepository memberRepository;
@@ -74,10 +74,37 @@ public class FundingServiceImpl implements FundingService{
 
 	private final CommentRepository commentRepository;
 
+
 	@Override
-	public List<FundingListResponse> findInProgressFunding() {
-		List<Funding> fundingListInProgress = fundingRepository.findAllByPostType(PostType.FUNDING_IN_PROGRESS);
-		List<FundingListResponse> collect = fundingListInProgress.stream()
+	public List<FundingListResponse> findFundingByKeyword(String keyword) {
+		List<Funding> byTitleContaining = fundingRepository.findByTitleOrContentContaining(keyword, keyword);
+		List<FundingListResponse> collect = byTitleContaining.stream()
+			.map(funding -> FundingListResponse.from(funding))
+			.collect(Collectors.toList());
+		return collect;
+	}
+
+	@Override
+	public List<FundingListResponse> findFundingByHashtag(String hashtag) {
+		Long hashtagId = hashTagRepository.findByName(hashtag).get().getId();
+		List<PostHashtag> byHashtag = postHashtagRepository.findByHashtagId(hashtagId);
+		List<Funding> posts = new ArrayList<>();
+		for (PostHashtag postHashtag : byHashtag) {
+			Optional<Funding> funding = fundingRepository.findById(postHashtag.getPost().getId());
+			posts.add(funding.get());
+		}
+		List<FundingListResponse> collect = posts.stream()
+			.map(funding -> FundingListResponse.from(funding))
+			.collect(Collectors.toList());
+		return collect;
+
+	}
+
+	@Override
+	public List<FundingListResponse> findFundingByCategory(Long categoryId) {
+		Category category = categoryRepository.findById(categoryId).orElseThrow();
+		List<Funding> allByCategory = fundingRepository.findAllByCategory(category);
+		List<FundingListResponse> collect = allByCategory.stream()
 			.map(funding -> FundingListResponse.from(funding))
 			.collect(Collectors.toList());
 		return collect;
@@ -111,11 +138,11 @@ public class FundingServiceImpl implements FundingService{
 		// Team team = teamRepository.findById(currentUserId).orElseThrow();
 
 		// time 변환
-		LocalDateTime startDate = LocalDateTime.parse(data.getStartDate(),
-			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		LocalDate startDate = LocalDate.parse(data.getStartDate(),
+			DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
-		LocalDateTime endDate = LocalDateTime.parse(data.getEndDate(),
-			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+		LocalDate endDate = LocalDate.parse(data.getEndDate(),
+			DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
 		// 펀딩 생성
 		Funding funding = Funding.builder()
@@ -214,7 +241,7 @@ public class FundingServiceImpl implements FundingService{
 	public FundingDetailResponse updateFunding(Long fundingId, MultipartFile thumbnail, FundingRequest data) throws Exception {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
 
-		LocalDateTime endDate = LocalDateTime.parse(data.getEndDate(),
+		LocalDate endDate = LocalDate.parse(data.getEndDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 		if (funding.getPostType() == PostType.FUNDING_REJECT) {
@@ -239,7 +266,7 @@ public class FundingServiceImpl implements FundingService{
 
 			addPostHashtags(funding, hashtags);
 
-			LocalDateTime startDate = LocalDateTime.parse(data.getStartDate(),
+			LocalDate startDate = LocalDate.parse(data.getStartDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
 			funding.setStartDate(startDate);
@@ -301,7 +328,7 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public void createFundingComment(Long fundingId, FundingCommentRequest data) {
-		Funding funding = fundingRepository.findById(data.getFundingId()).orElseThrow();
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
 		Optional<Long> userId = SecurityUtil.getCurrentUserId();
 		Member member = memberRepository.findById(userId).orElseThrow();
 
@@ -347,8 +374,6 @@ public class FundingServiceImpl implements FundingService{
 			e.printStackTrace();
 
 		}
-
-
 
 	}
 
