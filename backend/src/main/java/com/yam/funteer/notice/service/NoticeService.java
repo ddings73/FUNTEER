@@ -10,8 +10,8 @@ import com.yam.funteer.notice.dto.response.NoticeBaseRes;
 public interface NoticeService {
 	List<FaqListRes>noticeGetList();
 	NoticeBaseRes noticeGetDetail(Long postId);
-	NoticeBaseRes noticeRegister(NoticeRegistReq noticeRegistReq) throws IOException;
-	NoticeBaseRes noticeModify(Long postId,NoticeRegistReq noticeRegistReq) throws IOException;
+	NoticeBaseRes noticeRegister(NoticeRegistReq noticeRegistReq) ;
+	NoticeBaseRes noticeModify(Long postId,NoticeRegistReq noticeRegistReq) ;
 	void noticeDelete(Long postId);
 
 }

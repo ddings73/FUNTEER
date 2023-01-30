@@ -58,7 +58,7 @@ public class NoticeServiceImpl implements NoticeService{
 	}
 
 	@Override
-	public NoticeBaseRes noticeRegister(NoticeRegistReq noticeRegistReq) throws IOException {
+	public NoticeBaseRes noticeRegister(NoticeRegistReq noticeRegistReq) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		List<MultipartFile>files=noticeRegistReq.getFiles();
 		if(user.getUserType().equals(UserType.ADMIN)){
@@ -80,7 +80,7 @@ public class NoticeServiceImpl implements NoticeService{
 	}
 
 	@Override
-	public NoticeBaseRes noticeModify(Long postId, NoticeRegistReq noticeRegistReq) throws IOException {
+	public NoticeBaseRes noticeModify(Long postId, NoticeRegistReq noticeRegistReq)  {
 		Post postOrigin=postRepository.findById(postId).orElseThrow();
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {

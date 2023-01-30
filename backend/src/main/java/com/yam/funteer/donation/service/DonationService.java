@@ -17,9 +17,8 @@ public interface DonationService {
 	List<DonationListRes> donationGetList();
 	Payment donationJoin(Long postId, DonationJoinReq donationJoinReq)throws DonationNotFoundException;
 	DonationBaseRes donationGetDetail(Long postId) throws DonationNotFoundException;
-	DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq, List<MultipartFile>files) throws IOException;
+	DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq, List<MultipartFile>files);
 	// void donationDelete(Long postId,Long userId) throws DonationNotFoundException;
 	DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq,List<MultipartFile>files) throws
-		DonationNotFoundException,
-		IOException;
+		DonationNotFoundException;
 }
