@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { BrowserRouter, createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter, createBrowserRouter, RouterProvider, useParams } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
 import App from './App';
@@ -164,7 +164,7 @@ const router = createBrowserRouter([
         element: <AdminTeam />,
       },
       {
-        path: 'team/deny/:vn', // vn: vms 위촉 번호
+        path: 'team/deny/:dn', // dn: vms 위촉 번호
         element: <AdminTeamDeny />,
       },
     ],
