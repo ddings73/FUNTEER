@@ -41,6 +41,8 @@ public class Funding extends Post {
 
 	private Long currentFundingAmount;
 
+	private String fundingDescription;
+
 	public void setTargetMoneyList(List<TargetMoney> targetMoneyList) {
 		this.targetMoneyList = targetMoneyList;
 	}
