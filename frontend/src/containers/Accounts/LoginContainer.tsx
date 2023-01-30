@@ -17,17 +17,14 @@ import { useAppDispatch } from '../../store/hooks';
 import { openModal } from '../../store/slices/modalSlice';
 import { setUserLoginState } from '../../store/slices/userSlice';
 
-
-
 function LoginContainer() {
   const navigate = useNavigate();
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const [userInfo, setUserInfo] = useState<UserSignInType>({
     email: '',
     password: '',
-    type:"NORMAL"
+    type: 'NORMAL',
   });
-
 
   // 로 그인 정보 입력
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,35 +34,32 @@ function LoginContainer() {
   };
 
   // Enter키를 입력으로 로그인 요청
-  const onKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>)=>{
-    if(e.key==="Enter"){
-      requestEmailLogin()
-    }
-  }
-
-  const requestEmailLogin = async () => {
-    try{
-       const response = await requestSignIn(userInfo)
-       if(response.status === 200){
-        const {data} = response
-        localStorage.setItem("token",JSON.stringify(data.token))        
-        dispatch(setUserLoginState(true))
-        navigate("/")
-       }
-    }
-    catch(error){
-      console.error(error);
-      dispatch(openModal({isOpen:true,title:"로그인 실패",content:"비밀번호가 틀림요"}))
+  const onKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      requestEmailLogin();
     }
   };
 
-
+  const requestEmailLogin = async () => {
+    try {
+      const response = await requestSignIn(userInfo);
+      if (response.status === 200) {
+        const { data } = response;
+        localStorage.setItem('token', JSON.stringify(data.token));
+        dispatch(setUserLoginState(true));
+        navigate('/');
+      }
+    } catch (error) {
+      console.error(error);
+      dispatch(openModal({ isOpen: true, title: '로그인 실패', content: '비밀번호가 틀림요' }));
+    }
+  };
 
   // KAKAO 로그인 요청
   const OAuth = () => {
     const REST_API_KEY = process.env.REACT_APP_KAKAO_LOGIN_API;
-    const REDIRECT_URI = `http://localhost:3000`;
-    const url = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+    // const REDIRECT_URI = `http://localhost:3000/login`;
+    const url = `https://i8e204.p.ssafy.io/api/v1/oauth2/authorization/kakao`;
     window.location.href = url;
   };
 
@@ -76,14 +70,7 @@ function LoginContainer() {
           <p className={styles.title}>로그인</p>
 
           <p>이메일</p>
-          <TextField 
-          onChange={onChangeHandler} 
-          name="email" 
-          margin="normal" 
-          placeholder="이메일을 입력해주세요." 
-          variant="outlined" 
-          onKeyPress={onKeyDownHandler} 
-          />
+          <TextField onChange={onChangeHandler} name="email" margin="normal" placeholder="이메일을 입력해주세요." variant="outlined" onKeyPress={onKeyDownHandler} />
 
           <p>비밀번호</p>
           <TextField
@@ -105,7 +92,7 @@ function LoginContainer() {
             </span>
           </div>
 
-          <Button className={styles['login-button']} variant="contained" onClick={requestEmailLogin} >
+          <Button className={styles['login-button']} variant="contained" onClick={requestEmailLogin}>
             이메일로 로그인하기
           </Button>
 
@@ -114,10 +101,7 @@ function LoginContainer() {
           </Button>
         </div>
       </div>
-
-
     </div>
-    
   );
 }
 export default LoginContainer;
