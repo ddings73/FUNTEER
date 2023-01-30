@@ -44,6 +44,7 @@ import {
   CustomerCenter,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
+import LiveTest from './containers/MyPage/LiveTest';
 
 const router = createBrowserRouter([
   {
@@ -154,6 +155,10 @@ const router = createBrowserRouter([
       {
         path: '/cc',
         element: <CustomerCenter />,
+      },
+      {
+        path: '/test',
+        element: <LiveTest />,
       },
     ],
   },
