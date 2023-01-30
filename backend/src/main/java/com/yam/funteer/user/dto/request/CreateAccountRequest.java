@@ -36,12 +36,6 @@ public class CreateAccountRequest {
     @Pattern(regexp = "(01[016789])-(\\d{3,4})-(\\d{4})", message = "올바른 휴대폰 번호를 입력해주세요.")
     protected String phone;
 
-    @NotNull
-    protected UserType userType;
-    public boolean isTeam(){
-        return userType.equals(UserType.TEAM);
-    }
-
     public void encryptPassword(PasswordEncoder passwordEncoder) {
         this.password = passwordEncoder.encode(this.password);
     }
