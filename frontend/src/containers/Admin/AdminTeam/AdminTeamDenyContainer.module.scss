@@ -1,2 +1,51 @@
 @import '../../../styles/reset.scss';
 @import '../../../styles/variable.scss';
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  font-family: NanumSquareRound;
+
+  .contents {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1440px;
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 5rem 0;
+    }
+
+    .email-title {
+      width: 700px;
+      height: 35px;
+      margin-bottom: 1rem;
+      padding: 0 1rem;
+      font-family: NanumSquareRound;
+    }
+
+    .email-content {
+      width: 700px;
+      height: 400px;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      font-family: NanumSquareRound;
+    }
+
+    .btn-div {
+      display: flex;
+      justify-content: space-around;
+
+      .submit {
+        background-color: $primary;
+        margin: 0 0.5rem;
+        font-family: NanumSquareRound;
+      }
+    }
+  }
+}

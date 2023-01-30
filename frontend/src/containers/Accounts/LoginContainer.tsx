@@ -31,6 +31,7 @@ function LoginContainer() {
     const { name, value } = e.target;
 
     setUserInfo({ ...userInfo, [name]: value });
+    console.log('Get userinfo', userInfo);
   };
 
   // Enter키를 입력으로 로그인 요청
@@ -41,6 +42,7 @@ function LoginContainer() {
   };
 
   const requestEmailLogin = async () => {
+
     try {
       const response = await requestSignIn(userInfo);
       if (response.status === 200) {

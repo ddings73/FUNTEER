@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { BrowserRouter, createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { BrowserRouter, createBrowserRouter, RouterProvider, useParams } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
 import App from './App';
@@ -40,7 +40,9 @@ import {
   FundingList,
   CreateFunding,
   AdminTeamDeny,
+  AdminFunding,
 } from './pages/index';
+import FundingDetail from './pages/Funding/FundingDetail';
 
 const router = createBrowserRouter([
   {
@@ -144,6 +146,10 @@ const router = createBrowserRouter([
         path: '/funding/create',
         element: <CreateFunding />,
       },
+      {
+        path: '/funding/detail',
+        element: <FundingDetail />,
+      },
     ],
   },
   {
@@ -164,8 +170,12 @@ const router = createBrowserRouter([
         element: <AdminTeam />,
       },
       {
-        path: 'team/deny/:vn', // vn: vms 위촉 번호
+        path: 'team/deny/:dn', // dn: vms 위촉 번호
         element: <AdminTeamDeny />,
+      },
+      {
+        path: 'funding',
+        element: <AdminFunding />,
       },
     ],
   },
