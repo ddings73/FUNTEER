@@ -34,9 +34,6 @@ public class CreateTeamRequest extends CreateAccountRequest {
     @NotNull
     private MultipartFile performFile;
 
-    @NotNull
-    private String description;
-
     public Team toTeam(){
         return Team.builder()
                 .email(email)
@@ -46,7 +43,6 @@ public class CreateTeamRequest extends CreateAccountRequest {
                 .userType(UserType.TEAM_WAIT)
                 .money(0L)
                 .regDate(LocalDateTime.now())
-                .description(description)
                 .build();
     }
 
