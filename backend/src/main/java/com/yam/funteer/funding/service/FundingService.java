@@ -19,7 +19,7 @@ import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 
 public interface FundingService {
-	List<FundingListResponse> findInProgressFunding();
+	List<FundingListResponse> findFundingByCategory(Long categoryId);
 
 	FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException;
 
@@ -43,5 +43,7 @@ public interface FundingService {
 
 	void takeFunding(Long fundingId, TakeFundingRequest data);
 
+	List<FundingListResponse> findFundingByKeyword(String keyword);
 
+	List<FundingListResponse> findFundingByHashtag(String hashtag);
 }

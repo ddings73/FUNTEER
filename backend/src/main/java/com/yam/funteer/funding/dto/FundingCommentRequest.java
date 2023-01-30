@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 public class FundingCommentRequest {
-
-	private Long fundingId;
+	
 	private String content;
 }

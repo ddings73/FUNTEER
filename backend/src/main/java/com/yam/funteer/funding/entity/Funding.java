@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -36,8 +37,8 @@ public class Funding extends Post {
 	@ManyToOne
 	@JoinColumn(name = "team_id")
 	private Team team;
-	private LocalDateTime startDate;
-	private LocalDateTime endDate;
+	private LocalDate startDate;
+	private LocalDate endDate;
 	private String rejectComment;
 
 	private Long currentFundingAmount;
@@ -61,7 +62,7 @@ public class Funding extends Post {
 	@OneToMany(mappedBy = "funding")
 	private List<Comment> comments;
 
-	public void setEndDate(LocalDateTime endDate) {
+	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
 
@@ -75,7 +76,7 @@ public class Funding extends Post {
 		this.team = team;
 	}
 
-	public void setStartDate(LocalDateTime startDate) {
+	public void setStartDate(LocalDate startDate) {
 		this.startDate = startDate;
 	}
 

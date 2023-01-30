@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,9 +27,9 @@ public class FundingListResponse {
 
 	private String title;
 
-	private LocalDateTime startDate;
+	private LocalDate startDate;
 
-	private LocalDateTime endDate;
+	private LocalDate endDate;
 
 	private LocalDateTime postDate;
 
