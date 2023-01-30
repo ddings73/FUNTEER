@@ -65,7 +65,6 @@ public class TeamController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
             @ApiResponse(code = 400, message = "잘못된 요청정보"),
-            @ApiResponse(code = 401, message = "사용자 인증실패"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @GetMapping("/{userId}/profile")
