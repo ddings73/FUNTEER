@@ -39,6 +39,9 @@ function ResponsiveAppBar() {
   const [isLogin, setIsLogin] = useState(false);
   const insertedToken = localStorage.getItem('token');
   const dispatch = useAppDispatch();
+  const loginState = useSelector((state) => {
+    return state;
+  });
 
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
@@ -66,7 +69,9 @@ function ResponsiveAppBar() {
     },
   }));
 
-  useEffect(() => {}, [isLoginState]);
+  useEffect(() => {
+    console.log('state 정보: ', loginState);
+  }, [isLoginState]);
 
   // console.log('로그인임?', isLogin);
 
