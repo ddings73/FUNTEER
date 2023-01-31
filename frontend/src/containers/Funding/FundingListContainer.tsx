@@ -12,8 +12,10 @@ import styles from './FundingListContainer.module.scss';
 import FundingListElement from '../../components/Funding/FundingListElement';
 import { FundingElementType } from '../../types/funding';
 import { requestFundingList } from '../../api/funding';
+import { useAppSelector } from '../../store/hooks';
 
 function FundingListContainer() {
+  console.log(useAppSelector((state) => state.userSlice.userType));
   const [fundingList, setFundingList] = useState<FundingElementType[] | undefined>([]);
   const [successFundingCount, setSuccessFundingCount] = useState<number>(0);
   const [totalFundingAmount, setTotalFundingAmount] = useState<number>(0);

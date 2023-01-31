@@ -13,11 +13,12 @@ import { Button } from '@mui/material';
 import Icon from '@mui/material/Icon';
 import { BsLockFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
+import { off } from 'process';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestUploadImage } from '../../api/funding';
 import { FundingInterface } from '../../types/funding';
 import defaultThumbnail from '../../assets/images/default-profile-img.svg';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { openModal } from '../../store/slices/modalSlice';
 
 interface TabPanelProps {
