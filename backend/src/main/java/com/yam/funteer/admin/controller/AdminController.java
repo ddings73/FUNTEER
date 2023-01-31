@@ -6,17 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yam.funteer.admin.dto.MemberListResponse;
 import com.yam.funteer.admin.dto.TeamListResponse;
-import com.yam.funteer.funding.dto.FundingDetailResponse;
-import com.yam.funteer.funding.dto.FundingListResponse;
-import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.dto.response.FundingDetailResponse;
+import com.yam.funteer.funding.dto.response.FundingListResponse;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
