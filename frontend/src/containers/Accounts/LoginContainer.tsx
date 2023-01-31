@@ -42,7 +42,7 @@ function LoginContainer() {
   };
 
   const requestEmailLogin = async () => {
-    console.log('req 함수 호출');
+
     try {
       const response = await requestSignIn(userInfo);
       if (response.status === 200) {
@@ -60,8 +60,8 @@ function LoginContainer() {
   // KAKAO 로그인 요청
   const OAuth = () => {
     const REST_API_KEY = process.env.REACT_APP_KAKAO_LOGIN_API;
-    const REDIRECT_URI = `http://localhost:3000`;
-    const url = `https://kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
+    // const REDIRECT_URI = `http://localhost:3000/login`;
+    const url = `https://i8e204.p.ssafy.io/api/v1/oauth2/authorization/kakao`;
     window.location.href = url;
   };
 
