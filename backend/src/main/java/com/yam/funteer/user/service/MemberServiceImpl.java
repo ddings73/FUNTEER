@@ -1,29 +1,29 @@
 package com.yam.funteer.user.service;
 
+import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
-import com.yam.funteer.exception.EmailDuplicateException;
+import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.common.security.SecurityUtil;
+import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
-import com.yam.funteer.user.dto.request.CreateMemberRequest;
+import com.yam.funteer.user.dto.request.*;
+import com.yam.funteer.user.dto.response.MemberAccountResponse;
 import com.yam.funteer.user.dto.response.MemberProfileResponse;
-import com.yam.funteer.user.dto.request.BaseUserRequest;
-import com.yam.funteer.user.entity.Follow;
-import com.yam.funteer.user.entity.Member;
-import com.yam.funteer.user.entity.Team;
-import com.yam.funteer.user.entity.Wish;
-import com.yam.funteer.user.repository.FollowRepository;
-import com.yam.funteer.user.repository.MemberRepository;
-import com.yam.funteer.user.repository.TeamRepository;
-import com.yam.funteer.user.repository.WishRepository;
+import com.yam.funteer.user.entity.*;
+import com.yam.funteer.user.repository.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+
 import java.util.Optional;
 
 @Service @Slf4j
@@ -35,73 +35,149 @@ public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final AttachRepository attachRepository;
+    private final ChargeRepository chargeRepository;
+    private final AwsS3Uploader awsS3Uploader;
     private final FollowRepository followRepository;
     private final FundingRepository fundingRepository;
     private final WishRepository wishRepository;
 
 
     @Override
-    public void signupMember(CreateMemberRequest requestDto) {
-        Optional<Member> findMember = memberRepository.findByEmail(requestDto.getEmail());
+    public void createAccountWithOutProfile(CreateMemberRequest request) {
+        Optional<Member> findMember = memberRepository.findByEmail(request.getEmail());
         findMember.ifPresent(member -> {
-            throw new EmailDuplicateException();
+            throw new DuplicateInfoException("이메일이 중복됩니다.");
         });
 
-        requestDto.encryptPassword(passwordEncoder);
-        Member member = requestDto.toEntity();
+        request.encryptPassword(passwordEncoder);
+        Member member = request.toMember();
         memberRepository.save(member);
     }
 
     @Override
-    public void signoutMember(BaseUserRequest baseUserRequest) {
-        Optional<Member> findMember = memberRepository.findById(baseUserRequest.getUserId());
-        Member member = findMember.orElseThrow(UserNotFoundException::new);
-        String password = baseUserRequest.getPassword().orElseThrow(IllegalArgumentException::new);
+    public void setAccountSignOut(BaseUserRequest request) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        String password = request.getPassword()
+                .orElseThrow(() -> new IllegalArgumentException("패스워드를 입력해주세요"));
 
-        if(!member.validatePassword(passwordEncoder, password))
-            throw new IllegalArgumentException();
+        Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        member.validatePassword(passwordEncoder, password);
         member.signOut();
     }
 
     @Override
-    public MemberProfileResponse getMemberProfile(BaseUserRequest baseUserRequest) {
-        Long memberId = baseUserRequest.getUserId();
-        Optional<Member> findMember = memberRepository.findById(memberId);
-        Member member = findMember.orElseThrow(UserNotFoundException::new);
+    public MemberProfileResponse getProfile(Long userId) {
+        Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        if(member.isResign()){
+            throw new IllegalArgumentException("탈퇴한 회원입니다");
+        }
 
         long followCnt = followRepository.countAllByMember(member);
         long wishCnt = wishRepository.countAllByMember(member);
 
-        MemberProfileResponse memberProfileResponse = MemberProfileResponse.of(member);
-        return memberProfileResponse;
+        return MemberProfileResponse.of(member, wishCnt, followCnt);
     }
 
     @Override
-    public void followTeam(Long teamId, Long memberId) {
-        Optional<Member> findMember = memberRepository.findById(memberId);
-        Optional<Team> findTeam = teamRepository.findById(teamId);
+    public void updateProfile(UpdateProfileRequest request) {
+        Long userId = request.getUserId();
+        validateSameUser(userId);
+
+        Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        request.validateProfileType();
+        MultipartFile profileImg = request.getProfileImg();
+
+        String filePath = awsS3Uploader.upload(profileImg, "user");
+        Optional<Attach> memberProfile = member.getProfileImg();
+        memberProfile.ifPresentOrElse(attach -> {
+            awsS3Uploader.delete(attach.getPath(), "user");
+            attach.update(request, filePath);
+        }, () ->{
+            Attach saveImg = request.getAttach(filePath);
+            attachRepository.save(saveImg);
+            member.update(request, saveImg);
+        });
+    }
+
+    @Override
+    public MemberAccountResponse getAccount(Long userId) {
+        validateSameUser(userId);
+        Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        if(member.isResign()){
+            throw new IllegalArgumentException("탈퇴한 회원입니다");
+        }
+        return MemberAccountResponse.of(member);
+    }
+
+    @Override
+    public void updateAccount(BaseUserRequest request) {
+        Long userId = request.getUserId();
+        validateSameUser(userId);
+        
+        Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        String newPassword = request.getPassword().orElseThrow(()->{
+            throw new IllegalArgumentException("패스워드는 필수 입력 값입니다.");
+        });
+//        member.validatePassword(passwordEncoder, originPassword);
+//
+//        String newPassword = request.getNewPassword().orElseThrow(()->{
+//            throw new IllegalArgumentException("패스워드는 필수 입력 값입니다.");
+//        });
+
+        String pw = passwordEncoder.encode(newPassword);
+        member.changePassword(pw);
+    }
+
+    @Override
+    public void followTeam(FollowRequest followRequest) {
+        Optional<Member> findMember = memberRepository.findById(followRequest.getMemberId());
         Member member = findMember.orElseThrow(UserNotFoundException::new);
+
+        Optional<Team> findTeam = teamRepository.findById(followRequest.getTeamId());
         Team team = findTeam.orElseThrow(UserNotFoundException::new);
 
         Optional<Follow> findFollow = followRepository.findByMemberAndTeam(member, team);
-        findFollow.ifPresentOrElse(follow -> follow.toggle(), ()->{
+        findFollow.ifPresentOrElse(Follow::toggle, ()->{
             Follow newFollow = Follow.of(member, team);
             followRepository.save(newFollow);
         });
     }
 
     @Override
-    public void wishFunding(Long fundingId, Long memberId) {
-        Optional<Member> findMember = memberRepository.findById(memberId);
-        Optional<Funding> findFunding = fundingRepository.findById(fundingId);
+    public void wishFunding(WishRequest wishRequest) {
+        Optional<Member> findMember = memberRepository.findById(wishRequest.getMemberId());
         Member member = findMember.orElseThrow(UserNotFoundException::new);
+
+        Optional<Funding> findFunding = fundingRepository.findById(wishRequest.getFundingId());
         Funding funding = findFunding.orElseThrow(IllegalArgumentException::new);
 
         Optional<Wish> findWish = wishRepository.findByMemberAndFunding(member, funding);
-        findWish.ifPresentOrElse(wish -> wish.toggle(), ()->{
+        findWish.ifPresentOrElse(Wish::toggle, ()->{
             Wish newWish = Wish.of(member, funding);
             wishRepository.save(newWish);
         });
+    }
+
+    @Override
+    public void chargeMileage(ChargeRequest chargeRequest) {
+        Long userId = chargeRequest.getUserId();
+        validateSameUser(userId);
+
+        Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        Long amount = chargeRequest.getAmount();
+
+        Charge charge = chargeRequest.toEntity(member);
+        chargeRepository.save(charge);
+        member.charge(amount);
+    }
+
+
+    private void validateSameUser(Long userId){
+        Long nowId = SecurityUtil.getCurrentUserId();
+        if(nowId == null || userId != nowId){
+            throw new IllegalArgumentException("동일 회원만 접근할 수 있습니다");
+        }
     }
 
 }

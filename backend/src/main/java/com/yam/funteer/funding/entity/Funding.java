@@ -1,14 +1,21 @@
 package com.yam.funteer.funding.entity;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.boot.util.LambdaSafe;
+import org.springframework.lang.Nullable;
+
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.user.entity.Team;
@@ -31,16 +38,54 @@ public class Funding extends Post {
 	@ManyToOne
 	@JoinColumn(name = "team_id")
 	private Team team;
-	private LocalDateTime startDate;
-	private LocalDateTime endDate;
+	private LocalDate startDate;
+	private LocalDate endDate;
 	private String rejectComment;
 
-	public void setHashtags(List<PostHashtag> postHashtagList) {
+	private Long currentFundingAmount;
+
+	private String fundingDescription;
+
+	public void setTargetMoneyList(List<TargetMoney> targetMoneyList) {
+		this.targetMoneyList = targetMoneyList;
 	}
 
-	public void update(FundingRequest data) {
+	public void setHashtags(List<PostHashtag> hashtags) {
+		this.hashtags = hashtags;
 	}
 
-	public void setEnd(LocalDateTime endDate) {
+	@OneToMany(mappedBy = "funding")
+	private List<TargetMoney> targetMoneyList;
+
+	@OneToMany(mappedBy = "post")
+	private List<PostHashtag> hashtags;
+
+	@OneToMany(mappedBy = "funding")
+	private List<Comment> comments;
+
+	public void setEndDate(LocalDate endDate) {
+		this.endDate = endDate;
+	}
+
+	public void setCategory(Category category) {
+
+		this.category = category;
+	}
+
+	public void setTeam(Team team) {
+
+		this.team = team;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setRejectComment(String rejectComment) {
+		this.rejectComment = rejectComment;
+	}
+
+	public void setCurrentFundingAmount(Long amount) {
+		this.currentFundingAmount = amount;
 	}
 }
