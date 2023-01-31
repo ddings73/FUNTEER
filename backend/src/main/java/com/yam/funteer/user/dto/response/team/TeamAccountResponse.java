@@ -16,7 +16,7 @@ public class TeamAccountResponse {
     private String vmsFileUrl;
     private String performFileUrl;
 
-    private String profileImg;
+    private String profileImgUrl;
 
     public static TeamAccountResponse of(Team team){
         return TeamAccountResponse.builder()
@@ -28,13 +28,14 @@ public class TeamAccountResponse {
 
     public static TeamAccountResponse from(Team team) {
 
-        // Attach attach = team.getProfileImg().get();
-
-        return TeamAccountResponse.builder()
+        TeamAccountResponse response = TeamAccountResponse.builder()
             .email(team.getEmail())
             .name(team.getName())
             .phone(team.getPhone())
-            // .profileImg(attach.getPath())
             .build();
+
+        team.getProfileImg().ifPresent(attach -> response.setProfileImgUrl(attach.getPath()));
+
+        return response;
     }
 }

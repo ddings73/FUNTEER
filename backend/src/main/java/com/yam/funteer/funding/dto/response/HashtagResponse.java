@@ -1,10 +1,8 @@
-package com.yam.funteer.funding.dto;
+package com.yam.funteer.funding.dto.response;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-import com.yam.funteer.funding.entity.TargetMoney;
-import com.yam.funteer.post.entity.Hashtag;
 import com.yam.funteer.post.entity.PostHashtag;
 
 import lombok.AllArgsConstructor;

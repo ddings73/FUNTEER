@@ -1,6 +1,5 @@
 package com.yam.funteer.qna.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,13 +12,10 @@ import com.yam.funteer.attach.entity.PostAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.PostAttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
-import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
 
-import com.yam.funteer.funding.dto.FundingListResponse;
-import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.qna.dto.request.QnaRegisterReq;
 import com.yam.funteer.qna.dto.response.QnaBaseRes;
 import com.yam.funteer.qna.dto.response.QnaListRes;

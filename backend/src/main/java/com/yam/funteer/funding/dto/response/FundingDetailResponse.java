@@ -1,4 +1,4 @@
-package com.yam.funteer.funding.dto;
+package com.yam.funteer.funding.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -11,7 +11,7 @@ import com.yam.funteer.funding.exception.NotFoundCommentsException;
 import com.yam.funteer.funding.exception.NotFoundHashtagException;
 import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
-
+import com.yam.funteer.user.repository.WishRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +25,8 @@ import lombok.Getter;
 public class FundingDetailResponse {
 
 	private TeamAccountResponse team;
+
+	private Long wishCount;
 
 	private String fundingDescription;
 
@@ -50,7 +52,10 @@ public class FundingDetailResponse {
 	private Long currentFundingAmount;
 
 	public static FundingDetailResponse from(Funding funding) {
-		// TeamAccountResponse team = TeamAccountResponse.from(funding.getTeam());
+
+		WishRepository wishRepository;
+
+		TeamAccountResponse team = TeamAccountResponse.from(funding.getTeam());
 
 		List<TargetMoneyResponse> targetMoneyResponses = new ArrayList<>();
 		for (TargetMoney tm : funding.getTargetMoneyList()) {
@@ -74,7 +79,7 @@ public class FundingDetailResponse {
 			}
 
 			return FundingDetailResponse.builder()
-				// .team(team)
+				.team(team)
 				.fundingId(funding.getId())
 				.category(funding.getCategory().getName())
 				.title(funding.getTitle())
@@ -94,7 +99,7 @@ public class FundingDetailResponse {
 
 			e.printStackTrace();
 			return FundingDetailResponse.builder()
-				// .team(team)
+				.team(team)
 				.fundingId(funding.getId())
 				.category(funding.getCategory().getName())
 				.title(funding.getTitle())
@@ -134,7 +139,7 @@ public class FundingDetailResponse {
 
 		}  finally {
 			return FundingDetailResponse.builder()
-				// .team(team)
+				.team(team)
 				.fundingId(funding.getId())
 				.category(funding.getCategory().getName())
 				.title(funding.getTitle())

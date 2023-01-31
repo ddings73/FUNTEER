@@ -1,6 +1,5 @@
-package com.yam.funteer.funding.dto;
+package com.yam.funteer.funding.dto.response;
 
-import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.funding.entity.ReportDetail;
 
 import lombok.AllArgsConstructor;
