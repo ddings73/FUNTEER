@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useInterval } from 'usehooks-ts';
 import { Button, TextField } from '@mui/material';
 import { teamSignUpType } from '../../types/user';
@@ -7,6 +8,8 @@ import { requestEmailDuplConfirm, requestNameDuplConfirm, requestTeamSignUp } fr
 import styles from './TeamSignUpContainer.module.scss';
 
 function TeamSignUpContainer() {
+  const navigate = useNavigate();
+
   /** 회원가입 정보 */
   const [teamSignUpInfo, setTeamSignUpInfo] = useState({
     name: '',
@@ -213,6 +216,7 @@ function TeamSignUpContainer() {
     try {
       const response = await requestTeamSignUp(newTeamSignUpInfo);
       console.log(response);
+      navigate('/');
     } catch (error) {
       console.error(error);
     }

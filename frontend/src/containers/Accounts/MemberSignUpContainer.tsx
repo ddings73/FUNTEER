@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useInterval } from 'usehooks-ts';
 import { Button, TextField } from '@mui/material';
 import { memberSignUpType } from '../../types/user';
@@ -7,6 +8,8 @@ import { requestEmailDuplConfirm, requestMemberSignUp, requestNicknameDuplConfir
 import styles from './MemberSignUpContainer.module.scss';
 
 function MemberSignUpContainer() {
+  const navigate = useNavigate();
+
   /** 회원가입 정보 */
   const [memberSignUpInfo, setMemberSignUpInfo] = useState<memberSignUpType>({
     name: '',
@@ -207,6 +210,7 @@ function MemberSignUpContainer() {
     try {
       const response = await requestMemberSignUp(memberSignUpInfo);
       console.log(response);
+      navigate('/');
     } catch (error) {
       console.error(error);
     }
