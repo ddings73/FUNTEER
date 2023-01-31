@@ -48,14 +48,17 @@ public class JwtProvider {
 
         Date now = new Date();
 
+        String userId = authentication.getName();
+        
         String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(userId)
                 .claim(AUTHORITIES_KEY, authorities) // 권한
                 .setExpiration(new Date(now.getTime() + accessPeriod)) // 만료기간
                 .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
                 .compact();
         String refreshToken = Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(userId)
+                .claim(AUTHORITIES_KEY, authorities) // 권한
                 .setExpiration(new Date(now.getTime() + refreshPeriod)) // 만료기간
                 .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
                 .compact();
@@ -76,6 +79,7 @@ public class JwtProvider {
             .compact();
         String refreshToken = Jwts.builder()
             .setSubject(userId)
+            .claim(AUTHORITIES_KEY, authorities) // 권한
             .setExpiration(new Date(now.getTime() + refreshPeriod)) // 만료기간
             .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
             .compact();
