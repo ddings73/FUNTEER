@@ -6,9 +6,9 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import styles from './CustomerCenter.module.scss';
-import FAQContainer from '../../containers/CustomerCenter/FAQContainer';
-import NoticeContainer from '../../containers/CustomerCenter/NoticeContainer';
-import QuestionContainer from '../../containers/CustomerCenter/QuestionContainer';
+import FAQContainer from '../../containers/CustomerCenter/FAQ/FAQContainer';
+import NoticeContainer from '../../containers/CustomerCenter/Notice/NoticeContainer';
+import QuestionContainer from '../../containers/CustomerCenter/Question/QuestionContainer';
 
 interface TabPanelProps {
   children: React.ReactNode;
