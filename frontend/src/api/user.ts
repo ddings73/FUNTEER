@@ -79,9 +79,6 @@ export const requestTeamSignUp = async (teamSignUpInfo: teamSignUpType) => {
     }
   });
 
-  formData.append('vmsFile', teamSignUpInfo.vmsFile);
-  formData.append('performFile', teamSignUpInfo.performFile);
-
   const res = await http.post('team', formData);
 
   return res;
