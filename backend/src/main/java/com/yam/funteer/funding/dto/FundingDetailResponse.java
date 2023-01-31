@@ -129,6 +129,7 @@ public class FundingDetailResponse {
 				.postDate(funding.getRegDate())
 				.targetMonies(targetMoneyResponses)
 				.thumbnail(funding.getThumbnail())
+				.currentFundingAmount(funding.getCurrentFundingAmount())
 				.build();
 		}
 	}
