@@ -55,6 +55,11 @@ function MemberSignUpContainer() {
   const onClickNicknameDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
 
+    if (!memberSignUpInfo.nickname) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+
     try {
       const response = await requestNicknameDuplConfirm(memberSignUpInfo.nickname);
       alert('닉네임 중복 체크 완료');
@@ -68,6 +73,11 @@ function MemberSignUpContainer() {
   /** 이메일 중복 검사 */
   const onClickEmailDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+
+    if (!memberSignUpInfo.email) {
+      alert('이메일을 입력해주세요.');
+      return;
+    }
 
     /** 이메일 정규식 검사 */
     const validEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]+/; // (알파벳, 숫자)@(알파벳).(알파벳)
@@ -90,6 +100,11 @@ function MemberSignUpContainer() {
   /** 휴대폰 중복 검사 */
   const onClickPhoneDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+
+    if (!memberSignUpInfo.phone) {
+      alert('휴대폰 번호를 입력해주세요.');
+      return;
+    }
 
     try {
       const response = await requestPhoneDuplConfirm(memberSignUpInfo.email);

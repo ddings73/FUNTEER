@@ -52,6 +52,11 @@ function TeamSignUpContainer() {
   const onClickNameDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
 
+    if (!teamSignUpInfo.name) {
+      alert('단체명을 입력해주세요.');
+      return;
+    }
+
     try {
       const response = await requestNameDuplConfirm(teamSignUpInfo.name);
       alert('단체명 중복 체크 완료');
@@ -65,6 +70,11 @@ function TeamSignUpContainer() {
   /** 이메일 중복 검사 */
   const onClickEmailDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+
+    if (!teamSignUpInfo.email) {
+      alert('이메일을 입력해주세요.');
+      return;
+    }
 
     /** 이메일 정규식 검사 */
     const validEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]+/; // (알파벳, 숫자)@(알파벳).(알파벳)
