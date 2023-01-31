@@ -41,16 +41,11 @@ public class LoginServiceImpl implements LoginService{
         // 여기서 실제로 검증
         // UserDetailsService를 상속받는 bean을 찾아서 loadUserByUsername을 실행함
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-
         TokenInfo tokenInfo = jwtProvider.generateToken(authentication); // 검증되면 jwt 만들어서 가져옴
-
 
         // 생성된 토큰을 DB에 저장함
         Long userId = Long.valueOf(authentication.getName());
-        Token token = Token.builder()
-                .id(userId)
-                .refreshToken(tokenInfo.getRefreshToken())
-                .build();
+        Token token = Token.from(userId, tokenInfo.getRefreshToken());
         tokenRepository.save(token);
 
         User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(UserNotFoundException::new);
@@ -73,25 +68,24 @@ public class LoginServiceImpl implements LoginService{
     public TokenInfo regenerateToken(TokenRequest tokenRequest) {
         String accessToken = tokenRequest.getAccessToken();
         String refreshToken = tokenRequest.getRefreshToken();
+
         if(!jwtProvider.validateToken(refreshToken)){
             throw new JwtException("Refresh Token이 유효하지 않습니다.");
         }
 
-        Authentication authentication = jwtProvider.getAuthentication(refreshToken);
-        Long userId = Long.valueOf(authentication.getName());
-        Token token = tokenRepository.findById(Long.valueOf(userId))
-                .orElseThrow(()->new JwtException("로그아웃 된 사용자입니다."));
+        Token token = tokenRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(()->new JwtException("로그아웃된 사용자 혹은 유효하지 않은 토큰입니다."));
 
-        if (!token.getRefreshToken().equals(refreshToken)) {
-            throw new JwtException("토큰의 유저 정보가 일치하지 않습니다.");
-        }
-
+        Long userId = token.getId();
+        // access 토큰 만료 확인
         if(jwtProvider.validateToken(accessToken)){
             tokenRepository.deleteById(userId);
             throw new JwtException("Access Token이 만료되지 않았습니다.");
         }
 
-        TokenInfo tokenInfo = jwtProvider.generateToken(authentication);
+
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        TokenInfo tokenInfo = jwtProvider.createToken(String.valueOf(userId), user.getUserType().getAuthority());
         token.update(tokenInfo.getRefreshToken());
         return tokenInfo;
     }

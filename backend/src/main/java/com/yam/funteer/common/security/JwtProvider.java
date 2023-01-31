@@ -47,31 +47,32 @@ public class JwtProvider {
                 .collect(Collectors.joining(","));
 
         String userId = authentication.getName();
-
-        String accessToken = createToken(userId, authorities, accessPeriod);
-        String refreshToken = createToken(userId, authorities, refreshPeriod);
-
-        return TokenInfo.of(BEARER_TYPE, accessToken, refreshToken);
+        return createToken(userId, authorities);
     }
 
     public TokenInfo generateTokenForOAuth(String userId){
         String authorities = UserType.KAKAO.getAuthority();
+        return createToken(userId, authorities);
+    }
 
-        String accessToken = createToken(userId, authorities, accessPeriod);
-        String refreshToken = createToken(userId, authorities, refreshPeriod);
+    public TokenInfo createToken(String userId, String authorities){
+
+        Date now = new Date();
+        String accessToken = Jwts.builder()
+                .setSubject(userId)
+                .claim(AUTHORITIES_KEY, authorities) // 권한
+                .setExpiration(new Date(now.getTime() + accessPeriod)) // 만료기간
+                .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
+                .compact();
+        String refreshToken = Jwts.builder()
+                .setSubject(userId)
+                .setExpiration(new Date(now.getTime() + refreshPeriod)) // 만료기간
+                .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
+                .compact();
 
         return TokenInfo.of(BEARER_TYPE, accessToken, refreshToken);
     }
 
-    public String createToken(String userId, String authorities, long period){
-        Date now = new Date();
-        return Jwts.builder()
-                .setSubject(userId)
-                .claim(AUTHORITIES_KEY, authorities) // 권한
-                .setExpiration(new Date(now.getTime() + period)) // 만료기간
-                .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
-                .compact();
-    }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내는 메서드
     public Authentication getAuthentication(String accessToken) {
@@ -111,10 +112,14 @@ public class JwtProvider {
     }
 
     // claim 파싱
-    private Claims parseClaims(String accessToken){
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey).build()
-                .parseClaimsJws(accessToken)
-                .getBody();
+    private Claims parseClaims(String token){
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey).build()
+                    .parseClaimsJws(token)
+                    .getBody();
+    }
+
+    public Long getUserId(String token){
+        return Long.valueOf(parseClaims(token).getSubject());
     }
 }
