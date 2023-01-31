@@ -5,17 +5,18 @@ import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
 import thumbNail from '../../assets/images/funding/funding_thumbnail.png';
 import styles from './FundSummary.module.scss';
 import ProfileSvg from '../../assets/images/default-profile-img.svg';
+import TeamInfo from './TeamInfoCard';
 
 export interface ResponseInterface {
   id: number;
   title: string;
-  startDate: string;
-  endDate: string;
+  start: string;
+  end: string;
   postDate: string;
   thumbnail: string;
-  postType: string;
+  category: string;
   content: string;
-  targetMonies: targetType;
+  targetMonies: targetType[];
   currentFundingAmount: number;
 }
 type targetType = {
@@ -25,10 +26,9 @@ type targetType = {
 };
 
 export function FundSummary(board: ResponseInterface) {
-  const { title, startDate, endDate, content, targetMonies } = board;
-  console.log('title', title);
-  console.log('amount', targetMonies);
-  console.log('amount2', targetMonies.amount);
+  const { title, start, end, content, targetMonies, currentFundingAmount } = board;
+  // console.log('타겟 머니', targetMonies[2]);
+  // console.log('타겟 머니 amount', targetMonies[2].amount);
 
   return (
     <div className={styles.cardContainer}>
@@ -38,27 +38,16 @@ export function FundSummary(board: ResponseInterface) {
           <div className={styles.fundTitle}>{title}</div>
           <div className={styles.fundSubTitle}>{content}</div>
           <div className={styles.barWrapper}>
-            <div className={styles.object}> 목표금액: {targetMonies.amount}원</div>
+            <div className={styles.object}> 목표금액: {targetMonies[2]?.amount}원</div>
             <div className={styles.progressBar}>
-              <div className={styles.status} />
+              <div className={styles.status}>10%</div>
             </div>
           </div>
           <div className={styles.teamArea}>
-            <div className={styles.teamBadge}>
-              <img src={ProfileSvg} alt="BdgAlt" className={styles.teamPic} />
-              <div className={styles.badgeWrapper}>
-                <p className={styles.badgeName}>봉사단체명</p>
-                <p className={styles.badgeTeamName}>영알못</p>
-              </div>
-            </div>
-            <div className={styles.buttonGroup}>
-              <HomeIcon className={styles.buttonInfo} />
-              <EmailIcon className={styles.buttonInfo} />
-              <PhoneInTalkIcon className={styles.buttonInfo} />
-            </div>
+            <TeamInfo />
           </div>
           <p className={styles.fundPeriod}>
-            모금 기간 {startDate} ~ {endDate}
+            모금 기간 {start} ~ {end}
           </p>
         </div>
       </div>

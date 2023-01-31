@@ -8,6 +8,7 @@
   display: flex;
   justify-content: center;
   font-family: 'NanumSquare', sans-serif;
+  box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
   & .blogCard {
     width: 100%;
     box-sizing: border-box;
@@ -36,7 +37,7 @@
       }
       & .fundSubTitle {
         color: rgba(139, 139, 139, 0.623);
-        font-weight: 700;
+        font-weight: 600;
         line-height: 130%;
         margin-bottom: 20px;
       }
@@ -60,49 +61,14 @@
           padding: 3px;
           height: 10px;
           & .status {
-            width: 70%;
+            width: 10%;
             background-color: rgb(116, 194, 92);
-            color: white;
-            padding: 1%;
+            color: rgb(0, 0, 0);
+            padding-top: 12px;
             text-align: right;
             font-size: 20px;
             border-radius: 15px;
-          }
-        }
-      }
-      & .teamArea {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 3%;
-        & .buttonGroup {
-          width: 20%;
-          display: flex;
-          justify-content: space-around;
-          & .buttonInfo {
-            color: white;
-            background-image: linear-gradient(-20deg, #fc6076 0%, #ff9a44 100%);
-            width: 40px;
-            border-radius: 20%;
-          }
-        }
-        & .teamBadge {
-          display: flex;
-          & .teamPic {
-            width: 50px;
-            border-radius: 50%;
-          }
-          & .badgeWrapper {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            margin-left: 15px;
-            & .badgeName {
-              font-weight: 600;
-            }
-            & .badgeTeamName {
-              margin-top: 10px;
-            }
+            transition: 2s;
           }
         }
       }

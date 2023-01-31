@@ -45,3 +45,14 @@ export const requestFundingList = async () => {
 
   return res;
 };
+
+/**
+ * 펀딩 상세 호출
+ * @method GET
+ */
+export const requestFundingDetail = async (id: number) => {
+  const res = await http.get(`funding/${id}`);
+  console.log(res);
+
+  return res;
+};

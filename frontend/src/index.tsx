@@ -149,7 +149,7 @@ const router = createBrowserRouter([
         element: <CreateFunding />,
       },
       {
-        path: '/funding/detail',
+        path: '/funding/detail/:id',
         element: <FundingDetail />,
       },
       {
