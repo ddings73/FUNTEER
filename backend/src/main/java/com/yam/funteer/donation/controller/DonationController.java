@@ -61,18 +61,15 @@ public class DonationController {
 
 	@ApiOperation(value = "도네이션 등록", notes = "<strong>userId,타이틀,내용,금액 필수<strong>.")
 	@PostMapping("")
-	public ResponseEntity<?> donationRegister(@RequestPart(value = "donationRegisterReq") DonationRegisterReq donationRegisterReq,
-		@RequestPart (value = "files",required = false)List<MultipartFile>files) {
-		return ResponseEntity.ok(donationService.donationRegister(donationRegisterReq,files));
+	public ResponseEntity<?> donationRegister( DonationRegisterReq donationRegisterReq) {
+		return ResponseEntity.ok(donationService.donationRegister(donationRegisterReq));
 	}
 
 	@ApiOperation(value = "도네이션 수정", notes = "<strong>postId, userId,타이틀,내용,금액 필수<strong>.")
 	@PutMapping("/{postId}")
-	public ResponseEntity<?> donationModify(@PathVariable Long postId,@RequestPart(value ="donationModifyReq" ) DonationRegisterReq donationModifyrReq,
-		@RequestParam (value = "files",required = false) List<MultipartFile>files) throws
+	public ResponseEntity<?> donationModify(@PathVariable Long postId,DonationRegisterReq donationModifyrReq) throws
 		DonationNotFoundException{
-
-		return ResponseEntity.ok(donationService.donationModify(postId,donationModifyrReq,files));
+		return ResponseEntity.ok(donationService.donationModify(postId,donationModifyrReq));
 	}
 
 }

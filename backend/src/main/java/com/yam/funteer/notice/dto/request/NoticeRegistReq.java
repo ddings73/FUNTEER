@@ -1,8 +1,10 @@
 package com.yam.funteer.notice.dto.request;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.security.core.parameters.P;
@@ -18,17 +20,18 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Data
-@Getter
+@Setter @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class NoticeRegistReq {
-	@NotNull
+	@NotBlank
 	private String title;
-	@NotNull
+	@NotBlank
 	private String content;
-	private List<MultipartFile>files;
+	private List<MultipartFile>files=new ArrayList<>();
 
 	public Post toEntity(){
 		return Post.builder()

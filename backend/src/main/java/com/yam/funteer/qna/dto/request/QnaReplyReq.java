@@ -2,16 +2,26 @@ package com.yam.funteer.qna.dto.request;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotBlank;
+
 import com.yam.funteer.qna.entity.Qna;
 import com.yam.funteer.qna.entity.Reply;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Getter
+@Data
+@Getter @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class QnaReplyReq {
+	@NotBlank
 	private String content;
 
 	@Builder

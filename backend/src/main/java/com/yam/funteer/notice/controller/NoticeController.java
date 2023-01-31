@@ -22,7 +22,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 
-@Api(value = "FAQ",tags = "FAQ")
+@Api(value = "Notice",tags = "Notice")
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/notice")
