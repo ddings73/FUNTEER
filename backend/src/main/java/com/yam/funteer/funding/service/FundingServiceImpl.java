@@ -15,6 +15,8 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.yam.funteer.attach.FileType;
+import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.common.security.SecurityUtil;
@@ -25,6 +27,8 @@ import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.dto.RejectReasonRequest;
+import com.yam.funteer.funding.dto.ReportDetailResponse;
 import com.yam.funteer.funding.dto.TakeFundingRequest;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
@@ -37,12 +41,13 @@ import com.yam.funteer.funding.exception.NotFoundHashtagException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
+import com.yam.funteer.funding.repository.ReportRepository;
 import com.yam.funteer.funding.repository.TargetMoneyRepository;
+import com.yam.funteer.mail.service.EmailService;
 import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.post.entity.Hashtag;
-import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.post.repository.CategoryRepository;
 import com.yam.funteer.post.repository.CommentRepository;
@@ -50,6 +55,7 @@ import com.yam.funteer.post.repository.HashTagRepository;
 import com.yam.funteer.post.repository.PostHashtagRepository;
 import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.Member;
+import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
 
@@ -62,6 +68,8 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
 	private final PostRepository postRepository;
+
+	private final ReportRepository reportRepository;
 	private final TeamRepository teamRepository;
 	private final PaymentRepository paymentRepository;
 	private final MemberRepository memberRepository;
@@ -75,6 +83,8 @@ public class FundingServiceImpl implements FundingService{
 	private final PostHashtagRepository postHashtagRepository;
 
 	private final CommentRepository commentRepository;
+
+	private final EmailService emailService;
 
 
 	@Override
@@ -101,6 +111,7 @@ public class FundingServiceImpl implements FundingService{
 		return collect;
 
 	}
+
 
 	@Override
 	public List<FundingListResponse> findFundingByCategory(Long categoryId) {
@@ -136,8 +147,8 @@ public class FundingServiceImpl implements FundingService{
 		Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
 		// // Team
-		// Optional<Long> currentUserId = SecurityUtil.getCurrentUserId();
-		// Team team = teamRepository.findById(currentUserId).orElseThrow();
+		Long currentUserId = SecurityUtil.getCurrentUserId();
+		Team team = teamRepository.findById(currentUserId).orElseThrow();
 
 		// time 변환
 		LocalDate startDate = LocalDate.parse(data.getStartDate(),
@@ -148,7 +159,7 @@ public class FundingServiceImpl implements FundingService{
 
 		// 펀딩 생성
 		Funding funding = Funding.builder()
-			// .team(team)
+			.team(team)
 			.title(data.getTitle())
 			.category(category)
 			.content(data.getContent())
@@ -326,7 +337,19 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public void createFundingReport(Long fundingId, FundingReportRequest data) {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
-		// Report report =
+
+		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
+
+		Attach attach = Attach.builder()
+			.name(fundingId + "-receiptFIle")
+			.fileType(FileType.RECEIPT)
+			.path(receiptUrl)
+			.regDate(LocalDateTime.now())
+			.build();
+
+		Report report = new Report(funding, data.getContent(), LocalDateTime.now(), attach);
+		List<ReportDetailResponse> reportDetailResponses = new ArrayList<>();
+
 
 	}
 
@@ -386,7 +409,35 @@ public class FundingServiceImpl implements FundingService{
 			e.printStackTrace();
 
 		}
-
 	}
 
+	@Override
+	public void acceptFunding(Long fundingId) {
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		funding.setPostType(PostType.FUNDING_ACCEPT);
+	}
+
+	@Override
+	public void rejectFunding(Long fundingId, RejectReasonRequest data) throws Exception {
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		funding.setPostType(PostType.FUNDING_REJECT);
+		funding.setRejectComment(data.getRejectReason());
+		emailService.sendRejectMessage("bbookng@gmail.com", data.getRejectReason(), PostGroup.FUNDING);
+	}
+
+	@Override
+	public void acceptReport(Long fundingId) {
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		funding.setPostType(PostType.REPORT_ACCEPT);
+	}
+
+	@Override
+	public void rejectReport(Long fundingId, RejectReasonRequest data) throws Exception {
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Report report = reportRepository.findByFundingId(fundingId);
+		funding.setPostType(PostType.REPORT_REJECT);
+		report.setRejectComment(data.getRejectReason());
+		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.REPORT);
+
+	}
 }

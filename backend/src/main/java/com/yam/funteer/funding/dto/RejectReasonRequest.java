@@ -1,16 +1,14 @@
 package com.yam.funteer.funding.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
-@Builder
-public class TakeFundingRequest {
-
-	Long amount;
-
+@NoArgsConstructor
+public class RejectReasonRequest {
+	private String rejectReason;
 }

@@ -10,6 +10,8 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import java.util.Random;
 
+import com.yam.funteer.common.code.PostGroup;
+
 @Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService{
@@ -79,5 +81,45 @@ public class EmailServiceImpl implements EmailService{
             throw new IllegalArgumentException();
         }
         return ePw;
+    }
+
+    private MimeMessage createFundingMessage(String to, String rejectReason, PostGroup postGroup) throws Exception{
+        MimeMessage message = emailSender.createMimeMessage();
+
+        message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
+        if (postGroup == PostGroup.FUNDING) {
+            message.setSubject("FUNTEER : 펀딩 승인이 거절되었습니다.");//제목
+        } else if (postGroup == PostGroup.REPORT) {
+            message.setSubject("FUNTEER : 보고서 승인이 거절되었습니다.");
+        }
+
+        String msgg="";
+        msgg+= "<div style='margin:20px;'>";
+        msgg+= "<h1> 안녕하세요 FUNTEER입니다. </h1>";
+        msgg+= "<br>";
+        msgg+= "<p>다음과 같은 이유로 승인이 거절되었습니다.<p>";
+        msgg+= "<br>";
+        msgg+= "<p>다시 제출해주시길 바랍니다. 감사합니다.<p>";
+        msgg+= "<br>";
+        msgg+= "<div align='center' style='border:1px solid black; font-family:verdana';><br/>";
+        msgg+= "<div style='font-size:130%'>";
+        msgg+= rejectReason+"<div><br/> ";
+        msgg+= "</div>";
+        message.setText(msgg, "utf-8", "html");//내용
+        message.setFrom(new InternetAddress("yamyambuk04@gmail.com","funteer"));//보내는 사람
+
+        return message;
+    }
+
+    @Override
+    public String sendRejectMessage(String to, String rejectReason, PostGroup postGroup) throws Exception {
+        MimeMessage message = createFundingMessage(to, rejectReason, postGroup);
+        try{//예외처리
+            emailSender.send(message);
+        }catch(MailException es){
+            es.printStackTrace();
+            throw new IllegalArgumentException();
+        }
+        return rejectReason;
     }
 }

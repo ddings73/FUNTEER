@@ -23,16 +23,14 @@ import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.dto.RejectReasonRequest;
 import com.yam.funteer.funding.dto.TakeFundingRequest;
-import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
-import com.yam.funteer.post.repository.CommentRepository;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -142,4 +140,23 @@ public class FundingController {
 		fundingService.deleteFundingComment(commentId);
 		return ResponseEntity.ok("삭제 완료");
 	}
+
+	@ApiOperation(value = "펀딩 승인", notes = "제출된 펀딩을 확인하고 승인 상태로 바꾼다.")
+	@PutMapping("/funding/{fundingId}/accept")
+	public ResponseEntity<?> acceptFunding(@PathVariable Long fundingId) {
+		fundingService.acceptFunding(fundingId);
+		return ResponseEntity.ok("펀딩 승인 완료");
+	}
+
+	@ApiOperation(value = "펀딩 거절", notes = "제출된 펀딩을 확인하고 거절 상태로 바꾼다.")
+	@PutMapping("/funding/{fundingId}/reject")
+	public ResponseEntity<?> rejectFunding(@PathVariable Long fundingId, @RequestBody RejectReasonRequest data) throws
+		Exception {
+		fundingService.rejectFunding(fundingId, data);
+		return ResponseEntity.ok("펀딩 승인이 거절되었습니다.");
+	}
+
+
+
+
 }

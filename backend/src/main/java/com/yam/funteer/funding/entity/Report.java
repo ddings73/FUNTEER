@@ -12,6 +12,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.common.code.PostType;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +26,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Report{
+	public Report(Funding funding, String content, LocalDateTime regDate, Attach receipts) {
+		this.funding = funding;
+		this.content = content;
+		this.regDate = regDate;
+		this.receipts = receipts;
+	}
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -32,6 +41,16 @@ public class Report{
 	private String content;
 	private LocalDateTime regDate;
 
+	private String rejectReason;
+
+	@OneToOne
+	@JoinColumn(name = "recipt_id")
+	private Attach receipts;
+
 	@OneToMany(mappedBy = "report")
 	private List<ReportDetail> reportDetails;
+
+	public void setRejectComment(String rejectReason) {
+		this.rejectReason = rejectReason;
+	}
 }

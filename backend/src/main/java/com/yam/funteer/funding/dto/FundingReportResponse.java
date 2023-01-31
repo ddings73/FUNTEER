@@ -6,7 +6,6 @@ import java.util.List;
 
 import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.funding.entity.ReportDetail;
-import com.yam.funteer.funding.entity.TargetMoney;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
