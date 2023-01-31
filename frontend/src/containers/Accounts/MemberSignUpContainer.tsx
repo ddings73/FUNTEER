@@ -69,6 +69,14 @@ function MemberSignUpContainer() {
   const onClickEmailDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
 
+    /** 이메일 정규식 검사 */
+    const validEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]+/; // (알파벳, 숫자)@(알파벳).(알파벳)
+
+    if (validEmail.test(memberSignUpInfo.email) === false) {
+      alert('이메일 주소가 올바르지 않습니다.');
+      return;
+    }
+
     try {
       const response = await requestEmailDuplConfirm(memberSignUpInfo.email);
       alert('이메일 중복 체크 완료');

@@ -17,6 +17,7 @@ export type teamSignUpType = {
   name: string;
   email: string;
   password: string;
+  passwordCheck: string;
   phone: string;
   vmsFile: Blob;
   performFile: Blob;
