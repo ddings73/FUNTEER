@@ -15,6 +15,8 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.yam.funteer.attach.FileType;
+import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.common.security.SecurityUtil;
@@ -25,6 +27,7 @@ import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.dto.ReportDetailResponse;
 import com.yam.funteer.funding.dto.TakeFundingRequest;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
@@ -50,6 +53,7 @@ import com.yam.funteer.post.repository.HashTagRepository;
 import com.yam.funteer.post.repository.PostHashtagRepository;
 import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.Member;
+import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
 
@@ -136,8 +140,8 @@ public class FundingServiceImpl implements FundingService{
 		Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
 		// // Team
-		// Optional<Long> currentUserId = SecurityUtil.getCurrentUserId();
-		// Team team = teamRepository.findById(currentUserId).orElseThrow();
+		Long currentUserId = SecurityUtil.getCurrentUserId();
+		Team team = teamRepository.findById(currentUserId).orElseThrow();
 
 		// time 변환
 		LocalDate startDate = LocalDate.parse(data.getStartDate(),
@@ -148,7 +152,7 @@ public class FundingServiceImpl implements FundingService{
 
 		// 펀딩 생성
 		Funding funding = Funding.builder()
-			// .team(team)
+			.team(team)
 			.title(data.getTitle())
 			.category(category)
 			.content(data.getContent())
@@ -326,7 +330,19 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public void createFundingReport(Long fundingId, FundingReportRequest data) {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
-		// Report report =
+
+		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
+
+		Attach attach = Attach.builder()
+			.name(fundingId + "-receiptFIle")
+			.fileType(FileType.RECEIPT)
+			.path(receiptUrl)
+			.regDate(LocalDateTime.now())
+			.build();
+
+		Report report = new Report(funding, data.getContent(), LocalDateTime.now(), attach);
+		List<ReportDetailResponse> reportDetailResponses = new ArrayList<>();
+
 
 	}
 

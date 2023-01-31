@@ -1,7 +1,6 @@
 package com.yam.funteer.funding.dto;
 
 import javax.validation.constraints.NotNull;
-import com.yam.funteer.user.entity.Team;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,9 +27,6 @@ public class FundingRequest {
 
 	@NotNull
 	private String fundingDescription;
-
-	// @NotNull
-	// private MultipartFile thumbnail;
 
 	@NotNull
 	private int amount1;

@@ -4,7 +4,6 @@ import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.funding.entity.TargetMoney;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 
 @Data

@@ -24,15 +24,12 @@ import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
 import com.yam.funteer.funding.dto.TakeFundingRequest;
-import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
-import com.yam.funteer.post.repository.CommentRepository;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -142,4 +139,5 @@ public class FundingController {
 		fundingService.deleteFundingComment(commentId);
 		return ResponseEntity.ok("삭제 완료");
 	}
+
 }
