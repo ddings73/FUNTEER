@@ -66,9 +66,9 @@ export default function CustomerCenter() {
               variant="fullWidth"
               aria-label="full width tabs example"
             >
-              <Tab label="FAQ" {...a11yProps(0)} />
-              <Tab label="공지사항" {...a11yProps(1)} />
-              <Tab label="1:1 문의" {...a11yProps(2)} />
+              <Tab label="FAQ" {...a11yProps(0)} sx={{ fontWeight: 'bold', fontFamily: 'NanumSquareRound' }} />
+              <Tab label="공지사항" {...a11yProps(1)} sx={{ fontWeight: 'bold', fontFamily: 'NanumSquareRound' }} />
+              <Tab label="1:1 문의" {...a11yProps(2)} sx={{ fontWeight: 'bold', fontFamily: 'NanumSquareRound' }} />
             </Tabs>
           </AppBar>
 
