@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useInterval } from 'usehooks-ts';
 import { Button, TextField } from '@mui/material';
-// import axios from 'axios';
-import styles from './TeamSignUpContainer.module.scss';
+import { teamSignUpType } from '../../types/user';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
 import { requestEmailDuplConfirm, requestNameDuplConfirm, requestTeamSignUp } from '../../api/user';
-import { teamSignUpType } from '../../types/user';
+import styles from './TeamSignUpContainer.module.scss';
 
 function TeamSignUpContainer() {
   /** 회원가입 정보 */
@@ -24,6 +24,9 @@ function TeamSignUpContainer() {
   const [emailDuplConfirmed, setEmailDuplConfirmed] = useState<boolean>(false);
   /** 이메일 인증 버튼을 이미 눌렀는지 확인 */
   const [emailAuthButtonPushed, setEmailAuthButtonPushed] = useState<boolean>(false);
+  /** 이메일 인증 시간 제한 */
+  const initTime = 300;
+  const [time, setTime] = useState<number>(initTime);
   /** 인증 번호 */
   const [authNumber, setAuthNumber] = useState<string>('');
   /** 이메일 인증이 완료되었는지 체크해주는 상태 */
@@ -94,12 +97,7 @@ function TeamSignUpContainer() {
     }
   };
 
-  /** 인증 번호 입력 */
-  const onAuthNumberChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAuthNumber(e.target.value);
-  };
-
-  /** 이메일 인증 시간 카운팅 */
+  /** 이메일 인증하기 버튼 */
   const handleClickAuthEmail = () => {
     if (!emailDuplConfirmed) {
       alert('이메일 중복 체크를 먼저 완료해주세요.');
@@ -111,31 +109,33 @@ function TeamSignUpContainer() {
     }
 
     setEmailAuthButtonPushed(true);
+  };
 
-    let time = 30;
-    let minute;
-    let second;
-    const timer = setInterval(() => {
-      if (checkEmailAuth) {
-        console.log('인증했음!!!');
-        clearInterval(timer);
-        return;
-      }
-
+  /** 이메일 인증 타이머 */
+  let minute;
+  let second;
+  useInterval(
+    () => {
+      /** logic */
+      setTime(time - 1);
       minute = Math.floor(secondsToMinutes(time));
       second = secondsToSeconds(time);
-
       setButtonText(`${minute}분 ${second}초`);
-      time -= 1;
 
-      if (time < 0) {
+      if (time === 0) {
         alert('인증번호 입력 시간이 초과되었습니다.');
-        clearInterval(timer);
         setButtonText('이메일 인증하기');
         setEmailAuthButtonPushed(false);
-        // setCheckEmailAuth(false);
+        setTime(initTime);
       }
-    }, 1000);
+    },
+    /** Delay in milliseconds or null to stop it */
+    emailAuthButtonPushed && !checkEmailAuth ? 1000 : null,
+  );
+
+  /** 인증 번호 입력 */
+  const onAuthNumberChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthNumber(e.target.value);
   };
 
   /** 이메일 인증 요청 */
