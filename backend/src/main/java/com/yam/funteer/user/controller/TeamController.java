@@ -39,7 +39,7 @@ public class TeamController {
         @ApiResponse(code = 409, message = "중복된 이메일"),
         @ApiResponse(code = 500, message = "서버 에러")
     })
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping
     public ResponseEntity signUpTeam(@Validated @ModelAttribute CreateTeamRequest createTeamRequest, BindingResult bindingResult){
         validateBinding(bindingResult);
 
