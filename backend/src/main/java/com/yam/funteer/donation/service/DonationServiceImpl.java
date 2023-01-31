@@ -24,6 +24,7 @@ import com.yam.funteer.donation.dto.response.DonationBaseRes;
 import com.yam.funteer.donation.dto.response.DonationListRes;
 import com.yam.funteer.donation.entity.Donation;
 import com.yam.funteer.donation.exception.DonationNotFoundException;
+import com.yam.funteer.donation.exception.DonationPayException;
 import com.yam.funteer.donation.repository.DonationRepository;
 import com.yam.funteer.donation.dto.request.DonationJoinReq;
 
@@ -57,8 +58,8 @@ public class DonationServiceImpl implements DonationService{
 		return list;
 	}
 
-	public DonationBaseRes donationGetDetail(Long postId) throws DonationNotFoundException {
-		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException("찾으시는 게시물이 존재하지 않습니다."));
+	public DonationBaseRes donationGetDetail(Long postId) {
+		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
 
 		Long currentAmount=Long.valueOf(0);
 
@@ -80,9 +81,13 @@ public class DonationServiceImpl implements DonationService{
 		return new DonationBaseRes(donation,currentAmount,attachList);
 	}
 
-	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq)throws DonationNotFoundException {
-		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException("찾으시는 게시물이 존재하지 않습니다."));
+	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq) {
+		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
+		if(user.getMoney()<donationJoinReq.getPaymentAmount()||user.getMoney()==0){
+			throw new DonationPayException();
+		}
+
 		Payment payment=Payment.builder()
 			.user(user)
 			.amount(donationJoinReq.getPaymentAmount())
@@ -95,14 +100,14 @@ public class DonationServiceImpl implements DonationService{
 		return payment;
 	}
 
-	public DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq,List<MultipartFile>files) {
+	public DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Donation donation=donationRepository.save(donationRegisterReq.toEntity());
 			List<String>attachList=new ArrayList<>();
-			for(MultipartFile file:files){
-				String fileUrl = awsS3Uploader.upload(file,"/donation");
+			for(MultipartFile file:donationRegisterReq.getFiles()){
+				String fileUrl = awsS3Uploader.upload(file,"donation");
 				Attach attach=donationRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
 				PostAttach postAttach=PostAttach.builder()
 					.attach(attach)
@@ -119,16 +124,15 @@ public class DonationServiceImpl implements DonationService{
 
 	public void donationDelete(Long postId) throws DonationNotFoundException{
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
+		Donation donation = donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
-			Donation donation = donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
 			donationRepository.delete(donation);
 		}else throw new IllegalArgumentException();
 	}
 
 
-	public DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq,List<MultipartFile>files) throws
-		DonationNotFoundException {
-		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException("찾으시는 게시물이 없습니다."));
+	public DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq){
+		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
 
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
@@ -136,14 +140,14 @@ public class DonationServiceImpl implements DonationService{
 
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donation);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("/donation/",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("donation",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
 
 			List<String>attachList=new ArrayList<>();
-			for(MultipartFile file:files){
-				String fileUrl = awsS3Uploader.upload(file,"/donation");
+			for(MultipartFile file:donationModifyReq.getFiles()){
+				String fileUrl = awsS3Uploader.upload(file,"donation");
 				Attach attach=donationModifyReq.toAttachEntity(fileUrl,file.getOriginalFilename());
 				PostAttach postAttach=PostAttach.builder()
 					.attach(attach)

@@ -64,7 +64,7 @@ public class LoginController {
             @ApiResponse(code = 401, message = "사용자 인증 실패"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    @PostMapping("/refresh")
+    @GetMapping("/refresh")
     public ResponseEntity<TokenInfo> regenToken(@RequestBody TokenRequest tokenRequest){
         TokenInfo TokenInfo = loginService.regenerateToken(tokenRequest);
         return ResponseEntity.ok(TokenInfo);

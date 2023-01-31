@@ -2,15 +2,28 @@ package com.yam.funteer.faq.dto.request;
 
 import java.time.LocalDateTime;
 
+import javax.validation.constraints.NotBlank;
+
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.post.entity.Post;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-@Getter
+@Data
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class FaqRegisterReq {
+	@NotBlank
 	private String title;
+	@NotBlank
 	private String content;
 
 	public Post toEntity(){
