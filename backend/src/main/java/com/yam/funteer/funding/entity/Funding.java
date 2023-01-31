@@ -61,13 +61,6 @@ public class Funding extends Post {
 	@OneToMany(mappedBy = "funding", cascade = CascadeType.ALL)
 	private List<Comment> comments;
 
-	@Scheduled(cron = "0 0 17 * * *" )
-	public void changeStatusFunding() {
-		if (this.getPostType() == PostType.FUNDING_ACCEPT) {
-			this.setPostType(PostType.FUNDING_IN_PROGRESS);
-		}
-	}
-
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
 	}
