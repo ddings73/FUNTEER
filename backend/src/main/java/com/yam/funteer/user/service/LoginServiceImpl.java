@@ -92,8 +92,7 @@ public class LoginServiceImpl implements LoginService{
         }
 
         TokenInfo tokenInfo = jwtProvider.generateToken(authentication);
-        token.updateToken(tokenInfo.getRefreshToken());
-        tokenRepository.save(token);
+        token.update(tokenInfo.getRefreshToken());
         return tokenInfo;
     }
 }
