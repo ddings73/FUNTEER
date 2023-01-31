@@ -25,16 +25,28 @@ http.interceptors.request.use(
   },
 );
 
-// http.interceptors.response.use(
-//   function (response) {
-//     return response;
-//   },
-//   async function (error) {
-//     if (error.response && error.response === 401) {
-//       try {
-//         const originRequest = error.config;
-//         const response = await requestUpdateToken();
-//       } catch (error) {}
-//     }
-//   },
-// );
+http.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  async function (error) {
+    if (error.response && error.response.status === 401) {
+      try {
+        const originalRequest = error.config;
+        const response = await requestUpdateToken();
+        if (response) {
+          localStorage.removeItem('token');
+          localStorage.setItem('token', JSON.stringify('token', response.data));
+          originalRequest.headers.accessToken = response.data.accessToken;
+          originalRequest.headers.refreshToken = response.data.refreshToken;
+          return await http.request(originalRequest);
+        }
+      } catch (error) {
+        localStorage.removeItem('token');
+        console.log(error);
+      }
+      return Promise.reject(error);
+    }
+    return Promise.reject(error);
+  },
+);
