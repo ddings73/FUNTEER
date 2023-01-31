@@ -3,18 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';
 
 // mui
 import { Button, TextField } from '@mui/material';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogActions from '@mui/material/DialogActions';
-import Modal from '@mui/material/Modal';
 
 import styles from './LoginContainer.module.scss';
 import { UserSignInType } from '../../types/user';
 import { requestSignIn } from '../../api/user';
 import { useAppDispatch } from '../../store/hooks';
-import { openModal } from '../../store/slices/modalSlice';
+import { closeModal, openModal } from '../../store/slices/modalSlice';
 import { setUserLoginState } from '../../store/slices/userSlice';
 
 function LoginContainer() {
@@ -41,8 +35,11 @@ function LoginContainer() {
     }
   };
 
-  const requestEmailLogin = async () => {
+  const handleModal = () => {
+    dispatch(closeModal());
+  };
 
+  const requestEmailLogin = async () => {
     try {
       const response = await requestSignIn(userInfo);
       if (response.status === 200) {
@@ -53,7 +50,7 @@ function LoginContainer() {
       }
     } catch (error) {
       console.error(error);
-      dispatch(openModal({ isOpen: true, title: '로그인 실패', content: '비밀번호가 틀림요' }));
+      dispatch(openModal({ isOpen: true, title: '로그인 실패', content: '비밀번호가 틀림요', handleModal }));
     }
   };
 

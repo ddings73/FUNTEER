@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, TextField } from '@mui/material';
 // import axios from 'axios';
 import styles from './TeamSignUpContainer.module.scss';
@@ -29,9 +29,9 @@ function TeamSignUpContainer() {
   /** 이메일 인증이 완료되었는지 체크해주는 상태 */
   const [checkEmailAuth, setCheckEmailAuth] = useState<boolean>(false);
   /** vms 파일 */
-  const [vmsFiles, setVmsFiles] = useState<FileList | null>(null);
+  const [vmsFile, setVmsFile] = useState<Blob | null>(null);
   /** 실적 파일 */
-  const [performFiles, setPerformFiles] = useState<FileList | null>(null);
+  const [performFile, setPerformFile] = useState<Blob | null>(null);
 
   /** 회원가입 정보 입력 */
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,6 +66,14 @@ function TeamSignUpContainer() {
   const onClickEmailDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
 
+    /** 이메일 정규식 검사 */
+    const validEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]+/; // (알파벳, 숫자)@(알파벳).(알파벳)
+
+    if (validEmail.test(teamSignUpInfo.email) === false) {
+      alert('이메일 주소가 올바르지 않습니다.');
+      return;
+    }
+
     try {
       const response = await requestEmailDuplConfirm(teamSignUpInfo.email);
       alert('이메일 중복 체크 완료');
@@ -94,12 +102,14 @@ function TeamSignUpContainer() {
 
     setEmailAuthButtonPushed(true);
 
-    let time = 300;
+    let time = 30;
     let minute;
     let second;
     const timer = setInterval(() => {
       if (checkEmailAuth) {
+        console.log('인증했음!!!');
         clearInterval(timer);
+        return;
       }
 
       minute = Math.floor(secondsToMinutes(time));
@@ -138,24 +148,14 @@ function TeamSignUpContainer() {
   /** vms 파일 업로드 */
   const onVmsChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setVmsFiles(e.target.files);
-
-      if (vmsFiles) {
-        console.log(vmsFiles[0]);
-        console.log('vms 파일 타입', typeof vmsFiles[0]);
-      }
+      setVmsFile(e.target.files[0]);
     }
   };
 
   /** 실적 파일 업로드 */
   const onPerformChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setPerformFiles(e.target.files);
-    }
-
-    if (performFiles) {
-      console.log(performFiles[0]);
-      console.log('실적 파일 타입', typeof performFiles[0]);
+      setPerformFile(e.target.files[0]);
     }
   };
 
@@ -165,6 +165,17 @@ function TeamSignUpContainer() {
     /** 중복 검사 했는지 */
     if (!nameDuplConfirmed || !emailDuplConfirmed) {
       alert('모든 중복 체크를 완료해주세요.');
+      return;
+    }
+    /** 비밀번호와 비밀번호 확인 값이 같은지 */
+    if (teamSignUpInfo.password !== teamSignUpInfo.passwordCheck) {
+      alert('비밀번호와 비밀번호 확인 값이 다릅니다.');
+      return;
+    }
+    /** 비밀번호 정규식: 8 ~ 15자, 하나 이상의 문자와 숫자 */
+    const validPW = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z]).*$/;
+    if (!validPW.test(teamSignUpInfo.password)) {
+      alert('적합하지 않은 비밀번호입니다.');
       return;
     }
     /** 이메일 인증 여부 */
@@ -179,18 +190,14 @@ function TeamSignUpContainer() {
       return;
     }
     /** 필수 파일들을 업로드 했는지 */
-    if (!vmsFiles || !performFiles) {
+    if (!vmsFile || !performFile) {
       alert('필수 파일을 첨부해주세요.');
       return;
     }
-    /** 비밀번호와 비밀번호 확인 값이 같은지 */
-    if (teamSignUpInfo.password !== teamSignUpInfo.passwordCheck) {
-      alert('비밀번호와 비밀번호 확인 값이 다릅니다.');
-      return;
-    }
+
     // ===================================================================
 
-    const newTeamSignUpInfo: teamSignUpType = { ...teamSignUpInfo, vmsFile: vmsFiles[0], performFile: performFiles[0] };
+    const newTeamSignUpInfo: teamSignUpType = { ...teamSignUpInfo, vmsFile, performFile };
     console.log('단체 회원가입 정보', newTeamSignUpInfo);
 
     try {
@@ -251,6 +258,7 @@ function TeamSignUpContainer() {
 
             <p>비밀번호</p>
             <TextField name="password" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <p className={styles.comment}>8~15자, 하나 이상의 문자와 숫자가 포함되어야 합니다.</p>
 
             <p>비밀번호 확인</p>
             <TextField name="passwordCheck" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />

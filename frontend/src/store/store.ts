@@ -1,4 +1,4 @@
-import { configureStore } from '@reduxjs/toolkit';
+import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
 import userSlice from './slices/userSlice';
 import modalSlice from './slices/modalSlice';
 import fileModalSlice from './slices/fileModalSlice';
@@ -9,6 +9,9 @@ const store = configureStore({
     modalSlice,
     fileModalSlice,
   },
+  middleware: getDefaultMiddleware({
+    serializableCheck: false,
+  }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

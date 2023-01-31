@@ -68,26 +68,21 @@ export const requestMemberSignUp = async (memberSignUpInfo: memberSignUpType) =>
 
 export const requestTeamSignUp = async (teamSignUpInfo: teamSignUpType) => {
   const formData = new FormData();
+  const entries = Object.entries(teamSignUpInfo);
+
+  entries.forEach((data) => {
+    const key = data[0];
+    if (key !== 'passwordCheck') {
+      const value = data[1];
+
+      formData.append(`${key}`, value);
+    }
+  });
+
   formData.append('vmsFile', teamSignUpInfo.vmsFile);
   formData.append('performFile', teamSignUpInfo.performFile);
 
-  const data = {
-    name: teamSignUpInfo.name,
-    email: teamSignUpInfo.email,
-    password: teamSignUpInfo.password,
-    phone: teamSignUpInfo.phone,
-    formData,
-  };
-
-  const res = await http.post(
-    '/team',
-    { data },
-    {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    },
-  );
+  const res = await http.post('team', formData);
 
   return res;
 };
