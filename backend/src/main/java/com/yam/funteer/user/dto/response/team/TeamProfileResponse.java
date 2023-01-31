@@ -37,4 +37,5 @@ public class TeamProfileResponse extends BaseResponseBody {
         team.getBanner().ifPresent(attach -> response.setBannerUrl(attach.getPath()));
         return response;
     }
+
 }

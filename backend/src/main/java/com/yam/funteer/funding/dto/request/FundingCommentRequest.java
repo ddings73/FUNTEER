@@ -1,16 +1,13 @@
-package com.yam.funteer.funding.dto;
+package com.yam.funteer.funding.dto.request;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class TakeFundingRequest {
-
-	Long amount;
-
+@Data
+public class FundingCommentRequest {
+	
+	private String content;
 }

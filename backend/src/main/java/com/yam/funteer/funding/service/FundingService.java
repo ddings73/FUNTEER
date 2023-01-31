@@ -5,15 +5,15 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import com.yam.funteer.funding.dto.FundingCommentRequest;
-import com.yam.funteer.funding.dto.FundingDetailResponse;
-import com.yam.funteer.funding.dto.FundingListPageResponse;
-import com.yam.funteer.funding.dto.FundingListResponse;
-import com.yam.funteer.funding.dto.FundingReportRequest;
-import com.yam.funteer.funding.dto.FundingReportResponse;
-import com.yam.funteer.funding.dto.FundingRequest;
-import com.yam.funteer.funding.dto.RejectReasonRequest;
-import com.yam.funteer.funding.dto.TakeFundingRequest;
+import com.yam.funteer.funding.dto.request.FundingCommentRequest;
+import com.yam.funteer.funding.dto.response.FundingDetailResponse;
+import com.yam.funteer.funding.dto.response.FundingListPageResponse;
+import com.yam.funteer.funding.dto.response.FundingListResponse;
+import com.yam.funteer.funding.dto.request.FundingReportRequest;
+import com.yam.funteer.funding.dto.response.FundingReportResponse;
+import com.yam.funteer.funding.dto.request.FundingRequest;
+import com.yam.funteer.funding.dto.request.RejectReasonRequest;
+import com.yam.funteer.funding.dto.request.TakeFundingRequest;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 

@@ -1,4 +1,4 @@
-package com.yam.funteer.funding.dto;
+package com.yam.funteer.funding.dto.response;
 
 import java.time.LocalDateTime;
 import com.yam.funteer.post.entity.Comment;

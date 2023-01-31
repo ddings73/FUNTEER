@@ -1,4 +1,4 @@
-package com.yam.funteer.funding.dto;
+package com.yam.funteer.funding.dto.request;
 
 import org.springframework.web.multipart.MultipartFile;
 

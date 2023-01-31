@@ -1,4 +1,4 @@
-package com.yam.funteer.funding.dto;
+package com.yam.funteer.funding.dto.response;
 
 import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.funding.entity.TargetMoney;
