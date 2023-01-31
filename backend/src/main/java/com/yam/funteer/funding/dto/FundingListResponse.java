@@ -15,6 +15,8 @@ import lombok.Data;
 @Builder
 public class FundingListResponse {
 
+	private Long id;
+
 	private String title;
 
 	private LocalDate startDate;
@@ -36,6 +38,7 @@ public class FundingListResponse {
 	public static FundingListResponse from(Funding funding) {
 
 		return FundingListResponse.builder()
+			.id(funding.getId())
 			.title(funding.getTitle())
 			.startDate(funding.getStartDate())
 			.endDate(funding.getEndDate())
