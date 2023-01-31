@@ -7,32 +7,46 @@ import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Box } from '@mui/system';
 import TextField from '@mui/material/TextField';
+import InputAdornment from '@mui/material/InputAdornment';
+import SearchIcon from '@mui/icons-material/Search';
 import styles from './FundingListContainer.module.scss';
-
 import FundingListElement from '../../components/Funding/FundingListElement';
 import { FundingElementType } from '../../types/funding';
 import { requestFundingList } from '../../api/funding';
 import { useAppSelector } from '../../store/hooks';
 
+
 function FundingListContainer() {
-  console.log(useAppSelector((state) => state.userSlice.userType));
-  const [fundingList, setFundingList] = useState<FundingElementType[] | undefined>([]);
+  const [fundingList, setFundingList] = useState<FundingElementType[]>([]);
   const [successFundingCount, setSuccessFundingCount] = useState<number>(0);
   const [totalFundingAmount, setTotalFundingAmount] = useState<number>(0);
   const [totalFundingCount, setTotalFundingCount] = useState<number>(0);
+  const [searchText,setSearchText] =useState<string>('')
 
-  const [searchText, setSearchText] = useState<string>('');
 
-  const [age, setAge] = React.useState('');
 
-  const handleChange = (event: SelectChangeEvent) => {
-    console.log(event.target.value);
-  };
+
+  const search = ()=>{
+    if(searchText ==="" || searchText===null || searchText===undefined){
+      initFundingList()
+    }
+    else{
+    const temp= fundingList?.filter((item)=>{
+      console.log(item.title , searchText);
+      return item.title.includes(searchText)
+    })
+    setFundingList(temp)
+    }
+  }
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setSearchText(value);
+    setSearchText(value)
   };
+
+  useEffect(()=>{
+    search()
+  },[searchText])
 
   const initFundingList = useCallback(async () => {
     try {
@@ -73,23 +87,13 @@ function FundingListContainer() {
           </div>
         </div>
         <div className={styles['search-box']}>
-          {/* <Box sx={{ minWidth: 150 }}>
-                <FormControl fullWidth>
-                    <InputLabel id="demo-simple-select-label">카테고리</InputLabel>
-                <Select
-                    labelId="demo-simple-select-label"
-                     id="demo-simple-select"
-                value={age}
-          label="카테고리"
-          onChange={handleChange}
-        >
-          <MenuItem value={10}>Ten</MenuItem>
-          <MenuItem value={20}>Twenty</MenuItem>
-          <MenuItem value={30}>Thirty</MenuItem>
-        </Select>
-      </FormControl>
-    </Box>
-    <TextField sx={{minWidth:550, mr:2}}  variant="outlined" onChange={handleTextChange} /> */}
+          <TextField  className={styles.search} variant="outlined" onChange={handleTextChange} placeholder="검색어를 입력해주세요."  InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchIcon />
+                    </InputAdornment>
+                  ),
+                }}/>
         </div>
         <div className={styles['funding-list-box']}>
           <div className={styles['funding-filter-box']}>

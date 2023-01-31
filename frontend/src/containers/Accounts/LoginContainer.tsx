@@ -46,7 +46,9 @@ function LoginContainer() {
       if (response.status === 200) {
         const { data } = response;
 
-        localStorage.setItem('token', JSON.stringify(data.token));
+        localStorage.setItem('accessToken', JSON.stringify(data.token.accessToken));
+        localStorage.setItem('refreshToken', JSON.stringify(data.token.refreshToken));
+
         dispatch(setUserLoginState(true));
         dispatch(setUserType(data.userType));
 

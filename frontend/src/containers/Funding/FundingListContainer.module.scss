@@ -55,11 +55,13 @@
     .search-box {
       display: flex;
       flex-direction: row;
-      justify-content: space-around;
-      max-width: 50%;
       width: 100%;
       margin: 0 auto;
       margin-top: 150px;
+
+      & .search{
+        width: 100%;
+      }
     }
     .funding-list-box {
       margin-top: 80px;

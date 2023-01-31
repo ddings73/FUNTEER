@@ -6,5 +6,7 @@ import { http } from './axios';
  */
 export const requestUpdateToken = async () => {
   const response = await http.get('refresh');
+  console.log("updateToken", response);
+  
   return response;
 };

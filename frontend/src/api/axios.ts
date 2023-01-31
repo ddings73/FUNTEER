@@ -7,16 +7,17 @@ export const http: AxiosInstance = axios.create({
 });
 http.interceptors.request.use(
   function (config) {
-    const token = localStorage.getItem('token');
+    const accessToken = localStorage.getItem('accessToken')
+    const refreshToken = localStorage.getItem('refreshToken');
 
-    if (!token) {
+    if (!accessToken ||!refreshToken) {
       config.headers.accessToken = null;
       config.headers.refreshToken = null;
       return config;
     }
-    const { accessToken, refreshToken } = JSON.parse(token);
-    config.headers.accessToken = accessToken;
-    config.headers.refreshToken = refreshToken;
+    config.headers.Authorization =`Bearer ${JSON.parse(accessToken)}`;
+    config.headers.refreshToken = JSON.parse(refreshToken);
+    console.log('requestHEADER' ,config);
     return config;
   },
   function (error) {
@@ -33,16 +34,26 @@ http.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       try {
         const originalRequest = error.config;
+        console.log("original",originalRequest);
+        
         const response = await requestUpdateToken();
+        console.log("response",response);
+        
         if (response) {
-          localStorage.removeItem('token');
-          localStorage.setItem('token', JSON.stringify('token', response.data));
-          originalRequest.headers.accessToken = response.data.accessToken;
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+
+          localStorage.setItem('accessToken', JSON.stringify( response.data.accessToken));
+          localStorage.setItem('refreshToken', JSON.stringify(response.data.refreshToken));
+
+          originalRequest.headers.Authorization =  `Bearer ${JSON.stringify(response.data.accessToken)}`;
           originalRequest.headers.refreshToken = response.data.refreshToken;
           return await http.request(originalRequest);
         }
       } catch (error) {
-        localStorage.removeItem('token');
+
+        // localStorage.removeItem("accessToken")
+        // localStorage.removeItem("refreshToken")
         console.log(error);
       }
       return Promise.reject(error);
