@@ -10,6 +10,8 @@ import com.yam.funteer.funding.entity.TargetMoney;
 import com.yam.funteer.funding.exception.NotFoundCommentsException;
 import com.yam.funteer.funding.exception.NotFoundHashtagException;
 import com.yam.funteer.post.entity.Comment;
+import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +23,10 @@ import lombok.Getter;
 @Builder
 @Getter
 public class FundingDetailResponse {
+
+	private TeamAccountResponse team;
+
+	private String fundingDescription;
 
 	private Long fundingId;
 	private String title;
@@ -44,6 +50,8 @@ public class FundingDetailResponse {
 	private Long currentFundingAmount;
 
 	public static FundingDetailResponse from(Funding funding) {
+		// TeamAccountResponse team = TeamAccountResponse.from(funding.getTeam());
+
 		List<TargetMoneyResponse> targetMoneyResponses = new ArrayList<>();
 		for (TargetMoney tm : funding.getTargetMoneyList()) {
 			targetMoneyResponses.add(TargetMoneyResponse.from(tm));
@@ -66,6 +74,7 @@ public class FundingDetailResponse {
 			}
 
 			return FundingDetailResponse.builder()
+				// .team(team)
 				.fundingId(funding.getId())
 				.category(funding.getCategory().getName())
 				.title(funding.getTitle())
@@ -78,12 +87,14 @@ public class FundingDetailResponse {
 				.thumbnail(funding.getThumbnail())
 				.comments(commentResponses)
 				.currentFundingAmount(funding.getCurrentFundingAmount())
+				.fundingDescription(funding.getFundingDescription())
 				.build();
 
 		} catch (NotFoundCommentsException e) {
 
 			e.printStackTrace();
 			return FundingDetailResponse.builder()
+				// .team(team)
 				.fundingId(funding.getId())
 				.category(funding.getCategory().getName())
 				.title(funding.getTitle())
@@ -95,6 +106,7 @@ public class FundingDetailResponse {
 				.postHashtagList(HashtagResponse.from(funding.getHashtags()))
 				.currentFundingAmount(funding.getCurrentFundingAmount())
 				.thumbnail(funding.getThumbnail())
+				.fundingDescription(funding.getFundingDescription())
 				.build();
 
 		} catch (NotFoundHashtagException e) {
@@ -105,6 +117,7 @@ public class FundingDetailResponse {
 			}
 
 			return FundingDetailResponse.builder()
+				// .team(team)
 				.fundingId(funding.getId())
 				.category(funding.getCategory().getName())
 				.title(funding.getTitle())
@@ -116,10 +129,12 @@ public class FundingDetailResponse {
 				.thumbnail(funding.getThumbnail())
 				.comments(commentResponses)
 				.currentFundingAmount(funding.getCurrentFundingAmount())
+				.fundingDescription(funding.getFundingDescription())
 				.build();
 
 		}  finally {
 			return FundingDetailResponse.builder()
+				// .team(team)
 				.fundingId(funding.getId())
 				.category(funding.getCategory().getName())
 				.title(funding.getTitle())
@@ -130,6 +145,7 @@ public class FundingDetailResponse {
 				.targetMonies(targetMoneyResponses)
 				.thumbnail(funding.getThumbnail())
 				.currentFundingAmount(funding.getCurrentFundingAmount())
+				.fundingDescription(funding.getFundingDescription())
 				.build();
 		}
 	}
