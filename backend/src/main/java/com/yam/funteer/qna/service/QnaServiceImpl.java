@@ -66,12 +66,12 @@ public class QnaServiceImpl implements QnaService {
 	}
 
 	@Override
-	public QnaBaseRes qnaRegister(QnaRegisterReq qnaRegisterReq,List<MultipartFile>files){
+	public QnaBaseRes qnaRegister(QnaRegisterReq qnaRegisterReq){
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Qna qna=qnaRepository.save(qnaRegisterReq.toEntity(user));
 		List<String>attachList=new ArrayList<>();
-		for(MultipartFile file:files){
-			String fileUrl = awsS3Uploader.upload(file,"/qna");
+		for(MultipartFile file:qnaRegisterReq.getFiles()){
+			String fileUrl = awsS3Uploader.upload(file,"qna");
 			Attach attach=qnaRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
 			PostAttach postAttach=PostAttach.builder()
 				.attach(attach)
@@ -102,7 +102,7 @@ public class QnaServiceImpl implements QnaService {
 	}
 
 	@Override
-	public QnaBaseRes qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq, List<MultipartFile>files){
+	public QnaBaseRes qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq){
 		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		List<String>attachList=new ArrayList<>();
@@ -110,13 +110,13 @@ public class QnaServiceImpl implements QnaService {
 			qnaRepository.save(qnaRegisterReq.toEntity(user,qnaId));
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("/qna/",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("qna",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
 
-			for(MultipartFile file:files){
-				String fileUrl = awsS3Uploader.upload(file,"/qna");
+			for(MultipartFile file:qnaRegisterReq.getFiles()){
+				String fileUrl = awsS3Uploader.upload(file,"qna");
 				Attach attach=qnaRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
 				PostAttach postAttach=PostAttach.builder()
 					.attach(attach)
@@ -138,7 +138,7 @@ public class QnaServiceImpl implements QnaService {
 		if(qna.getUser().getId()==user.getId()) {
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("/qna/",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("qna",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}

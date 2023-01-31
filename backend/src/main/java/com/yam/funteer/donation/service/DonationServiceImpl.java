@@ -100,13 +100,13 @@ public class DonationServiceImpl implements DonationService{
 		return payment;
 	}
 
-	public DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq,List<MultipartFile>files) {
+	public DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Donation donation=donationRepository.save(donationRegisterReq.toEntity());
 			List<String>attachList=new ArrayList<>();
-			for(MultipartFile file:files){
+			for(MultipartFile file:donationRegisterReq.getFiles()){
 				String fileUrl = awsS3Uploader.upload(file,"donation");
 				Attach attach=donationRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
 				PostAttach postAttach=PostAttach.builder()
@@ -131,7 +131,7 @@ public class DonationServiceImpl implements DonationService{
 	}
 
 
-	public DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq,List<MultipartFile>files){
+	public DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq){
 		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
 
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
@@ -146,7 +146,7 @@ public class DonationServiceImpl implements DonationService{
 			}
 
 			List<String>attachList=new ArrayList<>();
-			for(MultipartFile file:files){
+			for(MultipartFile file:donationModifyReq.getFiles()){
 				String fileUrl = awsS3Uploader.upload(file,"donation");
 				Attach attach=donationModifyReq.toAttachEntity(fileUrl,file.getOriginalFilename());
 				PostAttach postAttach=PostAttach.builder()
