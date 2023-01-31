@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -411,6 +412,17 @@ public class FundingServiceImpl implements FundingService{
 
 		}
 	}
+
+	@Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+	public void changeStatusFunding() {
+		List<Funding> all = fundingRepository.findAllByStartDate(LocalDate.now());
+		for (Funding funding : all) {
+			if (funding.getPostType() == PostType.FUNDING_ACCEPT) {
+				funding.setPostType(PostType.FUNDING_IN_PROGRESS);
+			}
+		}
+	}
+
 
 	@Override
 	public void acceptFunding(Long fundingId) {
