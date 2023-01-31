@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 // mui
 import { Button, TextField } from '@mui/material';
@@ -10,10 +10,12 @@ import { requestSignIn } from '../../api/user';
 import { useAppDispatch } from '../../store/hooks';
 import { closeModal, openModal } from '../../store/slices/modalSlice';
 import { setUserLoginState } from '../../store/slices/userSlice';
+import KakaoLogin from '../../assets/images/kakao.png';
 
 function LoginContainer() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const params = useParams();
   const [userInfo, setUserInfo] = useState<UserSignInType>({
     email: '',
     password: '',
@@ -62,6 +64,10 @@ function LoginContainer() {
     window.location.href = url;
   };
 
+  useEffect(() => {
+    console.log(params);
+  }, []);
+
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
@@ -94,10 +100,7 @@ function LoginContainer() {
           <Button className={styles['login-button']} variant="contained" onClick={requestEmailLogin}>
             이메일로 로그인하기
           </Button>
-
-          <Button className={styles['login-button']} variant="contained" onClick={OAuth}>
-            카카오로 로그인 하기
-          </Button>
+          <img src={KakaoLogin} alt="aaa" onClick={OAuth} aria-hidden="true" />
         </div>
       </div>
     </div>
