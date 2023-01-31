@@ -14,9 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.yam.funteer.admin.dto.MemberListResponse;
 import com.yam.funteer.admin.dto.TeamListResponse;
-import com.yam.funteer.funding.dto.FundingDetailResponse;
-import com.yam.funteer.funding.dto.FundingListResponse;
-import com.yam.funteer.funding.dto.FundingRequest;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
