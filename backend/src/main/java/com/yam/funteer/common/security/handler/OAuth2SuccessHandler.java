@@ -21,6 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.transaction.Transactional;
 
 import java.io.IOException;
@@ -44,11 +45,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String jsonStr = objectMapper.writeValueAsString(tokenInfo);
 
-        System.out.println(jsonStr);
+        log.info(jsonStr);
+
+        HttpSession session = request.getSession();
+        session.setAttribute("token", jsonStr);
+
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().write(jsonStr);
-
-        // response.sendRedirect("http://localhost:3000/oauth2/redirect");
+        response.sendRedirect("/");
     }
 }
