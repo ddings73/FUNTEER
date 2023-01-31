@@ -52,8 +52,7 @@ public class QnaController {
 
 	@ApiOperation(value=" QnA 상세")
 	@GetMapping("/{postId}")
-	public ResponseEntity<?>teamQnaGetDetail(@PathVariable Long postId) throws
-		QnaNotFoundException {
+	public ResponseEntity<?>teamQnaGetDetail(@PathVariable Long postId){
 		return ResponseEntity.ok(qnaService.qnaGetDetail(postId));
 	}
 
@@ -61,18 +60,14 @@ public class QnaController {
 	@ApiOperation(value="QnA 수정")
 	@PutMapping("/{postId}")
 	public ResponseEntity<?>teamQnaModify(@PathVariable Long postId, @RequestPart(value ="qnaModifyReq" ) QnaRegisterReq qnaModifyReq,@RequestPart
-		(value = "files",required = false)List<MultipartFile>files) throws
-		QnaNotFoundException {
+		(value = "files",required = false)List<MultipartFile>files){
 		return ResponseEntity.ok(qnaService.qnaModify(postId,qnaModifyReq,files));
 	}
 
 	@ApiOperation(value=" QnA 삭제")
 	@DeleteMapping("/{postId}")
-	public ResponseEntity<? extends BaseResponseBody>teamQnaDelete(@PathVariable Long postId) throws
-		QnaNotFoundException {
+	public ResponseEntity<? extends BaseResponseBody>teamQnaDelete(@PathVariable Long postId){
 		qnaService.qnaDelete(postId);
 		return ResponseEntity.ok(BaseResponseBody.of("Success"));
 	}
-
-
 }

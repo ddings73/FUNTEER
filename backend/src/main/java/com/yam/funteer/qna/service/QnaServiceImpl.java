@@ -26,6 +26,7 @@ import com.yam.funteer.qna.dto.response.QnaListRes;
 import com.yam.funteer.qna.entity.Qna;
 import com.yam.funteer.qna.entity.Reply;
 import com.yam.funteer.qna.exception.QnaNotFoundException;
+import com.yam.funteer.qna.exception.ReplyNotFoundException;
 import com.yam.funteer.qna.repository.QnaRepository;
 import com.yam.funteer.qna.repository.ReplyRepository;
 
@@ -84,7 +85,7 @@ public class QnaServiceImpl implements QnaService {
 
 
 	@Override
-	public QnaBaseRes qnaGetDetail(Long qnaId) throws QnaNotFoundException {
+	public QnaBaseRes qnaGetDetail(Long qnaId) {
 		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if (qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN)) {
@@ -101,8 +102,7 @@ public class QnaServiceImpl implements QnaService {
 	}
 
 	@Override
-	public QnaBaseRes qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq, List<MultipartFile>files) throws
-		QnaNotFoundException{
+	public QnaBaseRes qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq, List<MultipartFile>files){
 		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		List<String>attachList=new ArrayList<>();
@@ -126,12 +126,13 @@ public class QnaServiceImpl implements QnaService {
 				attachRepository.save(attach);
 				postAttachRepository.save(postAttach);
 			}
+			return new QnaBaseRes(qna,attachList);
 		}
-		return new QnaBaseRes(qna,attachList);
+		else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 
 	@Override
-	public void qnaDelete(Long postId) throws QnaNotFoundException{
+	public void qnaDelete(Long postId){
 		Qna qna = qnaRepository.findById(postId).orElseThrow(() -> new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(qna.getUser().getId()==user.getId()) {
@@ -143,10 +144,10 @@ public class QnaServiceImpl implements QnaService {
 			}
 
 			qnaRepository.delete(qna);
-			Reply reply=replyRepository.findByQna(qna);
-			if(reply!=null){
-				replyRepository.delete(reply);
+			Reply reply=replyRepository.findByQna(qna).orElseThrow(()->new ReplyNotFoundException());
+			replyRepository.delete(reply);
+
 		}
-		}
+		else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 }

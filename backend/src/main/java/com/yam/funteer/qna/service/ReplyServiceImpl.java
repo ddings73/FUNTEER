@@ -1,7 +1,5 @@
 package com.yam.funteer.qna.service;
 
-import java.time.LocalDateTime;
-
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.common.code.UserType;
@@ -11,7 +9,9 @@ import com.yam.funteer.qna.dto.request.QnaReplyReq;
 import com.yam.funteer.qna.dto.response.ReplyBaseRes;
 import com.yam.funteer.qna.entity.Qna;
 import com.yam.funteer.qna.entity.Reply;
+import com.yam.funteer.qna.exception.ReplyDuplicatedException;
 import com.yam.funteer.qna.exception.QnaNotFoundException;
+import com.yam.funteer.qna.exception.ReplyNotFoundException;
 import com.yam.funteer.qna.repository.QnaRepository;
 import com.yam.funteer.qna.repository.ReplyRepository;
 
@@ -29,48 +29,44 @@ public class ReplyServiceImpl implements ReplyService{
 	private final ReplyRepository replyRepository;
 
 	@Override
-	public ReplyBaseRes replyGetDetail(Long qnaId) throws QnaNotFoundException {
+	public ReplyBaseRes replyGetDetail(Long qnaId) {
 		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Integer number=replyRepository.countAllByQna(qna);
-		if(number>0&&(qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN))){
-			Reply reply=replyRepository.findByQna(qna);
+		Reply reply=replyRepository.findByQna(qna).orElseThrow(()->new ReplyNotFoundException());
+		if(qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN)){
 			return new ReplyBaseRes(reply);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
 	@Override
-	public ReplyBaseRes replyRegister(Long qnaId, QnaReplyReq qnaReplyReq) throws QnaNotFoundException {
+	public ReplyBaseRes replyRegister(Long qnaId, QnaReplyReq qnaReplyReq)  {
 		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Integer number=replyRepository.countAllByQna(qna);
-		if(user.getUserType().equals(UserType.ADMIN)&&number==0) {
+		if(replyRepository.findByQna(qna).isPresent())throw new ReplyDuplicatedException();
+		if(user.getUserType().equals(UserType.ADMIN)) {
 			Reply reply=replyRepository.save(qnaReplyReq.toEntity(qna));
 			return new ReplyBaseRes(reply);
 		}else throw new  IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
 	@Override
-	public ReplyBaseRes replyModify(Long qnaId,QnaReplyReq qnaReplyReq) throws QnaNotFoundException {
+	public ReplyBaseRes replyModify(Long qnaId,QnaReplyReq qnaReplyReq) {
 		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
-		Integer number=replyRepository.countAllByQna(qna);
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-
-		if(number>0&&(qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN))){
-			Reply reply=replyRepository.findByQna(qna);
+		Reply reply=replyRepository.findByQna(qna).orElseThrow(()->new ReplyNotFoundException());
+		if(user.getUserType().equals(UserType.ADMIN)){
 			reply.update(reply.getId(),qna,qnaReplyReq.getContent(),reply.getRegDate());
 			return new ReplyBaseRes(reply);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
 	@Override
-	public void replyDelete(Long qnaId) throws QnaNotFoundException {
+	public void replyDelete(Long qnaId) {
 		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
-		Integer number=replyRepository.countAllByQna(qna);
+		Reply reply=replyRepository.findByQna(qna).orElseThrow(()->new ReplyNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
-		if(number>0&&(qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN))){
-			Reply reply=replyRepository.findByQna(qna);
+		if(user.getUserType().equals(UserType.ADMIN)){
 			replyRepository.delete(reply);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
