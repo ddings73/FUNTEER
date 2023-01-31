@@ -41,6 +41,8 @@ public class FundingDetailResponse {
 
 	private List<CommentResponse> comments;
 
+	private Long currentFundingAmount;
+
 	public static FundingDetailResponse from(Funding funding) {
 		List<TargetMoneyResponse> targetMoneyResponses = new ArrayList<>();
 		for (TargetMoney tm : funding.getTargetMoneyList()) {
@@ -75,6 +77,7 @@ public class FundingDetailResponse {
 				.postHashtagList(HashtagResponse.from(funding.getHashtags()))
 				.thumbnail(funding.getThumbnail())
 				.comments(commentResponses)
+				.currentFundingAmount(funding.getCurrentFundingAmount())
 				.build();
 
 		} catch (NotFoundCommentsException e) {
@@ -90,6 +93,7 @@ public class FundingDetailResponse {
 				.postDate(funding.getRegDate())
 				.targetMonies(targetMoneyResponses)
 				.postHashtagList(HashtagResponse.from(funding.getHashtags()))
+				.currentFundingAmount(funding.getCurrentFundingAmount())
 				.thumbnail(funding.getThumbnail())
 				.build();
 
@@ -111,6 +115,7 @@ public class FundingDetailResponse {
 				.targetMonies(targetMoneyResponses)
 				.thumbnail(funding.getThumbnail())
 				.comments(commentResponses)
+				.currentFundingAmount(funding.getCurrentFundingAmount())
 				.build();
 
 		}  finally {
