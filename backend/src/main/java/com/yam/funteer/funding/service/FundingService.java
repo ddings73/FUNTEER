@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
-import org.yaml.snakeyaml.tokens.CommentToken;
 
 import com.yam.funteer.funding.dto.FundingCommentRequest;
 import com.yam.funteer.funding.dto.FundingDetailResponse;
@@ -13,8 +12,8 @@ import com.yam.funteer.funding.dto.FundingListResponse;
 import com.yam.funteer.funding.dto.FundingReportRequest;
 import com.yam.funteer.funding.dto.FundingReportResponse;
 import com.yam.funteer.funding.dto.FundingRequest;
+import com.yam.funteer.funding.dto.RejectReasonRequest;
 import com.yam.funteer.funding.dto.TakeFundingRequest;
-import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 
@@ -46,4 +45,12 @@ public interface FundingService {
 	List<FundingListResponse> findFundingByKeyword(String keyword);
 
 	List<FundingListResponse> findFundingByHashtag(String hashtag);
+
+	void acceptFunding(Long fundingId);
+
+	void rejectFunding(Long fundingId, RejectReasonRequest data) throws Exception;
+
+	void acceptReport(Long fundingId);
+
+	void rejectReport(Long fundingId, RejectReasonRequest data) throws Exception;
 }

@@ -13,6 +13,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.common.code.PostType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -40,10 +41,16 @@ public class Report{
 	private String content;
 	private LocalDateTime regDate;
 
+	private String rejectReason;
+
 	@OneToOne
 	@JoinColumn(name = "recipt_id")
 	private Attach receipts;
 
 	@OneToMany(mappedBy = "report")
 	private List<ReportDetail> reportDetails;
+
+	public void setRejectComment(String rejectReason) {
+		this.rejectReason = rejectReason;
+	}
 }
