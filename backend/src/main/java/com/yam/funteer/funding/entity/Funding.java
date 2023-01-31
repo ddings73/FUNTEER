@@ -10,6 +10,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.springframework.scheduling.annotation.Scheduled;
+
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.entity.PostHashtag;
@@ -57,6 +60,13 @@ public class Funding extends Post {
 
 	@OneToMany(mappedBy = "funding", cascade = CascadeType.ALL)
 	private List<Comment> comments;
+
+	@Scheduled(cron = "0 0 17 * * *" )
+	public void changeStatusFunding() {
+		if (this.getPostType() == PostType.FUNDING_ACCEPT) {
+			this.setPostType(PostType.FUNDING_IN_PROGRESS);
+		}
+	}
 
 	public void setEndDate(LocalDate endDate) {
 		this.endDate = endDate;
