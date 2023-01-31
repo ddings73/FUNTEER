@@ -2,27 +2,28 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
-import { http } from '../../api/axios';
+// import { http } from '../../api/axios';
+import { ResponseInterface } from '../../components/Cards/FundSummary';
 
-export type IResponse = {
-  id: number;
-  title: string;
-  lstartDate: string;
-  endDate: string;
-  postDate: string;
-  thumbnail: string;
-  amount: number;
-  currentFundingAmount: number;
-  postType: string;
-};
 export function FundingDetailContainer() {
   const [users, setUsers] = useState(null);
-  const [board, setBoard] = useState<IResponse | null>(null);
+  const [board, setBoard] = useState<ResponseInterface>({
+    id: 0,
+    title: '',
+    startDate: '',
+    endDate: '',
+    postDate: '',
+    thumbnail: '',
+    postType: '',
+    content: '',
+    targetMonies: { amount: 0, description: '', targetMoneyType: '' },
+    currentFundingAmount: 0,
+  });
 
   useEffect(() => {
     const params = { fundingId: 1 };
     axios.get('https://i8e204.p.ssafy.io/api/v1/funding', { params }).then((response) => {
-      setBoard(response.data.fundingListResponses[6]);
+      setBoard(response.data.fundingListResponses[`${params}`]);
     });
   }, []);
 
@@ -30,7 +31,7 @@ export function FundingDetailContainer() {
     <div className={styles.bodyContainer}>
       <div className={styles.banner}>
         <div className={styles.bannerContent}>
-          <h1 className={styles.bannerTitle}>{board?.title}</h1>
+          <h1 className={styles.bannerTitle}>{board?.title}여기에 타이틀</h1>
           <div className={styles.bannerButtonGroup}>
             <button className={styles.bannerGrpBtn} type="button">
               보고서 제출
@@ -47,7 +48,7 @@ export function FundingDetailContainer() {
       <div className={styles.mainContiainer}>
         <div className={styles.mainSum}>
           {' '}
-          <FundSummary />
+          <FundSummary {...board} />
         </div>
         <div className={styles.mainContent}>123</div>
         <div className={styles.mainFooter}>푸터</div>

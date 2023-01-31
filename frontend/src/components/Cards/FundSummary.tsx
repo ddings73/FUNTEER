@@ -5,20 +5,40 @@ import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
 import thumbNail from '../../assets/images/funding/funding_thumbnail.png';
 import styles from './FundSummary.module.scss';
 import ProfileSvg from '../../assets/images/default-profile-img.svg';
-import { IResponse } from '../../containers/Funding/FundingDetailContainer';
 
-export function FundSummary() {
+export interface ResponseInterface {
+  id: number;
+  title: string;
+  startDate: string;
+  endDate: string;
+  postDate: string;
+  thumbnail: string;
+  postType: string;
+  content: string;
+  targetMonies: targetType;
+  currentFundingAmount: number;
+}
+type targetType = {
+  amount: number;
+  description: string;
+  targetMoneyType: string;
+};
+
+export function FundSummary(board: ResponseInterface) {
+  const { title, startDate, endDate, content, targetMonies } = board;
+  console.log('title', title);
+  console.log('amount', targetMonies);
+  console.log('amount2', targetMonies.amount);
+
   return (
     <div className={styles.cardContainer}>
       <div className={styles.blogCard}>
         <img className={styles.cardImage} src={thumbNail} alt="altImg" />
         <div className={styles.cardDetail}>
-          <div className={styles.fundTitle}>title</div>
-          <div className={styles.fundSubTitle}>
-            지친 사람들의 쉴 곳, 동식물들의 생명이 피어나는 곳 등 다양한 모습으로 우리 곁에 있으며 사계절의 변화를 보여주는 곳 바로 &#39;지역 하천&#39;입니다.
-          </div>
+          <div className={styles.fundTitle}>{title}</div>
+          <div className={styles.fundSubTitle}>{content}</div>
           <div className={styles.barWrapper}>
-            <div className={styles.object}> 123</div>
+            <div className={styles.object}> 목표금액: {targetMonies.amount}원</div>
             <div className={styles.progressBar}>
               <div className={styles.status} />
             </div>
@@ -37,7 +57,9 @@ export function FundSummary() {
               <PhoneInTalkIcon className={styles.buttonInfo} />
             </div>
           </div>
-          <p className={styles.fundPeriod}>모금 기간 2023-01-06 ~ 2023-01-21</p>
+          <p className={styles.fundPeriod}>
+            모금 기간 {startDate} ~ {endDate}
+          </p>
         </div>
       </div>
     </div>
