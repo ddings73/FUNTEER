@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.validation.constraints.NotBlank;
+
 @RestController
 @RequiredArgsConstructor
 @Api(tags = {"회원 공통"})
@@ -61,7 +63,7 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 에러"),
     })
     @GetMapping("/confirm/email")
-    public ResponseEntity confirmEmail(@RequestParam String email){
+    public ResponseEntity confirmEmail(@RequestParam @NotBlank String email){
         userService.confirmEmail(email);
         return ResponseEntity.ok().build();
     }
@@ -73,7 +75,7 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 에러"),
     })
     @GetMapping("/confirm/name")
-    public ResponseEntity confirmName(@RequestParam String name){
+    public ResponseEntity confirmName(@RequestParam @NotBlank String name){
         userService.confirmName(name);
         return ResponseEntity.ok().build();
     }
@@ -85,7 +87,7 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 에러"),
     })
     @GetMapping("/confirm/nickname")
-    public ResponseEntity confirmNickname(@RequestParam String nickname){
+    public ResponseEntity confirmNickname(@RequestParam @NotBlank String nickname){
         userService.confirmNickname(nickname);
         return ResponseEntity.ok().build();
     }

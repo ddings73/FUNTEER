@@ -29,7 +29,7 @@ export const AdminSideBarItem: adminSideBarDataType[] = [
   },
   {
     title: '펀딩 관리',
-    path: 'fund',
+    path: 'funding',
     icon: <BiIcons.BiReceipt color="white" />,
   },
   {

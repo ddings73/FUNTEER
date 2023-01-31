@@ -14,6 +14,7 @@ import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.funding.repository.FundingRepository;
+import com.yam.funteer.user.dto.request.team.UpdateTeamAccountRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
 import lombok.RequiredArgsConstructor;
@@ -147,6 +148,30 @@ public class TeamServiceImpl implements TeamService{
 		});
 
 		return response;
+	}
+
+	@Override
+	public void updateAccount(UpdateTeamAccountRequest request) {
+		Long userId = SecurityUtil.getCurrentUserId();
+		Team team = validateSameUser(userId, request.getUserId());
+
+		String password = request.getPassword().orElseThrow(()-> {
+			throw new IllegalArgumentException("비밀번호가 다릅니다");
+		});
+		team.validatePassword(passwordEncoder, password);
+
+		request.getNewPassword().ifPresent(newPw->{
+			String encryptedPw = passwordEncoder.encode(newPw);
+			team.changePassword(encryptedPw);
+		});
+
+		request.getVmsFile().ifPresent(multipartFile -> {
+
+		});
+
+		request.getPerformFile().ifPresent(multipartFile -> {
+
+		});
 	}
 
 	private void updateBannerOrProfile(String filename, String path, Attach attach){

@@ -7,12 +7,11 @@ import AdminMemberContainerItem, { MemberState } from './AdminMemberContainerIte
 
 function AdminMemberContainer() {
   const [memberSearch, setMemberSearch] = useState<string>('');
+  const [memberStateFilter, setMemberStateFilter] = useState<string>(MemberState.Normal);
 
   const onMemberSearchInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMemberSearch(e.target.value);
   };
-
-  const [memberStateFilter, setMemberStateFilter] = useState<string>(MemberState.Normal);
 
   const onMemberStateFilterChangeHandler = (e: SelectChangeEvent) => {
     setMemberStateFilter(e.target.value);

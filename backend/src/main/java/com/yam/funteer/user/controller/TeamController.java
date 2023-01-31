@@ -5,6 +5,7 @@ import java.util.List;
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.user.dto.request.BaseUserRequest;
 import com.yam.funteer.user.dto.request.team.CreateTeamRequest;
+import com.yam.funteer.user.dto.request.team.UpdateTeamAccountRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
 import com.yam.funteer.user.dto.response.team.TeamProfileResponse;
@@ -17,11 +18,13 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController @Slf4j
 @RequestMapping("/team")
@@ -36,7 +39,7 @@ public class TeamController {
         @ApiResponse(code = 409, message = "중복된 이메일"),
         @ApiResponse(code = 500, message = "서버 에러")
     })
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity signUpTeam(@Validated @ModelAttribute CreateTeamRequest createTeamRequest, BindingResult bindingResult){
         validateBinding(bindingResult);
 
@@ -52,12 +55,12 @@ public class TeamController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @DeleteMapping
-    public ResponseEntity<? extends BaseResponseBody> signOutTeam(@Validated @RequestBody BaseUserRequest baseUserRequest
+    public ResponseEntity signOutTeam(@Validated @RequestBody BaseUserRequest baseUserRequest
         , BindingResult bindingResult){
         validateBinding(bindingResult);
 
         teamService.setAccountSignOut(baseUserRequest);
-        return ResponseEntity.ok(BaseResponseBody.of("회원탈퇴에 성공하였습니다."));
+        return ResponseEntity.ok().build();
     }
 
 
@@ -90,7 +93,6 @@ public class TeamController {
     @ApiResponses({
             @ApiResponse(code = 200, message = "성공"),
             @ApiResponse(code = 400, message = "잘못된 요청정보"),
-            @ApiResponse(code = 401, message = "사용자 인증실패"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @GetMapping("/{userId}/account")
@@ -99,6 +101,17 @@ public class TeamController {
         return ResponseEntity.ok(teamAccount);
     }
 
+    @ApiOperation(value = "단체회원 개인정보 수정", notes = "비밀번호를 검증하여 ")
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 400, message = "잘못된 요청정보"),
+        @ApiResponse(code = 401, message = "사용자 인증실패"),
+        @ApiResponse(code = 500, message = "서버 에러")
+    })
+    @PutMapping("/account")
+    public void modifyAccount(@Validated @ModelAttribute UpdateTeamAccountRequest request, BindingResult bindingResult){
+        teamService.updateAccount(request);
+    }
 
     public void validateBinding(BindingResult bindingResult){
         if(bindingResult.hasErrors()){

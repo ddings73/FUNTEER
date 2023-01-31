@@ -1,4 +1,3 @@
-import { tmpdir } from 'os';
 import React from 'react';
 
 export enum TeamState {
