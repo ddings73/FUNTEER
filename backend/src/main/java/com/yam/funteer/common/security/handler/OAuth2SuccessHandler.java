@@ -52,6 +52,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpServletResponse.SC_OK);
-        response.sendRedirect("/");
+        response.sendRedirect("https://i8e204.p.ssafy.io/");
     }
 }
