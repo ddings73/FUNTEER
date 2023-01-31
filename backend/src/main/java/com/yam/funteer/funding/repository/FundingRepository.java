@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.repository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,5 +18,5 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 
 	List<Funding> findByTitleOrContentContaining(String keyword, String keyword2);
 
-
+	List<Funding> findAllByStartDate(LocalDate now);
 }
