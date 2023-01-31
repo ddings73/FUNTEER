@@ -71,16 +71,24 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     public TokenInfo regenerateToken(TokenRequest tokenRequest) {
-        if(!jwtProvider.validateToken(tokenRequest.getRefreshToken())){
+        String accessToken = tokenRequest.getAccessToken();
+        String refreshToken = tokenRequest.getRefreshToken();
+        if(!jwtProvider.validateToken(refreshToken)){
             throw new JwtException("Refresh Token이 유효하지 않습니다.");
         }
 
-        Authentication authentication = jwtProvider.getAuthentication(tokenRequest.getAccessToken());
-        Token token = tokenRepository.findById(Long.valueOf(authentication.getName()))
+        Authentication authentication = jwtProvider.getAuthentication(refreshToken);
+        Long userId = Long.valueOf(authentication.getName());
+        Token token = tokenRepository.findById(Long.valueOf(userId))
                 .orElseThrow(()->new JwtException("로그아웃 된 사용자입니다."));
 
-        if (!token.getRefreshToken().equals(tokenRequest.getRefreshToken())) {
+        if (!token.getRefreshToken().equals(refreshToken)) {
             throw new JwtException("토큰의 유저 정보가 일치하지 않습니다.");
+        }
+
+        if(jwtProvider.validateToken(accessToken)){
+            tokenRepository.deleteById(userId);
+            throw new JwtException("Access Token이 만료되지 않았습니다.");
         }
 
         TokenInfo tokenInfo = jwtProvider.generateToken(authentication);
