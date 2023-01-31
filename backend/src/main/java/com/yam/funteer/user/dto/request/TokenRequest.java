@@ -8,7 +8,7 @@ public class TokenRequest {
     private String refreshToken;
 
     public TokenRequest(String accessToken, String refreshToken) {
-        this.accessToken = accessToken;
-        this.refreshToken = refreshToken.substring(7);
+        this.accessToken = accessToken.substring(7);
+        this.refreshToken = refreshToken;
     }
 }
