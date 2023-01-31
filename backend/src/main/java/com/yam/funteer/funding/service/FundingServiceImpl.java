@@ -142,6 +142,7 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException {
+		// 인증 완료된 team 아니면 펀딩 작성 못함
 
 		// category 들고오기
 		Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
@@ -422,7 +423,7 @@ public class FundingServiceImpl implements FundingService{
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
 		funding.setPostType(PostType.FUNDING_REJECT);
 		funding.setRejectComment(data.getRejectReason());
-		emailService.sendRejectMessage("bbookng@gmail.com", data.getRejectReason(), PostGroup.FUNDING);
+		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.FUNDING);
 	}
 
 	@Override
