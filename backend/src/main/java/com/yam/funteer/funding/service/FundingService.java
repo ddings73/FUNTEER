@@ -29,7 +29,7 @@ public interface FundingService {
 
 	void deleteFunding(Long fundingId) throws FundingNotFoundException;
 
-	void createFundingReport(FundingReportRequest data);
+	void createFundingReport(Long fundingId, FundingReportRequest data);
 
 	FundingReportResponse findFundingReportById(Long fundingId);
 
