@@ -17,6 +17,7 @@ import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -80,7 +81,7 @@ public class LoginServiceImpl implements LoginService{
         // access 토큰 만료 확인
         if(jwtProvider.validateToken(accessToken)){
             tokenRepository.deleteById(userId);
-            throw new JwtException("Access Token이 만료되지 않았습니다.");
+            throw new AccessDeniedException("Access Token이 만료되지 않았습니다.");
         }
 
 
