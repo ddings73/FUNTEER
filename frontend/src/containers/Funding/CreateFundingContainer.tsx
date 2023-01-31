@@ -12,10 +12,13 @@ import Tab from '@mui/material/Tab';
 import { Button } from '@mui/material';
 import Icon from '@mui/material/Icon';
 import { BsLockFill } from 'react-icons/bs';
+import { useNavigate } from 'react-router-dom';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestUploadImage } from '../../api/funding';
 import { FundingInterface } from '../../types/funding';
 import defaultThumbnail from '../../assets/images/default-profile-img.svg';
+import { useAppDispatch } from '../../store/hooks';
+import { openModal } from '../../store/slices/modalSlice';
 
 interface TabPanelProps {
   // eslint-disable-next-line react/require-default-props
@@ -35,6 +38,8 @@ function TabPanel(props: TabPanelProps) {
 }
 
 function CreateFundingContainer() {
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const editorRef = useRef<ToastEditor>(null);
   const [fundingData, setFundingData] = useState<FundingInterface>({
     thumbnail: new Blob(),
@@ -44,7 +49,7 @@ function CreateFundingContainer() {
     content: '',
     startDate: '',
     endDate: '',
-    hashtags:"#tags",
+    hashtags: '#tags',
     amount1: 0,
     description1: '',
     amount2: 0,
@@ -59,14 +64,14 @@ function CreateFundingContainer() {
   const [tabIdx, setTabIdx] = useState<number>(0);
 
   const editorChangeHandler = (e: any) => {
-    const text =editorRef.current?.getInstance().getHTML()
-    
-    setFundingData({...fundingData, content:text})
+    const text = editorRef.current?.getInstance().getHTML();
+
+    setFundingData({ ...fundingData, content: text });
   };
 
   const onUploadImage = async (blob: Blob, callback: any) => {
     console.log(blob);
-    
+
     const url = await requestUploadImage(blob);
 
     callback(url, 'fundingContents이미지');
@@ -90,12 +95,11 @@ function CreateFundingContainer() {
       return;
     }
     const file = e.target.files[0];
-    setFundingData({...fundingData,thumbnail:file})
+    setFundingData({ ...fundingData, thumbnail: file });
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
       setThumbnailPreview(reader.result as string);
-
     };
   };
 
@@ -104,23 +108,26 @@ function CreateFundingContainer() {
     setFundingData({ ...fundingData, [name]: value });
   };
 
-  const onChangeDateHandler = (value: Dayjs | null,type:string) => {
-    const date = value?.format("YYYY-MM-DD")
-    setFundingData({...fundingData,[type]:date})
+  const onChangeDateHandler = (value: Dayjs | null, type: string) => {
+    const date = value?.format('YYYY-MM-DD');
+    setFundingData({ ...fundingData, [type]: date });
   };
 
-  const onCreateFunding = async()=>{
-    try{
-      const response = await requestCreateFunding(fundingData)
-      console.log(response);
-      
-    }  
-    catch(error){
-      console.log(error);
-      
-    }
-  }
+  const handleModal = () => {
+    navigate(-1);
+  };
 
+  const onCreateFunding = async () => {
+    try {
+      const response = await requestCreateFunding(fundingData);
+      if (response.status === 200) {
+        dispatch(openModal({ isOpen: true, title: '펀딩 생성 성공', content: '펀딩 생성에 성공했습니다.', handleModal }));
+      }
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -164,8 +171,8 @@ function CreateFundingContainer() {
               label="시작 날짜를 선택해주세요"
               value={startDate}
               onChange={(newValue) => {
-                setStartDate(newValue)
-                onChangeDateHandler(newValue,"startDate");
+                setStartDate(newValue);
+                onChangeDateHandler(newValue, 'startDate');
               }}
               renderInput={(params) => <TextField {...params} sx={{ mr: 2 }} />}
             />
@@ -176,8 +183,8 @@ function CreateFundingContainer() {
               label="끝나는 날짜를 선택해주세요"
               value={endDate}
               onChange={(newValue) => {
-                setEndDate(newValue)
-                onChangeDateHandler(newValue,"endDate");
+                setEndDate(newValue);
+                onChangeDateHandler(newValue, 'endDate');
               }}
               renderInput={(params) => <TextField {...params} sx={{ mx: 2 }} />}
             />
@@ -226,7 +233,9 @@ function CreateFundingContainer() {
               </button>
             </div>
           </div>
-          <button type='button' onClick={onCreateFunding}>생성하기</button>
+          <button type="button" onClick={onCreateFunding}>
+            생성하기
+          </button>
         </div>
       </div>
     </div>

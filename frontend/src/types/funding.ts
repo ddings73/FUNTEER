@@ -1,19 +1,20 @@
 export type FundingElementType = {
-  thumbnail:string
-  title:string
-  fundingDescription:string
-  amount:number
-  currentFundingAmount:number
-  startDate:string
-  endDate:string
-  postType:string
-  postDate:string
+  id: number;
+  thumbnail: string;
+  title: string;
+  fundingDescription: string;
+  amount: number;
+  currentFundingAmount: number;
+  startDate: string;
+  endDate: string;
+  postType: string;
+  postDate: string;
 };
 
-export interface FundingStatisticType  {
-  successFundingCount:number
-  totalFundingAmount:number
-  totalFundingCount:number
+export interface FundingStatisticType {
+  successFundingCount: number;
+  totalFundingAmount: number;
+  totalFundingCount: number;
 }
 
 export interface FundingInterface {
@@ -23,7 +24,7 @@ export interface FundingInterface {
   categoryId: number;
   content: string | undefined;
   startDate: string;
-  hashtags:string
+  hashtags: string;
   endDate: string;
   amount1: number;
   description1: string;
@@ -32,6 +33,3 @@ export interface FundingInterface {
   amount3: number;
   description3: string;
 }
-
-
-
