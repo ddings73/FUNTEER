@@ -46,7 +46,13 @@
         }
       }
 
-      .auth-button {
+      .dupl-btn {
+        margin-left: 0.5rem;
+        font-size: 0.9rem;
+        text-decoration: none;
+      }
+
+      .auth-btn {
         background-color: $error;
         margin: 0.5rem 0 0.3rem 0;
         min-width: 40px;
@@ -98,7 +104,7 @@
         color: rgba(1, 1, 1, 0.8);
       }
 
-      .signup-button {
+      .signup-btn {
         max-width: 450px;
         width: 100%;
         height: 60px;
@@ -128,7 +134,7 @@
           font-size: 0.75rem;
         }
 
-        .auth-check-button {
+        .auth-check-btn {
           margin-left: 0.5rem;
           font-size: 0.75rem;
           background-color: $error;

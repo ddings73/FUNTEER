@@ -22,7 +22,8 @@ import java.time.LocalDateTime;
 public class UpdateProfileRequest{
 	@NotNull
 	private Long userId;
-	private MultipartFile profileImg;
+
+	protected MultipartFile profileImg;
 
     public Attach getProfile(String filename) {
 		return Attach.builder()

@@ -14,6 +14,7 @@ export function LogOutContainer() {
   useEffect(() => {
     localStorage.removeItem('token');
     dispatch(setUserLoginState(false));
+    alert('로그아웃 되었습니다.');
     navigate('/');
   }, [loginState]);
   return <div className={styles.bodyContainer}>로그아웃</div>;

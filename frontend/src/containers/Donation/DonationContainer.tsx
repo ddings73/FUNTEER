@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@mui/material';
 import styles from './DonationContainer.module.scss';
 import donationThumbnail from '../../assets/images/donation/donationImg.png';
+import { useAppSelector } from '../../store/hooks';
 
 function DonationContainer() {
   return (
@@ -29,3 +30,4 @@ function DonationContainer() {
   );
 }
 export default DonationContainer;
+
