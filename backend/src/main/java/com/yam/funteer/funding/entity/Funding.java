@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -54,13 +55,13 @@ public class Funding extends Post {
 		this.hashtags = hashtags;
 	}
 
-	@OneToMany(mappedBy = "funding")
+	@OneToMany(mappedBy = "funding", cascade = CascadeType.ALL)
 	private List<TargetMoney> targetMoneyList;
 
-	@OneToMany(mappedBy = "post")
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private List<PostHashtag> hashtags;
 
-	@OneToMany(mappedBy = "funding")
+	@OneToMany(mappedBy = "funding", cascade = CascadeType.ALL)
 	private List<Comment> comments;
 
 	public void setEndDate(LocalDate endDate) {

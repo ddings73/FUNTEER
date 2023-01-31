@@ -1,5 +1,9 @@
 package com.yam.funteer.funding.dto;
 
+import java.util.List;
+
+import org.springframework.web.multipart.MultipartFile;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,4 +12,11 @@ import lombok.Data;
 @AllArgsConstructor
 @Builder
 public class FundingReportRequest {
+
+	private String content;
+
+	private MultipartFile receiptFile;
+
+	private List<ReportDetailResponse> reportDetailResponseList;
+
 }
