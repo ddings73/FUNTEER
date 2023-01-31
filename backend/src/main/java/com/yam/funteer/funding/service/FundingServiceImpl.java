@@ -320,11 +320,11 @@ public class FundingServiceImpl implements FundingService{
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
 		awsS3Uploader.delete("/thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
 		fundingRepository.delete(funding);
+		postRepository.delete(funding);
 	}
 
 	@Override
 	public void createFundingReport(FundingReportRequest data) {
-
 
 	}
 
