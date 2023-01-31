@@ -15,6 +15,7 @@ import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.faq.dto.request.FaqRegisterReq;
 import com.yam.funteer.faq.dto.response.FaqBaseRes;
 import com.yam.funteer.faq.dto.response.FaqListRes;
+import com.yam.funteer.faq.exception.FaqNotFoundException;
 import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.User;
@@ -28,7 +29,6 @@ public class FaqServiceImpl implements  FaqService{
 
 	private final UserRepository userRepository;
 	private final PostRepository postRepository;
-	private final PostAttachRepository postAttachRepository;
 
 	@Override
 	public List<FaqListRes> faqGetList() {
@@ -40,7 +40,7 @@ public class FaqServiceImpl implements  FaqService{
 
 	@Override
 	public FaqBaseRes faqGetDetail(Long postId) {
-		Post post=postRepository.findById(postId).orElseThrow();
+		Post post=postRepository.findById(postId).orElseThrow(()->new FaqNotFoundException());
 		return new FaqBaseRes(post);
 	}
 
@@ -52,26 +52,26 @@ public class FaqServiceImpl implements  FaqService{
 			Post post=postRepository.save(faqRegisterReq.toEntity());
 			return new FaqBaseRes(post);
 		}
-		return null;
+		else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 
 	@Override
 	public FaqBaseRes faqModify(Long postId,FaqRegisterReq faqRegisterReq) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Post postOrigin=postRepository.findById(postId).orElseThrow();
+		Post postOrigin=postRepository.findById(postId).orElseThrow(()->new FaqNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)){
 			Post post=postRepository.save(faqRegisterReq.toEntity(postOrigin.getId()));
 			return new FaqBaseRes(post);
 		}
-		return null;
+		else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 
 	@Override
 	public void faqDelete(Long postId) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Post post=postRepository.findById(postId).orElseThrow();
+		Post post=postRepository.findById(postId).orElseThrow(()->new FaqNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			postRepository.deleteById(postId);
-		}
+		}else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 }

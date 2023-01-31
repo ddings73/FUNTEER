@@ -1,22 +1,21 @@
-package com.yam.funteer.qna.exception.handler;
+package com.yam.funteer.notice.exception.handler;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.yam.funteer.qna.exception.QnaNotFoundException;
+
 import com.yam.funteer.common.BaseResponseBody;
-import com.yam.funteer.qna.exception.ReplyDuplicatedException;
-import com.yam.funteer.qna.exception.ReplyNotFoundException;
+import com.yam.funteer.notice.exception.NoticeNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RestControllerAdvice
-public class QnaExceptionHandler {
+@RestControllerAdvice("com.yam.funteer.notice")
+public class NoticeExceptionHandler {
 
-    @ExceptionHandler({QnaNotFoundException.class})
-    public ResponseEntity<BaseResponseBody> handleQnaNotFoundException(QnaNotFoundException exception){
-        log.info("QnaNotFoundException => {}", exception.getMessage());
+    @ExceptionHandler({NoticeNotFoundException.class})
+    public ResponseEntity<BaseResponseBody> handleNoticeNotFoundException(NoticeNotFoundException exception){
+        log.info("NoticeNotFoundException => {}", exception.getMessage());
         return ResponseEntity.badRequest()
             .body(BaseResponseBody.of("존재하지 않는 게시글입니다."));
     }
@@ -26,19 +25,5 @@ public class QnaExceptionHandler {
         log.info("IllegalArgumentException => {}", exception.getMessage());
         return ResponseEntity.badRequest()
             .body(BaseResponseBody.of(exception.getMessage()));
-    }
-
-    @ExceptionHandler({ReplyDuplicatedException.class})
-    public ResponseEntity<BaseResponseBody>handleReplyDuplicatedException(ReplyDuplicatedException
-        exception){
-        log.info("ReplyDuplicatedException => {}",exception.getMessage());
-        return ResponseEntity.badRequest().body(BaseResponseBody.of("이미 답변이 있는 게시글입니다."));
-    }
-
-    @ExceptionHandler({ReplyNotFoundException.class})
-    public ResponseEntity<BaseResponseBody> handleReplyNotFoundException(ReplyNotFoundException exception){
-        log.info("ReplyNotFoundException => {}", exception.getMessage());
-        return ResponseEntity.badRequest()
-            .body(BaseResponseBody.of("존재하지 않는 게시글입니다."));
     }
 }

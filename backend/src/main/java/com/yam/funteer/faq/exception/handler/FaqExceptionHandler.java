@@ -1,21 +1,21 @@
-package com.yam.funteer.notice.exception.handler;
+package com.yam.funteer.faq.exception.handler;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.yam.funteer.common.BaseResponseBody;
-import com.yam.funteer.notice.exception.NoticeNotFoundException;
+import com.yam.funteer.faq.exception.FaqNotFoundException;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RestControllerAdvice
-public class NoticeExceptionHandler {
+@RestControllerAdvice("com.yam.funteer.faq")
+public class FaqExceptionHandler {
 
-    @ExceptionHandler({NoticeNotFoundException.class})
-    public ResponseEntity<BaseResponseBody> handleQnaNotFoundException(NoticeNotFoundException exception){
-        log.info("QnaNotFoundException => {}", exception.getMessage());
+    @ExceptionHandler({FaqNotFoundException.class})
+    public ResponseEntity<BaseResponseBody> handleFaqExceptionHandler(FaqNotFoundException exception){
+        log.info("FaqNotFoundException => {}", exception.getMessage());
         return ResponseEntity.badRequest()
             .body(BaseResponseBody.of("존재하지 않는 게시글입니다."));
     }

@@ -11,14 +11,14 @@ import com.yam.funteer.donation.dto.response.DonationListRes;
 import com.yam.funteer.donation.exception.DonationNotFoundException;
 import com.yam.funteer.donation.dto.request.DonationJoinReq;
 
+import com.yam.funteer.donation.exception.DonationPayException;
 import com.yam.funteer.pay.entity.Payment;
 
 public interface DonationService {
 	List<DonationListRes> donationGetList();
-	Payment donationJoin(Long postId, DonationJoinReq donationJoinReq)throws DonationNotFoundException;
-	DonationBaseRes donationGetDetail(Long postId) throws DonationNotFoundException;
+	Payment donationJoin(Long postId, DonationJoinReq donationJoinReq) ;
+	DonationBaseRes donationGetDetail(Long postId);
 	DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq, List<MultipartFile>files);
 	// void donationDelete(Long postId,Long userId) throws DonationNotFoundException;
-	DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq,List<MultipartFile>files) throws
-		DonationNotFoundException;
+	DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq,List<MultipartFile>files);
 }

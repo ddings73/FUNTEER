@@ -20,6 +20,7 @@ import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.faq.dto.response.FaqListRes;
 import com.yam.funteer.notice.dto.request.NoticeRegistReq;
 import com.yam.funteer.notice.dto.response.NoticeBaseRes;
+import com.yam.funteer.notice.exception.NoticeNotFoundException;
 import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.User;
@@ -48,7 +49,7 @@ public class NoticeServiceImpl implements NoticeService{
 
 	@Override
 	public NoticeBaseRes noticeGetDetail(Long postId) {
-		Post post=postRepository.findById(postId).orElseThrow();
+		Post post=postRepository.findById(postId).orElseThrow(()->new NoticeNotFoundException());
 		List<PostAttach>postAttachList=postAttachRepository.findAllByPost(post);
 		List<String>files=new ArrayList<>();
 		for(PostAttach postAttach:postAttachList){
@@ -65,7 +66,7 @@ public class NoticeServiceImpl implements NoticeService{
 			List<String>paths=new ArrayList<>();
 			Post post=postRepository.save(noticeRegistReq.toEntity());
 			for(MultipartFile file:files) {
-				String fileUrl = awsS3Uploader.upload(file, "/notice");
+				String fileUrl = awsS3Uploader.upload(file, "notice");
 				Attach attach = noticeRegistReq.toAttachEntity(fileUrl, file.getOriginalFilename());
 				PostAttach postAttach = PostAttach.builder()
 					.attach(attach)
@@ -76,17 +77,17 @@ public class NoticeServiceImpl implements NoticeService{
 				paths.add(fileUrl);
 			}
 			return new NoticeBaseRes(post,paths);
-		}throw new IllegalArgumentException();
+		}else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 
 	@Override
 	public NoticeBaseRes noticeModify(Long postId, NoticeRegistReq noticeRegistReq)  {
-		Post postOrigin=postRepository.findById(postId).orElseThrow();
+		Post postOrigin=postRepository.findById(postId).orElseThrow(()->new NoticeNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(postOrigin);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("/notice/",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("notice",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
@@ -95,7 +96,7 @@ public class NoticeServiceImpl implements NoticeService{
 			List<MultipartFile>files=noticeRegistReq.getFiles();
 			List<String>attachList=new ArrayList<>();
 			for(MultipartFile file:files){
-				String fileUrl = awsS3Uploader.upload(file,"/notice");
+				String fileUrl = awsS3Uploader.upload(file,"notice");
 				Attach attach=noticeRegistReq.toAttachEntity(fileUrl,file.getOriginalFilename());
 				PostAttach postAttach=PostAttach.builder()
 					.attach(attach)
@@ -113,14 +114,14 @@ public class NoticeServiceImpl implements NoticeService{
 	public void noticeDelete(Long postId) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
-			Post post = postRepository.findById(postId).orElseThrow(() -> new IllegalArgumentException());
+			Post post = postRepository.findById(postId).orElseThrow(()->new NoticeNotFoundException());
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(post);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("/notice/",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("notice",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
 			postRepository.delete(post);
-		}
+		}else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 }

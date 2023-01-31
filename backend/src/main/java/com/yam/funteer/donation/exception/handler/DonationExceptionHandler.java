@@ -1,24 +1,31 @@
-package com.yam.funteer.qna.exception.handler;
+package com.yam.funteer.donation.exception.handler;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import com.yam.funteer.qna.exception.QnaNotFoundException;
+
 import com.yam.funteer.common.BaseResponseBody;
-import com.yam.funteer.qna.exception.ReplyDuplicatedException;
-import com.yam.funteer.qna.exception.ReplyNotFoundException;
+import com.yam.funteer.donation.exception.DonationNotFoundException;
+import com.yam.funteer.donation.exception.DonationPayException;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RestControllerAdvice
-public class QnaExceptionHandler {
+@RestControllerAdvice("com.yam.funteer.donation")
+public class DonationExceptionHandler {
 
-    @ExceptionHandler({QnaNotFoundException.class})
-    public ResponseEntity<BaseResponseBody> handleQnaNotFoundException(QnaNotFoundException exception){
+    @ExceptionHandler({DonationNotFoundException.class})
+    public ResponseEntity<BaseResponseBody> handleDonationNotFoundException(DonationNotFoundException exception){
         log.info("QnaNotFoundException => {}", exception.getMessage());
         return ResponseEntity.badRequest()
-            .body(BaseResponseBody.of("존재하지 않는 게시글입니다."));
+            .body(BaseResponseBody.of("존재하지 않는 도네이션페이지 입니다."));
+    }
+
+    @ExceptionHandler({DonationPayException.class})
+    public ResponseEntity<BaseResponseBody>handleDonationPayException(DonationPayException
+        exception){
+        log.info("DonationPayException => {}",exception.getMessage());
+        return ResponseEntity.badRequest().body(BaseResponseBody.of("금액이 부족합니다."));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -26,19 +33,5 @@ public class QnaExceptionHandler {
         log.info("IllegalArgumentException => {}", exception.getMessage());
         return ResponseEntity.badRequest()
             .body(BaseResponseBody.of(exception.getMessage()));
-    }
-
-    @ExceptionHandler({ReplyDuplicatedException.class})
-    public ResponseEntity<BaseResponseBody>handleReplyDuplicatedException(ReplyDuplicatedException
-        exception){
-        log.info("ReplyDuplicatedException => {}",exception.getMessage());
-        return ResponseEntity.badRequest().body(BaseResponseBody.of("이미 답변이 있는 게시글입니다."));
-    }
-
-    @ExceptionHandler({ReplyNotFoundException.class})
-    public ResponseEntity<BaseResponseBody> handleReplyNotFoundException(ReplyNotFoundException exception){
-        log.info("ReplyNotFoundException => {}", exception.getMessage());
-        return ResponseEntity.badRequest()
-            .body(BaseResponseBody.of("존재하지 않는 게시글입니다."));
     }
 }
