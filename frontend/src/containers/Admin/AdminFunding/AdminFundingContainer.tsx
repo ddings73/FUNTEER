@@ -7,7 +7,7 @@ import AdminFundingContainerItem, { FundingState } from './AdminFundingContainer
 
 function AdminFundingContainer() {
   const [fundingSearch, setFundingSearch] = useState<string>('');
-  const [fundingStateFilter, setFundingStateFilter] = useState<string>(FundingState.NotFundApproved);
+  const [fundingStateFilter, setFundingStateFilter] = useState<string>(FundingState.All);
 
   const onFundingSearchInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFundingSearch(e.target.value);
@@ -18,9 +18,14 @@ function AdminFundingContainer() {
   };
 
   const filtedFundings = AdminFundingContainerItem.filter((funding) => {
-    const filter =
-      (funding.id.toString().includes(fundingSearch) || funding.title.includes(fundingSearch) || funding.teamName.includes(fundingSearch)) &&
-      funding.fundingState === fundingStateFilter;
+    let filter;
+    if (fundingStateFilter === '전체') {
+      filter = funding.id.toString().includes(fundingSearch) || funding.title.includes(fundingSearch) || funding.teamName.includes(fundingSearch);
+    } else {
+      filter =
+        (funding.id.toString().includes(fundingSearch) || funding.title.includes(fundingSearch) || funding.teamName.includes(fundingSearch)) &&
+        funding.fundingState === fundingStateFilter;
+    }
     return filter;
   });
 

@@ -1,2 +1,90 @@
 @import '../../../styles/reset.scss';
 @import '../../../styles/variable.scss';
+
+.container {
+  width: 100%;
+
+  .ques-btn-div {
+    display: flex;
+    justify-content: flex-end;
+    margin: 2rem;
+
+    .ques-btn {
+      padding: auto auto;
+      border-color: $primary;
+      color: $primary;
+      font-weight: bold;
+
+      &:hover {
+        background-color: rgba(255, 251, 244, 0.5);
+      }
+    }
+  }
+
+  .state {
+    color: $primary;
+    font-weight: bold;
+  }
+
+  .ques-create {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 2rem;
+
+    .title-label {
+      width: 70%;
+      margin: 2rem 0 0.5rem 0;
+      font-size: 1.25rem;
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: bold;
+
+      @include mobile {
+        width: 95%;
+        margin: 1rem 0 0.5rem 0;
+      }
+    }
+
+    .title-input {
+      width: 70%;
+      height: 2.3rem;
+      font-size: 1.25rem;
+
+      @include mobile {
+        width: 95%;
+      }
+    }
+
+    .content-label {
+      width: 70%;
+      margin: 2rem 0 0.5rem 0;
+      font-size: 1.25rem;
+      color: rgba(0, 0, 0, 0.6);
+      font-weight: bold;
+
+      @include mobile {
+        width: 95%;
+        margin: 1rem 0 0.5rem 0;
+      }
+    }
+
+    .content-input {
+      width: 70%;
+      height: 20rem;
+      font-size: 1.125rem;
+
+      @include mobile {
+        width: 95%;
+      }
+    }
+
+    .submit-btn-div {
+      & button {
+        background-color: $primary;
+        margin: 0 0.5rem;
+      }
+    }
+  }
+}

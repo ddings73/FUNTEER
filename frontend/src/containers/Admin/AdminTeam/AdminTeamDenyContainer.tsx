@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import Button from '@mui/material/Button';
 import styles from './AdminTeamDenyContainer.module.scss';
@@ -11,12 +11,35 @@ function AdminTeamDenyContainer() {
   const location = useLocation();
   const { dn } = useParams();
 
+  /** 단체 거부 정보 */
+  const [teamDenyInfo, setTeamDenyInfo] = useState({
+    title: '',
+    content: '',
+  });
+
+  /** 정보 입력 */
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setTeamDenyInfo({ ...teamDenyInfo, [name]: value });
+  };
+
+  /** 취소 버튼 클릭 */
   const onClickBackHandler = () => {
     dispatch(closeModal());
     navigate(-1);
   };
 
+  /** 전송 버튼 클릭 */
   const onClickSubmitHandler = () => {
+    if (teamDenyInfo.title.length < 10) {
+      alert('제목을 10자 이상 입력하세요.');
+    }
+
+    if (teamDenyInfo.title.length < 20) {
+      alert('내용을 20자 이상 입력하세요.');
+    }
+
     console.log('단체 가입 거부 요청');
   };
 
@@ -24,8 +47,8 @@ function AdminTeamDenyContainer() {
     <div className={styles.container}>
       <div className={styles.contents}>
         <h1 className={styles.title}>단체 가입 거부 사유</h1>
-        <input type="text" className={styles['email-title']} placeholder="제목" />
-        <textarea className={styles['email-content']} placeholder="내용" />
+        <input name="title" type="text" className={styles['email-title']} placeholder="제목 (10자 이상)" />
+        <textarea name="content" className={styles['email-content']} placeholder="내용 (20자 이상)" />
         <div className={styles['btn-div']}>
           <Button variant="contained" className={styles.submit} onClick={onClickBackHandler}>
             취소

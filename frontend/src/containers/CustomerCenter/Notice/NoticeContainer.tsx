@@ -13,7 +13,7 @@ function NoticeContainer() {
   return (
     <div className={styles.container}>
       <ul className={styles['title-line']}>
-        <li>번호</li>
+        <li className={styles['mobile-none']}>번호</li>
         <li>제목</li>
         <li>작성일</li>
       </ul>
@@ -26,7 +26,7 @@ function NoticeContainer() {
             onClickNoticeHandler(data, e);
           }}
         >
-          <li>
+          <li className={styles['mobile-none']}>
             <p>{data.id}</p>
           </li>
           <li>

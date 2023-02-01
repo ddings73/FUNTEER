@@ -3,14 +3,18 @@
 
 .container {
   width: 100%;
-  font-family: NanumSquareRound;
 
   .user-type-div {
     margin: 5rem 0;
 
+    @include mobile {
+      margin: 3rem 0;
+    }
+
     .title {
+      margin-bottom: 1rem;
       font-weight: bold;
-      font-size: 2.25rem;
+      font-size: 2rem;
       color: $primary;
 
       @include tablet {
@@ -18,34 +22,7 @@
       }
 
       @include mobile {
-        font-size: 1rem;
-      }
-    }
-
-    .item {
-      margin: 2rem;
-
-      & summary {
-        font-size: 1.25rem;
-        padding-bottom: 1rem;
-        border-bottom: 2px solid rgba(1, 1, 1, 0.2);
-
-        @include mobile {
-          font-size: 0.9rem;
-        }
-
-        &:hover {
-          cursor: pointer;
-        }
-      }
-
-      & p {
-        background-color: rgba(1, 1, 1, 0.015);
         font-size: 1.125rem;
-
-        @include mobile {
-          font-size: 0.75rem;
-        }
       }
     }
   }
