@@ -71,4 +71,18 @@ public class LoginController {
         TokenInfo TokenInfo = loginService.regenerateToken(tokenRequest);
         return ResponseEntity.ok(TokenInfo);
     }
+
+
+    @ApiOperation(value = "카카오로그인")
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 400, message = "잘못된 요청 값, 아이디 혹은 비밀번호가 다르거나 데이터가 다 오지않음"),
+        @ApiResponse(code = 500, message = "서버 에러")
+    })
+    @GetMapping("/login/kakao/{userId}")
+    public ResponseEntity<LoginResponse> kakaoLogin(@PathVariable String userId){
+        LoginRequest loginRequest = new LoginRequest(userId, "kakaoPassword");
+        LoginResponse loginResponse = loginService.processLogin(loginRequest);
+        return ResponseEntity.ok(loginResponse);
+    }
 }

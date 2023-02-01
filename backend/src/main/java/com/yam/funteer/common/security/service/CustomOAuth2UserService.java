@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
@@ -31,6 +32,8 @@ import com.yam.funteer.user.repository.MemberRepository;
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
+    private final PasswordEncoder passwordEncoder;
+
     @Override
     @Transactional
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
@@ -59,7 +62,8 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         String name = (String) memberAttribute.get("name");
 
         Member member = memberRepository.findByEmail(email).orElseGet(() -> {
-            Member newKakaoMember = Member.toKakaoUser(email, name);
+            String kakaoPassword = passwordEncoder.encode("kakaoPassword");
+            Member newKakaoMember = Member.toKakaoUser(email, name, kakaoPassword);
             return memberRepository.save(newKakaoMember);
         });
 

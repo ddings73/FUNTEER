@@ -24,9 +24,6 @@ import java.io.IOException;
 @Component @Slf4j
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    private final JwtProvider jwtProvider;
-
-    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
@@ -34,12 +31,9 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
         String userId = (String)oAuth2User.getAttributes().get("userId");
-        TokenInfo tokenInfo = jwtProvider.generateTokenForOAuth(userId);
 
-        String targetURI = UriComponentsBuilder.fromUriString("https://i8e204.p.ssafy.io/kakao")
-            .queryParam("accessToken", tokenInfo.getAccessToken())
-            .queryParam("refreshToken", tokenInfo.getRefreshToken())
-            .build().toUriString();
+        String targetURI = UriComponentsBuilder.fromUriString("https://i8e204.p.ssafy.io/api/v1/login/kakao")
+            .queryParam("userId", userId).toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetURI);
     }
 }
