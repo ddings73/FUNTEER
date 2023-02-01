@@ -22,12 +22,15 @@
     }
 
     .label-div {
+      display: flex;
+      align-items: center;
       width: 710px;
       margin: 0.5rem 0;
       font-size: 1.25rem;
 
-      & span {
-        color: $error;
+      & img {
+        width: 8px;
+        margin-left: 0.5rem;
       }
     }
 

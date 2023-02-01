@@ -4,6 +4,8 @@ import './index.css';
 import { BrowserRouter, createBrowserRouter, RouterProvider, useParams } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
@@ -197,9 +199,13 @@ const router = createBrowserRouter([
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const persistor = persistStore(store);
+
 root.render(
   <Provider store={store}>
-    <RouterProvider router={router} />
+    <PersistGate loading={null} persistor={persistor}>
+      <RouterProvider router={router} />
+    </PersistGate>
   </Provider>,
 );
 
