@@ -91,7 +91,7 @@ public class MemberController {
 	@GetMapping("/account")
 	public ResponseEntity<MemberAccountResponse> getInfo(){
 		MemberAccountResponse account = memberService.getAccountInfo();
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(account);
+		return ResponseEntity.ok(account);
 	}
 
 
