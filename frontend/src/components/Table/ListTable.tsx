@@ -13,14 +13,14 @@ import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
-function createData(name: string, calories: number) {
+function createData(title: string, period: number) {
   return {
-    name,
-    calories,
+    title,
+    period,
     history: [
       {
-        date: '2020-01-05',
-        customerId: '11091700',
+        headCount: 5000,
+        objective: 4000,
       },
     ],
   };
@@ -47,9 +47,9 @@ function Row(props: { row: ReturnType<typeof createData> }) {
           </IconButton>
         </TableCell>
         <TableCell component="th" scope="row">
-          {row.name}
+          {row.title}
         </TableCell>
-        <TableCell align="center">{row.calories}</TableCell>
+        <TableCell align="center">{row.period}</TableCell>
       </TableRow>
       {/* 개별 이벤트 클릭 후 펼쳤을 때 */}
       <TableRow>
@@ -62,17 +62,17 @@ function Row(props: { row: ReturnType<typeof createData> }) {
               <Table size="small" aria-label="purchases">
                 <TableHead>
                   <TableRow>
-                    <TableCell>총 기부 인원</TableCell>
-                    <TableCell>목표 모금 금액</TableCell>
+                    <TableCell align="center">총 기부 인원</TableCell>
+                    <TableCell align="center">목표 모금 금액</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
                   {row.history.map((historyRow) => (
-                    <TableRow key={historyRow.date}>
-                      <TableCell component="th" scope="row">
-                        {historyRow.date}
+                    <TableRow key={historyRow.headCount}>
+                      <TableCell align="center" component="th" scope="row">
+                        {historyRow.headCount}명
                       </TableCell>
-                      <TableCell>{historyRow.customerId}</TableCell>
+                      <TableCell align="center">{historyRow.objective}원</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -98,7 +98,7 @@ export function ListTable() {
         </TableHead>
         <TableBody>
           {rows.map((row) => (
-            <Row key={row.name} row={row} />
+            <Row key={row.title} row={row} />
           ))}
         </TableBody>
       </Table>
