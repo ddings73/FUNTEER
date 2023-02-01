@@ -79,9 +79,9 @@ public class LoginController {
         @ApiResponse(code = 400, message = "잘못된 요청 값, 아이디 혹은 비밀번호가 다르거나 데이터가 다 오지않음"),
         @ApiResponse(code = 500, message = "서버 에러")
     })
-    @GetMapping("/login/kakao")
-    public ResponseEntity<LoginResponse> kakaoLogin(@RequestParam("email") String email){
-        LoginRequest loginRequest = new LoginRequest(email, "kakaoPassword");
+    @PostMapping("/login/kakao")
+    public ResponseEntity<LoginResponse> kakaoLogin(@RequestBody LoginRequest loginRequest){
+        loginRequest.setPassword("kakaoPassword");
         LoginResponse loginResponse = loginService.processKakaoLogin(loginRequest);
         return ResponseEntity.ok(loginResponse);
     }
