@@ -37,10 +37,6 @@ public class AlarmRepositoryImpl implements AlarmRepository {
 			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
-	@Override
-	public Map<String, SseEmitter> findAllEmitterStartWithByUserIdInList(List userIds) {
-		return null;
-	}
 
 	@Override
 	public Map<String, Object> findAllEventCacheStartWithById(String userId) {

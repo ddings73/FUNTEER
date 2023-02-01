@@ -104,6 +104,7 @@ public class AlarmService {
 
 	//알림 생성
 	private Alarm createNotification(User user, String title, String content,Post post) {
+		log.info("[ "+user.getId()+ " ] "+title+" "+content+" "+post.getId());
 		return Alarm.builder()
 			.user(user)
 			.content(content)
@@ -121,6 +122,8 @@ public class AlarmService {
 				.name("sse")
 				.data(data, MediaType.APPLICATION_JSON)
 				.reconnectTime(0));
+
+			log.info(data.toString());
 
 			emitter.complete();
 

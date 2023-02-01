@@ -21,7 +21,8 @@ public class AlarmController {
 
 	/**
 	 * @title 로그인 한 유저 sse 연결
-	 */
+	 *
+	 * */
 	@GetMapping(value = "/subscribe", produces = "text/event-stream")
 	public SseEmitter subscribe(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
 		return alarmService.subscribe(lastEventId);
