@@ -19,6 +19,7 @@ import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
+import com.yam.funteer.donation.dto.request.DonationModifyReq;
 import com.yam.funteer.donation.dto.request.DonationRegisterReq;
 import com.yam.funteer.donation.dto.response.DonationBaseRes;
 import com.yam.funteer.donation.dto.response.DonationListRes;
@@ -51,7 +52,7 @@ public class DonationServiceImpl implements DonationService{
 	private final PostAttachRepository postAttachRepository;
 
 	public List<DonationListRes> donationGetList() {
-		List<Donation>donations=donationRepository.findAllByPostGroup(PostGroup.DONATION);
+		List<Donation>donations=donationRepository.findAllByPostGroupOrderByIdDesc(PostGroup.DONATION);
 		List<DonationListRes>list;
 		list=donations.stream().map(donation->new DonationListRes(donation)).collect(Collectors.toList());
 
@@ -81,6 +82,12 @@ public class DonationServiceImpl implements DonationService{
 		return new DonationBaseRes(donation,currentAmount,attachList);
 	}
 
+	@Override
+	public DonationBaseRes donationGetCurrent() {
+		Donation donation=donationRepository.findFirstByPostGroupOrderByIdDesc(PostGroup.DONATION);
+		return donationGetDetail(donation.getId());
+	}
+
 	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq) {
 		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
@@ -106,16 +113,23 @@ public class DonationServiceImpl implements DonationService{
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Donation donation=donationRepository.save(donationRegisterReq.toEntity());
 			List<String>attachList=new ArrayList<>();
-			for(MultipartFile file:donationRegisterReq.getFiles()){
-				String fileUrl = awsS3Uploader.upload(file,"donation");
-				Attach attach=donationRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
-				PostAttach postAttach=PostAttach.builder()
-					.attach(attach)
-					.post(donation)
-					.build();
-				attachList.add(fileUrl);
-				attachRepository.save(attach);
-				postAttachRepository.save(postAttach);
+
+			List<MultipartFile>files=donationRegisterReq.getFiles();
+			if(!files.isEmpty()) {
+				for (MultipartFile file : files) {
+					if (file.isEmpty())
+						break;
+					String fileUrl = awsS3Uploader.upload(file, "donation");
+					Attach attach = donationRegisterReq.toAttachEntity(fileUrl, file.getOriginalFilename());
+					PostAttach postAttach = PostAttach.builder()
+						.attach(attach)
+						.post(donation)
+						.build();
+					attachList.add(fileUrl);
+					attachRepository.save(attach);
+					postAttachRepository.save(postAttach);
+
+				}
 			}
 			return new DonationBaseRes(donation,Long.valueOf(0),attachList);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
@@ -131,7 +145,7 @@ public class DonationServiceImpl implements DonationService{
 	}
 
 
-	public DonationBaseRes donationModify(Long postId, DonationRegisterReq donationModifyReq){
+	public DonationBaseRes donationModify(Long postId, DonationModifyReq donationModifyReq){
 		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
 
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
@@ -146,16 +160,22 @@ public class DonationServiceImpl implements DonationService{
 			}
 
 			List<String>attachList=new ArrayList<>();
-			for(MultipartFile file:donationModifyReq.getFiles()){
-				String fileUrl = awsS3Uploader.upload(file,"donation");
-				Attach attach=donationModifyReq.toAttachEntity(fileUrl,file.getOriginalFilename());
-				PostAttach postAttach=PostAttach.builder()
-					.attach(attach)
-					.post(donation)
-					.build();
-				attachList.add(fileUrl);
-				attachRepository.save(attach);
-				postAttachRepository.save(postAttach);
+			List<MultipartFile>files=donationModifyReq.getFiles();
+			if(!files.isEmpty()) {
+				for (MultipartFile file : files) {
+					if (file.isEmpty())
+						break;
+					String fileUrl = awsS3Uploader.upload(file, "donation");
+					Attach attach = donationModifyReq.toAttachEntity(fileUrl, file.getOriginalFilename());
+					PostAttach postAttach = PostAttach.builder()
+						.attach(attach)
+						.post(donation)
+						.build();
+					attachList.add(fileUrl);
+					attachRepository.save(attach);
+					postAttachRepository.save(postAttach);
+
+				}
 			}
 			return new DonationBaseRes(donation,Long.valueOf(0),attachList);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");

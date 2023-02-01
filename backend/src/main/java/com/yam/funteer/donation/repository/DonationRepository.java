@@ -8,5 +8,6 @@ import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.donation.entity.Donation;
 
 public interface DonationRepository extends JpaRepository<Donation,Long> {
-	List<Donation>findAllByPostGroup(PostGroup postGroup);
+	List<Donation>findAllByPostGroupOrderByIdDesc(PostGroup postGroup);
+	Donation findFirstByPostGroupOrderByIdDesc(PostGroup postGroup);
 }
