@@ -131,9 +131,7 @@ public class TeamServiceImpl implements TeamService{
 		Team team = teamRepository.findById(SecurityUtil.getCurrentUserId())
 			.orElseThrow(UserNotFoundException::new);
 
-		if(team.isResignOrWait()){
-			throw new IllegalArgumentException("탈퇴하였거나 가입 대기중인 회원입니다.");
-		}
+		team.validate();
 
 		List<TeamAttach> teamAttaches = teamAttachRepository.findAllByTeamId(team.getId());
 		TeamAccountResponse response = TeamAccountResponse.of(team);
