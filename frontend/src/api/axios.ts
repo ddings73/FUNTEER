@@ -7,16 +7,9 @@ export const http: AxiosInstance = axios.create({
 });
 http.interceptors.request.use(
   function (config) {
-    const token = localStorage.getItem('token');
+    config.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
+    console.log(config.headers);
 
-    if (!token) {
-      config.headers.accessToken = null;
-      config.headers.refreshToken = null;
-      return config;
-    }
-    const { accessToken, refreshToken } = JSON.parse(token);
-    config.headers.accessToken = accessToken;
-    config.headers.refreshToken = refreshToken;
     return config;
   },
   function (error) {
@@ -25,16 +18,29 @@ http.interceptors.request.use(
   },
 );
 
-// http.interceptors.response.use(
-//   function (response) {
-//     return response;
-//   },
-//   async function (error) {
-//     if (error.response && error.response === 401) {
-//       try {
-//         const originRequest = error.config;
-//         const response = await requestUpdateToken();
-//       } catch (error) {}
-//     }
-//   },
-// );
+http.interceptors.response.use(
+  function (response) {
+    return response;
+  },
+  async function (error) {
+    if (error.response && error.response.status === 401) {
+      // const refreshToken = JSON.parse(localStorage.getItem('refreshToken'));
+      console.log('responseError', error);
+      const refreshToken = localStorage.getItem('refreshToken');
+      if (!refreshToken) {
+        return error;
+      }
+      try {
+        const response = await requestUpdateToken();
+        localStorage.setItem('accessToken', response?.data.accessToken);
+        localStorage.setItem('refreshToken', response?.data.refreshToken);
+      } catch (e) {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('refreshToken');
+        console.log(e);
+      }
+      return Promise.reject(error);
+    }
+    return Promise.reject(error);
+  },
+);

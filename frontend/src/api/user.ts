@@ -1,11 +1,15 @@
 import { http } from './axios';
 import { memberSignUpType, teamSignUpType, UserSignInType } from '../types/user';
 
+/**
+ * 이메일 로그인 요청
+ * @method POST
+ * @param useInfo - userInfo : UserSignInType
+ */
 export const requestSignIn = async (userInfo: UserSignInType) => {
   const data: UserSignInType = {
     email: userInfo.email,
     password: userInfo.password,
-    type: userInfo.type,
   };
   const res = await http.post('/login', data);
 
@@ -82,4 +86,13 @@ export const requestTeamSignUp = async (teamSignUpInfo: teamSignUpType) => {
   const res = await http.post('team', formData);
 
   return res;
+};
+
+/**
+ * 유저 정보 조회 API
+ * @method GET
+ */
+export const requestUserInfo = async () => {
+  const response = await http.get(`member/account`);
+  return response;
 };

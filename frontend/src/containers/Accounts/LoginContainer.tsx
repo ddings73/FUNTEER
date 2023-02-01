@@ -7,9 +7,9 @@ import { Button, TextField } from '@mui/material';
 import styles from './LoginContainer.module.scss';
 import { UserSignInType } from '../../types/user';
 import { requestSignIn } from '../../api/user';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { closeModal, openModal } from '../../store/slices/modalSlice';
-import { setUserLoginState } from '../../store/slices/userSlice';
+import { setUserLoginState, setUserType } from '../../store/slices/userSlice';
 import KakaoLogin from '../../assets/images/kakao.png';
 
 function LoginContainer() {
@@ -19,7 +19,6 @@ function LoginContainer() {
   const [userInfo, setUserInfo] = useState<UserSignInType>({
     email: '',
     password: '',
-    type: 'NORMAL',
   });
 
   // 로 그인 정보 입력
@@ -46,8 +45,13 @@ function LoginContainer() {
       const response = await requestSignIn(userInfo);
       if (response.status === 200) {
         const { data } = response;
-        localStorage.setItem('token', JSON.stringify(data.token));
+
+        localStorage.setItem('accessToken', data.token.accessToken);
+        localStorage.setItem('refreshToken', data.token.refreshToken);
+
         dispatch(setUserLoginState(true));
+        dispatch(setUserType(data.userType));
+
         navigate('/');
       }
     } catch (error) {
