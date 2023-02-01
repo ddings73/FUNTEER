@@ -2,6 +2,7 @@ package com.yam.funteer.funding.entity;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -12,10 +13,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.validator.constraints.UniqueElements;
-import org.springframework.scheduling.annotation.Scheduled;
-
-import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.entity.PostHashtag;
@@ -92,4 +89,13 @@ public class Funding extends Post {
 	public void setCurrentFundingAmount(Long amount) {
 		this.currentFundingAmount = amount;
 	}
+
+	public Optional<List<Comment>> getComments(){
+		return Optional.ofNullable(this.comments);
+	}
+
+	public Optional<List<PostHashtag>> getPostHashtags() {
+		return Optional.ofNullable(this.hashtags);
+	}
+
 }

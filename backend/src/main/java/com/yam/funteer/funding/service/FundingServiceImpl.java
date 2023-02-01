@@ -24,6 +24,8 @@ import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
+import com.yam.funteer.funding.dto.request.TargetMoneyRequest;
+import com.yam.funteer.funding.dto.response.CommentResponse;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
 import com.yam.funteer.funding.dto.response.FundingListPageResponse;
 import com.yam.funteer.funding.dto.response.FundingListResponse;
@@ -31,6 +33,8 @@ import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
+import com.yam.funteer.funding.dto.response.HashtagResponse;
+import com.yam.funteer.funding.dto.response.TargetMoneyResponse;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.Report;
@@ -218,20 +222,11 @@ public class FundingServiceImpl implements FundingService{
 	private void addTargetMoney(FundingRequest data, Funding funding) {
 		List<TargetMoney> targetMoneyList = new ArrayList<>();
 
-		TargetMoney targetMoney1 = new TargetMoney(funding, TargetMoneyType.LEVEL_ONE, data.getAmount1(),
-			data.getDescription1());
-		TargetMoney targetMoney2 = new TargetMoney(funding, TargetMoneyType.LEVEL_TWO, data.getAmount2(),
-			data.getDescription2());
-		TargetMoney targetMoney3 = new TargetMoney(funding, TargetMoneyType.LEVEL_THREE, data.getAmount3(),
-			data.getDescription3());
-
-		targetMoneyRepository.save(targetMoney1);
-		targetMoneyRepository.save(targetMoney2);
-		targetMoneyRepository.save(targetMoney3);
-
-		targetMoneyList.add(targetMoney1);
-		targetMoneyList.add(targetMoney2);
-		targetMoneyList.add(targetMoney3);
+		for (TargetMoneyRequest tm : data.getTargetMoneyRequestList()) {
+			TargetMoney targetMoney = new TargetMoney(funding, tm.getTargetMoneyType(), tm.getAmount(), tm.getDescription());
+			targetMoneyRepository.save(targetMoney);
+			targetMoneyList.add(targetMoney);
+		}
 
 		funding.setTargetMoneyList(targetMoneyList);
 	}
@@ -264,6 +259,25 @@ public class FundingServiceImpl implements FundingService{
 		FundingDetailResponse fundingDetailResponse = FundingDetailResponse.from(funding);
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
 		fundingDetailResponse.setWishCount(wishCount);
+
+		// 해시태그
+
+		// 목표금액
+		List<TargetMoneyResponse> targetMoneyResponsesLevelOne = targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(id, TargetMoneyType.LEVEL_ONE);
+		List<TargetMoneyResponse> targetMoneyResponsesLevelTwo = targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(id, TargetMoneyType.LEVEL_TWO);
+		List<TargetMoneyResponse> targetMoneyResponsesLevelThree = targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(id, TargetMoneyType.LEVEL_THREE);
+
+		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyResponsesLevelOne);
+		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyResponsesLevelTwo);
+		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyResponsesLevelThree);
+
+		// 댓글
+
+		List<CommentResponse> comments = funding.getComments()
+			.stream()
+			.map(comment -> CommentResponse.from((Comment)comment))
+			.collect(Collectors.toList());
+
 		return fundingDetailResponse;
 	}
 
@@ -316,22 +330,19 @@ public class FundingServiceImpl implements FundingService{
 		return FundingDetailResponse.from(funding);
 	}
 
-	private static void setTargetMoney(FundingRequest data, Funding funding) {
+	private void setTargetMoney(FundingRequest data, Funding funding) {
 		List<TargetMoney> targetMoneyList = funding.getTargetMoneyList();
-
-		for (TargetMoney targetMoney : targetMoneyList) {
-			targetMoney.setAmount(data.getAmount1());
-			targetMoney.setDescription(data.getDescription1());
-			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_ONE);
-
-			targetMoney.setAmount(data.getAmount2());
-			targetMoney.setDescription(data.getDescription2());
-			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_TWO);
-
-			targetMoney.setAmount(data.getAmount3());
-			targetMoney.setDescription(data.getDescription3());
-			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_THREE);
+		for (TargetMoney targetMoney : funding.getTargetMoneyList()) {
+			targetMoneyRepository.delete(targetMoney);
 		}
+
+		for (TargetMoneyRequest tm : data.getTargetMoneyRequestList()) {
+			TargetMoney targetMoney = new TargetMoney(funding, tm.getTargetMoneyType(), tm.getAmount(),
+				tm.getDescription());
+			targetMoneyRepository.save(targetMoney);
+		}
+
+		funding.setTargetMoneyList(targetMoneyList);
 	}
 
 	@Override
@@ -390,7 +401,7 @@ public class FundingServiceImpl implements FundingService{
 		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
 
 		Attach attach = Attach.builder()
-			.name(fundingId + "-receiptFIle")
+			.name(fundingId + "-receiptFile")
 			.fileType(FileType.RECEIPT)
 			.path(receiptUrl)
 			.regDate(LocalDateTime.now())
