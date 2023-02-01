@@ -18,7 +18,7 @@ function ErrorPageContainer() {
         </div>
         <img className={styles.imgError} alt="errorimg" src={fzf} />
         <button className={styles.glowOnHover} type="button">
-          호떡개꿀맛
+          50번 누르면 탈출
         </button>
         <div className={styles.warning}>
           404 나가 404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404 나가404
