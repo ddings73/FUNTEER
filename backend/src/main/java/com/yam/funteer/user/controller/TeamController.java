@@ -95,9 +95,9 @@ public class TeamController {
             @ApiResponse(code = 400, message = "잘못된 요청정보"),
             @ApiResponse(code = 500, message = "서버 에러")
     })
-    @GetMapping("/{userId}/account")
-    public ResponseEntity<TeamAccountResponse> getAccountInfo(@PathVariable Long userId){
-        TeamAccountResponse teamAccount = teamService.getTeamAccount(userId);
+    @GetMapping("/account")
+    public ResponseEntity<TeamAccountResponse> getAccountInfo(){
+        TeamAccountResponse teamAccount = teamService.getTeamAccount();
         return ResponseEntity.ok(teamAccount);
     }
 

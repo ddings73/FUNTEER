@@ -12,6 +12,6 @@ public interface TeamService {
 	void setAccountSignOut(BaseUserRequest request);
 	TeamProfileResponse getTeamProfile(Long userId);
     void updateProfile(UpdateTeamProfileRequest request);
-	TeamAccountResponse getTeamAccount(Long userId);
+	TeamAccountResponse getTeamAccount();
 	void updateAccount(UpdateTeamAccountRequest request);
 }
