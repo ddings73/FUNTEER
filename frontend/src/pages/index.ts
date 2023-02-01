@@ -35,3 +35,6 @@ export { default as CreateFunding } from './Funding/CreateFunding';
 export { default as CustomerCenter } from './CustomerCenter/CustomerCenter';
 
 export { default as Donation } from './Donation/Donation';
+
+export { default as NoticeDetail } from './CustomerCenter/NoticeDetail';
+

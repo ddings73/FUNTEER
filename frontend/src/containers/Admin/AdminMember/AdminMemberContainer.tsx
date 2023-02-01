@@ -7,7 +7,7 @@ import AdminMemberContainerItem, { MemberState } from './AdminMemberContainerIte
 
 function AdminMemberContainer() {
   const [memberSearch, setMemberSearch] = useState<string>('');
-  const [memberStateFilter, setMemberStateFilter] = useState<string>(MemberState.Normal);
+  const [memberStateFilter, setMemberStateFilter] = useState<string>(MemberState.All);
 
   const onMemberSearchInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMemberSearch(e.target.value);
@@ -18,9 +18,14 @@ function AdminMemberContainer() {
   };
 
   const filtedMembers = AdminMemberContainerItem.filter((member) => {
-    const filter =
-      (member.name.includes(memberSearch) || member.nickname.includes(memberSearch) || member.phone.includes(memberSearch) || member.email.includes(memberSearch)) &&
-      member.memberState === memberStateFilter;
+    let filter;
+    if (memberStateFilter === '전체') {
+      filter = member.name.includes(memberSearch) || member.nickname.includes(memberSearch) || member.phone.includes(memberSearch) || member.email.includes(memberSearch);
+    } else {
+      filter =
+        (member.name.includes(memberSearch) || member.nickname.includes(memberSearch) || member.phone.includes(memberSearch) || member.email.includes(memberSearch)) &&
+        member.memberState === memberStateFilter;
+    }
     return filter;
   });
 

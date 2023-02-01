@@ -7,9 +7,11 @@ import profile5 from '../../../assets/images/teamProfile/백준봉.jpg';
 import profile6 from '../../../assets/images/teamProfile/안명수.jpg';
 
 export enum MemberState {
+  All = '전체',
   Normal = '정상',
   Dormant = '휴면',
   Withdrawn = '탈퇴',
+  Strange = '비정상',
 }
 
 type adminMemberContainerItemType = {
@@ -50,7 +52,7 @@ export const AdminMemberContainerItem: adminMemberContainerItemType[] = [
     phone: '010-1234-1234',
     email: 'sub9707@naver.com',
     money: tmp.toLocaleString('en-Us'),
-    memberState: MemberState.Normal,
+    memberState: MemberState.Strange,
   },
   {
     name: '김진호',

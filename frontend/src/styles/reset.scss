@@ -1,5 +1,10 @@
-
-html,body,div,span,applet,object,iframe,
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
 h1,
 h2,
 h3,
@@ -143,3 +148,6 @@ html {
   font-size: 16px;
 }
 
+input:focus {
+  outline: none;
+}
