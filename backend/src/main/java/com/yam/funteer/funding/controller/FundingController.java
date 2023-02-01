@@ -103,7 +103,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 게시글 보고서 작성", notes = "펀딩 게시글 보고서를 작성한다.")
 	@PostMapping("/{fundingId}/report")
-	public ResponseEntity<?> createFundingReport(@PathVariable Long fundingId, @RequestBody FundingReportRequest data) {
+	public ResponseEntity<FundingReportResponse> createFundingReport(@PathVariable Long fundingId, FundingReportRequest data) {
 		fundingService.createFundingReport(fundingId, data);
 		return ResponseEntity.ok().build();
 	}

@@ -5,11 +5,14 @@ import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.scheduling.annotation.Scheduled;
 
 import com.yam.funteer.common.code.PostType;
@@ -43,6 +46,9 @@ public class Funding extends Post {
 	private Long currentFundingAmount;
 
 	private String fundingDescription;
+
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Report report;
 
 	public void setTargetMoneyList(List<TargetMoney> targetMoneyList) {
 		this.targetMoneyList = targetMoneyList;
