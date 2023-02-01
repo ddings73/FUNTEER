@@ -72,6 +72,11 @@
         padding: 1rem;
         font-family: NanumSquareRound;
 
+        &:hover {
+          box-shadow: 0 0 15px rgba(1, 1, 1, 0.5);
+          transition: all 0.2s;
+        }
+
         .button-title {
           font-size: 2.25rem;
           font-weight: bold;

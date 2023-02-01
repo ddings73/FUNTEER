@@ -52,22 +52,59 @@
       }
     }
 
+    .category-box {
+      margin-top: 90px;
+      display: flex;
+      justify-content: center;
+      & .link {
+        text-decoration: none;
+        text-align: center;
+        padding: 15px;
+        margin: 0 15px;
+        border-radius: 100%;
+        transition: all 0.3s;
+        filter: grayscale(1);
+        opacity: 0.7;
+
+        &:hover {
+          filter: grayscale(0);
+          opacity: 1;
+        }
+        & .icon {
+          display: block;
+          width: 54px;
+          height: 54px;
+          margin-bottom: 10px;
+        }
+
+        & span {
+          font-size: 0.9rem;
+          color: black;
+          font-weight: bold;
+          letter-spacing: 2.5px;
+        }
+      }
+    }
+
     .search-box {
       display: flex;
       flex-direction: row;
-      justify-content: space-around;
-      max-width: 50%;
       width: 100%;
       margin: 0 auto;
-      margin-top: 150px;
+      margin-top: 40px;
+      justify-content: center;
+
+      & .search {
+        width: 70%;
+      }
     }
     .funding-list-box {
-      margin-top: 80px;
+      margin-top: 50px;
       display: flex;
       flex-direction: column;
 
       & p {
-        font-size: 0.8rem;
+        font-size: 1rem;
         font-weight: bold;
         & span {
           color: red;

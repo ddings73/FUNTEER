@@ -1,7 +1,6 @@
 export type UserSignInType = {
   email: string;
   password: string;
-  type: string;
 };
 
 export type memberSignUpType = {
@@ -17,6 +16,7 @@ export type teamSignUpType = {
   name: string;
   email: string;
   password: string;
+  passwordCheck: string;
   phone: string;
   vmsFile: Blob;
   performFile: Blob;

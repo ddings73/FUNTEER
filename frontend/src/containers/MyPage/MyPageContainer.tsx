@@ -1,15 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import EmailIcon from '@mui/icons-material/Email';
 import SettingsIcon from '@mui/icons-material/Settings';
 import Tooltip from '@mui/material/Tooltip';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
+import { useLocation } from 'react-router-dom';
 import SideBarList from '../../components/MyPageSideBar/SideBarList';
 import styles from './MyPageContainer.module.scss';
 import ProfileSvg from '../../assets/images/default-profile-img.svg';
+import { requestUserInfo } from '../../api/user';
 
 export function MyPageContainer() {
+  const { pathname } = useLocation();
+  console.log(pathname);
+
   const handleCopyClipBoard = async (text: string, type: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -20,6 +25,18 @@ export function MyPageContainer() {
     }
   };
 
+  const getRequestUserInfo = async () => {
+    try {
+      const response = await requestUserInfo();
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    getRequestUserInfo();
+  }, []);
   return (
     <div className={styles.bodyContainer}>
       <SideBarList />
