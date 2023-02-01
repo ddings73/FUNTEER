@@ -22,6 +22,13 @@ import lombok.NoArgsConstructor;
 public class ReportDetail {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	public ReportDetail(Report report, String description, Long amount) {
+		this.report = report;
+		this.description = description;
+		this.amount = amount;
+	}
+
 	@ManyToOne
 	@JoinColumn(name = "report_id")
 	private Report report;

@@ -18,10 +18,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
+import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
 import com.yam.funteer.funding.dto.response.FundingListPageResponse;
 import com.yam.funteer.funding.dto.response.FundingListResponse;
@@ -34,6 +36,7 @@ import com.yam.funteer.funding.dto.request.TakeFundingRequest;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.Report;
+import com.yam.funteer.funding.entity.ReportDetail;
 import com.yam.funteer.funding.entity.TargetMoney;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
@@ -42,6 +45,7 @@ import com.yam.funteer.funding.exception.NotFoundHashtagException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
+import com.yam.funteer.funding.repository.ReportDetailRepository;
 import com.yam.funteer.funding.repository.ReportRepository;
 import com.yam.funteer.funding.repository.TargetMoneyRepository;
 import com.yam.funteer.mail.service.EmailService;
@@ -70,6 +74,8 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
+	private final AttachRepository attachRepository;
+	private final ReportDetailRepository reportDetailRepository;
 	private final WishRepository wishRepository;
 	private final PostRepository postRepository;
 
@@ -344,7 +350,6 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public void createFundingReport(Long fundingId, FundingReportRequest data) {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
-
 		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
 
 		Attach attach = Attach.builder()
@@ -354,14 +359,27 @@ public class FundingServiceImpl implements FundingService{
 			.regDate(LocalDateTime.now())
 			.build();
 
-		Report report = new Report(funding, data.getContent(), LocalDateTime.now(), attach);
-		List<ReportDetailResponse> reportDetailResponses = new ArrayList<>();
+		attachRepository.save(attach);
 
+		Report report = new Report(funding, data.getContent(), LocalDateTime.now(), attach);
+		reportRepository.save(report);
+
+		List<ReportDetail> reportDetails = new ArrayList<>();
+		for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
+			ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
+				fundingReportDetailRequest.getAmount());
+			reportDetailRepository.save(reportDetail);
+			reportDetails.add(reportDetail);
+		}
+
+		report.setReportDetail(reportDetails);
+		funding.setPostType(PostType.REPORT_WAIT);
 
 	}
 
 	@Override
 	public FundingReportResponse findFundingReportById(Long fundingId) {
+
 		return null;
 	}
 
