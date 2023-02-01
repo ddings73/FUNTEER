@@ -30,8 +30,6 @@ import com.yam.funteer.funding.dto.response.FundingListResponse;
 import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
-import com.yam.funteer.funding.dto.request.RejectReasonRequest;
-import com.yam.funteer.funding.dto.response.ReportDetailResponse;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
@@ -48,7 +46,6 @@ import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.repository.ReportDetailRepository;
 import com.yam.funteer.funding.repository.ReportRepository;
 import com.yam.funteer.funding.repository.TargetMoneyRepository;
-import com.yam.funteer.mail.service.EmailService;
 import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.post.entity.Comment;
@@ -61,7 +58,6 @@ import com.yam.funteer.post.repository.PostHashtagRepository;
 import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
-import com.yam.funteer.user.entity.Wish;
 import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
 import com.yam.funteer.user.repository.WishRepository;
@@ -94,12 +90,10 @@ public class FundingServiceImpl implements FundingService{
 
 	private final CommentRepository commentRepository;
 
-	private final EmailService emailService;
-
 
 	@Override
 	public List<FundingListResponse> findFundingByKeyword(String keyword) {
-		List<Funding> byTitleContaining = fundingRepository.findByTitleOrContentContaining(keyword, keyword);
+		List<Funding> byTitleContaining = fundingRepository.findAllByTitleOrContentContaining(keyword, keyword);
 		List<FundingListResponse> collect = byTitleContaining.stream()
 			.map(funding -> FundingListResponse.from(funding))
 			.collect(Collectors.toList());
@@ -315,6 +309,7 @@ public class FundingServiceImpl implements FundingService{
 
 		} else if (funding.getPostType() == PostType.FUNDING_IN_PROGRESS) {
 			funding.setEndDate(endDate);
+			funding.setPostType(PostType.FUNDING_EXTEND);
 		} else {
 			throw new Exception("no");
 		}
@@ -348,7 +343,7 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public void createFundingReport(Long fundingId, FundingReportRequest data) {
+	public FundingReportResponse createFundingReport(Long fundingId, FundingReportRequest data) {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
 		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
 
@@ -374,13 +369,15 @@ public class FundingServiceImpl implements FundingService{
 
 		report.setReportDetail(reportDetails);
 		funding.setPostType(PostType.REPORT_WAIT);
+		return FundingReportResponse.from(report);
 
 	}
 
 	@Override
 	public FundingReportResponse findFundingReportById(Long fundingId) {
-
-		return null;
+		Report byFundingId = reportRepository.findByFundingId(fundingId);
+		FundingReportResponse fundingReport = FundingReportResponse.from(byFundingId);
+		return fundingReport;
 	}
 
 	@Override
@@ -436,7 +433,7 @@ public class FundingServiceImpl implements FundingService{
 		}
 	}
 
-	// 자정이 되면 StartDate가 당일인 펀딩들 중 승인 안료된 펀딩을 진행중으로 변경
+	// 자정이 되면 StartDate가 당일인 펀딩들 중 승인 안료된 펀딩을 진행중으로 변경, 펀딩 금액에 따라 완료/실패 여부 판단
 	@Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
 	public void changeStatusFunding() {
 		List<Funding> all = fundingRepository.findAllByStartDate(LocalDate.now());
@@ -445,36 +442,15 @@ public class FundingServiceImpl implements FundingService{
 				funding.setPostType(PostType.FUNDING_IN_PROGRESS);
 			}
 		}
+
+		List<Funding> allByEndDate = fundingRepository.findAllByEndDate(LocalDate.now().minusDays(1));
+		for (Funding funding : allByEndDate) {
+			if (funding.getCurrentFundingAmount() >= funding.getTargetMoneyList().get(0).getAmount()) {
+				funding.setPostType(PostType.FUNDING_COMPLETE);
+			} else {
+				funding.setPostType(PostType.FUNDING_FAIL);
+			}
+		}
 	}
 
-
-	@Override
-	public void acceptFunding(Long fundingId) {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
-		funding.setPostType(PostType.FUNDING_ACCEPT);
-	}
-
-	@Override
-	public void rejectFunding(Long fundingId, RejectReasonRequest data) throws Exception {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
-		funding.setPostType(PostType.FUNDING_REJECT);
-		funding.setRejectComment(data.getRejectReason());
-		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.FUNDING);
-	}
-
-	@Override
-	public void acceptReport(Long fundingId) {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
-		funding.setPostType(PostType.REPORT_ACCEPT);
-	}
-
-	@Override
-	public void rejectReport(Long fundingId, RejectReasonRequest data) throws Exception {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
-		Report report = reportRepository.findByFundingId(fundingId);
-		funding.setPostType(PostType.REPORT_REJECT);
-		report.setRejectComment(data.getRejectReason());
-		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.REPORT);
-
-	}
 }

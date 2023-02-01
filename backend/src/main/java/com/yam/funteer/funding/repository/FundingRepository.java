@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.entity.Category;
@@ -16,7 +17,9 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 
 	List<Funding> findAllByCategory(Category category);
 
-	List<Funding> findByTitleOrContentContaining(String keyword, String keyword2);
+	List<Funding> findAllByTitleOrContentContaining(String keyword, String keyword2);
 
 	List<Funding> findAllByStartDate(LocalDate now);
+
+	List<Funding> findAllByEndDate(LocalDate minusDays);
 }
