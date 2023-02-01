@@ -31,7 +31,7 @@ public interface FundingService {
 
 	FundingReportResponse findFundingReportById(Long fundingId);
 
-	FundingReportResponse updateFundingReport(Long fundingId, FundingReportResponse data);
+	FundingReportResponse updateFundingReport(Long fundingId, FundingReportRequest data);
 
 	void createFundingComment(Long fundingId, FundingCommentRequest data);
 

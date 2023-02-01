@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.UniqueElements;
+
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.code.PostType;
 
@@ -45,14 +47,26 @@ public class Report{
 
 	private String rejectReason;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "recipt_id")
 	private Attach receipts;
+
+	public void setReportContent(String content) {
+		this.content = content;
+	}
+
+	public void setReportRegDate(LocalDateTime regDate) {
+		this.regDate = regDate;
+	}
+
+	public void setReportReceipts(Attach receipts) {
+		this.receipts = receipts;
+	}
 
 	@OneToMany(mappedBy = "report", cascade = CascadeType.ALL)
 	private List<ReportDetail> reportDetails;
 
-	public void setRejectComment(String rejectReason) {
+	public void setReportRejectComment(String rejectReason) {
 		this.rejectReason = rejectReason;
 	}
 

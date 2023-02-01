@@ -236,7 +236,7 @@ public class FundingServiceImpl implements FundingService{
 		funding.setTargetMoneyList(targetMoneyList);
 	}
 
-	private List<Hashtag> saveNotExistHashTags(List<Hashtag> hashtagList){
+	private List<Hashtag> saveNotExistHashTags(List<Hashtag> hashtagList) {
 		List<Hashtag> hashtags = new ArrayList<>();
 		for(Hashtag hashtag : hashtagList) {
 			Optional<Hashtag> oneByName = hashTagRepository.findOneByName(hashtag.getName());
@@ -278,8 +278,8 @@ public class FundingServiceImpl implements FundingService{
 
 
 			// 기존 파일 삭제, 새로운 파일 추가
-			awsS3Uploader.delete("/thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
-			String thumbnailUrl = awsS3Uploader.upload(thumbnail, "/thumbnails/"+fundingId);
+			awsS3Uploader.delete("thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
+			String thumbnailUrl = awsS3Uploader.upload(thumbnail, "thumbnails/"+fundingId);
 
 			Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
@@ -337,7 +337,7 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public void deleteFunding(Long fundingId) throws FundingNotFoundException {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
-		awsS3Uploader.delete("/thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
+		awsS3Uploader.delete("thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
 		fundingRepository.delete(funding);
 		postRepository.delete(funding);
 	}
@@ -381,8 +381,39 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public FundingReportResponse updateFundingReport(Long fundingId, FundingReportResponse data) {
-		return null;
+	public FundingReportResponse updateFundingReport(Long fundingId, FundingReportRequest data) {
+		Report report = reportRepository.findByFundingId(fundingId);
+		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+
+		awsS3Uploader.delete("reports/" + fundingId + "/", report.getReceipts().getPath());
+		attachRepository.delete(report.getReceipts());
+		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
+
+		Attach attach = Attach.builder()
+			.name(fundingId + "-receiptFIle")
+			.fileType(FileType.RECEIPT)
+			.path(receiptUrl)
+			.regDate(LocalDateTime.now())
+			.build();
+
+		attachRepository.save(attach);
+
+		List<ReportDetail> reportDetails = new ArrayList<>();
+
+		for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
+			ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
+				fundingReportDetailRequest.getAmount());
+			reportDetailRepository.save(reportDetail);
+			reportDetails.add(reportDetail);
+		}
+
+		report.setReportReceipts(attach);
+		report.setReportContent(data.getContent());
+		report.setReportDetail(reportDetails);
+		report.setReportRegDate(LocalDateTime.now());
+		funding.setPostType(PostType.REPORT_WAIT);
+
+		return FundingReportResponse.from(report);
 	}
 
 	@Override

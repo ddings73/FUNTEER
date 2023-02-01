@@ -87,7 +87,7 @@ public class FundingController {
 		return ResponseEntity.ok(fundingService.findFundingById(fundingId));
 	}
 
-	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다. (D12: 승인 거절 시 게시글 전체 수정 가능 / D14: 진행중일때 기간 1회 수정 가능 / D15: 진행중, 수정 불가능")
+	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다.")
 	@PutMapping("/{fundingId}")
 	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, MultipartFile thumbnail,
 		FundingRequest data) throws Exception {
@@ -116,7 +116,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 게시글 보고서 수정", notes = "펀딩 게시글 보고서를 수정한다.")
 	@PutMapping("/{fundingId}/report")
-	public ResponseEntity<FundingReportResponse> updateFundingReport(@PathVariable Long fundingId, @RequestBody FundingReportResponse data) {
+	public ResponseEntity<FundingReportResponse> updateFundingReport(@PathVariable Long fundingId, FundingReportRequest data) {
 		return ResponseEntity.ok(fundingService.updateFundingReport(fundingId, data));
 	}
 

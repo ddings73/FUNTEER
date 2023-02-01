@@ -53,7 +53,7 @@ public class AdminServiceImpl implements AdminService{
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
 		Report report = reportRepository.findByFundingId(fundingId);
 		funding.setPostType(PostType.REPORT_REJECT);
-		report.setRejectComment(data.getRejectReason());
+		report.setReportRejectComment(data.getRejectReason());
 		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.REPORT);
 		return data.getRejectReason();
 	}
