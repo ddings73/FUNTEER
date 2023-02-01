@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useInterval } from 'usehooks-ts';
 import { Button, TextField } from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { memberSignUpType } from '../../types/user';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
 import { requestEmailDuplConfirm, requestMemberSignUp, requestNicknameDuplConfirm, requestPhoneDuplConfirm } from '../../api/user';
@@ -37,6 +38,10 @@ function MemberSignUpContainer() {
   const [authNumber, setAuthNumber] = useState<string>('');
   /** 이메일 인증이 완료되었는지 체크해주는 상태 */
   const [checkEmailAuth, setCheckEmailAuth] = useState<boolean>(false);
+  /** 비밀번호 가시 여부 */
+  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
+  /** 비밀번호 확인 가시 여부 */
+  const [passwordCheckVisibility, setPasswordCheckVisibility] = useState<boolean>(false);
 
   /** 회원가입 정보 입력 */
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,6 +77,7 @@ function MemberSignUpContainer() {
       setNicknameDuplConfirmed(true);
       console.log(response);
     } catch (error) {
+      alert('이미 가입된 닉네임입니다.');
       console.log(error);
     }
   };
@@ -99,6 +105,7 @@ function MemberSignUpContainer() {
       setEmailDuplConfirmed(true);
       console.log(response);
     } catch (error) {
+      alert('이미 가입된 이메일입니다.');
       console.log(error);
     }
   };
@@ -118,6 +125,7 @@ function MemberSignUpContainer() {
       setPhoneDuplConfirmed(true);
       console.log(response);
     } catch (error) {
+      alert('이미 가입된 휴대폰 번호입니다.');
       console.log(error);
     }
   };
@@ -258,10 +266,60 @@ function MemberSignUpContainer() {
             )}
 
             <p>비밀번호</p>
-            <TextField name="password" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <div className={styles['pw-div']}>
+              <TextField
+                name="password"
+                type={!passwordVisibility ? 'password' : ''}
+                margin="dense"
+                placeholder="비밀번호를 입력해주세요."
+                variant="outlined"
+                onChange={onChangeHandler}
+              />{' '}
+              {passwordVisibility && (
+                <Visibility
+                  onClick={() => {
+                    setPasswordVisibility(!passwordVisibility);
+                  }}
+                  className={styles['pwv-btn']}
+                />
+              )}
+              {!passwordVisibility && (
+                <VisibilityOff
+                  onClick={() => {
+                    setPasswordVisibility(!passwordVisibility);
+                  }}
+                  className={styles['pwv-btn']}
+                />
+              )}
+            </div>
 
             <p>비밀번호 확인</p>
-            <TextField name="passwordCheck" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <div className={styles['pw-div']}>
+              <TextField
+                name="passwordCheck"
+                type={!passwordCheckVisibility ? 'password' : ''}
+                margin="dense"
+                placeholder="비밀번호를 입력해주세요."
+                variant="outlined"
+                onChange={onChangeHandler}
+              />
+              {passwordCheckVisibility && (
+                <Visibility
+                  onClick={() => {
+                    setPasswordCheckVisibility(!passwordCheckVisibility);
+                  }}
+                  className={styles['pwv-btn']}
+                />
+              )}
+              {!passwordCheckVisibility && (
+                <VisibilityOff
+                  onClick={() => {
+                    setPasswordCheckVisibility(!passwordCheckVisibility);
+                  }}
+                  className={styles['pwv-btn']}
+                />
+              )}
+            </div>
 
             <p>
               닉네임
