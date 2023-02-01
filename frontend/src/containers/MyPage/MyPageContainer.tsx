@@ -27,7 +27,7 @@ export function MyPageContainer() {
 
   const getRequestUserInfo = async () => {
     try {
-      const response = await requestUserInfo(112);
+      const response = await requestUserInfo();
       console.log(response);
     } catch (error) {
       console.log(error);

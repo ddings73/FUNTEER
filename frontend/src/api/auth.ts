@@ -5,8 +5,11 @@ import { http } from './axios';
  * @method POST
  */
 export const requestUpdateToken = async () => {
-  const response = await http.get('refresh');
-  console.log("updateToken", response);
-  
+  const refreshToken = localStorage.getItem('refreshToken');
+
+  const response = await http.post('refresh', {
+    refreshToken: `${refreshToken}`,
+  });
+  // eslint-disable-next-line consistent-return
   return response;
 };

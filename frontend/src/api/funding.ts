@@ -45,3 +45,13 @@ export const requestFundingList = async () => {
 
   return res;
 };
+
+/**
+ * 펀딩 리스트 검색 API
+ * @method GET
+ */
+
+export const requestFundingSearch = async (text: string) => {
+  const response = await http.get(`funding/search/?keyword=${text}`);
+  return response;
+};

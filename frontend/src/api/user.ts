@@ -92,7 +92,7 @@ export const requestTeamSignUp = async (teamSignUpInfo: teamSignUpType) => {
  * 유저 정보 조회 API
  * @method GET
  */
-export const requestUserInfo = async (userId: number) => {
-  const response = await http.get(`member/${userId}/account`);
+export const requestUserInfo = async () => {
+  const response = await http.get(`member/account`);
   return response;
 };
