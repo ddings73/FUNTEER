@@ -30,9 +30,7 @@ import com.yam.funteer.funding.dto.response.FundingListResponse;
 import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
-import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
-import com.yam.funteer.funding.dto.response.ReportDetailResponse;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.Report;
@@ -48,7 +46,6 @@ import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.repository.ReportDetailRepository;
 import com.yam.funteer.funding.repository.ReportRepository;
 import com.yam.funteer.funding.repository.TargetMoneyRepository;
-import com.yam.funteer.mail.service.EmailService;
 import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.post.entity.Comment;
@@ -96,7 +93,7 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public List<FundingListResponse> findFundingByKeyword(String keyword) {
-		List<Funding> byTitleContaining = fundingRepository.findByTitleOrContentContaining(keyword, keyword);
+		List<Funding> byTitleContaining = fundingRepository.findAllByTitleOrContentContaining(keyword, keyword);
 		List<FundingListResponse> collect = byTitleContaining.stream()
 			.map(funding -> FundingListResponse.from(funding))
 			.collect(Collectors.toList());
