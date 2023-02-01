@@ -15,5 +15,4 @@ public interface AdminService {
 
 	String  rejectReport(Long fundingId, RejectReasonRequest data) throws Exception;
 
-	List<FundingListResponse> findAllWaitFunding();
 }

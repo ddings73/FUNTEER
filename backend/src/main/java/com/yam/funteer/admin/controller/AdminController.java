@@ -59,26 +59,6 @@ public class 	AdminController {
 		return null;
 	}
 
-
-	@ApiOperation(value = "승인 대기 펀딩 목록 조회", notes = "승인 대기중인 펀딩 목록을 조회한다.")
-	@GetMapping("/funding/wait")
-	public ResponseEntity<List<FundingListResponse>> findWaitFundingList() {
-		adminService.findAllWaitFunding();
-		return null;
-	}
-
-	// @ApiOperation(value = "모든 펀딩 목록 조회", notes = "모든 펀딩 목록을 조회한다.")
-	// @GetMapping("/funding")
-	// public ResponseEntity<List<FundingListResponse>> findAllFunding() {
-	// 	return null;
-	// }
-
-	// @ApiOperation(value = "펀딩 상세 조회", notes = "펀딩 상세를 조회한다.")
-	// @GetMapping("/funding/{fundingId}")
-	// public ResponseEntity<FundingDetailResponse> readFundingDetail(@PathVariable Long fundingId) {
-	// 	return null;
-	// }
-
 	@ApiOperation(value = "펀딩 삭제", notes = "펀딩을 삭제한다.")
 	@DeleteMapping("/funding/{fundingId}")
 	public ResponseEntity<?> deleteFunding(@PathVariable Long fundingId) throws FundingNotFoundException {
