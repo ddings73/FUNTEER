@@ -16,8 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.yam.funteer.attach.entity.Attach;
-import com.yam.funteer.post.PostGroup;
-import com.yam.funteer.post.PostType;
+import com.yam.funteer.common.code.PostGroup;
+import com.yam.funteer.common.code.PostType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -38,9 +38,8 @@ public class Post {
 	private String content;
 	private LocalDateTime regDate;
 	private Integer hit;
-	@ManyToOne
-	@JoinColumn(name = "attach_id")
-	private Attach thumbnail;
+
+	private String thumbnail;
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
 	private PostGroup postGroup;
@@ -48,4 +47,28 @@ public class Post {
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
 	private PostType postType;
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public void setRegDate(LocalDateTime regDate) {
+		this.regDate = regDate;
+	}
+
+	public void setHit(Integer hit) {
+		this.hit = hit;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+
+	public void setPostType(PostType postType) {
+		this.postType = postType;
+	}
 }

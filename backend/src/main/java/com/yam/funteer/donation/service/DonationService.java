@@ -2,17 +2,20 @@ package com.yam.funteer.donation.service;
 
 import java.util.List;
 
-import com.yam.funteer.donation.entity.Donation;
-import com.yam.funteer.donation.exception.DonationNotFoundException;
-import com.yam.funteer.donation.request.DonationJoinReq;
-import com.yam.funteer.donation.request.DonationRegisterReq;
+import com.yam.funteer.donation.dto.request.DonationModifyReq;
+import com.yam.funteer.donation.dto.request.DonationRegisterReq;
+import com.yam.funteer.donation.dto.response.DonationBaseRes;
+import com.yam.funteer.donation.dto.response.DonationListRes;
+import com.yam.funteer.donation.dto.request.DonationJoinReq;
+
 import com.yam.funteer.pay.entity.Payment;
 
 public interface DonationService {
-	List<Donation> donationGetList();
-	Payment donationJoin(Long postId, DonationJoinReq donationJoinReq)throws DonationNotFoundException;
-	Donation donationGetDetail(Long postId);
-	void donationRegister(DonationRegisterReq donationRegisterReq);
+	List<DonationListRes> donationGetList();
+	Payment donationJoin(Long postId, DonationJoinReq donationJoinReq) ;
+	DonationBaseRes donationGetDetail(Long postId);
+	DonationBaseRes donationGetCurrent();
+	DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq);
 	// void donationDelete(Long postId,Long userId) throws DonationNotFoundException;
-	void donationModify(Long postId, DonationRegisterReq donationModifyReq) throws DonationNotFoundException;
+	DonationBaseRes donationModify(Long postId, DonationModifyReq donationModifyReq);
 }

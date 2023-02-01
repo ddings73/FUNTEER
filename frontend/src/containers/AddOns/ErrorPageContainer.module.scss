@@ -1,0 +1,115 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+@font-face {
+  font-family: 'OKGUNG';
+  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2206-02@1.0/OKGUNG.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+
+.bodyContainer {
+  background-color: rgb(255, 154, 123);
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: blink 3s infinite alternate;
+}
+
+.glowOnHover {
+  margin-left: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 350px;
+  height: 50px;
+  border: none;
+  outline: none;
+  color: #fff;
+  background: #111;
+  cursor: pointer;
+  position: relative;
+  z-index: 0;
+  border-radius: 10px;
+  font-family: 'OKGUNG';
+  font-size: 30px;
+}
+
+.warning {
+  font-family: 'OKGUNG';
+  font-size: 30px;
+  color: white;
+}
+
+.glowOnHover:before {
+  content: '';
+  background: linear-gradient(45deg, #ff0000, #ff7300, #fffb00, #48ff00, #00ffd5, #002bff, #7a00ff, #ff00c8, #ff0000);
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  background-size: 400%;
+  z-index: -1;
+  filter: blur(5px);
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  animation: glowing 20s linear infinite;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 10px;
+}
+
+.glowOnHover:active {
+  color: #000;
+}
+
+.glowOnHover:active:after {
+  background: transparent;
+}
+
+.glowOnHover:hover:before {
+  opacity: 1;
+}
+
+.glowOnHover:after {
+  z-index: -1;
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #111;
+  left: 0;
+  top: 0;
+  border-radius: 10px;
+}
+
+@keyframes glowing {
+  0% {
+    background-position: 0 0;
+  }
+  50% {
+    background-position: 400% 0;
+  }
+  100% {
+    background-position: 0 0;
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  20% {
+    background-color: #ff0000;
+  }
+  40% {
+    background-color: #00ff40;
+  }
+  60% {
+    background-color: #0051ff;
+  }
+  100% {
+    background-color: #ff00d4;
+  }
+}

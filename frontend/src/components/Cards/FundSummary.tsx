@@ -1,0 +1,58 @@
+import React from 'react';
+import HomeIcon from '@mui/icons-material/Home';
+import EmailIcon from '@mui/icons-material/Email';
+import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
+import thumbNail from '../../assets/images/funding/funding_thumbnail.png';
+import styles from './FundSummary.module.scss';
+import ProfileSvg from '../../assets/images/default-profile-img.svg';
+import TeamInfo from './TeamInfoCard';
+
+export interface ResponseInterface {
+  id: number;
+  title: string;
+  start: string;
+  end: string;
+  postDate: string;
+  thumbnail: string;
+  category: string;
+  content: string;
+  targetMonies: targetType[];
+  currentFundingAmount: number;
+}
+type targetType = {
+  amount: number;
+  description: string;
+  targetMoneyType: string;
+};
+
+export function FundSummary(board: ResponseInterface) {
+  const { title, start, end, content, targetMonies, currentFundingAmount } = board;
+  // console.log('타겟 머니', targetMonies[2]);
+  // console.log('타겟 머니 amount', targetMonies[2].amount);
+
+  return (
+    <div className={styles.cardContainer}>
+      <div className={styles.blogCard}>
+        <img className={styles.cardImage} src={thumbNail} alt="altImg" />
+        <div className={styles.cardDetail}>
+          <div className={styles.fundTitle}>{title}</div>
+          <div className={styles.fundSubTitle}>{content}</div>
+          <div className={styles.barWrapper}>
+            <div className={styles.object}> 목표금액: {targetMonies[2]?.amount}원</div>
+            <div className={styles.progressBar}>
+              <div className={styles.status}>10%</div>
+            </div>
+          </div>
+          <div className={styles.teamArea}>
+            <TeamInfo />
+          </div>
+          <p className={styles.fundPeriod}>
+            모금 기간 {start} ~ {end}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default FundSummary;

@@ -1,0 +1,40 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+.dialog {
+  display: flex;
+  flex-direction: column;
+
+  .close-btn {
+    width: 20px;
+    height: 20px;
+    border: none;
+    border-radius: 100%;
+    margin: 1rem 1rem 0 auto;
+    padding: 0 !important;
+    background-color: white;
+    color: black;
+    font-weight: bold;
+    box-shadow: none;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  .approve-btn {
+    background-color: $primary;
+
+    &:hover {
+      background-color: $error;
+    }
+  }
+
+  .deny-btn {
+    background-color: $second;
+
+    &:hover {
+      background-color: $error;
+    }
+  }
+}

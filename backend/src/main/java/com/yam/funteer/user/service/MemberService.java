@@ -1,16 +1,22 @@
 package com.yam.funteer.user.service;
 
-import com.yam.funteer.user.dto.request.CreateMemberRequest;
-import com.yam.funteer.user.dto.request.FollowRequest;
-import com.yam.funteer.user.dto.response.MemberProfileResponse;
-import com.yam.funteer.user.dto.request.BaseUserRequest;
+import com.yam.funteer.user.dto.request.*;
+import com.yam.funteer.user.dto.request.member.*;
+import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
+import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
 
 public interface MemberService {
 
-    void signupMember(CreateMemberRequest requestDto);
-    void signoutMember(BaseUserRequest baseUserRequest);
-    MemberProfileResponse getMemberProfile(BaseUserRequest baseUserRequest);
+    void createAccountWithOutProfile(CreateMemberRequest request);
+    void setAccountSignOut(BaseUserRequest baseUserRequest);
+    MemberProfileResponse getProfile(Long userId);
+    void updateProfile(UpdateMemberProfileRequest request);
+
+    MemberAccountResponse getAccountInfo();
+    void updateAccount(BaseUserRequest request);
 
     void followTeam(FollowRequest followRequest);
-    void wishFunding(Long fundingId, Long memberId);
+    void wishFunding(WishRequest wishRequest);
+
+    void chargeMileage(ChargeRequest chargeRequest);
 }

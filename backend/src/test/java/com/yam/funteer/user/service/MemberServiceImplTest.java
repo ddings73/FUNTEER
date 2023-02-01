@@ -1,7 +1,7 @@
 package com.yam.funteer.user.service;
 
-import com.yam.funteer.user.UserType;
-import com.yam.funteer.user.dto.request.CreateMemberRequest;
+import com.yam.funteer.common.code.UserType;
+import com.yam.funteer.user.dto.request.member.CreateMemberRequest;
 import com.yam.funteer.user.entity.Follow;
 import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
@@ -44,7 +44,7 @@ class MemberServiceImplTest {
                 .phone("010-1234-5678")
                 .build();
 
-        Member member = requestDto.toEntity();
+        Member member = requestDto.toMember();
         assertNotNull(member);
         assertEquals(UserType.NORMAL, member.getUserType());
         assertEquals(0L, member.getMoney());
@@ -61,7 +61,7 @@ class MemberServiceImplTest {
                 .phone("010-1234-5678")
                 .build();
 
-        Member member = requestDto.toEntity();
+        Member member = requestDto.toMember();
 
         Optional<Member> byEmail = memberRepository.findByEmail(requestDto.getEmail());
         assertTrue(byEmail.isEmpty());
