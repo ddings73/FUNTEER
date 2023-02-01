@@ -10,7 +10,6 @@ export { default as LogOut } from './Accounts/LogOut';
 
 export { default as ErrorPage } from './AddOns/ErrorPage';
 export { default as Charge } from './AddOns/Charge';
-export { default as Donation } from './AddOns/Donation';
 
 export { default as TeamPage } from './Service/TeamPage';
 export { default as ServiceDetail } from './Service/ServiceDetail';
@@ -34,3 +33,8 @@ export { default as FundingList } from './Funding/FundingList';
 export { default as CreateFunding } from './Funding/CreateFunding';
 
 export { default as CustomerCenter } from './CustomerCenter/CustomerCenter';
+
+export { default as Donation } from './Donation/Donation';
+
+export { default as NoticeDetail } from './CustomerCenter/NoticeDetail';
+

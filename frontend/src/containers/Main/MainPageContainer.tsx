@@ -1,7 +1,11 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
+import { useAppSelector } from '../../store/hooks';
 import styles from './MainPageContainer.module.scss';
 
 export function MainPageContainer() {
+  console.log(useAppSelector((state) => state.userSlice.userType));
+
   return (
     <div className={styles.container}>
       <div className={styles.bannerContainer}>
@@ -13,6 +17,7 @@ export function MainPageContainer() {
           <button className={styles.serviceBtn} type="button">
             서비스 상세보기
           </button>
+          <Link to="/funding/create">펀딩</Link>
         </div>
         <div className={styles.bannerImg}>배너 이미지 공간</div>
       </div>

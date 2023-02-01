@@ -146,6 +146,22 @@
         color: grey;
         margin-bottom: 1.5rem;
       }
+
+      .pw-div {
+        display: flex;
+        align-items: center;
+        box-shadow: none;
+
+        .pwv-btn {
+          color: rgba(1, 1, 1, 0.2);
+          margin-left: 1rem;
+
+          &:hover {
+            cursor: pointer;
+            color: rgba(1, 1, 1, 0.3);
+          }
+        }
+      }
     }
   }
 }
