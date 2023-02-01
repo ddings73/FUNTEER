@@ -7,19 +7,19 @@
   display: flex;
   justify-content: center;
   margin-top: 77.6px;
-  font-family: NanumSquareRound;
 
   .contents {
-    width: 100%;
-    max-width: 1160px;
+    width: 90%;
+    max-width: 950px;
     display: flex;
     flex-direction: column;
-    padding: 0 2rem;
+    padding: 0 5rem;
 
     .title {
+      margin: 10rem 0 1.5rem 0;
       font-weight: bold;
       font-size: 2.25rem;
-      margin: 10rem 0 1.5rem 0;
+      color: rgba(0, 0, 0, 0.8);
 
       @include tablet {
         font-size: 1.5rem;
@@ -27,14 +27,14 @@
       }
 
       @include mobile {
-        font-size: 1.25rem;
+        font-size: 1.125rem;
         margin: 5rem 0 0.5rem 0;
       }
     }
 
     .post-date {
       font-weight: bold;
-      color: grey;
+      color: rgba(0, 0, 0, 0.4);
       font-size: 1.25rem;
 
       @include tablet {
@@ -48,22 +48,25 @@
 
     & hr {
       margin: 3rem 0;
-      max-width: 85%;
+      width: 85%;
 
       @include tablet {
         margin: 2.5rem 0;
       }
 
       @include mobile {
+        width: 100%;
         margin: 1rem 0;
       }
     }
 
     .content {
-      max-width: 80%;
+      width: 80%;
       font-size: 1.125rem;
+      line-height: 2rem;
 
       @include mobile {
+        width: 100%;
         font-size: 0.75rem;
       }
     }
@@ -74,6 +77,7 @@
       border: none;
       color: $primary;
       font-size: 1.25rem;
+      font-weight: bold;
 
       &:hover {
         cursor: pointer;
@@ -85,7 +89,7 @@
       }
 
       @include mobile {
-        display: none;
+        display: 0.75rem;
       }
     }
   }

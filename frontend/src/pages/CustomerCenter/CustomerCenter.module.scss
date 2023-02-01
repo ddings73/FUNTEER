@@ -1,15 +1,14 @@
 @import '../../styles/reset.scss';
 @import '../../styles/variable.scss';
 
-.container {
+.page {
   width: 100%;
   min-height: 100vh;
   display: flex;
   justify-content: center;
   margin-top: 120px;
-  font-family: NanumSquareRound;
 
-  .contents {
+  .tab-contents {
     display: flex;
     flex-direction: column;
     width: 100%;

@@ -51,14 +51,14 @@ export default function CustomerCenter() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.contents}>
+    <div className={styles.page}>
+      <div className={styles['tab-contents']}>
         <Box sx={{ width: '100%' }}>
-          <AppBar position="static">
+          <AppBar position="static" sx={{ backgroundColor: 'white', boxShadow: 'none' }}>
             <Tabs
               value={value}
               onChange={handleChange}
-              sx={{ backgroundColor: '#EC994B' }}
+              sx={{ color: 'black' }}
               TabIndicatorProps={{
                 sx: { backgroundColor: '#E6750A' },
               }}
@@ -66,9 +66,9 @@ export default function CustomerCenter() {
               variant="fullWidth"
               aria-label="full width tabs example"
             >
-              <Tab label="공지사항" {...a11yProps(0)} sx={{ fontWeight: 'bold', fontFamily: 'NanumSquareRound' }} />
-              <Tab label="FAQ" {...a11yProps(1)} sx={{ fontWeight: 'bold', fontFamily: 'NanumSquareRound' }} />
-              <Tab label="1:1 문의" {...a11yProps(2)} sx={{ fontWeight: 'bold', fontFamily: 'NanumSquareRound' }} />
+              <Tab label="공지사항" {...a11yProps(0)} sx={{ fontWeight: 'bold' }} />
+              <Tab label="FAQ" {...a11yProps(1)} sx={{ fontWeight: 'bold' }} />
+              <Tab label="1:1 문의" {...a11yProps(2)} sx={{ fontWeight: 'bold' }} />
             </Tabs>
           </AppBar>
 

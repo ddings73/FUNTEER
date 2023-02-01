@@ -13,7 +13,7 @@ function AdminTeamContainer() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [TeamSearch, setTeamSearch] = useState<string>('');
-  const [TeamStateFilter, setTeamStateFilter] = useState<string>(TeamState.NotCertified);
+  const [TeamStateFilter, setTeamStateFilter] = useState<string>(TeamState.All);
 
   /** 검색 */
   const onTeamSearchInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,9 +27,14 @@ function AdminTeamContainer() {
 
   /** 검색 + 필터 고려해서 필터링 */
   const filtedTeams = AdminTeamContainerItem.filter((Team) => {
-    const filter =
-      (Team.name.includes(TeamSearch) || Team.email.includes(TeamSearch) || Team.phone.includes(TeamSearch) || Team.vmsNum.includes(TeamSearch)) &&
-      Team.teamState === TeamStateFilter;
+    let filter;
+    if (TeamStateFilter === '전체') {
+      filter = Team.name.includes(TeamSearch) || Team.email.includes(TeamSearch) || Team.phone.includes(TeamSearch) || Team.vmsNum.includes(TeamSearch);
+    } else {
+      filter =
+        (Team.name.includes(TeamSearch) || Team.email.includes(TeamSearch) || Team.phone.includes(TeamSearch) || Team.vmsNum.includes(TeamSearch)) &&
+        Team.teamState === TeamStateFilter;
+    }
     return filter;
   });
 

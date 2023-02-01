@@ -1,7 +1,12 @@
 import React from 'react';
-import styles from './FAQContainer.module.scss';
+import Accordion from '@mui/material/Accordion';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FAQContainerMemberItem from './FAQContainerMemberItem';
 import FAQContainerTeamItem from './FAQContainerTeamItem';
+import styles from './FAQContainer.module.scss';
 
 export default function FAQContainer() {
   return (
@@ -9,19 +14,27 @@ export default function FAQContainer() {
       <div className={styles['user-type-div']}>
         <h1 className={styles.title}>후원자 분들이 많이 문의했어요.</h1>
         {FAQContainerMemberItem.map((data) => (
-          <details key={data.ques} className={styles.item}>
-            <summary>{data.ques}</summary>
-            <p>{data.ans}</p>
-          </details>
+          <Accordion sx={{ boxShadow: 'none' }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+              <Typography sx={{ fontSize: '1.125rem' }}>{data.ques}</Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ backgroundColor: 'rgb(255, 254, 253)', padding: '2rem', boxShadow: '0px 0px 20px rgba(255, 132, 0, 0.02) inset' }}>
+              <Typography sx={{ fontSize: '1rem', lineHeight: '2rem' }}>{data.ans}</Typography>
+            </AccordionDetails>
+          </Accordion>
         ))}
       </div>
       <div className={styles['user-type-div']}>
         <h1 className={styles.title}>봉사 단체에서 많이 문의했어요.</h1>
         {FAQContainerTeamItem.map((data) => (
-          <details key={data.ques} className={styles.item}>
-            <summary>{data.ques}</summary>
-            <p>{data.ans}</p>
-          </details>
+          <Accordion sx={{ boxShadow: 'none' }}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+              <Typography sx={{ fontSize: '1.125rem' }}>{data.ques}</Typography>
+            </AccordionSummary>
+            <AccordionDetails sx={{ backgroundColor: 'rgb(255, 254, 252)', padding: '2rem', boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.05) inset' }}>
+              <Typography sx={{ fontSize: '1rem', lineHeight: '2rem' }}>{data.ans}</Typography>
+            </AccordionDetails>
+          </Accordion>
         ))}
       </div>
     </div>

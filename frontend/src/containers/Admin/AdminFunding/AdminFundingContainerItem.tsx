@@ -1,6 +1,7 @@
 import React from 'react';
 
 export enum FundingState {
+  All = '전체',
   NotFundApproved = '승인 대기',
   FundApproved = '승인',
   Funding = '펀딩중',
