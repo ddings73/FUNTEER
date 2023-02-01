@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import styles from './AdminTeamDenyContainer.module.scss';
 import { useAppDispatch } from '../../../store/hooks';
 import { closeModal } from '../../../store/slices/fileModalSlice';
+import requiredIcon from '../../../assets/images/funding/required.svg';
 
 function AdminTeamDenyContainer() {
   const dispatch = useAppDispatch();
@@ -48,16 +49,12 @@ function AdminTeamDenyContainer() {
       <div className={styles.contents}>
         <h1 className={styles.title}>단체 가입 거부 사유</h1>
         <div className={styles['label-div']}>
-          <p>
-            제목 <span>*</span>
-          </p>
+          <p>제목</p> <img src={requiredIcon} alt="required icon" />
         </div>
 
         <input name="title" type="text" className={styles['email-title']} placeholder="제목을 10자 이상 입력해주세요." />
         <div className={styles['label-div']}>
-          <p>
-            내용 <span>*</span>
-          </p>
+          <p>내용</p> <img src={requiredIcon} alt="required icon" />
         </div>
         <textarea name="content" className={styles['email-content']} placeholder="내용을 20자 이상 입력해주세요." />
         <div className={styles['btn-div']}>

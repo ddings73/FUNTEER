@@ -29,7 +29,7 @@ const tmp = 500000;
 export const AdminMemberContainerItem: adminMemberContainerItemType[] = [
   {
     name: '김보경',
-    nickname: '김보경',
+    nickname: '닉네임이어어엄청길어요ㅋㅋㅋㅋ',
     profileImageUrl: profile1,
     phone: '010-1234-1234',
     email: 'bbookng@gmail.com',
