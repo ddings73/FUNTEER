@@ -6,9 +6,9 @@ import Tab from '@mui/material/Tab';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import styles from './CustomerCenter.module.scss';
-import FAQContainer from '../../containers/CustomerCenter/FAQContainer';
-import NoticeContainer from '../../containers/CustomerCenter/NoticeContainer';
-import QuestionContainer from '../../containers/CustomerCenter/QuestionContainer';
+import FAQContainer from '../../containers/CustomerCenter/FAQ/FAQContainer';
+import NoticeContainer from '../../containers/CustomerCenter/Notice/NoticeContainer';
+import QuestionContainer from '../../containers/CustomerCenter/Question/QuestionContainer';
 
 interface TabPanelProps {
   children: React.ReactNode;
@@ -51,14 +51,14 @@ export default function CustomerCenter() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.contents}>
+    <div className={styles.page}>
+      <div className={styles['tab-contents']}>
         <Box sx={{ width: '100%' }}>
-          <AppBar position="static">
+          <AppBar position="static" sx={{ backgroundColor: 'white', boxShadow: 'none' }}>
             <Tabs
               value={value}
               onChange={handleChange}
-              sx={{ backgroundColor: '#EC994B' }}
+              sx={{ color: 'black' }}
               TabIndicatorProps={{
                 sx: { backgroundColor: '#E6750A' },
               }}
@@ -66,17 +66,17 @@ export default function CustomerCenter() {
               variant="fullWidth"
               aria-label="full width tabs example"
             >
-              <Tab label="FAQ" {...a11yProps(0)} />
-              <Tab label="공지사항" {...a11yProps(1)} />
-              <Tab label="1:1 문의" {...a11yProps(2)} />
+              <Tab label="공지사항" {...a11yProps(0)} sx={{ fontWeight: 'bold' }} />
+              <Tab label="FAQ" {...a11yProps(1)} sx={{ fontWeight: 'bold' }} />
+              <Tab label="1:1 문의" {...a11yProps(2)} sx={{ fontWeight: 'bold' }} />
             </Tabs>
           </AppBar>
 
           <TabPanel value={value} index={0} dir={theme.direction}>
-            <FAQContainer />
+            <NoticeContainer />
           </TabPanel>
           <TabPanel value={value} index={1} dir={theme.direction}>
-            <NoticeContainer />
+            <FAQContainer />
           </TabPanel>
           <TabPanel value={value} index={2} dir={theme.direction}>
             <QuestionContainer />
