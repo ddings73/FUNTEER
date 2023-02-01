@@ -150,7 +150,7 @@ const router = createBrowserRouter([
         element: <CreateFunding />,
       },
       {
-        path: '/funding/detail/:id',
+        path: '/funding/detail/:fundIdx',
         element: <FundingDetail />,
       },
       {

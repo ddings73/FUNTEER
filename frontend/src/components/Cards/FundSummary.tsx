@@ -16,29 +16,29 @@ export interface ResponseInterface {
   thumbnail: string;
   category: string;
   content: string;
-  targetMonies: targetType[];
+  targetMoneyListLevelThree: targetType[];
   currentFundingAmount: number;
 }
 type targetType = {
-  amount: number;
-  description: string;
-  targetMoneyType: string;
+  amount?: number;
+  targetMoneyType?: string;
+  description?: string;
 };
 
 export function FundSummary(board: ResponseInterface) {
-  const { title, start, end, content, targetMonies, currentFundingAmount } = board;
+  const { title, start, end, content, targetMoneyListLevelThree, thumbnail } = board;
   // console.log('타겟 머니', targetMonies[2]);
   // console.log('타겟 머니 amount', targetMonies[2].amount);
 
   return (
     <div className={styles.cardContainer}>
       <div className={styles.blogCard}>
-        <img className={styles.cardImage} src={thumbNail} alt="altImg" />
+        <img className={styles.cardImage} src={thumbnail} alt="altImg" />
         <div className={styles.cardDetail}>
           <div className={styles.fundTitle}>{title}</div>
           <div className={styles.fundSubTitle}>{content}</div>
           <div className={styles.barWrapper}>
-            <div className={styles.object}> 목표금액: {targetMonies[2]?.amount}원</div>
+            <div className={styles.object}> 목표금액: {targetMoneyListLevelThree[0].amount}원</div>
             <div className={styles.progressBar}>
               <div className={styles.status}>10%</div>
             </div>
@@ -47,7 +47,7 @@ export function FundSummary(board: ResponseInterface) {
             <TeamInfo />
           </div>
           <p className={styles.fundPeriod}>
-            모금 기간 {start} ~ {end}
+            모금 기간: {start} ~ {end}
           </p>
         </div>
       </div>

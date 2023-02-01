@@ -12,6 +12,10 @@ import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
 import CommentCard from '../../components/Cards/CommentCard';
 
+type ParamsType = {
+  id: number;
+};
+
 export function FundingDetailContainer() {
   const [users, setUsers] = useState(null);
   const [board, setBoard] = useState<ResponseInterface>({
@@ -23,25 +27,25 @@ export function FundingDetailContainer() {
     thumbnail: '',
     category: '',
     content: '',
-    targetMonies: [],
+    targetMoneyListLevelThree: [],
     currentFundingAmount: 0,
   });
 
-  const initFundDetail = useCallback(async () => {
-    try {
-      const param = useParams();
-      const paramId = Number(param.id);
-
-      const { data } = await requestFundingDetail(paramId);
-      console.log('데이터임', data);
-      setBoard(data);
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
+  const { fundIdx } = useParams();
 
   useEffect(() => {
-    initFundDetail();
+    const fetchData = async () => {
+      try {
+        const response = await requestFundingDetail(fundIdx);
+        console.log('res: ', response);
+        console.log('data res: ', response.data);
+        setBoard(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (

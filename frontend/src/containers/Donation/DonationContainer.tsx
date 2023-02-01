@@ -1,14 +1,54 @@
 import React from 'react';
+import { useState } from 'react';
 import { Button } from '@mui/material';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import axios from 'axios';
 import donationThumbnail from '../../assets/images/donation/donationImg.png';
 import styles from './DonationContainer.module.scss';
 import { useAppSelector } from '../../store/hooks';
 import ListTable from '../../components/Table/ListTable';
+import { requestUnderDonating } from '../../api/donation';
+
+interface ResponseInterface {
+  id: number;
+  title: string;
+  content: string;
+  // files: fileType;
+  targetAmount: number;
+  currentAmount: number;
+  postType: boolean;
+}
+
+const [donation, setdonation] = useState<ResponseInterface>({
+  id: 0,
+  title: '',
+  content: '',
+  // files: [],
+  targetAmount: 0,
+  currentAmount: 0,
+  postType: true,
+});
+
+// const result = requestUnderDonating();
+// console.log(result);
+// useEffect(() => {
+//   const fetchData = async () => {
+//     try {
+//       const response = await requestFundingDetail(fundIdx);
+//       console.log('res: ', response);
+//       console.log('data res: ', response.data);
+//       setBoard(response.data);
+//     } catch (error) {
+//       console.log(error);
+//     }
+//   };
+
+//   fetchData();
+// }, []);
 
 function DonationContainer() {
   return (

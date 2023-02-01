@@ -26,6 +26,7 @@
       font-size: 1.5rem;
       font-family: 'nanumsquare';
       margin-bottom: 30px;
+      font-weight: 600;
     }
 
     .donation-box {
@@ -75,7 +76,8 @@
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
-          // text-fill-color: transparent;
+          text-align: center;
+          text-fill-color: transparent;
 
           @include mobile {
             font-size: 1.5rem;
