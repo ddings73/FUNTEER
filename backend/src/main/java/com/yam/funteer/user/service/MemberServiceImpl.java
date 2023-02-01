@@ -98,8 +98,10 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberAccountResponse getAccountInfo(Long userId) {
-        Member member = memberRepository.findById(SecurityUtil.getCurrentUserId()).get();//validateSameUser(SecurityUtil.getCurrentUserId(), userId);
+    public MemberAccountResponse getAccountInfo() {
+        Long userid = SecurityUtil.getCurrentUserId();
+        Member member = memberRepository.findById(userid)
+            .orElseThrow(UserNotFoundException::new);
 
         if(member.isResign()){
             throw new IllegalArgumentException("탈퇴한 회원입니다");

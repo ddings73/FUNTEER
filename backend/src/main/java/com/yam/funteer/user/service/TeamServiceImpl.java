@@ -127,8 +127,9 @@ public class TeamServiceImpl implements TeamService{
 	}
 
 	@Override
-	public TeamAccountResponse getTeamAccount(Long userId) {
-		Team team = validateSameUser(SecurityUtil.getCurrentUserId(), userId);
+	public TeamAccountResponse getTeamAccount() {
+		Team team = teamRepository.findById(SecurityUtil.getCurrentUserId())
+			.orElseThrow(UserNotFoundException::new);
 
 		if(team.isResignOrWait()){
 			throw new IllegalArgumentException("탈퇴하였거나 가입 대기중인 회원입니다.");
