@@ -1,27 +1,36 @@
 package com.yam.funteer.user.dto.response;
 
-import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.BaseResponseBody;
+import com.yam.funteer.user.entity.Token;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.User;
 
 import lombok.*;
 
+@Builder
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse extends BaseResponseBody {
+public class LoginResponse {
 
     private Long userId;
     private String username;
-    private Attach profileImg;
-    private String userType;
+    private String profileImgUrl;
+    private UserType userType;
+    private TokenInfo token;
 
-    // token 두개
-    private String accessToken;
-    private String refreshToken;
+    public static LoginResponse of(User user, TokenInfo token){
+        String path = null;
+        if(user.getProfileImg().isPresent()){
+            path = user.getProfileImg().get().getPath();
+        }
 
-    public static LoginResponse of(User user, String accessToken, String refreshToken){
-        return new LoginResponse(user.getId(), user.getName(), user.getProfileImg(), user.getUserType().name()
-            , accessToken, refreshToken);
+        return LoginResponse.builder()
+                .userId(user.getId())
+                .username(user.getName())
+                .profileImgUrl(path)
+                .userType(user.getUserType())
+                .token(token)
+                .build();
     }
 }

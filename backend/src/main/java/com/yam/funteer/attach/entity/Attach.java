@@ -13,6 +13,8 @@ import javax.persistence.Table;
 
 import com.yam.funteer.attach.FileType;
 
+import com.yam.funteer.user.dto.request.UpdateProfileRequest;
+import io.swagger.annotations.ApiOperation;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,4 +41,18 @@ public class Attach {
 	@Enumerated(EnumType.STRING)
 	@Column(nullable = false)
 	private FileType fileType;
+
+	public void update(String name, String path) {
+		this.name = name;
+		this.path = path;
+	}
+
+	public static Attach of(String filename, String path, FileType fileType){
+		return Attach.builder()
+			.name(filename)
+			.fileType(fileType)
+			.path(path)
+			.regDate(LocalDateTime.now())
+			.build();
+	}
 }

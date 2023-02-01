@@ -1,6 +1,7 @@
 package com.yam.funteer.post.entity;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.user.entity.Member;
 
@@ -39,4 +41,13 @@ public class Comment {
 
 	private @NotBlank String content;
 	private LocalDateTime regDate;
+
+	public Comment(Funding funding, Member member, String content) {
+		this.funding = funding;
+		this.member = member;
+		this.content = content;
+		this.regDate = LocalDateTime.now();
+
+	}
+
 }

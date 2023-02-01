@@ -28,9 +28,9 @@ public class SwaggerConfig {
 			.select()
 			.apis(RequestHandlerSelectors.basePackage("com.yam.funteer"))
 			.paths(PathSelectors.ant("/**/**/**"))
-			.build();
-			// .securityContexts(Arrays.asList(securityContext()))
-			// .securitySchemes(Arrays.asList(apiKey()));
+			.build()
+			.securityContexts(Arrays.asList(securityContext()))
+			.securitySchemes(Arrays.asList(apiKey()));
 	}
 
 	private ApiInfo apiInfo() {
@@ -39,18 +39,18 @@ public class SwaggerConfig {
 			.version("1.0").build();
 	}
 
-	// private ApiKey apiKey() {
-	// 	return new ApiKey("JWT", "Authorization", "header");
-	// }
+	private ApiKey apiKey() {
+		return new ApiKey("JWT", "Authorization", "header");
+	}
 
-	// private SecurityContext securityContext() {
-	// 	return SecurityContext.builder().securityReferences(defaultAuth()).build();
-	// }
+	private SecurityContext securityContext() {
+		return SecurityContext.builder().securityReferences(defaultAuth()).build();
+	}
 
-	// private List<SecurityReference> defaultAuth(){
-	// 	AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
-	// 	AuthorizationScope[] auth = new AuthorizationScope[1];
-	// 	auth[0] = authorizationScope;
-	// 	return Arrays.asList(new SecurityReference("JWT", auth));
-	// }
+	private List<SecurityReference> defaultAuth(){
+		AuthorizationScope authorizationScope = new AuthorizationScope("global", "accessEverything");
+		AuthorizationScope[] auth = new AuthorizationScope[1];
+		auth[0] = authorizationScope;
+		return Arrays.asList(new SecurityReference("JWT", auth));
+	}
 }
