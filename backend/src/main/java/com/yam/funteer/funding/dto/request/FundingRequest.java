@@ -1,5 +1,7 @@
 package com.yam.funteer.funding.dto.request;
 
+import java.util.List;
+
 import javax.validation.constraints.NotNull;
 
 import lombok.AllArgsConstructor;
@@ -28,21 +30,7 @@ public class FundingRequest {
 	@NotNull
 	private String fundingDescription;
 
-	@NotNull
-	private int amount1;
-	@NotNull
-	private String description1;
-
-	@NotNull
-	private int amount2;
-	@NotNull
-	private String description2;
-
-	@NotNull
-	private int amount3;
-	@NotNull
-	private String description3;
-
+	private List<TargetMoneyRequest> targetMoneyRequestList;
 	private String hashtags;
 
 }
