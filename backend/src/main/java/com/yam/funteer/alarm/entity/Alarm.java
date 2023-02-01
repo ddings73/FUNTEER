@@ -1,4 +1,4 @@
-package com.yam.funteer.post.entity;
+package com.yam.funteer.alarm.entity;
 
 import java.time.LocalDateTime;
 
@@ -11,6 +11,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 
+import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.user.entity.User;
 
 import lombok.AccessLevel;
@@ -37,4 +38,5 @@ public class Alarm {
 	private @NotBlank String content;
 	private boolean checked;
 	private LocalDateTime date;
+
 }

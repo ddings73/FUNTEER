@@ -3,6 +3,7 @@ package com.yam.funteer.funding.entity;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -31,6 +32,7 @@ public class Report{
 		this.content = content;
 		this.regDate = regDate;
 		this.receipts = receipts;
+
 	}
 
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -47,10 +49,14 @@ public class Report{
 	@JoinColumn(name = "recipt_id")
 	private Attach receipts;
 
-	@OneToMany(mappedBy = "report")
+	@OneToMany(mappedBy = "report", cascade = CascadeType.ALL)
 	private List<ReportDetail> reportDetails;
 
 	public void setRejectComment(String rejectReason) {
 		this.rejectReason = rejectReason;
+	}
+
+	public void setReportDetail(List<ReportDetail> reportDetails) {
+		this.reportDetails = reportDetails;
 	}
 }

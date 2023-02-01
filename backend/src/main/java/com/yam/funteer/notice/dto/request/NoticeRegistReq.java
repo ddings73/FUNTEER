@@ -31,6 +31,7 @@ public class NoticeRegistReq {
 	private String title;
 	@NotBlank
 	private String content;
+
 	private List<MultipartFile>files=new ArrayList<>();
 
 	public Post toEntity(){

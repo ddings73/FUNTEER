@@ -2,6 +2,8 @@ package com.yam.funteer.funding.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
+
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.entity.Funding;
 
@@ -35,9 +37,13 @@ public class FundingListResponse {
 
 	private String thumbnail;
 
+	private String categoryName;
+
+	private HashtagResponse postHashtagList;
+
 	public static FundingListResponse from(Funding funding) {
 
-		return FundingListResponse.builder()
+		FundingListResponse response = FundingListResponse.builder()
 			.id(funding.getId())
 			.title(funding.getTitle())
 			.startDate(funding.getStartDate())
@@ -48,7 +54,13 @@ public class FundingListResponse {
 			.currentFundingAmount(funding.getCurrentFundingAmount())
 			.amount(funding.getTargetMoneyList().get(2).getAmount())
 			.postType(funding.getPostType())
+			.categoryName(funding.getCategory().getName())
 			.build();
 
+		if (funding.getHashtags() != null) {
+			response.setPostHashtagList(HashtagResponse.from(funding.getHashtags()));
+		}
+
+		return response;
 	}
 }
