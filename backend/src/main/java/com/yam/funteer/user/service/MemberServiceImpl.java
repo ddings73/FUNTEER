@@ -69,9 +69,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        if(member.isResign()){
-            throw new IllegalArgumentException("탈퇴한 회원입니다");
-        }
+        member.validate();
 
         long followCnt = followRepository.countAllByMember(member);
         long wishCnt = wishRepository.countAllByMember(member);
@@ -103,9 +101,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(userid)
             .orElseThrow(UserNotFoundException::new);
 
-        if(member.isResign()){
-            throw new IllegalArgumentException("탈퇴한 회원입니다");
-        }
+        member.validate();
         return MemberAccountResponse.of(member);
     }
 
