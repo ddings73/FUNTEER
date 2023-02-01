@@ -19,4 +19,6 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 	List<Funding> findByTitleOrContentContaining(String keyword, String keyword2);
 
 	List<Funding> findAllByStartDate(LocalDate now);
+
+	List<Funding> findAllByEndDate(LocalDate minusDays);
 }

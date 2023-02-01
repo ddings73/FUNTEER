@@ -315,6 +315,7 @@ public class FundingServiceImpl implements FundingService{
 
 		} else if (funding.getPostType() == PostType.FUNDING_IN_PROGRESS) {
 			funding.setEndDate(endDate);
+			funding.setPostType(PostType.FUNDING_EXTEND);
 		} else {
 			throw new Exception("no");
 		}
@@ -436,13 +437,22 @@ public class FundingServiceImpl implements FundingService{
 		}
 	}
 
-	// 자정이 되면 StartDate가 당일인 펀딩들 중 승인 안료된 펀딩을 진행중으로 변경
+	// 자정이 되면 StartDate가 당일인 펀딩들 중 승인 안료된 펀딩을 진행중으로 변경, 펀딩 금액에 따라 완료/실패 여부 판단
 	@Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
 	public void changeStatusFunding() {
 		List<Funding> all = fundingRepository.findAllByStartDate(LocalDate.now());
 		for (Funding funding : all) {
 			if (funding.getPostType() == PostType.FUNDING_ACCEPT) {
 				funding.setPostType(PostType.FUNDING_IN_PROGRESS);
+			}
+		}
+
+		List<Funding> allByEndDate = fundingRepository.findAllByEndDate(LocalDate.now().minusDays(1));
+		for (Funding funding : allByEndDate) {
+			if (funding.getCurrentFundingAmount() >= funding.getTargetMoneyList().get(0).getAmount()) {
+				funding.setPostType(PostType.FUNDING_COMPLETE);
+			} else {
+				funding.setPostType(PostType.FUNDING_FAIL);
 			}
 		}
 	}
