@@ -2,9 +2,12 @@ package com.yam.funteer.qna.service;
 
 import org.springframework.stereotype.Service;
 
+import com.yam.funteer.alarm.repository.AlarmRepository;
+import com.yam.funteer.alarm.service.AlarmService;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
+import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.qna.dto.request.QnaReplyReq;
 import com.yam.funteer.qna.dto.response.ReplyBaseRes;
 import com.yam.funteer.qna.entity.Qna;
@@ -27,6 +30,7 @@ public class ReplyServiceImpl implements ReplyService{
 	private final UserRepository userRepository;
 	private final QnaRepository qnaRepository;
 	private final ReplyRepository replyRepository;
+	private final AlarmService alarmService;
 
 	@Override
 	public ReplyBaseRes replyGetDetail(Long qnaId) {
@@ -45,6 +49,7 @@ public class ReplyServiceImpl implements ReplyService{
 		if(replyRepository.findByQna(qna).isPresent())throw new ReplyDuplicatedException();
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Reply reply=replyRepository.save(qnaReplyReq.toEntity(qna));
+			alarmService.send(qna.getUser(),qna.getTitle(), "답변이 등록되었습니다.", qna);
 			return new ReplyBaseRes(reply);
 		}else throw new  IllegalArgumentException("접근 권한이 없습니다.");
 	}
@@ -56,6 +61,7 @@ public class ReplyServiceImpl implements ReplyService{
 		Reply reply=replyRepository.findByQna(qna).orElseThrow(()->new ReplyNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)){
 			reply.update(reply.getId(),qna,qnaReplyReq.getContent(),reply.getRegDate());
+			alarmService.send(qna.getUser(),qna.getTitle(), "답변이 수정되었습니다.", qna);
 			return new ReplyBaseRes(reply);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
@@ -68,6 +74,7 @@ public class ReplyServiceImpl implements ReplyService{
 
 		if(user.getUserType().equals(UserType.ADMIN)){
 			replyRepository.delete(reply);
+			alarmService.send(qna.getUser(),qna.getTitle(), "답변이 삭제되었습니다.", qna);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 }
