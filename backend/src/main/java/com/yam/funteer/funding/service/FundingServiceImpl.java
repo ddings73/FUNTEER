@@ -93,7 +93,7 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public List<FundingListResponse> findFundingByKeyword(String keyword) {
-		List<Funding> byTitleContaining = fundingRepository.findAllByTitleOrContentContaining(keyword, keyword);
+		List<Funding> byTitleContaining = fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword);
 		List<FundingListResponse> collect = byTitleContaining.stream()
 			.map(funding -> FundingListResponse.from(funding))
 			.collect(Collectors.toList());

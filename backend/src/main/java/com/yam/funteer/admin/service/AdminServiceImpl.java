@@ -1,8 +1,5 @@
 package com.yam.funteer.admin.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -10,7 +7,6 @@ import org.springframework.stereotype.Service;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
-import com.yam.funteer.funding.dto.response.FundingListResponse;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.funding.repository.FundingRepository;
@@ -62,12 +58,4 @@ public class AdminServiceImpl implements AdminService{
 		return data.getRejectReason();
 	}
 
-	@Override
-	public List<FundingListResponse> findAllWaitFunding() {
-		List<Funding> allByPostType = fundingRepository.findAllByPostType(PostType.FUNDING_WAIT);
-		List<FundingListResponse> collect = allByPostType.stream()
-			.map(funding -> FundingListResponse.from(funding))
-			.collect(Collectors.toList());
-		return collect;
-	}
 }

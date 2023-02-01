@@ -17,7 +17,7 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 
 	List<Funding> findAllByCategory(Category category);
 
-	List<Funding> findAllByTitleOrContentContaining(String keyword, String keyword2);
+	List<Funding> findAllByTitleContainingOrContentContaining(String keyword, String keyword2);
 
 	List<Funding> findAllByStartDate(LocalDate now);
 
