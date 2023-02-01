@@ -7,6 +7,7 @@ import com.yam.funteer.user.dto.response.TokenInfo;
 
 public interface LoginService {
     LoginResponse processLogin(LoginRequest loginRequest);
+    LoginResponse processKakaoLogin(LoginRequest loginRequest);
 
     void processLogOut();
 

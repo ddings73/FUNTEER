@@ -57,9 +57,12 @@ public class FundingListResponse {
 			.categoryName(funding.getCategory().getName())
 			.build();
 
+
 		if (funding.getHashtags() != null) {
 			response.setPostHashtagList(HashtagResponse.from(funding.getHashtags()));
 		}
+
+		// funding.getPostHashtags().ifPresent(postHashtags -> response.setPostHashtagList((HashtagResponse)postHashtags));
 
 		return response;
 	}

@@ -21,9 +21,10 @@ public class Member extends User{
 	private @NotBlank String nickname;
 	private boolean display;
 
-	public static Member toKakaoUser(String email, String name) {
+	public static Member toKakaoUser(String email, String name, String password) {
 		return Member.builder()
 			.email(email)
+			.password(password)
 			.name(name)
 			.nickname(name)
 			.display(true)

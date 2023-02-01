@@ -33,8 +33,4 @@ public class Team extends User{
         this.description = description;
     }
 
-    public boolean isResignOrWait() {
-        UserType userType = getUserType();
-        return userType.equals(UserType.TEAM_WAIT) || isResign();
-    }
 }

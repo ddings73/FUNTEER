@@ -4,10 +4,12 @@ import { RootState } from '../store';
 
 export interface UserStateInterface {
   isLogin: boolean;
+  userType: string;
 }
 
 const initialState: UserStateInterface = {
   isLogin: false,
+  userType: '',
 };
 
 export const userSlice = createSlice({
@@ -17,10 +19,13 @@ export const userSlice = createSlice({
     setUserLoginState: (state, action: PayloadAction<boolean>) => {
       state.isLogin = action.payload;
     },
+    setUserType: (state, action: PayloadAction<string>) => {
+      state.userType = action.payload;
+    },
   },
 });
 
-export const { setUserLoginState } = userSlice.actions;
+export const { setUserLoginState, setUserType } = userSlice.actions;
 
 export const isLoginState = (state: RootState) => state.userSlice.isLogin;
 

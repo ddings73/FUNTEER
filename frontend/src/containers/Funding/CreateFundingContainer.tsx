@@ -13,12 +13,16 @@ import { Button } from '@mui/material';
 import Icon from '@mui/material/Icon';
 import { BsLockFill } from 'react-icons/bs';
 import { useNavigate } from 'react-router-dom';
+import { off } from 'process';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestUploadImage } from '../../api/funding';
 import { FundingInterface } from '../../types/funding';
 import defaultThumbnail from '../../assets/images/default-profile-img.svg';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { openModal } from '../../store/slices/modalSlice';
+import requiredIcon from '../../assets/images/funding/required.svg';
+import uploadIcon from '../../assets/images/funding/upload.svg';
+import cancelIcon from '../../assets/images/funding/cancel.svg';
 
 interface TabPanelProps {
   // eslint-disable-next-line react/require-default-props
@@ -38,6 +42,7 @@ function TabPanel(props: TabPanelProps) {
 }
 
 function CreateFundingContainer() {
+  const thumbnailRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const editorRef = useRef<ToastEditor>(null);
@@ -129,30 +134,67 @@ function CreateFundingContainer() {
     }
   };
 
+  const onClickUpload = () => {
+    if (thumbnailRef.current) thumbnailRef.current.click();
+  };
+
+  useEffect(() => {
+    console.log(fundingData);
+  }, [fundingData]);
+
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
         <div className={styles['funding-thumbnail-box']}>
-          <p className={styles.title}>펀딩 썸네일 사진 등록</p>
-          <img src={thunmbnailPreview || defaultThumbnail} alt="thumbnail" className={styles['thumbnail-image']} />
+          <p className={styles.title}>
+            프로젝트 대표 이미지 <img className={styles.required} src={requiredIcon} alt="" />
+          </p>
+          <p className={styles.subTitle}>후원자들이 프로젝트의 내용을 쉽게 파악할 수 있는 이미지를 올려주세요.</p>
+          <div className={styles['thumbnail-upload-box']}>
+            <img src={thunmbnailPreview || defaultThumbnail} alt="thumbnail" className={styles['thumbnail-image']} />
 
-          <input type="file" accept="image/*" onChange={onFileHandler} />
+            <div className={styles['upload-button-box']} onClick={onClickUpload} aria-hidden="true">
+              <p className={styles['upload-icon-box']}>
+                <img className={styles['upload-icon']} src={uploadIcon} alt="업로드 아이콘" /> 이미지 업로드{' '}
+              </p>
+              <p className={styles.subDescription}>파일 형식은 jpg 또는 png로 업로드 해주세요. </p>
+              <p className={styles.subDescription}>
+                <span>
+                  {' '}
+                  이미지를 등록하면 즉시 반영됩니다. <br />
+                </span>
+              </p>
+              <input ref={thumbnailRef} type="file" accept="image/*" onChange={onFileHandler} className={styles['thumbnail-upload-input']} />
+            </div>
+          </div>
         </div>
         <div className={styles['funding-title-box']}>
-          <p className={styles.title}>펀딩 제목</p>
-          <input type="text" name="title" onChange={onChangeTextHandler} />
+          <p className={styles.title}>
+            펀딩 제목 <img className={styles.required} src={requiredIcon} alt="" />
+          </p>
+          <input type="text" name="title" className={styles['input-text']} onChange={onChangeTextHandler} placeholder="제목을 입력해주세요" />
         </div>
 
         <div className={styles['funding-description-box']}>
-          <p className={styles.title}>펀딩 요약 </p>
-          <input type="text" name="fundingDescription" onChange={onChangeTextHandler} />
+          <p className={styles.title}>
+            펀딩 요약 설명 <img className={styles.required} src={requiredIcon} alt="" />
+          </p>
+          <input
+            type="text"
+            name="fundingDescription"
+            onChange={onChangeTextHandler}
+            className={styles['input-text']}
+            placeholder="진행하는 펀딩에 대해 간단히 설명해 주세요."
+          />
         </div>
 
         <div className={styles['funding-contents-box']}>
-          <p className={styles.title}>펀딩 내용</p>
+          <p className={styles.title}>
+            펀딩 내용 <img className={styles.required} src={requiredIcon} alt="" />
+          </p>
           <ToastEditor
             ref={editorRef}
-            initialValue="펀딩 내용을 입력해주세요."
+            placeholder="진행하시는 펀딩에 대해 자세히 설명해주세요."
             height="500px"
             useCommandShortcut
             initialEditType="wysiwyg"
@@ -164,7 +206,9 @@ function CreateFundingContainer() {
         </div>
 
         <div className={styles['funding-date-box']}>
-          <p className={styles.title}>펀딩 기간 설정</p>
+          <p className={styles.title}>
+            펀딩 기간 설정 <img className={styles.required} src={requiredIcon} alt="" />
+          </p>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker

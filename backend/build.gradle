@@ -26,9 +26,11 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
+	// openvidu
+	implementation 'io.openvidu:openvidu-java-client:2.25.0'
+
 	// 파일 확장자 검증
 	implementation 'org.apache.tika:tika-core:2.6.0'
-
 
 	// mail
 	implementation 'org.springframework.boot:spring-boot-starter-mail:2.7.7'

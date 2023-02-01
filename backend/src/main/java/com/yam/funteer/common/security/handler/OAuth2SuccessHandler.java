@@ -24,22 +24,16 @@ import java.io.IOException;
 @Component @Slf4j
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
-    private final JwtProvider jwtProvider;
-
-    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        String userId = (String)oAuth2User.getAttributes().get("userId");
-        TokenInfo tokenInfo = jwtProvider.generateTokenForOAuth(userId);
+        String email = (String)oAuth2User.getAttributes().get("email");
 
-        String targetURI = UriComponentsBuilder.fromUriString("https://i8e204.p.ssafy.io/kakao")
-            .queryParam("accessToken", tokenInfo.getAccessToken())
-            .queryParam("refreshToken", tokenInfo.getRefreshToken())
-            .build().toUriString();
+        String targetURI = UriComponentsBuilder.fromUriString("https://i8e204.p.ssafy.io/login/kakao")
+            .queryParam("email", email).toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetURI);
     }
 }
