@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -29,12 +30,13 @@ import lombok.ToString;
 @Getter @Setter
 @AllArgsConstructor
 @ToString
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 public class QnaRegisterReq {
 	@NotBlank
 	private String title;
 	@NotBlank
 	private String content;
+
 	private List<MultipartFile>files=new ArrayList<>();
 
 	public Qna toEntity(User user){
