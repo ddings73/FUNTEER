@@ -3,18 +3,27 @@
 
 .container {
   width: 100%;
-  font-family: NanumSquareRound;
 
-  .title {
-    font-weight: bold;
-    font-size: 2.25rem;
-
-    @include tablet {
-      font-size: 1.25rem;
-    }
+  .user-type-div {
+    margin: 5rem 0;
 
     @include mobile {
-      font-size: 1.25rem;
+      margin: 3rem 0;
+    }
+
+    .title {
+      margin-bottom: 1rem;
+      font-weight: bold;
+      font-size: 2rem;
+      color: $primary;
+
+      @include tablet {
+        font-size: 1.25rem;
+      }
+
+      @include mobile {
+        font-size: 1.125rem;
+      }
     }
   }
 }

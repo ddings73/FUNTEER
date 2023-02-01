@@ -42,6 +42,7 @@ import {
   AdminTeamDeny,
   AdminFunding,
   CustomerCenter,
+  NoticeDetail,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -149,7 +150,7 @@ const router = createBrowserRouter([
         element: <CreateFunding />,
       },
       {
-        path: '/funding/detail',
+        path: '/funding/detail/:id',
         element: <FundingDetail />,
       },
       {
@@ -159,6 +160,10 @@ const router = createBrowserRouter([
       {
         path: '/test',
         element: <LiveTest />,
+      },
+      {
+        path: '/cc/:nn', // nn: 공지사항 번호
+        element: <NoticeDetail />,
       },
     ],
   },
