@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useInterval } from 'usehooks-ts';
 import { Button, TextField } from '@mui/material';
-// import axios from 'axios';
-import styles from './MemberSignUpContainer.module.scss';
-import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { memberSignUpType } from '../../types/user';
+import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
 import { requestEmailDuplConfirm, requestMemberSignUp, requestNicknameDuplConfirm, requestPhoneDuplConfirm } from '../../api/user';
+import styles from './MemberSignUpContainer.module.scss';
 
 function MemberSignUpContainer() {
+  const navigate = useNavigate();
+
   /** 회원가입 정보 */
   const [memberSignUpInfo, setMemberSignUpInfo] = useState<memberSignUpType>({
     name: '',
@@ -27,10 +31,17 @@ function MemberSignUpContainer() {
   const [phoneDuplConfirmed, setPhoneDuplConfirmed] = useState<boolean>(false);
   /** 이메일 인증 버튼을 이미 눌렀는지 확인 */
   const [emailAuthButtonPushed, setEmailAuthButtonPushed] = useState<boolean>(false);
+  /** 이메일 인증 시간 제한 */
+  const initTime = 300;
+  const [time, setTime] = useState<number>(initTime);
   /** 인증 번호 */
   const [authNumber, setAuthNumber] = useState<string>('');
   /** 이메일 인증이 완료되었는지 체크해주는 상태 */
   const [checkEmailAuth, setCheckEmailAuth] = useState<boolean>(false);
+  /** 비밀번호 가시 여부 */
+  const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
+  /** 비밀번호 확인 가시 여부 */
+  const [passwordCheckVisibility, setPasswordCheckVisibility] = useState<boolean>(false);
 
   /** 회원가입 정보 입력 */
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -55,12 +66,18 @@ function MemberSignUpContainer() {
   const onClickNicknameDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
 
+    if (!memberSignUpInfo.nickname) {
+      alert('닉네임을 입력해주세요.');
+      return;
+    }
+
     try {
       const response = await requestNicknameDuplConfirm(memberSignUpInfo.nickname);
       alert('닉네임 중복 체크 완료');
       setNicknameDuplConfirmed(true);
       console.log(response);
     } catch (error) {
+      alert('이미 가입된 닉네임입니다.');
       console.log(error);
     }
   };
@@ -68,6 +85,11 @@ function MemberSignUpContainer() {
   /** 이메일 중복 검사 */
   const onClickEmailDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
+
+    if (!memberSignUpInfo.email) {
+      alert('이메일을 입력해주세요.');
+      return;
+    }
 
     /** 이메일 정규식 검사 */
     const validEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]+/; // (알파벳, 숫자)@(알파벳).(알파벳)
@@ -83,6 +105,7 @@ function MemberSignUpContainer() {
       setEmailDuplConfirmed(true);
       console.log(response);
     } catch (error) {
+      alert('이미 가입된 이메일입니다.');
       console.log(error);
     }
   };
@@ -91,22 +114,23 @@ function MemberSignUpContainer() {
   const onClickPhoneDuplBtnHandler = async (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault();
 
+    if (!memberSignUpInfo.phone) {
+      alert('휴대폰 번호를 입력해주세요.');
+      return;
+    }
+
     try {
       const response = await requestPhoneDuplConfirm(memberSignUpInfo.email);
       alert('휴대폰 번호 중복 체크 완료');
       setPhoneDuplConfirmed(true);
       console.log(response);
     } catch (error) {
+      alert('이미 가입된 휴대폰 번호입니다.');
       console.log(error);
     }
   };
 
-  /** 인증 번호 입력 */
-  const onAuthNumberChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setAuthNumber(e.target.value);
-  };
-
-  /** 이메일 인증 시간 카운팅 */
+  /** 이메일 인증하기 버튼 */
   const handleClickAuthEmail = () => {
     if (!emailDuplConfirmed) {
       alert('이메일 중복 체크를 먼저 완료해주세요.');
@@ -118,29 +142,33 @@ function MemberSignUpContainer() {
     }
 
     setEmailAuthButtonPushed(true);
+  };
 
-    let time = 300;
-    let minute;
-    let second;
-    const timer = setInterval(() => {
-      if (checkEmailAuth) {
-        clearInterval(timer);
-      }
-
+  /** 이메일 인증 타이머 */
+  let minute;
+  let second;
+  useInterval(
+    () => {
+      /** logic */
+      setTime(time - 1);
       minute = Math.floor(secondsToMinutes(time));
       second = secondsToSeconds(time);
-
       setButtonText(`${minute}분 ${second}초`);
-      time -= 1;
 
-      if (time < 0) {
+      if (time === 0) {
         alert('인증번호 입력 시간이 초과되었습니다.');
-        clearInterval(timer);
         setButtonText('이메일 인증하기');
         setEmailAuthButtonPushed(false);
-        // setCheckEmailAuth(false);
+        setTime(initTime);
       }
-    }, 1000);
+    },
+    /** Delay in milliseconds or null to stop it */
+    emailAuthButtonPushed && !checkEmailAuth ? 1000 : null,
+  );
+
+  /** 인증 번호 입력 */
+  const onAuthNumberChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setAuthNumber(e.target.value);
   };
 
   const checkAuthNumber = () => {
@@ -190,6 +218,7 @@ function MemberSignUpContainer() {
     try {
       const response = await requestMemberSignUp(memberSignUpInfo);
       console.log(response);
+      navigate('/');
     } catch (error) {
       console.error(error);
     }
@@ -237,10 +266,60 @@ function MemberSignUpContainer() {
             )}
 
             <p>비밀번호</p>
-            <TextField name="password" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <div className={styles['pw-div']}>
+              <TextField
+                name="password"
+                type={!passwordVisibility ? 'password' : ''}
+                margin="dense"
+                placeholder="비밀번호를 입력해주세요."
+                variant="outlined"
+                onChange={onChangeHandler}
+              />{' '}
+              {passwordVisibility && (
+                <Visibility
+                  onClick={() => {
+                    setPasswordVisibility(!passwordVisibility);
+                  }}
+                  className={styles['pwv-btn']}
+                />
+              )}
+              {!passwordVisibility && (
+                <VisibilityOff
+                  onClick={() => {
+                    setPasswordVisibility(!passwordVisibility);
+                  }}
+                  className={styles['pwv-btn']}
+                />
+              )}
+            </div>
 
             <p>비밀번호 확인</p>
-            <TextField name="passwordCheck" margin="dense" placeholder="비밀번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <div className={styles['pw-div']}>
+              <TextField
+                name="passwordCheck"
+                type={!passwordCheckVisibility ? 'password' : ''}
+                margin="dense"
+                placeholder="비밀번호를 입력해주세요."
+                variant="outlined"
+                onChange={onChangeHandler}
+              />
+              {passwordCheckVisibility && (
+                <Visibility
+                  onClick={() => {
+                    setPasswordCheckVisibility(!passwordCheckVisibility);
+                  }}
+                  className={styles['pwv-btn']}
+                />
+              )}
+              {!passwordCheckVisibility && (
+                <VisibilityOff
+                  onClick={() => {
+                    setPasswordCheckVisibility(!passwordCheckVisibility);
+                  }}
+                  className={styles['pwv-btn']}
+                />
+              )}
+            </div>
 
             <p>
               닉네임

@@ -1,6 +1,7 @@
 import React from 'react';
 
 export enum TeamState {
+  All = '전체',
   NotCertified = '인증 대기',
   Certified = '인증',
   Expired = '갱신 필요',

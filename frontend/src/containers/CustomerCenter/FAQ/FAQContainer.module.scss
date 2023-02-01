@@ -1,0 +1,29 @@
+@import '../../../styles/reset.scss';
+@import '../../../styles/variable.scss';
+
+.container {
+  width: 100%;
+
+  .user-type-div {
+    margin: 5rem 0;
+
+    @include mobile {
+      margin: 3rem 0;
+    }
+
+    .title {
+      margin-bottom: 1rem;
+      font-weight: bold;
+      font-size: 2rem;
+      color: $primary;
+
+      @include tablet {
+        font-size: 1.25rem;
+      }
+
+      @include mobile {
+        font-size: 1.125rem;
+      }
+    }
+  }
+}

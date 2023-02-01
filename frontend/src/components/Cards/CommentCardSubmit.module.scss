@@ -1,0 +1,39 @@
+.cardContainer {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  & .commentHead {
+    text-align: center;
+    margin-right: 80%;
+    font-size: 20px;
+    font-family: 'nanumsquare';
+    font-weight: 600;
+  }
+
+  & .commentMid {
+    width: 100%;
+    margin-top: 15px;
+    & .commentImg {
+      border-radius: 50%;
+      width: 5%;
+      margin-right: 2%;
+    }
+    & .tesxtField {
+      width: 80%;
+    }
+  }
+  & .BtnGrop {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+    & .commentBtn {
+      width: 100px;
+      height: 40px;
+      margin: 0 6.5%;
+    }
+  }
+}
