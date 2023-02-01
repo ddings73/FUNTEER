@@ -87,7 +87,7 @@ public class FundingController {
 		return ResponseEntity.ok(fundingService.findFundingById(fundingId));
 	}
 
-	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다. (D12: 승인 거절 시 게시글 전체 수정 가능 / D14: 진행중일때 기간 1회 수정 가능 / D15: 진행중, 수정 불가능")
+	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다.")
 	@PutMapping("/{fundingId}")
 	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, MultipartFile thumbnail,
 		FundingRequest data) throws Exception {
@@ -104,8 +104,8 @@ public class FundingController {
 	@ApiOperation(value = "펀딩 게시글 보고서 작성", notes = "펀딩 게시글 보고서를 작성한다.")
 	@PostMapping("/{fundingId}/report")
 	public ResponseEntity<FundingReportResponse> createFundingReport(@PathVariable Long fundingId, FundingReportRequest data) {
-		fundingService.createFundingReport(fundingId, data);
-		return ResponseEntity.ok().build();
+		FundingReportResponse fundingReport = fundingService.createFundingReport(fundingId, data);
+		return ResponseEntity.ok(fundingReport);
 	}
 
 	@ApiOperation(value = "펀딩 게시글 보고서 탭 조회", notes = "펀딩 게시글 보고서 탭을 조회한다.")
@@ -116,7 +116,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 게시글 보고서 수정", notes = "펀딩 게시글 보고서를 수정한다.")
 	@PutMapping("/{fundingId}/report")
-	public ResponseEntity<FundingReportResponse> updateFundingReport(@PathVariable Long fundingId, @RequestBody FundingReportResponse data) {
+	public ResponseEntity<FundingReportResponse> updateFundingReport(@PathVariable Long fundingId, FundingReportRequest data) {
 		return ResponseEntity.ok(fundingService.updateFundingReport(fundingId, data));
 	}
 
@@ -140,23 +140,5 @@ public class FundingController {
 		fundingService.deleteFundingComment(commentId);
 		return ResponseEntity.ok("삭제 완료");
 	}
-
-	@ApiOperation(value = "펀딩 승인", notes = "제출된 펀딩을 확인하고 승인 상태로 바꾼다.")
-	@PutMapping("/funding/{fundingId}/accept")
-	public ResponseEntity<?> acceptFunding(@PathVariable Long fundingId) {
-		fundingService.acceptFunding(fundingId);
-		return ResponseEntity.ok("펀딩 승인 완료");
-	}
-
-	@ApiOperation(value = "펀딩 거절", notes = "제출된 펀딩을 확인하고 거절 상태로 바꾼다.")
-	@PutMapping("/funding/{fundingId}/reject")
-	public ResponseEntity<?> rejectFunding(@PathVariable Long fundingId, @RequestBody RejectReasonRequest data) throws
-		Exception {
-		fundingService.rejectFunding(fundingId, data);
-		return ResponseEntity.ok("펀딩 승인이 거절되었습니다.");
-	}
-
-
-
 
 }

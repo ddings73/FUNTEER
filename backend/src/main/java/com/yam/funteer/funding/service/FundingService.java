@@ -12,7 +12,6 @@ import com.yam.funteer.funding.dto.response.FundingListResponse;
 import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
-import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
@@ -28,11 +27,11 @@ public interface FundingService {
 
 	void deleteFunding(Long fundingId) throws FundingNotFoundException;
 
-	void createFundingReport(Long fundingId, FundingReportRequest data);
+	FundingReportResponse createFundingReport(Long fundingId, FundingReportRequest data);
 
 	FundingReportResponse findFundingReportById(Long fundingId);
 
-	FundingReportResponse updateFundingReport(Long fundingId, FundingReportResponse data);
+	FundingReportResponse updateFundingReport(Long fundingId, FundingReportRequest data);
 
 	void createFundingComment(Long fundingId, FundingCommentRequest data);
 
@@ -46,11 +45,5 @@ public interface FundingService {
 
 	List<FundingListResponse> findFundingByHashtag(String hashtag);
 
-	void acceptFunding(Long fundingId);
 
-	void rejectFunding(Long fundingId, RejectReasonRequest data) throws Exception;
-
-	void acceptReport(Long fundingId);
-
-	void rejectReport(Long fundingId, RejectReasonRequest data) throws Exception;
 }
