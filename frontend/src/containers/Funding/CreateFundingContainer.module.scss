@@ -136,6 +136,14 @@
 
     .funding-date-box {
       margin-top: 15px;
+      .date-picker-box{
+        display: flex;
+        flex-direction: row; 
+        margin-bottom: 25px;
+        & .date-picker{
+          margin-right: 25px;
+        }
+      }
     }
     .funding-amount-box {
       margin-top: 50px;
@@ -148,6 +156,7 @@
         .stage-text-box {
           display: flex;
           justify-content: space-between;
+          margin-bottom: 8px;
         }
 
         .stage-contents-box {
