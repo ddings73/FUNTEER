@@ -203,7 +203,6 @@ public class FundingServiceImpl implements FundingService{
 			e.printStackTrace();
 		}
 
-
 		return FundingDetailResponse.from(savedPost);
 
 	}
@@ -260,23 +259,13 @@ public class FundingServiceImpl implements FundingService{
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
 		fundingDetailResponse.setWishCount(wishCount);
 
-		// 해시태그
-
 		// 목표금액
-		List<TargetMoneyResponse> targetMoneyResponsesLevelOne = targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(id, TargetMoneyType.LEVEL_ONE);
-		List<TargetMoneyResponse> targetMoneyResponsesLevelTwo = targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(id, TargetMoneyType.LEVEL_TWO);
-		List<TargetMoneyResponse> targetMoneyResponsesLevelThree = targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(id, TargetMoneyType.LEVEL_THREE);
-
-		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyResponsesLevelOne);
-		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyResponsesLevelTwo);
-		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyResponsesLevelThree);
-
-		// 댓글
-
-		List<CommentResponse> comments = funding.getComments()
-			.stream()
-			.map(comment -> CommentResponse.from((Comment)comment))
-			.collect(Collectors.toList());
+		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(
+			id, TargetMoneyType.LEVEL_ONE));
+		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(
+			id, TargetMoneyType.LEVEL_TWO));
+		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(
+			id, TargetMoneyType.LEVEL_THREE));
 
 		return fundingDetailResponse;
 	}
