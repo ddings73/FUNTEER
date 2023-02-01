@@ -65,16 +65,22 @@ public class NoticeServiceImpl implements NoticeService{
 		if(user.getUserType().equals(UserType.ADMIN)){
 			List<String>paths=new ArrayList<>();
 			Post post=postRepository.save(noticeRegistReq.toEntity());
-			for(MultipartFile file:files) {
-				String fileUrl = awsS3Uploader.upload(file, "notice");
-				Attach attach = noticeRegistReq.toAttachEntity(fileUrl, file.getOriginalFilename());
-				PostAttach postAttach = PostAttach.builder()
-					.attach(attach)
-					.post(post)
-					.build();
-				attachRepository.save(attach);
-				postAttachRepository.save(postAttach);
-				paths.add(fileUrl);
+
+			if(!files.isEmpty()) {
+				for (MultipartFile file : files) {
+					if (file.isEmpty())
+						break;
+					String fileUrl = awsS3Uploader.upload(file, "notice");
+					Attach attach = noticeRegistReq.toAttachEntity(fileUrl, file.getOriginalFilename());
+					PostAttach postAttach = PostAttach.builder()
+						.attach(attach)
+						.post(post)
+						.build();
+					attachRepository.save(attach);
+					postAttachRepository.save(postAttach);
+					paths.add(fileUrl);
+
+				}
 			}
 			return new NoticeBaseRes(post,paths);
 		}else throw new IllegalArgumentException("접근권한이 없습니다.");
@@ -95,16 +101,22 @@ public class NoticeServiceImpl implements NoticeService{
 			Post post=postRepository.save(noticeRegistReq.toEntity(postId));
 			List<MultipartFile>files=noticeRegistReq.getFiles();
 			List<String>attachList=new ArrayList<>();
-			for(MultipartFile file:files){
-				String fileUrl = awsS3Uploader.upload(file,"notice");
-				Attach attach=noticeRegistReq.toAttachEntity(fileUrl,file.getOriginalFilename());
-				PostAttach postAttach=PostAttach.builder()
-					.attach(attach)
-					.post(post)
-					.build();
-				attachList.add(fileUrl);
-				attachRepository.save(attach);
-				postAttachRepository.save(postAttach);
+
+			if(!files.isEmpty()) {
+				for (MultipartFile file : files) {
+					if (file.isEmpty())
+						break;
+					String fileUrl = awsS3Uploader.upload(file, "notice");
+					Attach attach = noticeRegistReq.toAttachEntity(fileUrl, file.getOriginalFilename());
+					PostAttach postAttach = PostAttach.builder()
+						.attach(attach)
+						.post(post)
+						.build();
+					attachList.add(fileUrl);
+					attachRepository.save(attach);
+					postAttachRepository.save(postAttach);
+
+				}
 			}
 			return new NoticeBaseRes(post,attachList);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");

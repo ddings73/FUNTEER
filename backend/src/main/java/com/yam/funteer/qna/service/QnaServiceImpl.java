@@ -1,25 +1,24 @@
 package com.yam.funteer.qna.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.transaction.Transactional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.yam.funteer.alarm.service.AlarmService;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.entity.PostAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.PostAttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
-import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
 
-import com.yam.funteer.funding.dto.FundingListResponse;
-import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.qna.dto.request.QnaRegisterReq;
 import com.yam.funteer.qna.dto.response.QnaBaseRes;
 import com.yam.funteer.qna.dto.response.QnaListRes;
@@ -46,6 +45,7 @@ public class QnaServiceImpl implements QnaService {
 	private final AttachRepository attachRepository;
 
 	private final AwsS3Uploader awsS3Uploader;
+	private final AlarmService alarmService;
 
 	@Override
 	public List<QnaListRes> qnaGetList() {
@@ -70,17 +70,24 @@ public class QnaServiceImpl implements QnaService {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Qna qna=qnaRepository.save(qnaRegisterReq.toEntity(user));
 		List<String>attachList=new ArrayList<>();
-		for(MultipartFile file:qnaRegisterReq.getFiles()){
-			String fileUrl = awsS3Uploader.upload(file,"qna");
-			Attach attach=qnaRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
-			PostAttach postAttach=PostAttach.builder()
-				.attach(attach)
-				.post(qna)
-				.build();
-			attachList.add(fileUrl);
-			attachRepository.save(attach);
-			postAttachRepository.save(postAttach);
-		}return new QnaBaseRes(qna,attachList);
+		List<MultipartFile>files=qnaRegisterReq.getFiles();
+		if(!files.isEmpty()){
+			for(MultipartFile file:files) {
+				if(file.isEmpty())break;
+				String fileUrl = awsS3Uploader.upload(file, "qna");
+				Attach attach = qnaRegisterReq.toAttachEntity(fileUrl, file.getOriginalFilename());
+				PostAttach postAttach = PostAttach.builder()
+					.attach(attach)
+					.post(qna)
+					.build();
+				attachList.add(fileUrl);
+				attachRepository.save(attach);
+				postAttachRepository.save(postAttach);
+			}
+		}
+		List<User> adminList = userRepository.findAllByUserType(UserType.ADMIN);
+		alarmService.sendList(adminList,qna.getTitle(), "QnA가 등록되었습니다.", qna);
+		return new QnaBaseRes(qna,attachList);
 	}
 
 
@@ -115,16 +122,21 @@ public class QnaServiceImpl implements QnaService {
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
 
-			for(MultipartFile file:qnaRegisterReq.getFiles()){
-				String fileUrl = awsS3Uploader.upload(file,"qna");
-				Attach attach=qnaRegisterReq.toAttachEntity(fileUrl,file.getOriginalFilename());
-				PostAttach postAttach=PostAttach.builder()
-					.attach(attach)
-					.post(qna)
-					.build();
-				attachList.add(fileUrl);
-				attachRepository.save(attach);
-				postAttachRepository.save(postAttach);
+			List<MultipartFile>files=qnaRegisterReq.getFiles();
+
+			if(!files.isEmpty()){
+				for(MultipartFile file:files) {
+					if(file.isEmpty())break;
+					String fileUrl = awsS3Uploader.upload(file, "qna");
+					Attach attach = qnaRegisterReq.toAttachEntity(fileUrl, file.getOriginalFilename());
+					PostAttach postAttach = PostAttach.builder()
+						.attach(attach)
+						.post(qna)
+						.build();
+					attachList.add(fileUrl);
+					attachRepository.save(attach);
+					postAttachRepository.save(postAttach);
+				}
 			}
 			return new QnaBaseRes(qna,attachList);
 		}

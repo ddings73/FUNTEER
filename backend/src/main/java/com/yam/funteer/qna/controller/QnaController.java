@@ -30,34 +30,34 @@ public class QnaController {
 
 	@ApiOperation(value="본인 QnA 리스트")
 	@GetMapping("")
-	public ResponseEntity<?>QnaGetList(){
+	public ResponseEntity<?>qnaGetList(){
 		return ResponseEntity.ok(qnaService.qnaGetList());
 	}
 
 
 	@ApiOperation(value="QnA 등록")
 	@PostMapping("")
-	public ResponseEntity<?>teamQnaRegister(QnaRegisterReq qnaRegisterReq){
+	public ResponseEntity<?>qnaRegister(QnaRegisterReq qnaRegisterReq){
 		return ResponseEntity.ok(qnaService.qnaRegister(qnaRegisterReq));
 	}
 
 
 	@ApiOperation(value=" QnA 상세")
 	@GetMapping("/{postId}")
-	public ResponseEntity<?>teamQnaGetDetail(@PathVariable Long postId){
+	public ResponseEntity<?>qnaGetDetail(@PathVariable Long postId){
 		return ResponseEntity.ok(qnaService.qnaGetDetail(postId));
 	}
 
 
 	@ApiOperation(value="QnA 수정")
 	@PutMapping("/{postId}")
-	public ResponseEntity<?>teamQnaModify(@PathVariable Long postId, QnaRegisterReq qnaModifyReq){
+	public ResponseEntity<?>qnaModify(@PathVariable Long postId, QnaRegisterReq qnaModifyReq){
 		return ResponseEntity.ok(qnaService.qnaModify(postId,qnaModifyReq));
 	}
 
 	@ApiOperation(value=" QnA 삭제")
 	@DeleteMapping("/{postId}")
-	public ResponseEntity<? extends BaseResponseBody>teamQnaDelete(@PathVariable Long postId){
+	public ResponseEntity<? extends BaseResponseBody>qnaDelete(@PathVariable Long postId){
 		qnaService.qnaDelete(postId);
 		return ResponseEntity.ok(BaseResponseBody.of("Success"));
 	}
