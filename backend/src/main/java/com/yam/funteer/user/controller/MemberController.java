@@ -88,9 +88,9 @@ public class MemberController {
 		@ApiResponse(code = 401, message = "인증 실패"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@GetMapping("/{userId}/account")
-	public ResponseEntity<MemberAccountResponse> getInfo(@PathVariable Long userId){
-		MemberAccountResponse account = memberService.getAccountInfo(userId);
+	@GetMapping("/account")
+	public ResponseEntity<MemberAccountResponse> getInfo(){
+		MemberAccountResponse account = memberService.getAccountInfo();
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(account);
 	}
 
