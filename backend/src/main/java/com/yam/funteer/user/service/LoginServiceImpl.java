@@ -71,11 +71,11 @@ public class LoginServiceImpl implements LoginService{
         String refreshToken = tokenRequest.getRefreshToken();
 
         if(!jwtProvider.validateToken(refreshToken)){
-            throw new JwtException("Refresh Token이 유효하지 않습니다.");
+            throw new AccessDeniedException("Refresh Token이 유효하지 않습니다.");
         }
 
         Token token = tokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(()->new JwtException("로그아웃된 사용자 혹은 유효하지 않은 토큰입니다."));
+                .orElseThrow(()->new AccessDeniedException("로그아웃된 사용자 혹은 유효하지 않은 토큰입니다."));
 
         Long userId = token.getId();
         // access 토큰 만료 확인
