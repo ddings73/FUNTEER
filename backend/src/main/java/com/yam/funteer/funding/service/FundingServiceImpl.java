@@ -25,7 +25,6 @@ import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
 import com.yam.funteer.funding.dto.request.TargetMoneyRequest;
-import com.yam.funteer.funding.dto.response.CommentResponse;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
 import com.yam.funteer.funding.dto.response.FundingListPageResponse;
 import com.yam.funteer.funding.dto.response.FundingListResponse;
@@ -33,8 +32,6 @@ import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
-import com.yam.funteer.funding.dto.response.HashtagResponse;
-import com.yam.funteer.funding.dto.response.TargetMoneyResponse;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.Report;
@@ -464,7 +461,7 @@ public class FundingServiceImpl implements FundingService{
 		}
 	}
 
-	// 자정이 되면 StartDate가 당일인 펀딩들 중 승인 안료된 펀딩을 진행중으로 변경, 펀딩 금액에 따라 완료/실패 여부 판단
+	// 자정이 되면 StartDate 가 당일인 펀딩들 중 승인 안료된 펀딩을 진행중으로 변경, 펀딩 금액에 따라 완료/실패 여부 판단
 	@Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
 	public void changeStatusFunding() {
 		List<Funding> all = fundingRepository.findAllByStartDate(LocalDate.now());
@@ -475,8 +472,18 @@ public class FundingServiceImpl implements FundingService{
 		}
 
 		List<Funding> allByEndDate = fundingRepository.findAllByEndDate(LocalDate.now().minusDays(1));
+
 		for (Funding funding : allByEndDate) {
-			if (funding.getCurrentFundingAmount() >= funding.getTargetMoneyList().get(0).getAmount()) {
+
+			Long targetAmount = 0L;
+
+			for (TargetMoney targetMoney : funding.getTargetMoneyList()) {
+				if (targetMoney.getTargetMoneyType() == TargetMoneyType.LEVEL_ONE) {
+					targetAmount += targetMoney.getAmount();
+				}
+			}
+
+			if (funding.getCurrentFundingAmount() >= targetAmount) {
 				funding.setPostType(PostType.FUNDING_COMPLETE);
 			} else {
 				funding.setPostType(PostType.FUNDING_FAIL);
