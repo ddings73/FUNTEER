@@ -2,6 +2,9 @@ package com.yam.funteer.qna.dto.response;
 
 import java.time.LocalDateTime;
 
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import com.yam.funteer.alarm.entity.Alarm;
 import com.yam.funteer.qna.entity.Qna;
 import com.yam.funteer.qna.entity.Reply;
 
@@ -20,4 +23,5 @@ public class ReplyBaseRes {
 		this.content=entity.getContent();
 		this.regDate=entity.getRegDate();
 	}
+
 }

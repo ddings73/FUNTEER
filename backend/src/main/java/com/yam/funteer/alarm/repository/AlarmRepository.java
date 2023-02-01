@@ -13,6 +13,7 @@ public interface AlarmRepository{
 	Map<String, SseEmitter> findAllEmitterStartWithById(String userId);
 
 	Map<String, Object> findAllEventCacheStartWithById(String userId);
+
 	void deleteById(String userId);
 
 	void deleteAllEmitterStartWithId(String userId);

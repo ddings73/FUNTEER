@@ -32,7 +32,7 @@ public class FaqServiceImpl implements  FaqService{
 
 	@Override
 	public List<FaqListRes> faqGetList() {
-		List<Post>faqList=postRepository.findAllByPostType(PostType.FAQ);
+		List<Post>faqList=postRepository.findAllByPostTypeOrderByIdDesc(PostType.FAQ);
 		List<FaqListRes>faqListRes;
 		faqListRes=faqList.stream().map(faq->new FaqListRes(faq)).collect(Collectors.toList());
 		return faqListRes;

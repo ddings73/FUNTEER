@@ -53,13 +53,13 @@ public class QnaServiceImpl implements QnaService {
 		List<QnaListRes>list;
 
 		if(user.getUserType().equals(UserType.ADMIN)){
-			List<Qna>qnaList=qnaRepository.findAll();
+			List<Qna>qnaList=qnaRepository.findAllByOrderByIdDesc();
 			list=qnaList.stream().map(qna->new QnaListRes(qna)).collect(Collectors.toList());
 
 			return list;
 		}
 
-		List<Qna>qnaList=qnaRepository.findAllByUser(user);
+		List<Qna>qnaList=qnaRepository.findAllByUserOrderByIdDesc(user);
 		list=qnaList.stream().map(qna->new QnaListRes(qna)).collect(Collectors.toList());
 
 		return list;
