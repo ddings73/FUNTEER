@@ -52,7 +52,7 @@ function AdminFundingContainer() {
 
         <ul className={styles['title-line']}>
           <li>번호</li>
-          <li>제목</li>
+          <li className={styles['title-col']}>제목</li>
           <li>단체명</li>
           <li>시작일</li>
           <li>종료일</li>
@@ -63,7 +63,7 @@ function AdminFundingContainer() {
             <li>
               <p>{data.id}</p>
             </li>
-            <li>
+            <li className={styles['title-col']}>
               <p>{data.title}</p>
             </li>
             <li>

@@ -21,11 +21,22 @@
       margin: 5rem 0;
     }
 
+    .label-div {
+      width: 710px;
+      margin: 0.5rem 0;
+      font-size: 1.25rem;
+
+      & span {
+        color: $error;
+      }
+    }
+
     .email-title {
       width: 700px;
       height: 35px;
       margin-bottom: 1rem;
       padding: 0 1rem;
+      border-radius: 5px;
       font-family: NanumSquareRound;
     }
 
@@ -34,6 +45,7 @@
       height: 400px;
       margin-bottom: 1rem;
       padding: 1rem;
+      border-radius: 5px;
       font-family: NanumSquareRound;
     }
 

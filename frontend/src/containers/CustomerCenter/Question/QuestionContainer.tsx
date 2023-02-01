@@ -34,7 +34,7 @@ export default function QuestionContainer() {
       {!createMode && (
         <div className={styles['ques-board']}>
           <div className={styles['ques-btn-div']}>
-            <Button variant="outlined" className={styles['ques-btn']} onClick={onClickCreateQuesBtnHandler}>
+            <Button variant="outlined" sx={{ fontFamily: 'NanumSquareRound' }} className={styles['ques-btn']} onClick={onClickCreateQuesBtnHandler}>
               문의하기
             </Button>
           </div>
@@ -43,12 +43,12 @@ export default function QuestionContainer() {
               <Accordion sx={{ boxShadow: 'none' }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                   <div>
-                    <Typography sx={{ fontSize: '1.125rem' }}>{data.ques}</Typography>
+                    <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquareRound' }}>{data.ques}</Typography>
                     <p className={styles.state}>{data.state}</p>
                   </div>
                 </AccordionSummary>
                 <AccordionDetails sx={{ backgroundColor: 'rgb(255, 254, 253)', padding: '2rem', boxShadow: '0px 0px 20px rgba(255, 132, 0, 0.02) inset' }}>
-                  <Typography sx={{ fontSize: '1rem', lineHeight: '2rem' }}>{data.ans}</Typography>
+                  <Typography sx={{ fontSize: '1rem', lineHeight: '2rem', fontFamily: 'NanumSquareRound' }}>{data.ans}</Typography>
                 </AccordionDetails>
               </Accordion>
             ))}

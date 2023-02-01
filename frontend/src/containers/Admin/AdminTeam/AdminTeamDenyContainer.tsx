@@ -47,8 +47,19 @@ function AdminTeamDenyContainer() {
     <div className={styles.container}>
       <div className={styles.contents}>
         <h1 className={styles.title}>단체 가입 거부 사유</h1>
-        <input name="title" type="text" className={styles['email-title']} placeholder="제목 (10자 이상)" />
-        <textarea name="content" className={styles['email-content']} placeholder="내용 (20자 이상)" />
+        <div className={styles['label-div']}>
+          <p>
+            제목 <span>*</span>
+          </p>
+        </div>
+
+        <input name="title" type="text" className={styles['email-title']} placeholder="제목을 10자 이상 입력해주세요." />
+        <div className={styles['label-div']}>
+          <p>
+            내용 <span>*</span>
+          </p>
+        </div>
+        <textarea name="content" className={styles['email-content']} placeholder="내용을 20자 이상 입력해주세요." />
         <div className={styles['btn-div']}>
           <Button variant="contained" className={styles.submit} onClick={onClickBackHandler}>
             취소

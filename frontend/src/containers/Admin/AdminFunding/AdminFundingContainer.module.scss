@@ -47,6 +47,12 @@
       border-radius: 3px;
       margin-bottom: 0.1rem;
 
+      .title-col {
+        width: 400px;
+        display: flex;
+        justify-content: center;
+      }
+
       & li {
         width: 150px;
         display: flex;
@@ -71,6 +77,12 @@
       &:hover {
         cursor: pointer;
         background-color: rgba(1, 1, 1, 0.05);
+      }
+
+      .title-col {
+        width: 400px;
+        display: flex;
+        justify-content: center;
       }
 
       & li {
