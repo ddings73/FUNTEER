@@ -4,7 +4,7 @@
 .container {
   width: 100%;
   min-height: 100vh;
-  margin-top: 150px;
+  margin-top: 170px;
 
   @include tablet {
     margin-top: 100px;
@@ -22,15 +22,29 @@
     flex-direction: column;
     padding: 0 15px;
 
+    & .contentTitle {
+      font-size: 1.5rem;
+      font-family: 'nanumsquare';
+      margin-bottom: 30px;
+    }
+
     .donation-box {
       display: flex;
       flex-direction: row;
       justify-content: space-around;
 
       .left {
+        margin-top: 60px;
         width: 40%;
         & img {
           width: 100%;
+          transition: 1s;
+          &:hover {
+            z-index: 999;
+            scale: 2;
+            opacity: 0.9;
+            rotate: 12deg;
+          }
         }
 
         @include tablet {
@@ -42,7 +56,7 @@
         }
       }
       .right {
-        padding: 25px;
+        padding: 50px;
         width: 40%;
         border: 7px solid $primary;
         border-radius: 18px;
@@ -57,32 +71,47 @@
         & .title {
           font-size: 3.5rem;
           font-weight: bold;
-          color: $primary;
+          background: linear-gradient(259.55deg, #ff9900 51.3%, #ff6b00 92.74%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+          // text-fill-color: transparent;
 
           @include mobile {
             font-size: 1.5rem;
           }
         }
         & .text {
-          margin-top: 25px;
+          margin-top: 40px;
           margin-bottom: 50px;
           color: $primary;
           font-size: 1.25rem;
           line-height: 1.5;
+          font-weight: bold;
 
           @include mobile {
             font-size: 1rem;
           }
         }
 
-        & button {
+        & .donButton {
           font-weight: bold;
-          width: 30%;
+          font-size: 20px;
+          width: 40%;
+          height: 15%;
+          border-radius: 15px;
           color: #ffff;
+          margin-left: 30%;
           background-color: $primary;
+          border: 2px solid white;
+          cursor: pointer;
           @include mobile {
             width: 60%;
           }
+          &:active {
+            scale: 0.9;
+          }
+          filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
         }
       }
     }
@@ -105,12 +134,12 @@
         font-size: 3.5rem;
         font-weight: bold;
         line-height: 120px;
-        background: linear-gradient(180deg, #ffffff 33.33%, #cac2c2 51.04%, #ffffff 69.79%);
+        background: linear-gradient(180deg, #ffffff 50%, #cac2c2 30%, #ffffff 50%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
-        text-fill-color: transparent;
-        text-shadow: 3px 4px 6px rgba(0, 0, 0, 0.25);
+        // text-fill-color: transparent;
+        text-shadow: 3px 4px 6px rgba(255, 174, 98, 0.25);
         @include tablet {
           font-size: 2.5rem;
         }
@@ -120,5 +149,8 @@
         }
       }
     }
+  }
+  & .finishedTable {
+    margin-top: 40px;
   }
 }
