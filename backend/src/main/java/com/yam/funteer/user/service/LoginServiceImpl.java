@@ -36,21 +36,26 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     public LoginResponse processLogin(LoginRequest loginRequest) {
-        
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
 
-        // 여기서 실제로 검증
-        // UserDetailsService를 상속받는 bean을 찾아서 loadUserByUsername을 실행함
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         TokenInfo tokenInfo = jwtProvider.generateToken(authentication); // 검증되면 jwt 만들어서 가져옴
-
-        // 생성된 토큰을 DB에 저장함
         Long userId = Long.valueOf(authentication.getName());
-        Token token = Token.from(userId, tokenInfo.getRefreshToken());
-        tokenRepository.save(token);
+        User user = userFoundProcess(loginRequest, tokenInfo, userId);
 
-        User user = userRepository.findById(Long.valueOf(userId)).orElseThrow(UserNotFoundException::new);
         user.validate();
+
+        return LoginResponse.of(user, tokenInfo);
+    }
+
+    @Override
+    public LoginResponse processKakaoLogin(LoginRequest loginRequest) {
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
+
+        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+        TokenInfo tokenInfo = jwtProvider.generateToken(authentication); // 검증되면 jwt 만들어서 가져옴
+        Long userId = Long.valueOf(authentication.getName());
+        User user = userFoundProcess(loginRequest, tokenInfo, userId);
 
         return LoginResponse.of(user, tokenInfo);
     }
@@ -85,5 +90,13 @@ public class LoginServiceImpl implements LoginService{
         TokenInfo tokenInfo = jwtProvider.createToken(String.valueOf(userId), user.getUserType().getAuthority());
         token.update(tokenInfo.getRefreshToken());
         return tokenInfo;
+    }
+
+
+    private User userFoundProcess(LoginRequest loginRequest, TokenInfo tokenInfo, Long userId){
+        Token token = Token.from(userId, tokenInfo.getRefreshToken());
+        tokenRepository.save(token);
+
+        return userRepository.findById(Long.valueOf(userId)).orElseThrow(UserNotFoundException::new);
     }
 }
