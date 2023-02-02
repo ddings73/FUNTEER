@@ -1,9 +1,11 @@
+import React from 'react';
 import { Button, MenuItem, Select } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
-import React from 'react';
+import { useAppDispatch } from '../../store/hooks';
 import styles from './ChargeContainer.module.scss';
+import { closeModal, openModal } from '../../store/slices/payModalSlice';
 
-// 더미 테이터 타입인 신경 안써도 됨
+// 더미 테이터 타입, 신경 안써도 됨
 type NoticeType = {
   idx: number;
   text: string;
@@ -26,7 +28,7 @@ const dummyNotice: NoticeType[] = [
   },
   {
     idx: 3,
-    text: ' 밝은 자신과 방지하는 칼이다. 있는 꽃이 용감하고 사라지지 얼마나 아름답고 그리하였는가? 위하여서, 있는 간에 방황하여도, 천고에 봄바람이다. 놀이 힘차게 대중을 보는 인간의 갑 무한한 사막이다.',
+    text: '밝은 자신과 방지하는 칼이다. 있는 꽃이 용감하고 사라지지 얼마나 아름답고 그리하였는가? 위하여서, 있는 간에 방황하여도, 천고에 봄바람이다. 놀이 힘차게 대중을 보는 인간의 갑 무한한 사막이다.',
   },
 ];
 
@@ -47,11 +49,18 @@ const dummyChargeHistory: ChargeHistoryType[] = [
     date: '2023.01.23',
   },
 ];
+
 function ChargeContainer() {
+  const dispatch = useAppDispatch();
+
   const [age, setAge] = React.useState('');
 
   const handleChange = (event: SelectChangeEvent) => {
     setAge(event.target.value);
+  };
+
+  const onClickChargeHandler = () => {
+    dispatch(openModal({ isOpen: true }));
   };
 
   return (
@@ -63,7 +72,9 @@ function ChargeContainer() {
           <p>잔액</p>
           <div>
             <span>12,400원</span>
-            <Button variant="contained">충전</Button>
+            <Button variant="contained" onClick={onClickChargeHandler}>
+              충전
+            </Button>
           </div>
         </div>
         <div className={styles['notice-box']}>

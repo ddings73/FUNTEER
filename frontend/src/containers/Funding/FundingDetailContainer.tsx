@@ -14,6 +14,7 @@ import CommentCard from '../../components/Cards/CommentCard';
 
 export function FundingDetailContainer() {
   const [users, setUsers] = useState(null);
+  const { fundIdx } = useParams();
   const [board, setBoard] = useState<ResponseInterface>({
     id: 0,
     title: '',
@@ -23,25 +24,24 @@ export function FundingDetailContainer() {
     thumbnail: '',
     category: '',
     content: '',
-    targetMonies: [],
+    targetMoneyListLevelThree: [],
     currentFundingAmount: 0,
+    wishCount: 0,
   });
 
-  const initFundDetail = useCallback(async () => {
-    try {
-      const param = useParams();
-      const paramId = Number(param.id);
-
-      const { data } = await requestFundingDetail(paramId);
-      console.log('데이터임', data);
-      setBoard(data);
-    } catch (error) {
-      console.log(error);
-    }
-  }, []);
-
   useEffect(() => {
-    initFundDetail();
+    const fetchData = async () => {
+      try {
+        const response = await requestFundingDetail(fundIdx);
+        console.log('res: ', response);
+        console.log('data res: ', response.data);
+        setBoard(response.data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -78,7 +78,7 @@ export function FundingDetailContainer() {
           <FavoriteIcon className={styles.mainFooterLike} />
           <div className={styles.Likebox}>
             <div className={styles.mainFooterLikeTest}> 펀딩 찜</div>
-            <div className={styles.mainFooterLikeTestSub}> 찜 수 20</div>
+            <div className={styles.mainFooterLikeTestSub}> 찜 수 {board.wishCount}</div>
           </div>
         </div>
         <div className={styles.mainFooterdiv} />

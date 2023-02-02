@@ -54,15 +54,15 @@ export const requestFundingList = async () => {
 export const requestFundingSearch = async (text: string) => {
   const response = await http.get(`funding/search/?keyword=${text}`);
   return response;
-}
+};
 
 /*
  * 펀딩 상세 호출
  * @method GET
  */
 
-export const requestFundingDetail = async (id: number) => {
-  const res = await http.get(`funding/${id}`);
+export const requestFundingDetail = async (fundIdx?: string) => {
+  const res = await http.get(`funding/${fundIdx}`);
   console.log(res);
   return res;
 };
