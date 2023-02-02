@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.dto.response;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,26 +19,25 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TargetMoneyResponse {
 
-	private int amount;
+	private String amount;
 	private TargetMoneyType targetMoneyType;
 	private List<TargetMoneyDetailResponse> descriptions;
 
 	public static TargetMoneyResponse from (TargetMoney targetMoney) {
+
+		DecimalFormat decFormat = new DecimalFormat("###,###");
+		String str = decFormat.format(targetMoney.getAmount());
+
 		List<TargetMoneyDetailResponse> targetMoneyDetailResponses = new ArrayList<>();
 
 		for (TargetMoneyDetail tmd : targetMoney.getDescriptions()) {
-
 			targetMoneyDetailResponses.add(TargetMoneyDetailResponse.from(tmd));
 		}
 		return TargetMoneyResponse.builder()
-			.amount(targetMoney.getAmount())
 			.targetMoneyType(targetMoney.getTargetMoneyType())
 			.descriptions(targetMoneyDetailResponses)
+			.amount(str)
 			.build();
 	}
-
-
-
-
 
 }
