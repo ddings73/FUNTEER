@@ -26,10 +26,22 @@ export interface FundingInterface {
   startDate: string;
   hashtags: string;
   endDate: string;
-  amount1: number;
-  description1: string;
-  amount2: number;
-  description2: string;
-  amount3: number;
-  description3: string;
+  LEVEL_ONE: amountLevelType;
+  LEVEL_TWO: amountLevelType;
+  LEVEL_THREE: amountLevelType;
+}
+
+export type amountLevelType = {
+  amount: string;
+  descriptions: descriptionType[];
+};
+
+export type descriptionType = {
+  description: string;
+};
+
+export enum LevelEnum {
+  LEVEL_ONE,
+  LEVEL_TWO,
+  LEVEL_THREE,
 }
