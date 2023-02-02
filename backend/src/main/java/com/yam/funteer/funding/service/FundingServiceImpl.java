@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.common.security.SecurityUtil;
@@ -90,6 +91,8 @@ public class FundingServiceImpl implements FundingService{
 	private final PostHashtagRepository postHashtagRepository;
 
 	private final CommentRepository commentRepository;
+
+	private final BadgeService badgeService;
 
 
 	@Override
@@ -453,6 +456,10 @@ public class FundingServiceImpl implements FundingService{
 
 			member.setMoney(member.getMoney() - data.getAmount());
 			funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + data.getAmount());
+
+			badgeService.postBadges(member, PostGroup.FUNDING);
+			badgeService.totalPayAmount(member);
+
 
 		} catch ( InsufficientBalanceException e) {
 			String message = e.getMessage();
