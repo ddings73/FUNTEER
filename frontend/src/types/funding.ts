@@ -32,7 +32,7 @@ export interface FundingInterface {
 }
 
 export type amountLevelType = {
-  amount: string | number;
+  amount: string ;
   descriptions: descriptionType[];
 };
 

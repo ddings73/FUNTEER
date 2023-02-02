@@ -1,0 +1,66 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+.stage-contents-box {
+    
+    & .input-text {
+        box-sizing: border-box;
+        width: 100%;
+        height: 50px;
+        padding: 5px 5px 5px 15px;
+        border: 1px solid rgba(216, 216, 216, 0.725);
+        transition: all 0.2s;
+        &::placeholder {
+          color: #d1d2d1;
+          font-size: 1rem;
+        }
+  
+        &:focus {
+          border: 1px solid $second;
+        }
+    }
+    .stage {
+      margin-top: 30px;
+      & .stage-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin: 15px 0;
+      }
+      .todo-list-box {
+        margin-top: 30px;
+        display: flex;
+        flex-direction: column;
+
+        & .todo-list-title {
+          font-size: 1.3rem;
+          font-weight: bold;
+          margin: 15px 0;
+        }
+
+        .todo-contents {
+          font-size: 1.1rem;
+          margin: 10px 0;
+        }
+        .todo-input-box {
+          display: flex;
+          flex-direction: row;
+          margin: 25px 0 20px 0;
+          & .todo-input {
+            box-sizing: border-box;
+            width: 80%;
+            height: 40px;
+            font-size: 1rem;
+          }
+
+          & .create-button,
+          & .delete-button {
+            margin: 0 10px;
+            border-radius: 100%;
+            box-sizing: border-box;
+            width: 5%;
+            height: 50px;
+          }
+        }
+      }
+    }
+  }
