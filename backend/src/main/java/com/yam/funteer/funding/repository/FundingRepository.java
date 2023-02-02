@@ -24,5 +24,5 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 
 	List<Funding> findAllByEndDate(LocalDate minusDays);
 
-	List<Funding> findAllByTeamAAndPostType(Team team,PostType postType);
+	List<Funding> findAllByTeamAndPostType(Team team,PostType postType);
 }

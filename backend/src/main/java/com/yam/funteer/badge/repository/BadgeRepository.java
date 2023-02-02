@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.yam.funteer.badge.entity.Badge;
 
 public interface BadgeRepository extends JpaRepository<Badge,Long> {
-	List<Badge>findAllByIdBetweenId1AndId2(Long id1,Long id2);
+	List<Badge>findAllByIdBetween(Long id1,Long id2);
 }
