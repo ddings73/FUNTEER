@@ -9,6 +9,6 @@ import com.yam.funteer.funding.dto.response.TargetMoneyResponse;
 import com.yam.funteer.funding.entity.TargetMoney;
 
 public interface TargetMoneyRepository extends JpaRepository<TargetMoney, Long> {
-	List<TargetMoneyResponse> findAllByFundingIdAndTargetMoneyType(Long id, TargetMoneyType level);
+	List<TargetMoneyResponse> findByFundingIdAndTargetMoneyType(Long id, TargetMoneyType level);
 
 }

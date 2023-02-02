@@ -25,6 +25,7 @@ import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
+import com.yam.funteer.funding.dto.request.TargetMoneyDetailRequest;
 import com.yam.funteer.funding.dto.request.TargetMoneyRequest;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
 import com.yam.funteer.funding.dto.response.FundingListPageResponse;
@@ -38,6 +39,7 @@ import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.funding.entity.ReportDetail;
 import com.yam.funteer.funding.entity.TargetMoney;
+import com.yam.funteer.funding.entity.TargetMoneyDetail;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.exception.InsufficientBalanceException;
@@ -47,6 +49,7 @@ import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.repository.ReportDetailRepository;
 import com.yam.funteer.funding.repository.ReportRepository;
+import com.yam.funteer.funding.repository.TargetMoneyDetailRepository;
 import com.yam.funteer.funding.repository.TargetMoneyRepository;
 import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
@@ -91,6 +94,8 @@ public class FundingServiceImpl implements FundingService{
 	private final PostHashtagRepository postHashtagRepository;
 
 	private final CommentRepository commentRepository;
+
+	private final TargetMoneyDetailRepository targetMoneyDetailRepository;
 
 	private final BadgeService badgeService;
 
@@ -188,6 +193,9 @@ public class FundingServiceImpl implements FundingService{
 		String thumbnailUrl = awsS3Uploader.upload(thumbnail, "thumbnails/" + savedPost.getId());
 
 		savedPost.setThumbnail(thumbnailUrl);
+		System.out.println(data.getTargetMoneyLevelOne().getTargetMoneyType());
+		System.out.println(data.getTargetMoneyLevelOne().getAmount());
+		System.out.println(data.getTargetMoneyLevelOne().getDescriptions());
 
 		addTargetMoney(data, funding);
 
@@ -221,13 +229,26 @@ public class FundingServiceImpl implements FundingService{
 	private void addTargetMoney(FundingRequest data, Funding funding) {
 		List<TargetMoney> targetMoneyList = new ArrayList<>();
 
-		for (TargetMoneyRequest tm : data.getTargetMoneyRequestList()) {
-			TargetMoney targetMoney = new TargetMoney(funding, tm.getTargetMoneyType(), tm.getAmount(), tm.getDescription());
-			targetMoneyRepository.save(targetMoney);
-			targetMoneyList.add(targetMoney);
-		}
+		setTargetMoneyListByLevel(data.getTargetMoneyLevelOne(), funding, targetMoneyList);
+		setTargetMoneyListByLevel(data.getTargetMoneyLevelTwo(), funding, targetMoneyList);
+		setTargetMoneyListByLevel(data.getTargetMoneyLevelThree(), funding, targetMoneyList);
 
 		funding.setTargetMoneyList(targetMoneyList);
+	}
+
+	private void setTargetMoneyListByLevel(TargetMoneyRequest targetMoneyRequest, Funding funding, List<TargetMoney> targetMoneyList) {
+		TargetMoney targetMoney = new TargetMoney(funding, targetMoneyRequest.getTargetMoneyType(), targetMoneyRequest.getAmount());
+
+		List<TargetMoneyDetail> targetMoneyDetails = new ArrayList<>();
+		for (TargetMoneyDetailRequest targetMoneyDetailRequest : targetMoneyRequest.getDescriptions()) {
+			TargetMoneyDetail targetMoneyDetail = new TargetMoneyDetail(targetMoney, targetMoneyDetailRequest.getDescription());
+			targetMoneyDetailRepository.save(targetMoneyDetail);
+			targetMoneyDetails.add(targetMoneyDetail);
+		}
+
+		targetMoneyRepository.save(targetMoney);
+		targetMoney.setTargetMoneyDescriptions(targetMoneyDetails);
+		targetMoneyList.add(targetMoney);
 	}
 
 	private List<Hashtag> saveNotExistHashTags(List<Hashtag> hashtagList) {
@@ -260,11 +281,11 @@ public class FundingServiceImpl implements FundingService{
 		fundingDetailResponse.setWishCount(wishCount);
 
 		// 목표금액
-		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(
+		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_ONE));
-		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(
+		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_TWO));
-		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(
+		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_THREE));
 
 		return fundingDetailResponse;
@@ -320,17 +341,12 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	private void setTargetMoney(FundingRequest data, Funding funding) {
-		List<TargetMoney> targetMoneyList = funding.getTargetMoneyList();
+		List<TargetMoney> targetMoneyList = new ArrayList<>();
 		for (TargetMoney targetMoney : funding.getTargetMoneyList()) {
 			targetMoneyRepository.delete(targetMoney);
 		}
 
-		for (TargetMoneyRequest tm : data.getTargetMoneyRequestList()) {
-			TargetMoney targetMoney = new TargetMoney(funding, tm.getTargetMoneyType(), tm.getAmount(),
-				tm.getDescription());
-			targetMoneyRepository.save(targetMoney);
-		}
-
+		setTargetMoneyListByLevel(data.getTargetMoneyLevelOne(), funding, targetMoneyList);
 		funding.setTargetMoneyList(targetMoneyList);
 	}
 

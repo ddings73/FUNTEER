@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -29,7 +30,7 @@ public class ReportDetail {
 		this.amount = amount;
 	}
 
-	@ManyToOne
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "report_id")
 	private Report report;
 	private String description;

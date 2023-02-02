@@ -1,5 +1,8 @@
 package com.yam.funteer.funding.entity;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -9,6 +12,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -24,7 +29,6 @@ import lombok.Setter;
 @Entity
 @Table(name = "target_money")
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class TargetMoney {
@@ -37,12 +41,16 @@ public class TargetMoney {
 	@Column(nullable = false)
 	private TargetMoneyType targetMoneyType;
 	private @NotNull int amount;
-	private @NotBlank String description;
 
-	public TargetMoney(Funding funding, TargetMoneyType targetMoneyType, int amount, String description) {
+	@OneToMany(mappedBy = "targetMoney",  cascade = CascadeType.ALL)
+	private List<TargetMoneyDetail> descriptions;
+
+	public TargetMoney(Funding funding, TargetMoneyType targetMoneyType, int amount) {
 		this.funding = funding;
 		this.targetMoneyType = targetMoneyType;
 		this.amount = amount;
-		this.description = description;
+	}
+
+	public void setTargetMoneyDescriptions(List<TargetMoneyDetail> targetMoneyDetails) {
 	}
 }

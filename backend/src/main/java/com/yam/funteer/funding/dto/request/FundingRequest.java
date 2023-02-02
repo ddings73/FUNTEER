@@ -30,7 +30,9 @@ public class FundingRequest {
 	@NotNull
 	private String fundingDescription;
 
-	private List<TargetMoneyRequest> targetMoneyRequestList;
+	private TargetMoneyRequest targetMoneyLevelOne;
+	private TargetMoneyRequest targetMoneyLevelTwo;
+	private TargetMoneyRequest targetMoneyLevelThree;
 	private String hashtags;
 
 }
