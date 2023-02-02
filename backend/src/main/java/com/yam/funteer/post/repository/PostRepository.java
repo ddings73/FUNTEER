@@ -13,6 +13,6 @@ public interface PostRepository extends JpaRepository<Post,Long> {
 	@Query(value = "select * from funding where keyword", nativeQuery = true)
 	List<Post> findApprovedFunding(String keyword, String category, String hashTag);
 
-	List<Post>findAllByPostType(PostType postType);
+	List<Post>findAllByPostTypeOrderByIdDesc(PostType postType);
 
 }

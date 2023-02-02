@@ -45,20 +45,10 @@ public class DonationRegisterReq {
 			.title(title)
 			.content(content)
 			.amount(amount)
+			.currentAmount(Long.valueOf(0))
 			.build();
 	}
 
-	public Donation toEntity(Long postId){
-		return Donation.builder()
-			.id(postId)
-			.regDate(LocalDateTime.now())
-			.postGroup(PostGroup.DONATION)
-			.postType(PostType.DONATION_ACTIVE)
-			.title(title)
-			.content(content)
-			.amount(amount)
-			.build();
-	}
 
 	public Attach toAttachEntity(String path,String name){
 		return Attach.builder()

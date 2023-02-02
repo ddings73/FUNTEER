@@ -66,9 +66,6 @@ public class DonationServiceImpl implements DonationService{
 
 		List<Payment>paymentList=paymentRepository.findAllByPost(donation);
 
-		for(Payment payment:paymentList){
-			currentAmount+=payment.getAmount();
-		}
 		List<String>attachList=new ArrayList<>();
 		if(postAttachRepository.findAllByPost(donation).size()>0){
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donation);
@@ -79,7 +76,7 @@ public class DonationServiceImpl implements DonationService{
 				}
 			}
 		}
-		return new DonationBaseRes(donation,currentAmount,attachList);
+		return new DonationBaseRes(donation,attachList);
 	}
 
 	@Override
@@ -91,18 +88,21 @@ public class DonationServiceImpl implements DonationService{
 	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq) {
 		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		if(user.getMoney()<donationJoinReq.getPaymentAmount()||user.getMoney()==0){
+		Long paymentAmount=donationJoinReq.getPaymentAmount();
+		if(user.getMoney()<paymentAmount||user.getMoney()==0){
 			throw new DonationPayException();
 		}
 
 		Payment payment=Payment.builder()
 			.user(user)
-			.amount(donationJoinReq.getPaymentAmount())
+			.amount(paymentAmount)
 			.post(donation)
 			.payDate(LocalDateTime.now())
 			.build();
 
 		paymentRepository.save(payment);
+		donation.currentAmountUpdate(paymentAmount);
+		user.charge(-paymentAmount);
 
 		return payment;
 	}
@@ -131,7 +131,7 @@ public class DonationServiceImpl implements DonationService{
 
 				}
 			}
-			return new DonationBaseRes(donation,Long.valueOf(0),attachList);
+			return new DonationBaseRes(donation,attachList);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
@@ -146,11 +146,11 @@ public class DonationServiceImpl implements DonationService{
 
 
 	public DonationBaseRes donationModify(Long postId, DonationModifyReq donationModifyReq){
-		donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
+		Donation donationOrigin=donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
 
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
-			Donation donation=donationRepository.save(donationModifyReq.toEntity(postId));
+			Donation donation=donationRepository.save(donationModifyReq.toEntity(postId,donationOrigin.getCurrentAmount()));
 
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donation);
 			for(PostAttach postAttach:postAttachList){
@@ -177,7 +177,7 @@ public class DonationServiceImpl implements DonationService{
 
 				}
 			}
-			return new DonationBaseRes(donation,Long.valueOf(0),attachList);
+			return new DonationBaseRes(donation,attachList);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 }

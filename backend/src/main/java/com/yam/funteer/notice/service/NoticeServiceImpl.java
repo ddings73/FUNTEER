@@ -41,7 +41,7 @@ public class NoticeServiceImpl implements NoticeService{
 
 	@Override
 	public List<FaqListRes> noticeGetList() {
-		List<Post>postList=postRepository.findAllByPostType(PostType.NOTICE);
+		List<Post>postList=postRepository.findAllByPostTypeOrderByIdDesc(PostType.NOTICE);
 		List<FaqListRes>noticeList;
 		noticeList=postList.stream().map(notice->new FaqListRes(notice)).collect(Collectors.toList());
 		return noticeList;

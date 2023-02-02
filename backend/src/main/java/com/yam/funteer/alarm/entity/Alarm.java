@@ -17,26 +17,20 @@ import com.yam.funteer.user.entity.User;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Entity
-@Table(name="alarm")
+@Data
 @Getter @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Alarm {
-	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	private User user;
-	@ManyToOne
-	@JoinColumn(name = "post_id")
-	private Post post;
-	private @NotBlank String title;
-	private @NotBlank String content;
-	private boolean checked;
-	private LocalDateTime date;
+	private String receiver;
 
+	private String content;
+
+	private String url;
+
+	private Boolean isRead;
 }

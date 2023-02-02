@@ -19,4 +19,9 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 public class Donation extends Post {
 	private @NotNull Long amount;
+	private Long currentAmount;
+
+	public void currentAmountUpdate(Long payAmount){
+		this.currentAmount+=payAmount;
+	}
 }
