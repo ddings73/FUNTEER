@@ -8,7 +8,7 @@ import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 
 public interface BadgeService {
-	void initBadges(UserType userType);
+	void initBadges(User user);
 	void postBadges(User user, PostGroup postGroup);
 	void totalPayAmount(User user);
 	void teamFundingBadges(Team team);

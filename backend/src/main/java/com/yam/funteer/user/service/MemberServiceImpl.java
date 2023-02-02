@@ -2,6 +2,7 @@ package com.yam.funteer.user.service;
 
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
@@ -39,6 +40,8 @@ public class MemberServiceImpl implements MemberService {
     private final FundingRepository fundingRepository;
     private final WishRepository wishRepository;
 
+    private final BadgeService badgeService;
+
 
     @Override
     public void createAccountWithOutProfile(CreateMemberRequest request) {
@@ -49,6 +52,7 @@ public class MemberServiceImpl implements MemberService {
         request.encryptPassword(passwordEncoder);
         Member member = request.toMember();
         memberRepository.save(member);
+        badgeService.initBadges(member);
     }
 
     @Override

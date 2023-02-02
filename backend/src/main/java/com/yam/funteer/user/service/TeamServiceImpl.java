@@ -10,6 +10,7 @@ import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.entity.TeamAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.TeamAttachRepository;
+import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
@@ -46,6 +47,7 @@ public class TeamServiceImpl implements TeamService{
 	private final TeamAttachRepository teamAttachRepository;
 	private final AwsS3Uploader awsS3Uploader;
 
+	private final BadgeService badgeService;
 
 
 
@@ -59,6 +61,7 @@ public class TeamServiceImpl implements TeamService{
 
 		Team team = request.toTeam();
 		teamRepository.save(team);
+		badgeService.initBadges(team);
 
 		request.validateFile();
 		MultipartFile vmsFile = request.getVmsFile();
