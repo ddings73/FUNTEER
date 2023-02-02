@@ -32,8 +32,8 @@ public class DonationModifyReq {
 	private String content;
 	@NotBlank
 	private String title;
-	@NotNull
-	private Long amount;
+	@NotBlank
+	private String amount;
 
 	private List<MultipartFile>files=new ArrayList<>();
 	@NotBlank
@@ -47,7 +47,7 @@ public class DonationModifyReq {
 			.postType(postType)
 			.title(title)
 			.content(content)
-			.amount(amount)
+			.amount(Long.parseLong(amount))
 			.currentAmount(currentAmount)
 			.build();
 	}

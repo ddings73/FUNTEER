@@ -19,6 +19,7 @@ import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.entity.PostAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.PostAttachRepository;
+import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
@@ -57,6 +58,7 @@ public class DonationServiceImpl implements DonationService{
 	private final AttachRepository attachRepository;
 	private final PostAttachRepository postAttachRepository;
 	private final AlarmService alarmService;
+	private final BadgeService badgeService;
 
 	public List<DonationListRes> donationGetList() {
 		List<Donation>donations=donationRepository.findAllByPostGroupOrderByIdDesc(PostGroup.DONATION);
@@ -91,7 +93,7 @@ public class DonationServiceImpl implements DonationService{
 	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq) {
 		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Long paymentAmount=donationJoinReq.getPaymentAmount();
+		Long paymentAmount=Long.parseLong(donationJoinReq.getPaymentAmount());
 		if(user.getMoney()<paymentAmount||user.getMoney()==0){
 			throw new DonationPayException();
 		}
@@ -106,6 +108,9 @@ public class DonationServiceImpl implements DonationService{
 		paymentRepository.save(payment);
 		donation.currentAmountUpdate(paymentAmount);
 		user.charge(-paymentAmount);
+
+		badgeService.totalPayAmount(user);
+		badgeService.postBadges(user,PostGroup.DONATION);
 
 		return payment;
 	}
@@ -157,7 +162,7 @@ public class DonationServiceImpl implements DonationService{
 
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donation);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("donation",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("donation/",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}

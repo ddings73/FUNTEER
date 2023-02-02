@@ -21,7 +21,6 @@ public class AlarmRepositoryImpl implements AlarmRepository {
 	@Override
 	public SseEmitter save(String emitterId, SseEmitter sseEmitter) {
 		emitters.put(emitterId, sseEmitter);
-		log.info(String.valueOf(emitters));
 		return sseEmitter;
 	}
 

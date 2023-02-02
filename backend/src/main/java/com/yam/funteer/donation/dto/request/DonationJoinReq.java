@@ -18,6 +18,6 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class DonationJoinReq {
-	@NotNull
-	private Long paymentAmount;
+	@NotBlank
+	private String paymentAmount;
 }
