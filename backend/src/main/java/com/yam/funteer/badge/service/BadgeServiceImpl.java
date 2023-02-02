@@ -40,9 +40,8 @@ public class BadgeServiceImpl implements BadgeService {
 	private final PaymentRepository paymentRepository;
 
 	@Override
-	public void initBadges(UserType userType) {
-		if(userType.equals(UserType.TEAM_WAIT)){
-			User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
+	public void initBadges(User user) {
+		if(user.getUserType().equals(UserType.TEAM_WAIT)){
 			List<Badge> badgeList=badgeRepository.findAllByIdBetween(Long.valueOf(9),Long.valueOf(17));
 			for(Badge badge:badgeList){
 				UserBadge userBadge=UserBadge.builder()
@@ -51,8 +50,7 @@ public class BadgeServiceImpl implements BadgeService {
 					.achieve(false).build();
 				userBadgeRepository.save(userBadge);
 			}
-		}else if(!userType.equals(UserType.ADMIN)){
-			User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
+		}else if(!user.getUserType().equals(UserType.ADMIN)){
 			List<Badge> badgeList=badgeRepository.findAllByIdBetween(Long.valueOf(1),Long.valueOf(14));
 			for(Badge badge:badgeList){
 				UserBadge userBadge=UserBadge.builder()

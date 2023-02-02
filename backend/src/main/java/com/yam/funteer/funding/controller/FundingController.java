@@ -42,6 +42,7 @@ public class FundingController {
 	private final FundingService fundingService;
 	private final AwsS3Uploader awsS3Uploader;
 
+
 	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
 	@GetMapping("")
 	public ResponseEntity<FundingListPageResponse> findAllFunding() {

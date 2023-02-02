@@ -4,6 +4,7 @@ import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
 
+import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
@@ -26,6 +27,8 @@ public class AdminServiceImpl implements AdminService{
 	private final EmailService emailService;
 	private final ReportRepository reportRepository;
 
+	private final BadgeService badgeService;
+
 
 	@Override
 	public void acceptFunding(Long fundingId) {
@@ -46,6 +49,7 @@ public class AdminServiceImpl implements AdminService{
 	public void acceptReport(Long fundingId) {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
 		funding.setPostType(PostType.REPORT_ACCEPT);
+		badgeService.teamFundingBadges(funding.getTeam());
 	}
 
 	@Override
