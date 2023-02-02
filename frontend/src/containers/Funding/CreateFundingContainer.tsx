@@ -1,24 +1,27 @@
-import React, { useState, useRef, useEffect, useMemo} from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor as ToastEditor } from '@toast-ui/react-editor';
 import dayjs, { Dayjs } from 'dayjs';
 import LinearProgress from '@mui/material/LinearProgress';
 import { useNavigate } from 'react-router-dom';
-import Calendar from 'react-calendar';
-import DatePicker from 'react-date-picker';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { Button, Icon, IconButton, TextField } from '@mui/material';
+import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
+import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestUploadImage } from '../../api/funding';
-import { FundingInterface } from '../../types/funding';
+import { FundingInterface, amountLevelType } from '../../types/funding';
 import defaultThumbnail from '../../assets/images/default-profile-img.svg';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { openModal } from '../../store/slices/modalSlice';
 import requiredIcon from '../../assets/images/funding/required.svg';
 import uploadIcon from '../../assets/images/funding/upload.svg';
-import 'react-calendar/dist/Calendar.css';
-import 'react-date-picker/dist/DatePicker.css'
-import './CalendarCustom.css'
-import './DatePickerCustom.css'
-import { diffDay, diffDayOfStartEnd } from '../../utils/day';
+import { diffDayStartToEnd } from '../../utils/day';
+import { stringToSeparator } from '../../types/convert';
 
 interface TabPanelProps {
   // eslint-disable-next-line react/require-default-props
@@ -26,6 +29,10 @@ interface TabPanelProps {
   index: number;
   value: number;
 }
+
+type todoType = {
+  description: string;
+};
 
 function TabPanel(props: TabPanelProps) {
   const { children, value, index, ...other } = props;
@@ -37,6 +44,55 @@ function TabPanel(props: TabPanelProps) {
   );
 }
 
+type TabContentPropsType = {
+  data: amountLevelType;
+  onChangeTextHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChangeTodoHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onKeyDownHandler: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+  addTodos: () => void;
+  level: string;
+};
+function TabContent(props: TabContentPropsType) {
+  const { data, onChangeTextHandler, onChangeTodoHandler, onKeyDownHandler, addTodos, level } = props;
+  return (
+    <div className={styles['stage-contents-box']}>
+      <div className={styles.stage}>
+        <p className={styles['stage-title']}>목표 금액</p>
+        <input
+          type="text"
+          value={data.amount}
+          placeholder="펀딩 최소달성 금액을 입력해주세요"
+          name={level}
+          className={styles['input-text']}
+          onChange={onChangeTextHandler}
+        />
+
+        <div className={styles['todo-list-box']}>
+          <p className={styles['todo-list-title']}>기준 충족시 진행할 봉사의 내용을 입력해주세요.</p>
+          {/* {todos.map((todo, index) => (
+            <p className={styles['todo-contents']}>
+              {index + 1}. {todo.description}
+            </p>
+          ))} */}
+
+          <div className={styles['todo-input-box']}>
+            <input
+              type="text"
+              className={styles['input-text']}
+              // value={todoText}
+              placeholder="내용을 입력해주세요."
+              onChange={onChangeTodoHandler}
+              onKeyDown={onKeyDownHandler}
+            />
+            <IconButton size="large" aria-label="delete" className={styles['create-button']} color="warning" onClick={addTodos}>
+              <AddCircleOutlineOutlinedIcon fontSize="inherit" />
+            </IconButton>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 function CreateFundingContainer() {
   const thumbnailRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
@@ -51,20 +107,28 @@ function CreateFundingContainer() {
     startDate: '',
     endDate: '',
     hashtags: '#tags',
-    amount1: 0,
-    description1: '',
-    amount2: 0,
-    description2: '',
-    amount3: 0,
-    description3: '',
+    LEVEL_ONE: {
+      amount: '',
+      descriptions: [],
+    },
+    LEVEL_TWO: {
+      amount: '',
+      descriptions: [],
+    },
+    LEVEL_THREE: {
+      amount: '',
+      descriptions: [],
+    },
   });
   const [thunmbnailPreview, setThumbnailPreview] = useState<string>();
   const [progress, setProgress] = useState<number>(100 / 3);
   const [tabIdx, setTabIdx] = useState<number>(0);
-  const [startDate,setStartDate] = useState(new Date())
-  const [endDate,setEndDate] = useState(new Date())
+  const [startDate, setStartDate] = useState<Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<Dayjs | null>(null);
+  const [todoText, setTodoText] = useState<string>('');
+  const [todos, setTodos] = useState<todoType[]>([]);
 
-  const allFundingDays = useMemo(()=>diffDayOfStartEnd(startDate,endDate),[startDate,endDate])
+  const allFundingDays = useMemo(() => diffDayStartToEnd(fundingData.startDate, fundingData.endDate), [fundingData.startDate, fundingData.endDate]);
 
   const editorChangeHandler = (e: any) => {
     const text = editorRef.current?.getInstance().getHTML();
@@ -106,9 +170,24 @@ function CreateFundingContainer() {
     };
   };
 
-  const onChangeTextHandler = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  // 목표 금액 Handler
+  const onChangeTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFundingData({ ...fundingData, [name]: value });
+    const separatorValue = stringToSeparator(value);
+
+    switch (name) {
+      case 'LEVEL_ONE':
+        setFundingData({ ...fundingData, LEVEL_ONE: { ...fundingData.LEVEL_ONE, amount: separatorValue } });
+        break;
+      case 'LEVEL_TWO':
+        setFundingData({ ...fundingData, LEVEL_TWO: { ...fundingData.LEVEL_TWO, amount: separatorValue } });
+        break;
+      case 'LEVEL_THREE':
+        setFundingData({ ...fundingData, LEVEL_TWO: { ...fundingData.LEVEL_THREE, amount: separatorValue } });
+        break;
+      default:
+        break;
+    }
   };
 
   const onChangeDateHandler = (value: Dayjs | null, type: string) => {
@@ -136,19 +215,23 @@ function CreateFundingContainer() {
     if (thumbnailRef.current) thumbnailRef.current.click();
   };
 
-  // useEffect(() => {
-  //   console.log(fundingData);
-  // }, [fundingData]);
+  const onKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') addTodos();
+  };
+  const addTodos = () => {
+    if (todoText) {
+      setTodos([...todos, { description: todoText }]);
+      setTodoText('');
+    }
+  };
 
-  useEffect(()=>{
-console.log(startDate , endDate);
-console.log(typeof startDate);
+  const onChangeTodoHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTodoText(e.target.value);
+  };
 
-
-  },[startDate,endDate])
-
-
-
+  useEffect(() => {
+    console.log(fundingData);
+  }, [fundingData]);
 
   return (
     <div className={styles.container}>
@@ -218,22 +301,48 @@ console.log(typeof startDate);
             펀딩 기간 설정 <img className={styles.required} src={requiredIcon} alt="" />
           </p>
 
-          {/* <Calendar/> */}
           <div className={styles['date-picker-box']}>
-            <div className={styles['date-picker']}>
-            <p className={styles.subTitle}>펀딩 시작 일자를 선택해주세요.</p>
-          <DatePicker onChange={setStartDate} value={startDate}    />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                disablePast
+                label="펀딩 시작 일자를 선택해주세요"
+                inputFormat="YYYY-MM-DD"
+                value={startDate}
+                onChange={(newValue) => {
+                  setStartDate(newValue);
+                  onChangeDateHandler(newValue, 'startDate');
+                }}
+                renderInput={(params) => <TextField {...params} sx={{ mr: 2, mb: 5, minWidth: 300 }} />}
+              />
+            </LocalizationProvider>
+
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                disablePast
+                label="펀딩 종료 일자를 선택해주세요"
+                minDate={startDate}
+                inputFormat="YYYY-MM-DD"
+                value={endDate}
+                onChange={(newValue) => {
+                  setEndDate(newValue);
+                  onChangeDateHandler(newValue, 'endDate');
+                }}
+                renderInput={(params) => <TextField {...params} sx={{ minWidth: 300 }} />}
+              />
+            </LocalizationProvider>
           </div>
-           <div className={styles['date-picker']}>
-            <p className={styles.subTitle}>펀딩 종료 일자를 선택해주세요.</p>
-            <DatePicker onChange={setEndDate} value={endDate} />
-           </div>
-           </div>
-           <p>총 {allFundingDays}일간 펀딩을 진행합니다.</p>
+
+          {allFundingDays > 0 ? (
+            <p className={styles['funding-days-text']}>총 {allFundingDays}일간 펀딩을 진행합니다.</p>
+          ) : (
+            <p className={styles['funding-days-text']}>시작 일자와 종료 일자를 선택해주세요.</p>
+          )}
         </div>
 
         <div className={styles['funding-amount-box']}>
-          <p className={styles.title}>펀딩 단계별 활동 설정  <img className={styles.required} src={requiredIcon} alt="" /></p>
+          <p className={styles.title}>
+            펀딩 단계별 활동 설정 <img className={styles.required} src={requiredIcon} alt="" />
+          </p>
 
           <div className={styles['progress-box']}>
             <div className={styles['stage-text-box']}>
@@ -242,42 +351,53 @@ console.log(typeof startDate);
               <p className={styles.subTitle}>추가 모금 1단계 </p>
               <p className={styles.subTitle}>추가 모금 2단계</p>
             </div>
-            <LinearProgress sx={{height:6,borderRadius:2}} variant="determinate" value={progress}   color="warning"/>
+            <LinearProgress sx={{ height: 15, borderRadius: 2 }} variant="determinate" value={progress} color="warning" />
 
             <TabPanel value={0} index={tabIdx}>
-              <div className={styles['stage-contents-box']}>
-                <p>목표 금액</p>
-                <input type="number" value={fundingData.amount1} placeholder="금액을 입력해주세요" name="amount1" className={styles['money-input']} onChange={onChangeTextHandler} />
-                <textarea placeholder="내용을 입력해주세요" value={fundingData.description1} className={styles['contents-textarea']} name="description1" onChange={onChangeTextHandler} />
-              </div>
+              <TabContent
+                data={fundingData.LEVEL_ONE}
+                onChangeTextHandler={onChangeTextHandler}
+                onChangeTodoHandler={onChangeTodoHandler}
+                onKeyDownHandler={onKeyDownHandler}
+                addTodos={addTodos}
+                level="LEVEL_ONE"
+              />
             </TabPanel>
 
             <TabPanel value={1} index={tabIdx}>
-              <div className={styles['stage-contents-box']}>
-                <input type="number" placeholder="금액을 입력해주세요" value={fundingData.amount2} className={styles['money-input']} name="amount2" onChange={onChangeTextHandler} />
-                <textarea placeholder="내용을 입력해주세요" value={fundingData.description2} className={styles['contents-textarea']} name="description2" onChange={onChangeTextHandler} />
-              </div>
+              <TabContent
+                data={fundingData.LEVEL_TWO}
+                onChangeTextHandler={onChangeTextHandler}
+                onChangeTodoHandler={onChangeTodoHandler}
+                onKeyDownHandler={onKeyDownHandler}
+                addTodos={addTodos}
+                level="LEVEL_TWO"
+              />
             </TabPanel>
 
             <TabPanel value={2} index={tabIdx}>
-              <div className={styles['stage-contents-box']}>
-                <input type="number" placeholder="금액을 입력해주세요" value={fundingData.amount3} className={styles['money-input']} name="amount3" onChange={onChangeTextHandler} />
-                <textarea placeholder="내용을 입력해주세요" value={fundingData.description3} className={styles['contents-textarea']} name="description3" onChange={onChangeTextHandler} />
-              </div>
+              <TabContent
+                data={fundingData.LEVEL_THREE}
+                onChangeTextHandler={onChangeTextHandler}
+                onChangeTodoHandler={onChangeTodoHandler}
+                onKeyDownHandler={onKeyDownHandler}
+                addTodos={addTodos}
+                level="LEVEL_THREE"
+              />
             </TabPanel>
             <div className={styles['stage-button-box']}>
-              <button type="button" onClick={prevStageHandler}>
+              <Button className={styles['stage-button']} type="button" onClick={prevStageHandler} variant="outlined" startIcon={<ArrowBackOutlinedIcon />}>
                 이전 단계
-              </button>
+              </Button>
 
-              <button type="button" onClick={nextStageHandler}>
+              <Button className={styles['stage-button']} type="button" onClick={nextStageHandler} endIcon={<ArrowForwardOutlinedIcon />}>
                 다음 단계
-              </button>
+              </Button>
             </div>
           </div>
-          <button type="button" onClick={onCreateFunding}>
-            생성하기
-          </button>
+          <Button variant="contained" type="button" className={styles['submit-button']} onClick={onCreateFunding}>
+            펀딩 생성하기
+          </Button>
         </div>
       </div>
     </div>
