@@ -36,10 +36,10 @@ public class DonationModifyReq {
 	private Long amount;
 
 	private List<MultipartFile>files=new ArrayList<>();
-
+	@NotBlank
 	private PostType postType;
 
-	public Donation toEntity(Long postId){
+	public Donation toEntity(Long postId,Long currentAmount){
 		return Donation.builder()
 			.id(postId)
 			.regDate(LocalDateTime.now())
@@ -48,6 +48,7 @@ public class DonationModifyReq {
 			.title(title)
 			.content(content)
 			.amount(amount)
+			.currentAmount(currentAmount)
 			.build();
 	}
 

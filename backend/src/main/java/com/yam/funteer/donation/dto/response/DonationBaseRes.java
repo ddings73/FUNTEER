@@ -17,13 +17,13 @@ public class DonationBaseRes {
 	private Long currentAmount;
 	private PostType postType;
 
-	public DonationBaseRes(Donation entity, Long currentAmount,List<String>files){
+	public DonationBaseRes(Donation entity,List<String>files){
 		this.id=entity.getId();
 		this.title=entity.getTitle();
 		this.content=entity.getContent();
 		this.files=files;
 		this.targetAmount=entity.getAmount();
-		this.currentAmount=currentAmount;
+		this.currentAmount=entity.getCurrentAmount();
 		this.postType=entity.getPostType();
 	}
 }
