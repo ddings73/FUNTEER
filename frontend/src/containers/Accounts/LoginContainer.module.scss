@@ -7,7 +7,7 @@
 
   .contents {
     display: flex;
-    padding-top: 100px;
+    padding-top: 200px;
     margin: 0 auto;
     width: 100%;
     max-width: 1280px;
@@ -43,6 +43,9 @@
         font-size: 3rem;
         padding: 15px 0;
         margin-bottom: 15px;
+        background: linear-gradient(259.55deg, #ff9900 51.3%, #ff6b00 92.74%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
       }
 
       & .login-button {

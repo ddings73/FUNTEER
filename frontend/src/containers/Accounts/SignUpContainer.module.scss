@@ -4,13 +4,13 @@
 .container {
   width: 100%;
   min-height: 100vh;
-  margin-top: 77.594px;
   display: flex;
   flex-direction: column;
   align-items: center;
   font-family: NanumSquareRound;
 
   .contents {
+    margin-top: 150px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -20,6 +20,9 @@
     .title {
       font-size: 3rem;
       font-weight: bold;
+      background: linear-gradient(259.55deg, #ff9900 51.3%, #ff6b00 92.74%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       margin: 5rem 0 2rem 0;
 
       @include tablet {
@@ -78,9 +81,9 @@
         }
 
         .button-title {
+          color: #ff9900;
           font-size: 2.25rem;
           font-weight: bold;
-          color: black;
 
           @include tablet {
             font-size: 1.25rem;
