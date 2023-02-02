@@ -9,7 +9,7 @@ import { Box } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import styles from './FundingListContainer.module.scss';
 import FundingListElement from '../../components/Funding/FundingListElement';
 import { FundingElementType } from '../../types/funding';
@@ -126,7 +126,9 @@ function FundingListContainer() {
 
             <div className={styles['funding-list']}>
               {fundingList?.map((funding) => (
-                <FundingListElement {...funding} key={funding.id} />
+                <NavLink to={`detail/${funding.id}`} style={{ display: 'flex', width: '100%', textDecoration: 'none' }}>
+                  <FundingListElement {...funding} key={funding.id} />
+                </NavLink>
               ))}
             </div>
           </div>
