@@ -238,6 +238,7 @@ function CreateFundingContainer() {
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
+        <form>
         <div className={styles['funding-thumbnail-box']}>
           <p className={styles.title}>
             프로젝트 대표 이미지 <img className={styles.required} src={requiredIcon} alt="" />
@@ -257,7 +258,7 @@ function CreateFundingContainer() {
                   이미지를 등록하면 즉시 반영됩니다. <br />
                 </span>
               </p>
-              <input ref={thumbnailRef} type="file" accept="image/*" onChange={onFileHandler} className={styles['thumbnail-upload-input']} />
+              <input ref={thumbnailRef} type="file" accept="image/*" onChange={onFileHandler} className={styles['thumbnail-upload-input']}  required/>
             </div>
           </div>
         </div>
@@ -265,7 +266,7 @@ function CreateFundingContainer() {
           <p className={styles.title}>
             펀딩 제목 <img className={styles.required} src={requiredIcon} alt="" />
           </p>
-          <input type="text" name="title" className={styles['input-text']} onChange={onChangeTextHandler} placeholder="제목을 입력해주세요" />
+          <input type="text" name="title" className={styles['input-text']} onChange={onChangeTextHandler} placeholder="제목을 입력해주세요"  required/>
         </div>
 
         <div className={styles['funding-description-box']}>
@@ -278,6 +279,7 @@ function CreateFundingContainer() {
             onChange={onChangeTextHandler}
             className={styles['input-text']}
             placeholder="진행하는 펀딩에 대해 간단히 설명해 주세요."
+            required
           />
         </div>
 
@@ -295,6 +297,7 @@ function CreateFundingContainer() {
             hooks={{ addImageBlobHook: onUploadImage }}
             language="ko-KR"
             hideModeSwitch // 하단의 타입 선택 탭 숨기기
+            
           />
         </div>
 
@@ -304,8 +307,9 @@ function CreateFundingContainer() {
           </p>
 
           <div className={styles['date-picker-box']}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}   required>
               <DatePicker
+
                 disablePast
                 label="펀딩 시작 일자를 선택해주세요"
                 inputFormat="YYYY-MM-DD"
@@ -318,8 +322,9 @@ function CreateFundingContainer() {
               />
             </LocalizationProvider>
 
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}  required>
               <DatePicker
+             
                 disablePast
                 label="펀딩 종료 일자를 선택해주세요"
                 minDate={startDate}
@@ -431,10 +436,12 @@ function CreateFundingContainer() {
               </Button>
             </div>
           </div>
-          <Button variant="contained" type="button" className={styles['submit-button']} color="warning" onClick={onCreateFunding}>
+          <Button variant="contained" type="submit" className={styles['submit-button']} color="warning" onClick={onCreateFunding}>
             펀딩 생성하기
           </Button>
         </div>
+  
+        </form>
       </div>
     </div>
   );
