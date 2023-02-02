@@ -27,3 +27,7 @@ export const w1500 = {
 export const customAlert = (alertType: object, title: string) => {
   swal.fire({ ...alertType, title });
 };
+
+export const customTextAlert = (alertType: object, title: string, text: string) => {
+  swal.fire({ ...alertType, title, text });
+};
