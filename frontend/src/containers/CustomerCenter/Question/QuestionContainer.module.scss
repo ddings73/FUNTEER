@@ -32,14 +32,24 @@
     align-items: center;
     min-height: 100vh;
     margin: 0 auto;
-    padding: 2rem;
+    padding: 5rem 2rem;
+    border-radius: 20px;
+    background-color: #fcfcfc;
 
     .title-label {
+      display: flex;
+      align-items: center;
       width: 70%;
       margin: 2rem 0 0.5rem 0;
       font-size: 1.25rem;
       color: rgba(0, 0, 0, 0.6);
       font-weight: bold;
+
+      & img {
+        width: 8px;
+        margin-left: 0.5rem;
+        padding: 0 0 0.35rem 0;
+      }
 
       @include mobile {
         width: 95%;
@@ -51,6 +61,7 @@
       width: 70%;
       height: 2.3rem;
       font-size: 1.25rem;
+      background-color: white;
 
       @include mobile {
         width: 95%;
@@ -58,11 +69,20 @@
     }
 
     .content-label {
+      display: flex;
+      align-items: center;
       width: 70%;
       margin: 2rem 0 0.5rem 0;
+
       font-size: 1.25rem;
       color: rgba(0, 0, 0, 0.6);
       font-weight: bold;
+
+      & img {
+        width: 8px;
+        margin-left: 0.5rem;
+        padding: 0 0 0.35rem 0;
+      }
 
       @include mobile {
         width: 95%;
@@ -74,6 +94,7 @@
       width: 70%;
       height: 20rem;
       font-size: 1.125rem;
+      background-color: white;
 
       @include mobile {
         width: 95%;
