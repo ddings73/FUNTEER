@@ -43,7 +43,7 @@ public class BadgeServiceImpl implements BadgeService {
 	public void initBadges(UserType userType) {
 		if(userType.equals(UserType.TEAM_WAIT)){
 			User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
-			List<Badge> badgeList=badgeRepository.findAllByIdBetweenId1AndId2(Long.valueOf(9),Long.valueOf(17));
+			List<Badge> badgeList=badgeRepository.findAllByIdBetween(Long.valueOf(9),Long.valueOf(17));
 			for(Badge badge:badgeList){
 				UserBadge userBadge=UserBadge.builder()
 					.user(user)
@@ -53,7 +53,7 @@ public class BadgeServiceImpl implements BadgeService {
 			}
 		}else if(!userType.equals(UserType.ADMIN)){
 			User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
-			List<Badge> badgeList=badgeRepository.findAllByIdBetweenId1AndId2(Long.valueOf(1),Long.valueOf(14));
+			List<Badge> badgeList=badgeRepository.findAllByIdBetween(Long.valueOf(1),Long.valueOf(14));
 			for(Badge badge:badgeList){
 				UserBadge userBadge=UserBadge.builder()
 					.user(user)
@@ -150,7 +150,7 @@ public class BadgeServiceImpl implements BadgeService {
 
 	@Override
 	public void teamFundingBadges(Team team) {
-		List<Funding> fundingList=fundingRepository.findAllByTeamAAndPostType(team, PostType.REPORT_ACCEPT);
+		List<Funding> fundingList=fundingRepository.findAllByTeamAndPostType(team, PostType.REPORT_ACCEPT);
 		Integer count=fundingList.size();
 		List<Long>ids=new ArrayList<>();
 		if(count>=5){
