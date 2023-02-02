@@ -14,7 +14,7 @@ import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestUploadImage } from '../../api/funding';
-import { FundingInterface, amountLevelType } from '../../types/funding';
+import { FundingInterface, amountLevelType, descriptionType } from '../../types/funding';
 import defaultThumbnail from '../../assets/images/default-profile-img.svg';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { openModal } from '../../store/slices/modalSlice';
@@ -49,7 +49,7 @@ type TabContentPropsType = {
   onChangeTextHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onChangeTodoHandler: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onKeyDownHandler: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-  addTodos: () => void;
+  addTodos: (level: string) => void;
   level: string;
 };
 function TabContent(props: TabContentPropsType) {
@@ -69,11 +69,11 @@ function TabContent(props: TabContentPropsType) {
 
         <div className={styles['todo-list-box']}>
           <p className={styles['todo-list-title']}>기준 충족시 진행할 봉사의 내용을 입력해주세요.</p>
-          {/* {todos.map((todo, index) => (
+          {data.descriptions.map((todo, index) => (
             <p className={styles['todo-contents']}>
               {index + 1}. {todo.description}
             </p>
-          ))} */}
+          ))}
 
           <div className={styles['todo-input-box']}>
             <input
@@ -126,7 +126,6 @@ function CreateFundingContainer() {
   const [startDate, setStartDate] = useState<Dayjs | null>(null);
   const [endDate, setEndDate] = useState<Dayjs | null>(null);
   const [todoText, setTodoText] = useState<string>('');
-  const [todos, setTodos] = useState<todoType[]>([]);
 
   const allFundingDays = useMemo(() => diffDayStartToEnd(fundingData.startDate, fundingData.endDate), [fundingData.startDate, fundingData.endDate]);
 
@@ -190,6 +189,11 @@ function CreateFundingContainer() {
     }
   };
 
+  // 해야할일 input 관리
+  const onChangeTodoHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTodoText(e.target.value);
+  };
+
   const onChangeDateHandler = (value: Dayjs | null, type: string) => {
     const date = value?.format('YYYY-MM-DD');
     setFundingData({ ...fundingData, [type]: date });
@@ -218,15 +222,11 @@ function CreateFundingContainer() {
   const onKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') addTodos();
   };
-  const addTodos = () => {
+  const addTodos = (level: string) => {
+    let temp;
     if (todoText) {
-      setTodos([...todos, { description: todoText }]);
-      setTodoText('');
+      console.log(todoText);
     }
-  };
-
-  const onChangeTodoHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTodoText(e.target.value);
   };
 
   useEffect(() => {
@@ -359,7 +359,7 @@ function CreateFundingContainer() {
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
                 onKeyDownHandler={onKeyDownHandler}
-                addTodos={addTodos}
+                // addTodos={addTodos(level)}
                 level="LEVEL_ONE"
               />
             </TabPanel>
@@ -370,7 +370,7 @@ function CreateFundingContainer() {
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
                 onKeyDownHandler={onKeyDownHandler}
-                addTodos={addTodos}
+                // addTodos={addTodos(level)}
                 level="LEVEL_TWO"
               />
             </TabPanel>
@@ -381,7 +381,7 @@ function CreateFundingContainer() {
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
                 onKeyDownHandler={onKeyDownHandler}
-                addTodos={addTodos}
+                // addTodos={addTodos(level)}
                 level="LEVEL_THREE"
               />
             </TabPanel>

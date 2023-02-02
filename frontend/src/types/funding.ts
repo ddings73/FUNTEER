@@ -32,16 +32,10 @@ export interface FundingInterface {
 }
 
 export type amountLevelType = {
-  amount: string;
+  amount: string | number;
   descriptions: descriptionType[];
 };
 
 export type descriptionType = {
   description: string;
 };
-
-export enum LevelEnum {
-  LEVEL_ONE,
-  LEVEL_TWO,
-  LEVEL_THREE,
-}
