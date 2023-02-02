@@ -10,13 +10,13 @@ public interface AlarmRepository{
 
 	void saveEventCache(String eventCacheId, Object event);
 
-	Map<String, SseEmitter> findAllEmitterStartWithById(String userId);
+	Map<String, SseEmitter> findAllEmitterStartWithByEmail(String email);
 
-	Map<String, Object> findAllEventCacheStartWithById(String userId);
+	Map<String, Object> findAllEventCacheStartWithByEmail(String email);
 
-	void deleteById(String userId);
+	void deleteById(String id);
 
-	void deleteAllEmitterStartWithId(String userId);
+	void deleteAllEmitterStartWithId(String email);
 
-	void deleteAllEventCacheStartWithId(String userId);
+	void deleteAllEventCacheStartWithId(String email);
 }
