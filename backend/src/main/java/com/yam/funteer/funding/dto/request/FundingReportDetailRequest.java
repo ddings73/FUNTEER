@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class FundingReportDetailRequest {
-	private Long amount;
+	private String amount;
 	private String description;
 
 }

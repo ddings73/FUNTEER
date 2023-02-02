@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.dto.response;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -48,9 +49,12 @@ public class FundingDetailResponse {
 
 	private Optional<List<CommentResponse>> comments;
 
-	private Long currentFundingAmount;
+	private String currentFundingAmount;
 
 	public static FundingDetailResponse from(Funding funding) {
+
+		DecimalFormat decFormat = new DecimalFormat("###,###");
+		String str = decFormat.format(funding.getCurrentFundingAmount());
 
 		TeamAccountResponse team = TeamAccountResponse.from(funding.getTeam());
 
@@ -64,7 +68,7 @@ public class FundingDetailResponse {
 			.end(funding.getEndDate())
 			.postDate(funding.getRegDate())
 			.thumbnail(funding.getThumbnail())
-			.currentFundingAmount(funding.getCurrentFundingAmount())
+			.currentFundingAmount(str)
 			.fundingDescription(funding.getFundingDescription())
 			.build();
 

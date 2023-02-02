@@ -1,5 +1,7 @@
 package com.yam.funteer.funding.dto.response;
 
+import java.text.DecimalFormat;
+
 import com.yam.funteer.funding.entity.ReportDetail;
 
 import lombok.AllArgsConstructor;
@@ -11,10 +13,13 @@ import lombok.Getter;
 @Getter
 public class ReportDetailResponse {
 
-	private Long amount;
+	private String amount;
 	private String description;
 
 	public static ReportDetailResponse from(ReportDetail reportDetail) {
-		return new ReportDetailResponse(reportDetail.getAmount(), reportDetail.getDescription());
+		DecimalFormat decFormat = new DecimalFormat("###,###");
+		String str = decFormat.format(reportDetail.getAmount());
+
+		return new ReportDetailResponse(str, reportDetail.getDescription());
 	}
 }
