@@ -58,11 +58,6 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
-        element: <MainPage />,
-      },
-      /* Accounts Routes */
-      {
         path: 'login',
         element: <Login />,
       },
@@ -114,6 +109,10 @@ const router = createBrowserRouter([
     element: <UserFooterRoot />,
     errorElement: <ErrorPage />,
     children: [
+      {
+        index: true,
+        element: <MainPage />,
+      },
       {
         path: 'donation',
         element: <Donation />,
