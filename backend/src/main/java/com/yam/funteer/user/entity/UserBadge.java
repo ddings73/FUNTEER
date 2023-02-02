@@ -1,5 +1,6 @@
 package com.yam.funteer.user.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -7,6 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.ColumnDefault;
 
 import com.yam.funteer.badge.entity.Badge;
 
@@ -33,10 +36,11 @@ public class UserBadge {
 	@ManyToOne
 	@JoinColumn(name = "badge_id")
 	private Badge badge;
+	@ColumnDefault("false")
+	private boolean achieve;
 
-	public void upgrade(Long id,User user,Badge badge){
-		this.id=id;
-		this.badge=badge;
-		this.user=user;
+	public void set(){
+		this.achieve=true;
 	}
+
 }

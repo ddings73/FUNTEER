@@ -56,6 +56,7 @@ public class User {
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
 	private UserType userType;
+	private Long totalPayAmount;
 
 	public Optional<Attach> getProfileImg(){
 		return Optional.ofNullable(this.profileImg);

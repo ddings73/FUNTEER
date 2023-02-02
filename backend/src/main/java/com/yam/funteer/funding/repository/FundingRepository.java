@@ -11,6 +11,7 @@ import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.TargetMoney;
 import com.yam.funteer.post.entity.PostHashtag;
+import com.yam.funteer.user.entity.Team;
 
 public interface FundingRepository extends JpaRepository<Funding, Long> {
 	List<Funding> findAllByPostType(PostType postType);
@@ -22,4 +23,6 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 	List<Funding> findAllByStartDate(LocalDate now);
 
 	List<Funding> findAllByEndDate(LocalDate minusDays);
+
+	List<Funding> findAllByTeamAAndPostType(Team team,PostType postType);
 }
