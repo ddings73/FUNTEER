@@ -86,7 +86,8 @@ public class QnaServiceImpl implements QnaService {
 			}
 		}
 		List<User> adminList = userRepository.findAllByUserType(UserType.ADMIN);
-		alarmService.sendList(adminList,qna.getTitle(), "QnA가 등록되었습니다.", qna);
+		List<String>adminEmailList=adminList.stream().map(User::getEmail).collect(Collectors.toList());
+		alarmService.sendList(adminEmailList,qna.getTitle()+", QnA가 등록되었습니다.", "/qna/"+qna.getId());
 		return new QnaBaseRes(qna,attachList);
 	}
 

@@ -3,7 +3,10 @@ package com.yam.funteer.donation.service;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -11,17 +14,20 @@ import javax.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.yam.funteer.alarm.service.AlarmService;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.entity.PostAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.PostAttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.PostGroup;
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.donation.dto.request.DonationModifyReq;
 import com.yam.funteer.donation.dto.request.DonationRegisterReq;
 import com.yam.funteer.donation.dto.response.DonationBaseRes;
+import com.yam.funteer.donation.dto.response.DonationJoinUserRes;
 import com.yam.funteer.donation.dto.response.DonationListRes;
 import com.yam.funteer.donation.entity.Donation;
 import com.yam.funteer.donation.exception.DonationNotFoundException;
@@ -50,6 +56,7 @@ public class DonationServiceImpl implements DonationService{
 	private final AwsS3Uploader awsS3Uploader;
 	private final AttachRepository attachRepository;
 	private final PostAttachRepository postAttachRepository;
+	private final AlarmService alarmService;
 
 	public List<DonationListRes> donationGetList() {
 		List<Donation>donations=donationRepository.findAllByPostGroupOrderByIdDesc(PostGroup.DONATION);
@@ -61,10 +68,6 @@ public class DonationServiceImpl implements DonationService{
 
 	public DonationBaseRes donationGetDetail(Long postId) {
 		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
-
-		Long currentAmount=Long.valueOf(0);
-
-		List<Payment>paymentList=paymentRepository.findAllByPost(donation);
 
 		List<String>attachList=new ArrayList<>();
 		if(postAttachRepository.findAllByPost(donation).size()>0){
@@ -174,8 +177,14 @@ public class DonationServiceImpl implements DonationService{
 					attachList.add(fileUrl);
 					attachRepository.save(attach);
 					postAttachRepository.save(postAttach);
-
 				}
+			}
+			if(donationModifyReq.getPostType().equals(PostType.DONATION_CLOSE)){
+				List<Payment>paymentList=paymentRepository.findAllByPost(donation);
+				Set<User> userList;
+				userList=paymentList.stream().map(Payment::getUser).collect(Collectors.toSet());
+				List<String> userEmailList=userList.stream().map(User::getEmail).collect(Collectors.toList());
+				alarmService.sendList(userEmailList,donation.getTitle()+" 종료되었습니다. 참여감사띠~!~!","/donation/"+postId);
 			}
 			return new DonationBaseRes(donation,attachList);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");

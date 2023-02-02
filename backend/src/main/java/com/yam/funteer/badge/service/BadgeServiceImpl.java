@@ -46,7 +46,7 @@ public class BadgeServiceImpl implements BadgeService {
 		User user=userRepository.findById(userBadge.getUser().getId()).orElseThrow(()->new UserNotFoundException());
 		Badge badge=badgeRepository.findById(badgeId).orElseThrow(()->new IllegalArgumentException("잘못된 뱃지입니다."));
 		userBadge.upgrade(id,user,badge);
-		alarmService.send(user, "뱃지를 획득했습니다.",badge.getName(),null);
+		alarmService.send(user.getEmail(), "뱃지를 획득했습니다."+badge.getName(),null);
 		return new BadgeBaseRes(badge);
 	}
 }

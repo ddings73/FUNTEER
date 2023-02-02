@@ -49,7 +49,7 @@ public class ReplyServiceImpl implements ReplyService{
 		if(replyRepository.findByQna(qna).isPresent())throw new ReplyDuplicatedException();
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Reply reply=replyRepository.save(qnaReplyReq.toEntity(qna));
-			alarmService.send(qna.getUser(),qna.getTitle(), " 에 대한 답변이 등록되었습니다.", qna);
+			alarmService.send(qna.getUser().getEmail(),qna.getTitle()+" 에 대한 답변이 등록되었습니다.","/qna/"+qnaId+"/reply");
 			return new ReplyBaseRes(reply);
 		}else throw new  IllegalArgumentException("접근 권한이 없습니다.");
 	}
@@ -61,7 +61,7 @@ public class ReplyServiceImpl implements ReplyService{
 		Reply reply=replyRepository.findByQna(qna).orElseThrow(()->new ReplyNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)){
 			reply.update(reply.getId(),qna,qnaReplyReq.getContent(),reply.getRegDate());
-			alarmService.send(qna.getUser(),qna.getTitle(), " 에 대한 답변이 수정되었습니다.", qna);
+			alarmService.send(qna.getUser().getEmail(),qna.getTitle()+" 에 대한 답변이 수정되었습니다.","/qna/"+qnaId+"/reply");
 			return new ReplyBaseRes(reply);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
@@ -74,7 +74,7 @@ public class ReplyServiceImpl implements ReplyService{
 
 		if(user.getUserType().equals(UserType.ADMIN)){
 			replyRepository.delete(reply);
-			alarmService.send(qna.getUser(),qna.getTitle(), " 에 대한 답변이 삭제되었습니다.", qna);
+			alarmService.send(qna.getUser().getEmail(),qna.getTitle()+" 에 대한 답변이 삭제되었습니다.", " /qna/"+qnaId);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 }

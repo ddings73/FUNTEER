@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
-@Setter
 public class DonationGetListReq {
 	private String keyword;
 	private String category;
