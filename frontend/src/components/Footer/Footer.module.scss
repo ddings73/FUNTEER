@@ -1,0 +1,63 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+.footer {
+  display: flex;
+  justify-content: center;
+  margin-top: 10rem;
+  align-items: center;
+  width: 100%;
+  height: 170px;
+  bottom: 0px;
+  border-top: 1px solid rgba(0, 0, 0, 0.2);
+  color: rgba(0, 0, 0, 0.8);
+
+  .contents {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 90%;
+    max-width: 1440px;
+
+    @include mobile {
+      flex-direction: column;
+    }
+
+    .left {
+      display: flex;
+      flex-direction: column;
+      margin: 2rem 0;
+
+      & h1 {
+        font-size: 2.25rem;
+        font-weight: bold;
+        margin: 4rem 0 2rem 0;
+        padding-top: 2rem;
+      }
+
+      & nav {
+        margin-bottom: 2rem;
+        & a {
+          margin-right: 1rem;
+          text-decoration: none;
+          font-family: NanumSquareRound;
+        }
+      }
+
+      & p {
+        margin-bottom: 2rem;
+        font-family: NanumSquareRound;
+      }
+    }
+
+    .right {
+      margin: 4rem 0 2rem 0;
+      & p {
+        padding-top: 2rem;
+        font-size: 1.4rem;
+        font-family: NanumSquareRound;
+        color: rgba(0, 0, 0, 0.6);
+      }
+    }
+  }
+}
