@@ -23,10 +23,10 @@ public class BadgeController {
 	private final BadgeService badgeService;
 
 
-	@PostMapping("")
-	public ResponseEntity<?>badgeRegister(@RequestBody BadgeRegisterReq badgeRegisterReq){
-		return ResponseEntity.ok(badgeService.badgeRegister(badgeRegisterReq));
-	}
+	// @PostMapping("")
+	// public ResponseEntity<?>badgeRegister(@RequestBody BadgeRegisterReq badgeRegisterReq){
+	// 	return ResponseEntity.ok(badgeService.badgeRegister(badgeRegisterReq));
+	// }
 
 
 }

@@ -2,11 +2,16 @@ package com.yam.funteer.badge.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
+
+import com.yam.funteer.common.code.PostGroup;
+import com.yam.funteer.common.code.UserType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -31,6 +36,9 @@ public class Badge {
 
 	@Column(nullable = false)
 	private String badgeImgPath;
+
+	@Enumerated(value = EnumType.STRING)
+	private PostGroup postGroup;
 
 	public void update(Long id,String name, String description,String badgeImgPath) {
 		this.name = name;
