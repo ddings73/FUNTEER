@@ -3,14 +3,8 @@ package com.yam.funteer.funding.controller;
 import java.io.IOException;
 import java.util.List;
 
-<<<<<<< HEAD
-import javax.validation.Valid;
-
-=======
 import org.springframework.http.MediaType;
->>>>>>> feat-BE/member
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,9 +16,7 @@ import com.yam.funteer.funding.dto.response.FundingListResponse;
 import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
-import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
-import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
