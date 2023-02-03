@@ -181,6 +181,7 @@ $Desktop-max-size: 1001px;
   backdrop-filter: blur(10.5px);
   -webkit-backdrop-filter: blur(10.5px);
   transition: 1s;
+  z-index: 998;
 }
 
 .megaContainerHidden {
@@ -193,4 +194,5 @@ $Desktop-max-size: 1001px;
   backdrop-filter: blur(10.5px);
   -webkit-backdrop-filter: blur(10.5px);
   transition: 1s;
+  z-index: 998;
 }
