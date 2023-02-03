@@ -19,6 +19,7 @@ import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.entity.PostAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.PostAttachRepository;
+import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
@@ -57,9 +58,10 @@ public class DonationServiceImpl implements DonationService{
 	private final AttachRepository attachRepository;
 	private final PostAttachRepository postAttachRepository;
 	private final AlarmService alarmService;
+	private final BadgeService badgeService;
 
 	public List<DonationListRes> donationGetList() {
-		List<Donation>donations=donationRepository.findAllByPostGroupOrderByIdDesc(PostGroup.DONATION);
+		List<Donation>donations=donationRepository.findAllByPostTypeOrderByIdDesc(PostType.DONATION_CLOSE);
 		List<DonationListRes>list;
 		list=donations.stream().map(donation->new DonationListRes(donation)).collect(Collectors.toList());
 
@@ -91,7 +93,7 @@ public class DonationServiceImpl implements DonationService{
 	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq) {
 		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Long paymentAmount=donationJoinReq.getPaymentAmount();
+		Long paymentAmount=Long.parseLong(donationJoinReq.getPaymentAmount());
 		if(user.getMoney()<paymentAmount||user.getMoney()==0){
 			throw new DonationPayException();
 		}
@@ -106,6 +108,9 @@ public class DonationServiceImpl implements DonationService{
 		paymentRepository.save(payment);
 		donation.currentAmountUpdate(paymentAmount);
 		user.charge(-paymentAmount);
+
+		badgeService.totalPayAmount(user);
+		badgeService.postBadges(user,PostGroup.DONATION);
 
 		return payment;
 	}
@@ -153,11 +158,11 @@ public class DonationServiceImpl implements DonationService{
 
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
-			Donation donation=donationRepository.save(donationModifyReq.toEntity(postId,donationOrigin.getCurrentAmount()));
+			Donation donation=donationRepository.save(donationModifyReq.toEntity(postId,donationOrigin.getCurrentAmount(),donationOrigin.getStartDate()));
 
-			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donation);
+			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donationOrigin);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("donation",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("donation/",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
@@ -180,6 +185,7 @@ public class DonationServiceImpl implements DonationService{
 				}
 			}
 			if(donationModifyReq.getPostType().equals(PostType.DONATION_CLOSE)){
+				donation.setEndDate();
 				List<Payment>paymentList=paymentRepository.findAllByPost(donation);
 				Set<User> userList;
 				userList=paymentList.stream().map(Payment::getUser).collect(Collectors.toSet());

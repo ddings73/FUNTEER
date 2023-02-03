@@ -93,7 +93,7 @@ public class NoticeServiceImpl implements NoticeService{
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(postOrigin);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("notice",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("notice/",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
@@ -129,7 +129,7 @@ public class NoticeServiceImpl implements NoticeService{
 			Post post = postRepository.findById(postId).orElseThrow(()->new NoticeNotFoundException());
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(post);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("notice",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("notice/",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
