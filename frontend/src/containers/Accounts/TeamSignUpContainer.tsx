@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import { useInterval } from 'usehooks-ts';
 import { Button, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { s1000, s1500, w1500, customAlert } from '../../utils/customAlert';
 import { teamSignUpType } from '../../types/user';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
 import { requestEmailDuplConfirm, requestNameDuplConfirm, requestTeamSignUp } from '../../api/user';
@@ -64,17 +65,17 @@ function TeamSignUpContainer() {
     e.preventDefault();
 
     if (!teamSignUpInfo.name) {
-      alert('단체명을 입력해주세요.');
+      customAlert(w1500, '단체명을 입력해주세요.');
       return;
     }
 
     try {
       const response = await requestNameDuplConfirm(teamSignUpInfo.name);
-      alert('단체명 중복 체크 완료');
+      customAlert(s1000, '단체명 중복 체크 완료');
       setNameDuplConfirmed(true);
       console.log(response);
     } catch (error) {
-      alert('이미 가입된 단체명입니다.');
+      customAlert(w1500, '이미 가입된 단체명입니다.');
       console.log(error);
     }
   };
@@ -84,7 +85,7 @@ function TeamSignUpContainer() {
     e.preventDefault();
 
     if (!teamSignUpInfo.email) {
-      alert('이메일을 입력해주세요.');
+      customAlert(w1500, '이메일을 입력해주세요.');
       return;
     }
 
@@ -92,17 +93,17 @@ function TeamSignUpContainer() {
     const validEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]+/; // (알파벳, 숫자)@(알파벳).(알파벳)
 
     if (validEmail.test(teamSignUpInfo.email) === false) {
-      alert('이메일 주소가 올바르지 않습니다.');
+      customAlert(w1500, '이메일 주소가 올바르지 않습니다.');
       return;
     }
 
     try {
       const response = await requestEmailDuplConfirm(teamSignUpInfo.email);
-      alert('이메일 중복 체크 완료');
+      customAlert(s1000, '이메일 중복 체크 완료');
       setEmailDuplConfirmed(true);
       console.log(response);
     } catch (error) {
-      alert('이미 가입된 이메일입니다.');
+      customAlert(w1500, '이미 가입된 이메일입니다.');
       console.log(error);
     }
   };
@@ -110,7 +111,7 @@ function TeamSignUpContainer() {
   /** 이메일 인증하기 버튼 */
   const handleClickAuthEmail = () => {
     if (!emailDuplConfirmed) {
-      alert('이메일 중복 체크를 먼저 완료해주세요.');
+      customAlert(w1500, '먼저 이메일 중복 체크를 완료해주세요.');
       return;
     }
 
@@ -133,7 +134,7 @@ function TeamSignUpContainer() {
       setButtonText(`${minute}분 ${second}초`);
 
       if (time === 0) {
-        alert('인증번호 입력 시간이 초과되었습니다.');
+        customAlert(w1500, '인증번호 입력 시간이 초과되었습니다.');
         setButtonText('이메일 인증하기');
         setEmailAuthButtonPushed(false);
         setTime(initTime);
@@ -150,7 +151,7 @@ function TeamSignUpContainer() {
 
   /** 이메일 인증 요청 */
   const checkAuthNumber = async () => {
-    alert('이메일 인증이 완료되었습니다.');
+    customAlert(s1500, '이메일 인증이 완료되었습니다.');
     setCheckEmailAuth(true);
     setEmailAuthButtonPushed(false);
 
@@ -191,34 +192,34 @@ function TeamSignUpContainer() {
     // ========================== 유효성 검사 ==============================
     /** 중복 검사 했는지 */
     if (!nameDuplConfirmed || !emailDuplConfirmed) {
-      alert('모든 중복 체크를 완료해주세요.');
+      customAlert(w1500, '모든 중복 체크를 완료해주세요.');
       return;
     }
     /** 비밀번호와 비밀번호 확인 값이 같은지 */
     if (teamSignUpInfo.password !== teamSignUpInfo.passwordCheck) {
-      alert('비밀번호와 비밀번호 확인 값이 다릅니다.');
+      customAlert(w1500, '비밀번호와 비밀번호 확인 값이 다릅니다.');
       return;
     }
     /** 비밀번호 정규식: 8 ~ 15자, 하나 이상의 문자와 숫자 */
     const validPW = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z]).*$/;
     if (!validPW.test(teamSignUpInfo.password)) {
-      alert('적합하지 않은 비밀번호입니다.');
+      customAlert(w1500, '적합하지 않은 비밀번호입니다.');
       return;
     }
     /** 이메일 인증 여부 */
     if (!checkEmailAuth) {
-      alert('이메일 인증을 완료해주세요.');
+      customAlert(w1500, '이메일 인증을 완료해주세요.');
       return;
     }
     /** 모든 정보를 입력 했는지 */
     const isEmpty = Object.values(teamSignUpInfo).some((value) => value === '' || value === null);
     if (isEmpty) {
-      alert('모든 정보를 입력해주세요.');
+      customAlert(w1500, '모든 정보를 입력해주세요.');
       return;
     }
     /** 필수 파일들을 업로드 했는지 */
     if (!vmsFile || !performFile) {
-      alert('필수 파일을 첨부해주세요.');
+      customAlert(w1500, '필수 파일을 첨부해주세요.');
       return;
     }
 
@@ -230,6 +231,7 @@ function TeamSignUpContainer() {
     try {
       const response = await requestTeamSignUp(newTeamSignUpInfo);
       console.log(response);
+      customAlert(s1500, '단체 회원가입이 완료되었습니다.');
       navigate('/');
     } catch (error) {
       console.error(error);

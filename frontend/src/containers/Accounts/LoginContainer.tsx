@@ -45,9 +45,11 @@ function LoginContainer() {
       const response = await requestSignIn(userInfo);
       if (response.status === 200) {
         const { data } = response;
+        console.log(data);
 
         localStorage.setItem('accessToken', data.token.accessToken);
         localStorage.setItem('refreshToken', data.token.refreshToken);
+        localStorage.setItem('user', data);
 
         dispatch(setUserLoginState(true));
         dispatch(setUserType(data.userType));
@@ -73,38 +75,55 @@ function LoginContainer() {
   }, []);
 
   return (
-    <div className={styles.container}>
-      <div className={styles.contents}>
-        <div className={styles['login-box']}>
-          <p className={styles.title}>로그인</p>
+    <div>
+      <div className={styles.container}>
+        <div className={styles.area}>
+          <div className={styles.contents}>
+            <div className={styles['login-box']}>
+              <p className={styles.title}>로그인</p>
 
-          <p>이메일</p>
-          <TextField onChange={onChangeHandler} name="email" margin="normal" placeholder="이메일을 입력해주세요." variant="outlined" onKeyPress={onKeyDownHandler} />
+              <p>이메일</p>
+              <TextField onChange={onChangeHandler} name="email" margin="normal" placeholder="이메일을 입력해주세요." variant="outlined" onKeyPress={onKeyDownHandler} />
 
-          <p>비밀번호</p>
-          <TextField
-            onChange={onChangeHandler}
-            name="password"
-            type="password"
-            margin="normal"
-            placeholder="비밀번호를 입력해주세요."
-            onKeyPress={onKeyDownHandler}
-            variant="outlined"
-          />
+              <p>비밀번호</p>
+              <TextField
+                onChange={onChangeHandler}
+                name="password"
+                type="password"
+                margin="normal"
+                placeholder="비밀번호를 입력해주세요."
+                onKeyPress={onKeyDownHandler}
+                variant="outlined"
+              />
 
-          <div className={styles['findInfo-box']}>
-            <span>
-              <Link to="/findEmail">이메일 찾기</Link>
-            </span>
-            <span>
-              <Link to="/findPassword">비밀번호 찾기</Link>
-            </span>
+              <div className={styles['findInfo-box']}>
+                <span>
+                  <Link to="/findEmail">이메일 찾기</Link>
+                </span>
+                <span>
+                  <Link to="/findPassword">비밀번호 찾기</Link>
+                </span>
+              </div>
+
+              <Button className={styles['login-button']} variant="contained" onClick={requestEmailLogin}>
+                이메일로 로그인하기
+              </Button>
+              <img src={KakaoLogin} alt="aaa" onClick={OAuth} aria-hidden="true" />
+            </div>
           </div>
 
-          <Button className={styles['login-button']} variant="contained" onClick={requestEmailLogin}>
-            이메일로 로그인하기
-          </Button>
-          <img src={KakaoLogin} alt="aaa" onClick={OAuth} aria-hidden="true" />
+          <ul className={styles.circles}>
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+            <li />
+          </ul>
         </div>
       </div>
     </div>
