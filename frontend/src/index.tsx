@@ -46,7 +46,6 @@ import {
   AdminFunding,
   CustomerCenter,
   NoticeDetail,
-  Payment,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -101,10 +100,6 @@ const router = createBrowserRouter([
       {
         path: '/test',
         element: <LiveTest />,
-      },
-      {
-        path: '/iamport',
-        element: <Payment />,
       },
     ],
   },

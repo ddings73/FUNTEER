@@ -11,13 +11,13 @@ function AdminRoot() {
   const userType = useAppSelector((state) => state.userSlice.userType);
   console.log(userType);
 
-  useEffect(() => {
-    if (!userType) {
-      navigate('/login');
-    } else if (userType !== 'ADMIN') {
-      navigate('/');
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (!userType) {
+  //     navigate('/login');
+  //   } else if (userType !== 'ADMIN') {
+  //     navigate('/');
+  //   }
+  // }, []);
 
   return (
     <div className={styles['admin-page']}>
