@@ -20,16 +20,18 @@ export const requestUploadImage = async (imageBase64: Blob) => {
  */
 export const requestCreateFunding = async (fundingData: FundingInterface) => {
   const formData = new FormData();
-  const entries = Object.entries(fundingData);
 
-  entries.forEach((data) => {
-    const key = data[0];
-    const value = data[1];
-    console.log(typeof value);
-
-    formData.append(`${key}`, value);
-  });
-
+  formData.append('thumbnail', fundingData.thumbnail);
+  formData.append('title', fundingData.title);
+  formData.append('fundingDescription', fundingData.fundingDescription);
+  formData.append('categoryId', JSON.stringify(fundingData.categoryId));
+  formData.append('content', fundingData.content as string);
+  formData.append('startDate', fundingData.startDate);
+  formData.append('endDate', fundingData.endDate);
+  formData.append('hashTags', fundingData.hashtags);
+  formData.append('targetMoneyLevelOne', JSON.stringify(fundingData.targetMoneyLevelOne));
+  formData.append('targetMoneyLevelTwo', JSON.stringify(fundingData.targetMoneyLevelTwo));
+  formData.append('targetMoneyLevelThree', JSON.stringify(fundingData.targetMoneyLevelThree));
   const res = await http.post('funding', formData);
   return res;
 };

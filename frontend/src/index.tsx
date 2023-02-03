@@ -62,6 +62,10 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+        path: 'login/kakao',
+        element: <h1>login/kakao</h1>,
+      },
+      {
         path: 'findEmail',
         element: <FindEmail />,
       },

@@ -18,7 +18,7 @@ import { styled } from '@mui/material/styles';
 import { fontWeight } from '@mui/system';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestUploadImage } from '../../api/funding';
-import { FundingInterface, amountLevelType, descriptionType } from '../../types/funding';
+import { FundingInterface, descriptionType } from '../../types/funding';
 import defaultThumbnail from '../../assets/images/default-profile-img.svg';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { openModal } from '../../store/slices/modalSlice';
@@ -207,6 +207,28 @@ function CreateFundingContainer() {
     setTodoText('');
   };
 
+  const removeTodo = (index: number, level: string) => {
+    console.log('removeTodo', index);
+    console.log('level', level);
+    let prev;
+
+    switch (level) {
+      case 'LEVEL_ONE':
+        prev = fundingData.targetMoneyLevelOne.descriptions;
+
+        break;
+      case 'LEVEL_TWO':
+        prev = fundingData.targetMoneyLevelTwo.descriptions;
+        break;
+      case 'LEVEL_THREE':
+        prev = fundingData.targetMoneyLevelThree.descriptions;
+        break;
+
+      default:
+        break;
+    }
+  };
+
   useEffect(() => {
     const htmlString = `  
     <h1>프로젝트 소개</h1>
@@ -383,6 +405,7 @@ function CreateFundingContainer() {
                 addTodos={addTodos}
                 level="LEVEL_ONE"
                 todoText={todoText}
+                removeTodo={removeTodo}
               />
             </TabPanel>
 
@@ -395,6 +418,7 @@ function CreateFundingContainer() {
                 addTodos={addTodos}
                 level="LEVEL_TWO"
                 todoText={todoText}
+                removeTodo={removeTodo}
               />
             </TabPanel>
 
@@ -407,6 +431,7 @@ function CreateFundingContainer() {
                 addTodos={addTodos}
                 level="LEVEL_THREE"
                 todoText={todoText}
+                removeTodo={removeTodo}
               />
             </TabPanel>
             <div className={styles['stage-button-box']}>
