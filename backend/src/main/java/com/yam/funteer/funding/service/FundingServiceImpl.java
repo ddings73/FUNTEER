@@ -195,7 +195,7 @@ public class FundingServiceImpl implements FundingService{
 
 		savedPost.setThumbnail(thumbnailUrl);
 
-		addTargetMoney(data, funding);
+		addTargetMoney(data, savedPost);
 
 		try {
 			if (data.getHashtags() == null) {
@@ -241,6 +241,7 @@ public class FundingServiceImpl implements FundingService{
 		TargetMoney targetMoney = TargetMoney.builder()
 			.amount(amount)
 			.funding(funding)
+			.targetMoneyType(TargetMoneyType.LEVEL_ONE)
 			.build();
 
 		targetMoneyRepository.save(targetMoney);

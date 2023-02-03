@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.yam.funteer.funding.entity.Funding;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -30,10 +32,10 @@ public class FundingRequest {
 	@NotNull
 	private String fundingDescription;
 
-
 	private TargetMoneyRequest targetMoneyLevelOne;
 	private TargetMoneyRequest targetMoneyLevelTwo;
 	private TargetMoneyRequest targetMoneyLevelThree;
 	private String hashtags;
+
 
 }
