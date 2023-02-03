@@ -3,6 +3,8 @@ package com.yam.funteer.funding.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,7 +79,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
 	@PostMapping("")
-	public  ResponseEntity<?> createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException {
+	public  ResponseEntity<?> createFunding(MultipartFile thumbnail, @Valid FundingRequest data) throws IOException {
 		FundingDetailResponse funding = fundingService.createFunding(thumbnail, data);
 		return ResponseEntity.ok(funding);
 	}
