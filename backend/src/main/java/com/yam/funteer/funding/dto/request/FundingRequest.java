@@ -30,6 +30,7 @@ public class FundingRequest {
 	@NotNull
 	private String fundingDescription;
 
+
 	private TargetMoneyRequest targetMoneyLevelOne;
 	private TargetMoneyRequest targetMoneyLevelTwo;
 	private TargetMoneyRequest targetMoneyLevelThree;
