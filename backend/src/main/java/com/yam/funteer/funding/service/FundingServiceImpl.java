@@ -148,6 +148,7 @@ public class FundingServiceImpl implements FundingService{
 		for (Funding funding : successFundingList) {
 			totalFundingAmount += funding.getCurrentFundingAmount();
 		}
+
 		FundingListPageResponse fundingListPageResponse = new FundingListPageResponse(collect, totalFundingCount, successFundingCount, totalFundingAmount);
 		return fundingListPageResponse;
 	}
@@ -193,9 +194,6 @@ public class FundingServiceImpl implements FundingService{
 		String thumbnailUrl = awsS3Uploader.upload(thumbnail, "thumbnails/" + savedPost.getId());
 
 		savedPost.setThumbnail(thumbnailUrl);
-		System.out.println(data.getTargetMoneyLevelOne().getTargetMoneyType());
-		System.out.println(data.getTargetMoneyLevelOne().getAmount());
-		System.out.println(data.getTargetMoneyLevelOne().getDescriptions());
 
 		addTargetMoney(data, funding);
 
@@ -237,7 +235,10 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	private void setTargetMoneyListByLevel(TargetMoneyRequest targetMoneyRequest, Funding funding, List<TargetMoney> targetMoneyList) {
-		TargetMoney targetMoney = new TargetMoney(funding, targetMoneyRequest.getTargetMoneyType(), targetMoneyRequest.getAmount());
+		String[] split = targetMoneyRequest.getAmount().split(",");
+		int amount = Integer.parseInt(String.join("", split));
+
+		TargetMoney targetMoney = new TargetMoney(funding, targetMoneyRequest.getTargetMoneyType(), amount);
 
 		List<TargetMoneyDetail> targetMoneyDetails = new ArrayList<>();
 		for (TargetMoneyDetailRequest targetMoneyDetailRequest : targetMoneyRequest.getDescriptions()) {
@@ -377,8 +378,12 @@ public class FundingServiceImpl implements FundingService{
 
 		List<ReportDetail> reportDetails = new ArrayList<>();
 		for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
+
+			String[] split = fundingReportDetailRequest.getAmount().split(",");
+			Long result = Long.parseLong(String.join("", split));
+
 			ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
-				fundingReportDetailRequest.getAmount());
+				result);
 			reportDetailRepository.save(reportDetail);
 			reportDetails.add(reportDetail);
 		}
@@ -417,8 +422,12 @@ public class FundingServiceImpl implements FundingService{
 		List<ReportDetail> reportDetails = new ArrayList<>();
 
 		for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
+
+			String[] split = fundingReportDetailRequest.getAmount().split(",");
+			Long result = Long.parseLong(String.join("", split));
+
 			ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
-				fundingReportDetailRequest.getAmount());
+				result);
 			reportDetailRepository.save(reportDetail);
 			reportDetails.add(reportDetail);
 		}
@@ -456,13 +465,16 @@ public class FundingServiceImpl implements FundingService{
 		Long memberId = SecurityUtil.getCurrentUserId();
 		Member member = memberRepository.findById(memberId).orElseThrow();
 
+		String[] split = data.getAmount().split(",");
+		Long amount = Long.parseLong(String.join("", split));
+
 		try {
-			if (member.getMoney() < data.getAmount()) {
+			if (member.getMoney() < amount) {
 				throw new InsufficientBalanceException("잔액 부족");
 			}
 
 			Payment payment = Payment.builder()
-				.amount(data.getAmount())
+				.amount(amount)
 				.post(funding)
 				.payDate(LocalDateTime.now())
 				.user(member)
@@ -470,8 +482,8 @@ public class FundingServiceImpl implements FundingService{
 
 			paymentRepository.save(payment);
 
-			member.setMoney(member.getMoney() - data.getAmount());
-			funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + data.getAmount());
+			member.setMoney(member.getMoney() - amount);
+			funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + amount);
 
 			badgeService.postBadges(member, PostGroup.FUNDING);
 			badgeService.totalPayAmount(member);

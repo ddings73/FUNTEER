@@ -23,7 +23,7 @@ public class FundingRequest {
 	@NotNull
 	private String content;
 	@NotNull
-	private String  startDate;
+	private String startDate;
 	@NotNull
 	private String endDate;
 

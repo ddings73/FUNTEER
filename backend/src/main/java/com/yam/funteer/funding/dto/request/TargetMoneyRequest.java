@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 public class TargetMoneyRequest {
 
 	private TargetMoneyType targetMoneyType;
-	private int amount;
+	private String amount;
 	private List<TargetMoneyDetailRequest> descriptions;
 
 }

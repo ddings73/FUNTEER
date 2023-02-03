@@ -47,6 +47,8 @@ public class User {
 	private @NotNull String email;
 	private String password;
 	private @NotNull String name;
+
+	@Column(unique = true)
 	private String phone;
 	@OneToOne
 	@JoinColumn(name = "profile_id")
