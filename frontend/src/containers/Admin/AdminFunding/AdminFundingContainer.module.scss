@@ -49,13 +49,13 @@
       font-family: NanumSquareRound;
 
       .title-col {
-        width: 400px;
+        width: 300px;
         display: flex;
         justify-content: center;
       }
 
       & li {
-        width: 150px;
+        width: 120px;
         display: flex;
         justify-content: center;
       }
@@ -67,7 +67,7 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      background-color: rgba(1, 1, 1, 0.01);
+      background-color: rgb(250, 250, 250);
       font-size: 1rem;
       border: none;
       border-bottom: 1px solid rgba(1, 1, 1, 0.05);
@@ -75,28 +75,50 @@
       padding: 0.5rem 0;
       font-family: NanumSquareRound;
 
-      &:hover {
-        cursor: pointer;
-        background-color: rgba(1, 1, 1, 0.05);
-      }
-
-      .title-col {
-        width: 400px;
-        font-size: 1rem;
+      .title-col-btn {
         display: flex;
         justify-content: center;
+        width: 290px;
+        font-size: 1rem;
+        padding: 0;
+        border: none;
+        background-color: inherit;
+
+        & li {
+          width: 100%;
+
+          & p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: NanumSquareRound;
+          }
+        }
+
+        &:hover {
+          cursor: pointer;
+          font-weight: bold;
+        }
       }
 
       & li {
-        width: 150px;
+        width: 120px;
         display: flex;
         justify-content: center;
 
         & p {
-          max-width: 400px;
+          max-width: 280px;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
+        }
+
+        .show-approve {
+          height: 2rem;
+        }
+
+        .hide-approve {
+          display: none;
         }
       }
     }

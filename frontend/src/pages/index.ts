@@ -19,6 +19,7 @@ export { default as AdminMember } from './Admin/AdminMember';
 export { default as AdminTeam } from './Admin/AdminTeam';
 export { default as AdminTeamDeny } from './Admin/AdminTeamDeny';
 export { default as AdminFunding } from './Admin/AdminFunding';
+export { default as AdminDonation } from './Admin/AdminDonation';
 
 export { default as MyPage } from './MyPage/MyPage';
 export { default as EditProfile } from './MyPage/EditProfile';
