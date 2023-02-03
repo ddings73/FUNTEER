@@ -31,15 +31,19 @@ import NavbarMenuData from './NavbarMenuData';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
+
 function ResponsiveAppBar() {
   const navigateTo = useNavigate();
   function clickNavigate(address: string) {
     navigateTo(address);
   }
-
+  const [scrollPosition, setScrollPosition] = useState(0);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [ishovered, setIsHovered] = useState(false);
 
+  const updateScroll = () => {
+    setScrollPosition(window.scrollY || document.documentElement.scrollTop);
+  };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -59,12 +63,15 @@ function ResponsiveAppBar() {
 
   const isLogin = useAppSelector((state) => state.userSlice.isLogin);
   let menuDataLength: number = NavbarMenuData.length;
-  console.log(menuDataLength);
   // console.log('로그인임?', isLogin);
+
+  useEffect(() => {
+    window.addEventListener('scroll', updateScroll);
+  });
 
   return (
     <div>
-      <AppBar className={styles.appBar} position="fixed">
+      <AppBar className={styles.appBar} position="fixed" sx={{ backgroundColor: scrollPosition < 10000 ? 'transparent' : 'rgb(255,255,255)' }}>
         <Container className={styles.appContainer} maxWidth="xl">
           <Toolbar disableGutters>
             {/* Desktop 구조 */}
