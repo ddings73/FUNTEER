@@ -13,7 +13,7 @@ import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOu
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import RoomIcon from '@mui/icons-material/Room';
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip'
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { fontWeight } from '@mui/system';
 import styles from './CreateFundingContainer.module.scss';
@@ -25,14 +25,11 @@ import { openModal } from '../../store/slices/modalSlice';
 import requiredIcon from '../../assets/images/funding/required.svg';
 import uploadIcon from '../../assets/images/funding/upload.svg';
 import { diffDayStartToEnd } from '../../utils/day';
-import { stringToSeparator,stringToNumber } from '../../types/convert';
+import { stringToSeparator, stringToNumber } from '../../types/convert';
 import TabPanel from '../../components/Funding/TabPanel';
 import TabContent from '../../components/Funding/TabContent';
 
-
-const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
-  <Tooltip {...props} classes={{ popper: className }} />
-))(({ theme }) => ({
+const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: '#f5f5f9',
     color: 'rgba(0, 0, 0, 0.87)',
@@ -40,10 +37,10 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => (
     fontSize: theme.typography.pxToRem(12),
     border: '1px solid #dadde9',
   },
-  [`& .title`]:{
-   fontSize:"15px",
-   fontWeight:"bold"
-  }
+  [`& .title`]: {
+    fontSize: '15px',
+    fontWeight: 'bold',
+  },
 }));
 
 function CreateFundingContainer() {
@@ -60,16 +57,19 @@ function CreateFundingContainer() {
     startDate: '',
     endDate: '',
     hashtags: '#tags',
-    LEVEL_ONE: {
+    targetMoneyLevelOne: {
       amount: '',
+      targetMoneyType: 'LEVEL_ONE',
       descriptions: [],
     },
-    LEVEL_TWO: {
+    targetMoneyLevelTwo: {
       amount: '',
+      targetMoneyType: 'LEVEL_TWO',
       descriptions: [],
     },
-    LEVEL_THREE: {
+    targetMoneyLevelThree: {
       amount: '',
+      targetMoneyType: 'LEVEL_THREE',
       descriptions: [],
     },
   });
@@ -126,25 +126,23 @@ function CreateFundingContainer() {
   const onChangeTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     // 금액 입력중 숫자외의 문자가 들어오면 제거
-    const regex = /[^0-9]/g
-    const separatorValue = stringToSeparator(value.replaceAll(regex,""))
+    const regex = /[^0-9]/g;
+    const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
     switch (name) {
-      case "title":
-        setFundingData({...fundingData,title:value})
+      case 'title':
+        setFundingData({ ...fundingData, title: value });
         break;
-      case "fundingDescription":
-        setFundingData({...fundingData,fundingDescription:value})
+      case 'fundingDescription':
+        setFundingData({ ...fundingData, fundingDescription: value });
         break;
       case 'LEVEL_ONE':
-        
-     
-        setFundingData({ ...fundingData, LEVEL_ONE: { ...fundingData.LEVEL_ONE, amount: separatorValue } });
+        setFundingData({ ...fundingData, targetMoneyLevelOne: { ...fundingData.targetMoneyLevelOne, amount: separatorValue } });
         break;
       case 'LEVEL_TWO':
-        setFundingData({ ...fundingData, LEVEL_TWO: { ...fundingData.LEVEL_TWO, amount: separatorValue } });
+        setFundingData({ ...fundingData, targetMoneyLevelTwo: { ...fundingData.targetMoneyLevelTwo, amount: separatorValue } });
         break;
       case 'LEVEL_THREE':
-        setFundingData({ ...fundingData, LEVEL_THREE: { ...fundingData.LEVEL_THREE, amount: separatorValue } });
+        setFundingData({ ...fundingData, targetMoneyLevelThree: { ...fundingData.targetMoneyLevelThree, amount: separatorValue } });
         break;
       default:
         break;
@@ -166,7 +164,6 @@ function CreateFundingContainer() {
   };
 
   const onCreateFunding = async () => {
-
     console.log(fundingData);
     try {
       const response = await requestCreateFunding(fundingData);
@@ -183,36 +180,34 @@ function CreateFundingContainer() {
     if (thumbnailRef.current) thumbnailRef.current.click();
   };
 
-  const onKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>,level:string) => {
+  const onKeyDownHandler = (e: React.KeyboardEvent<HTMLInputElement>, level: string) => {
     if (e.key === 'Enter') addTodos(level);
   };
   const addTodos = (level: string) => {
-    
     let prev;
-    const todo ={ description : todoText}
+    const todo = { description: todoText };
     // eslint-disable-next-line default-case
-    switch(level){
-      case "LEVEL_ONE":
-        prev = fundingData.LEVEL_ONE.descriptions
-        setFundingData({...fundingData,LEVEL_ONE:{...fundingData.LEVEL_ONE,descriptions:[...prev,todo]}})
+    switch (level) {
+      case 'LEVEL_ONE':
+        prev = fundingData.targetMoneyLevelOne.descriptions;
+        setFundingData({ ...fundingData, targetMoneyLevelOne: { ...fundingData.targetMoneyLevelOne, descriptions: [...prev, todo] } });
         break;
-        case 'LEVEL_TWO':
-          prev = fundingData.LEVEL_TWO.descriptions
-          setFundingData({...fundingData,LEVEL_TWO:{...fundingData.LEVEL_TWO,descriptions:[...prev,todo]}})
+      case 'LEVEL_TWO':
+        prev = fundingData.targetMoneyLevelTwo.descriptions;
+        setFundingData({ ...fundingData, targetMoneyLevelTwo: { ...fundingData.targetMoneyLevelTwo, descriptions: [...prev, todo] } });
         break;
-      case "LEVEL_THREE":
-        prev = fundingData.LEVEL_THREE.descriptions
-        setFundingData({...fundingData,LEVEL_THREE:{...fundingData.LEVEL_THREE,descriptions:[...prev,todo]}})
-      break;
+      case 'LEVEL_THREE':
+        prev = fundingData.targetMoneyLevelThree.descriptions;
+        setFundingData({ ...fundingData, targetMoneyLevelThree: { ...fundingData.targetMoneyLevelThree, descriptions: [...prev, todo] } });
+        break;
       default:
         break;
     }
 
-    setTodoText("")
+    setTodoText('');
   };
 
-  useEffect(()=>{
-
+  useEffect(() => {
     const htmlString = `  
     <h1>프로젝트 소개</h1>
     <p>프로젝트를 간단히 소개한다면?</p> 
@@ -231,14 +226,13 @@ function CreateFundingContainer() {
     <li>0월 0일: 봉사활동 실행</li>
     </ul>
 
-    `
+    `;
     editorRef.current?.getInstance().setHTML(htmlString);
-  },[])
+  }, []);
 
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
-        <form>
         <div className={styles['funding-thumbnail-box']}>
           <p className={styles.title}>
             프로젝트 대표 이미지 <img className={styles.required} src={requiredIcon} alt="" />
@@ -258,7 +252,7 @@ function CreateFundingContainer() {
                   이미지를 등록하면 즉시 반영됩니다. <br />
                 </span>
               </p>
-              <input ref={thumbnailRef} type="file" accept="image/*" onChange={onFileHandler} className={styles['thumbnail-upload-input']}  required/>
+              <input ref={thumbnailRef} type="file" accept="image/*" onChange={onFileHandler} className={styles['thumbnail-upload-input']} required />
             </div>
           </div>
         </div>
@@ -266,7 +260,7 @@ function CreateFundingContainer() {
           <p className={styles.title}>
             펀딩 제목 <img className={styles.required} src={requiredIcon} alt="" />
           </p>
-          <input type="text" name="title" className={styles['input-text']} onChange={onChangeTextHandler} placeholder="제목을 입력해주세요"  required/>
+          <input type="text" name="title" className={styles['input-text']} onChange={onChangeTextHandler} placeholder="제목을 입력해주세요" required />
         </div>
 
         <div className={styles['funding-description-box']}>
@@ -297,7 +291,6 @@ function CreateFundingContainer() {
             hooks={{ addImageBlobHook: onUploadImage }}
             language="ko-KR"
             hideModeSwitch // 하단의 타입 선택 탭 숨기기
-            
           />
         </div>
 
@@ -307,9 +300,8 @@ function CreateFundingContainer() {
           </p>
 
           <div className={styles['date-picker-box']}>
-            <LocalizationProvider dateAdapter={AdapterDayjs}   required>
+            <LocalizationProvider dateAdapter={AdapterDayjs} required>
               <DatePicker
-
                 disablePast
                 label="펀딩 시작 일자를 선택해주세요"
                 inputFormat="YYYY-MM-DD"
@@ -322,9 +314,8 @@ function CreateFundingContainer() {
               />
             </LocalizationProvider>
 
-            <LocalizationProvider dateAdapter={AdapterDayjs}  required>
+            <LocalizationProvider dateAdapter={AdapterDayjs} required>
               <DatePicker
-             
                 disablePast
                 label="펀딩 종료 일자를 선택해주세요"
                 minDate={startDate}
@@ -353,46 +344,39 @@ function CreateFundingContainer() {
 
           <div className={styles['progress-box']}>
             <div className={styles['stage-text-box']}>
-              <Tooltip title="asdas" placement='top'>
-              <Icon fontSize="large"> <RoomIcon   fontSize="large" sx={{color:'rgba(236, 153, 75, 1)'}}/></Icon>
+              <Tooltip title="asdas" placement="top">
+                <Icon fontSize="large">
+                  {' '}
+                  <RoomIcon fontSize="large" sx={{ color: 'rgba(236, 153, 75, 1)' }} />
+                </Icon>
               </Tooltip>
-            
-              <HtmlTooltip
-              placement='top'
-                  title={
-                    <>
-                    <p className='title'>최소 달성조건</p>
-                    {fundingData?.LEVEL_ONE.descriptions[0]}
-                    </>
-                   }
-                  > 
-              <Icon fontSize="large"> <RoomIcon  fontSize="large" sx={tabIdx >=0?{color:"rgba(236, 153, 75, 1)"}:{color:"rgb(109, 109, 109);"}}/></Icon>
+
+              <HtmlTooltip placement="top" title={<p className="title">최소 달성조건</p>}>
+                <Icon fontSize="large">
+                  {' '}
+                  <RoomIcon fontSize="large" sx={tabIdx >= 0 ? { color: 'rgba(236, 153, 75, 1)' } : { color: 'rgb(109, 109, 109);' }} />
+                </Icon>
               </HtmlTooltip>
 
-              <HtmlTooltip
-              placement='top'
-                  title={
-                    <p className='title'>1단계 초과달성 </p>
-                   }
-                  > 
-              <Icon fontSize="large"> <RoomIcon fontSize="large" sx={tabIdx >=1?{color:"rgba(236, 153, 75, 1)"}:{color:"rgb(109, 109, 109);"}}/></Icon>
+              <HtmlTooltip placement="top" title={<p className="title">1단계 초과달성 </p>}>
+                <Icon fontSize="large">
+                  {' '}
+                  <RoomIcon fontSize="large" sx={tabIdx >= 1 ? { color: 'rgba(236, 153, 75, 1)' } : { color: 'rgb(109, 109, 109);' }} />
+                </Icon>
               </HtmlTooltip>
 
-              <HtmlTooltip
-              placement='top'
-                  title={
-                    <p className='title'>2단계 초과달성 </p>
-                   }
-                  > 
-              <Icon fontSize="large"> <RoomIcon fontSize="large" sx={tabIdx >=2?{color:"rgba(236, 153, 75, 1)"}:{color:"rgb(109, 109, 109);"}}/></Icon>
+              <HtmlTooltip placement="top" title={<p className="title">2단계 초과달성 </p>}>
+                <Icon fontSize="large">
+                  {' '}
+                  <RoomIcon fontSize="large" sx={tabIdx >= 2 ? { color: 'rgba(236, 153, 75, 1)' } : { color: 'rgb(109, 109, 109);' }} />
+                </Icon>
               </HtmlTooltip>
-        
             </div>
             <LinearProgress sx={{ height: 15, borderRadius: 2 }} variant="determinate" value={progress} color="warning" />
 
             <TabPanel value={0} index={tabIdx}>
               <TabContent
-                data={fundingData.LEVEL_ONE}
+                data={fundingData.targetMoneyLevelOne}
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
                 onKeyDownHandler={onKeyDownHandler}
@@ -404,20 +388,19 @@ function CreateFundingContainer() {
 
             <TabPanel value={1} index={tabIdx}>
               <TabContent
-                data={fundingData.LEVEL_TWO}
+                data={fundingData.targetMoneyLevelTwo}
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
                 onKeyDownHandler={onKeyDownHandler}
                 addTodos={addTodos}
                 level="LEVEL_TWO"
                 todoText={todoText}
-
               />
             </TabPanel>
 
             <TabPanel value={2} index={tabIdx}>
               <TabContent
-                data={fundingData.LEVEL_THREE}
+                data={fundingData.targetMoneyLevelThree}
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
                 onKeyDownHandler={onKeyDownHandler}
@@ -436,12 +419,10 @@ function CreateFundingContainer() {
               </Button>
             </div>
           </div>
-          <Button variant="contained" type="submit" className={styles['submit-button']} color="warning" onClick={onCreateFunding}>
+          <Button variant="contained" type="button" className={styles['submit-button']} color="warning" onClick={onCreateFunding}>
             펀딩 생성하기
           </Button>
         </div>
-  
-        </form>
       </div>
     </div>
   );
