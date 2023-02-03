@@ -51,8 +51,11 @@ public class LoginServiceImpl implements LoginService{
     @Override
     public LoginResponse processKakaoLogin(LoginRequest loginRequest) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword());
-
+        log.info("email => " + loginRequest.getEmail());
+        log.info("password => " + loginRequest.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
+
+        log.info("id => " + authentication.getName());
         TokenInfo tokenInfo = jwtProvider.generateToken(authentication); // 검증되면 jwt 만들어서 가져옴
         Long userId = Long.valueOf(authentication.getName());
         User user = userFoundProcess(loginRequest, tokenInfo, userId);
