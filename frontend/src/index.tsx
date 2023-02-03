@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { BrowserRouter, createBrowserRouter, RouterProvider, useParams } from 'react-router-dom';
+import { BrowserRouter, createBrowserRouter, RouterProvider, useParams, useSearchParams } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
 // import { persistStore } from 'redux-persist';
@@ -49,6 +49,24 @@ import {
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
+import { http } from './api/axios';
+
+function Test() {
+  const { email } = useParams();
+
+  const kakaoLogin = async () => {
+    try {
+      const response = await http.post('login/kakao', email);
+      console.log(response);
+    } catch (Error) {
+      console.log(Error);
+    }
+  };
+  useEffect(() => {
+    kakaoLogin();
+  }, []);
+  return <h1>ㅎㅇㅎㅇㅎㅇ</h1>;
+}
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
@@ -63,7 +81,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'login/kakao',
-        element: <h1>login/kakao</h1>,
+        element: <Test />,
       },
       {
         path: 'findEmail',
