@@ -227,14 +227,14 @@ public class FundingServiceImpl implements FundingService{
 	private void addTargetMoney(FundingRequest data, Funding funding) {
 		List<TargetMoney> targetMoneyList = new ArrayList<>();
 
-		setTargetMoneyListByLevel(data.getTargetMoneyLevelOne(), funding, targetMoneyList);
-		setTargetMoneyListByLevel(data.getTargetMoneyLevelTwo(), funding, targetMoneyList);
-		setTargetMoneyListByLevel(data.getTargetMoneyLevelThree(), funding, targetMoneyList);
+		setTargetMoneyListByLevel(targetMoneyList, funding, data.getTargetMoneyLevelOne());
+		setTargetMoneyListByLevel(targetMoneyList, funding, data.getTargetMoneyLevelTwo());
+		setTargetMoneyListByLevel(targetMoneyList, funding, data.getTargetMoneyLevelThree());
 
 		funding.setTargetMoneyList(targetMoneyList);
 	}
 
-	private void setTargetMoneyListByLevel(TargetMoneyRequest targetMoneyRequest, Funding funding, List<TargetMoney> targetMoneyList) {
+	private void setTargetMoneyListByLevel(List<TargetMoney> targetMoneyList, Funding funding, TargetMoneyRequest targetMoneyRequest) {
 		String[] split = targetMoneyRequest.getAmount().split(",");
 		int amount = Integer.parseInt(String.join("", split));
 
@@ -360,7 +360,7 @@ public class FundingServiceImpl implements FundingService{
 			targetMoneyRepository.delete(targetMoney);
 		}
 
-		setTargetMoneyListByLevel(data.getTargetMoneyLevelOne(), funding, targetMoneyList);
+		setTargetMoneyListByLevel(targetMoneyList, funding,  data.getTargetMoneyLevelOne());
 		funding.setTargetMoneyList(targetMoneyList);
 	}
 
