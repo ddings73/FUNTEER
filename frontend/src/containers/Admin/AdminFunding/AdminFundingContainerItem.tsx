@@ -7,7 +7,7 @@ export enum FundingState {
   Funding = '펀딩중',
   Funded = '펀딩 완료',
   Acted = '활동 종료',
-  NotActApproved = '종료 승인 대기',
+  NotActApproved = '종료 대기',
   ActApproved = '종료',
 }
 

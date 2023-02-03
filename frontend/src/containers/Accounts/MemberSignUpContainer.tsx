@@ -230,7 +230,7 @@ function MemberSignUpContainer() {
       <div className={styles.contents}>
         <h1 className={styles.title}>개인 회원가입</h1>
         <div className={styles['form-div']}>
-          <div id="form-div-inner">
+          <div className={styles['form-div-inner']}>
             <p>이름</p>
             <TextField name="name" margin="dense" placeholder="이름을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
