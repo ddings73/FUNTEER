@@ -103,9 +103,9 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/account")
-	public void modifyAccount(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult) {
+	public void modifyAccount(@Validated @RequestBody UpdateMemberAccountRequest request, BindingResult bindingResult) {
 		validateBinding(bindingResult);
-		memberService.updateAccount(baseUserRequest);
+		memberService.updateAccount(request);
 	}
 
 	/**
