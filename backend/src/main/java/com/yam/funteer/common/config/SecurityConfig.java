@@ -56,6 +56,7 @@ public class SecurityConfig{
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
             .oauth2Login()
+            .defaultSuccessUrl("/login/kakao")
                 .successHandler(successHandler) // oAuth 정보를 가져오면 동작할 핸들러
                 .userInfoEndpoint().userService(oAuth2UserService); // 여기서 oAuth 정보를 가져옴
         return http.build();
