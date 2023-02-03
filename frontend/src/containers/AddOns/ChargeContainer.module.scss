@@ -12,22 +12,31 @@
     max-width: 1160px;
 
     & .title {
-      margin-top: 2rem;
+      margin-top: 4rem;
       text-align: center;
       font-size: 2.5rem;
       font-weight: bold;
+
+      @include mobile {
+        font-size: 1.75rem;
+      }
     }
 
     & .charge-box {
-      margin-top: 80px;
+      margin-top: 6rem;
       width: 100%;
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       padding-bottom: 30px;
 
       & p {
-        font-size: 2.25rem;
+        font-size: 1.75rem;
         font-weight: bold;
+
+        @include mobile {
+          font-size: 1.5rem;
+        }
       }
+
       & div {
         display: flex;
         flex-direction: row;
@@ -37,7 +46,9 @@
         & span {
           font-size: 1.25rem;
           font-weight: bold;
+          font-family: NanumSquareRound;
         }
+
         & button {
           margin-left: 25px;
           width: 77px;
@@ -46,22 +57,35 @@
         }
       }
     }
+
     & .notice-box {
-      margin-top: 30px;
+      margin-top: 2.5rem;
 
       & p {
-        font-size: 2.25rem;
+        font-size: 1.75rem;
         font-weight: bold;
         margin-bottom: 30px;
+
+        @include mobile {
+          font-size: 1.5rem;
+        }
       }
 
       & ul li {
+        width: 80%;
         margin-bottom: 33px;
+        line-height: 2rem;
+        color: rgba(0, 0, 0, 0.7);
+        font-family: NanumSquareRound;
+
+        @include mobile {
+          width: 95%;
+        }
       }
     }
 
     & .charge-history-box {
-      margin-top: 60px;
+      margin-top: 4rem;
 
       & .charge-title-box {
         display: flex;
@@ -69,41 +93,59 @@
         justify-content: space-between;
 
         & p {
-          font-size: 2.25rem;
+          font-size: 1.75rem;
           font-weight: bold;
+
+          @include mobile {
+            font-size: 1.5rem;
+          }
         }
       }
 
       & table {
         margin-top: 30px;
         width: 100%;
+        font-family: NanumSquareRound;
+
         & thead tr {
           height: 50px;
           background: linear-gradient(269.64deg, #ffe1be 9.38%, #ffccaf 95.73%);
           box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
         }
+
         & thead tr :first-child {
           text-align: left;
         }
+
         & thead tr :last-child {
           text-align: right;
         }
+
         & thead tr th {
           padding: 0 15px;
           line-height: 50px;
           font-weight: bold;
-          font-size: 1.5rem;
+          font-size: 1.25rem;
+
+          @include mobile {
+            font-size: 1rem;
+          }
         }
 
         & tbody tr {
           height: 50px;
+
           & td {
             padding: 0 15px;
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             line-height: 50px;
-            font-weight: bold;
+
+            @include mobile {
+              font-size: 0.9rem;
+            }
           }
         }
+
         & tbody tr :last-child {
           text-align: right;
         }

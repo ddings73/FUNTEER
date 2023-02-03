@@ -1,15 +1,39 @@
+import swal from 'sweetalert2';
+import { paymentSuccessRequest } from '../api/charge';
 import { CallBackParams, PayParams } from '../types/payment';
-import { customAlert, customTextAlert, s1000, w1500 } from '../utils/customAlert';
 
-const callback: (response: CallBackParams) => void = (response) => {
-  const { success, errorMsg } = response;
-  console.log(response);
+const callback: (response: CallBackParams) => void = async (response) => {
+  console.log('결제 정보', response);
 
-  if (success) {
-    customAlert(s1000, '결제 성공');
-    console.log('결제 정보 전달 요청');
+  if (response.success) {
+    /** 결제 성공 알림 */
+    swal.fire({
+      position: 'bottom-end',
+      title: '결제 성공',
+      icon: 'success',
+      iconColor: 'rgba(236, 153, 75, 1)',
+      showConfirmButton: false,
+      timer: 2000,
+      timerProgressBar: true,
+    });
+    /** 결제 성공 요청 */
+    try {
+      const axiosResponse = await paymentSuccessRequest(response);
+      console.log('결제 성공 요청 정보', axiosResponse);
+    } catch (error) {
+      console.log('결제 성공 요청 에러', error);
+    }
   } else {
-    customTextAlert(w1500, '결제 실패', `${errorMsg}`);
+    /** 결제 실패 알림 */
+    swal.fire({
+      position: 'bottom-end',
+      title: '결제 실패',
+      // eslint-disable-next-line
+      text: `${response.error_msg}`,
+      icon: 'warning',
+      iconColor: 'rgba(211, 79, 4, 1)',
+      showConfirmButton: false,
+    });
   }
 };
 

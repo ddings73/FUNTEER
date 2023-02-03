@@ -1,8 +1,9 @@
 import swal from 'sweetalert2';
+import './customAlert.module.scss';
 
 export const s1000 = {
   icon: 'success',
-  iconColor: 'rgba(211, 79, 4, 1)',
+  iconColor: 'rgba(236, 153, 75, 1)',
   showConfirmButton: false,
   timer: 1500,
   timerProgressBar: true,
@@ -10,7 +11,7 @@ export const s1000 = {
 
 export const s1500 = {
   icon: 'success',
-  iconColor: 'rgba(211, 79, 4, 1)',
+  iconColor: 'rgba(236, 153, 75, 1)',
   showConfirmButton: false,
   timer: 1500,
   timerProgressBar: true,
