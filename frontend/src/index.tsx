@@ -52,8 +52,9 @@ import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
 
 function Test() {
-  const { email } = useParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
+  const email = searchParams.get('email');
   const kakaoLogin = async () => {
     try {
       const response = await http.post('login/kakao', email);
