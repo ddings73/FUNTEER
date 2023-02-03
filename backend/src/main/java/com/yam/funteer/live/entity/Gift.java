@@ -10,6 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.yam.funteer.user.entity.Member;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -27,6 +29,11 @@ public class Gift {
 	@ManyToOne
 	@JoinColumn(name = "live_id")
 	private Live live;
+
+	@ManyToOne
+	@JoinColumn(name = "member_id")
+	private Member member;
+
 	private Long amount;
 	private LocalDateTime giftDate;
 }

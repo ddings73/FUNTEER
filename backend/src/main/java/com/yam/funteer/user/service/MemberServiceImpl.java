@@ -114,11 +114,12 @@ public class MemberServiceImpl implements MemberService {
         Long userId = SecurityUtil.getCurrentUserId();
         Member member = validateSameUser(userId, request.getUserId());
 
-        String newPassword = request.getPassword().orElseThrow(()->{
+        String password = request.getPassword().orElseThrow(()->{
             throw new IllegalArgumentException("패스워드는 필수 입력 값입니다.");
         });
+        member.validatePassword(passwordEncoder, password);
 
-        request.getPassword().ifPresent(newPw -> {
+        request.getNewPassword().ifPresent(newPw -> {
             String encryptedPw = passwordEncoder.encode(newPw);
             member.changePassword(encryptedPw);
         });

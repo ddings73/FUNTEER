@@ -30,10 +30,6 @@ public class Live {
 	@JoinColumn(name = "funding_id")
 	private Funding funding;
 
-	@ManyToOne
-	@JoinColumn(name = "member_id")
-	private Member member;
-	
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 	private String sessionId;
