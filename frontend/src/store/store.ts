@@ -1,9 +1,10 @@
 import { configureStore, combineReducers, getDefaultMiddleware } from '@reduxjs/toolkit';
-import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
+// import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 // import storage from 'redux-persist/lib/storage';
 import userSlice from './slices/userSlice';
 import modalSlice from './slices/modalSlice';
 import fileModalSlice from './slices/fileModalSlice';
+import payModalSlice from './slices/payModalSlice';
 
 // const persistConfig = {
 //   key: 'root',
@@ -15,6 +16,7 @@ const rootReducer = combineReducers({
   userSlice,
   modalSlice,
   fileModalSlice,
+  payModalSlice,
 });
 
 // const persistedReducer = persistReducer(persistConfig, rootReducer);

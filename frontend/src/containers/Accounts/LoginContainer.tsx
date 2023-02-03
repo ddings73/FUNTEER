@@ -45,6 +45,7 @@ function LoginContainer() {
       const response = await requestSignIn(userInfo);
       if (response.status === 200) {
         const { data } = response;
+        console.log(data)
 
         localStorage.setItem('accessToken', data.token.accessToken);
         localStorage.setItem('refreshToken', data.token.refreshToken);
