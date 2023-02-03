@@ -189,7 +189,7 @@ public class FundingServiceImpl implements FundingService{
 			.build();
 
 		Funding savedPost = fundingRepository.save(funding);
-		
+
 		// s3 변환
 		String thumbnailUrl = awsS3Uploader.upload(thumbnail, "thumbnails/" + savedPost.getId());
 
