@@ -22,6 +22,7 @@ import com.yam.funteer.common.code.TargetMoneyType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,8 +30,9 @@ import lombok.Setter;
 @Entity
 @Table(name = "target_money")
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class TargetMoney {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -38,19 +40,18 @@ public class TargetMoney {
 	@JoinColumn(name = "funding_id")
 	private Funding funding;
 	@Enumerated(value = EnumType.STRING)
-	@Column(nullable = false)
 	private TargetMoneyType targetMoneyType;
 	private @NotNull int amount;
 
 	@OneToMany(mappedBy = "targetMoney",  cascade = CascadeType.ALL)
 	private List<TargetMoneyDetail> descriptions;
 
-	public TargetMoney(Funding funding, TargetMoneyType targetMoneyType, int amount) {
-		this.funding = funding;
-		this.targetMoneyType = targetMoneyType;
-		this.amount = amount;
+	public void setTargetMoneyDescriptions(List<TargetMoneyDetail> targetMoneyDetails) {
+		this.descriptions = targetMoneyDetails;
 	}
 
-	public void setTargetMoneyDescriptions(List<TargetMoneyDetail> targetMoneyDetails) {
+	public void setTargetMoneyType(TargetMoneyType targetMoneyType) {
+		this.targetMoneyType = targetMoneyType;
+
 	}
 }

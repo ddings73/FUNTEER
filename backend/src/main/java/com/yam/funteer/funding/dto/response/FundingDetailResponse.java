@@ -39,9 +39,9 @@ public class FundingDetailResponse {
 
 	private LocalDateTime postDate;
 
-	private List<TargetMoneyResponse> targetMoneyListLevelOne;
-	private List<TargetMoneyResponse> targetMoneyListLevelTwo;
-	private List<TargetMoneyResponse> targetMoneyListLevelThree;
+	private TargetMoneyResponse targetMoneyListLevelOne;
+	private TargetMoneyResponse targetMoneyListLevelTwo;
+	private TargetMoneyResponse targetMoneyListLevelThree;
 
 	private Optional<HashtagResponse> postHashtagList;
 
