@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { BrowserRouter, createBrowserRouter, RouterProvider, useParams } from 'react-router-dom';
+import { BrowserRouter, createBrowserRouter, RouterProvider, useParams, useSearchParams } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+import { config } from 'yargs';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
@@ -11,6 +14,7 @@ import store from './store/store';
 import { theme } from './theme/theme';
 import UserRoot from './roots/UserRoot';
 import AdminRoot from './roots/AdminRoot';
+import UserFooterRoot from './roots/UserFooterRoot';
 import {
   MainPage,
   SignUp,
@@ -43,24 +47,51 @@ import {
   AdminFunding,
   CustomerCenter,
   NoticeDetail,
+  AdminDonation,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
+import { http } from './api/axios';
+
+function Test() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const email = searchParams.get('email');
+  const data = {
+    email,
+  };
+  const kakaoLogin = async () => {
+    try {
+      const response = await http.post('login/kakao', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response);
+    } catch (Error) {
+      console.log(Error);
+    }
+  };
+  useEffect(() => {
+    kakaoLogin();
+  }, []);
+  return <h1>ㅎㅇㅎㅇㅎㅇ</h1>;
+}
 
 const router = createBrowserRouter([
+  /** Footer 없는 페이지 */
   {
     path: '/',
     element: <UserRoot />,
     errorElement: <ErrorPage />,
     children: [
       {
-        index: true,
-        element: <MainPage />,
-      },
-      /* Accounts Routes */
-      {
         path: 'login',
         element: <Login />,
+      },
+      {
+        path: 'login/kakao',
+        element: <Test />,
       },
       {
         path: 'findEmail',
@@ -90,16 +121,6 @@ const router = createBrowserRouter([
         path: 'logout',
         element: <LogOut />,
       },
-      /* Add-on Routes */
-      {
-        path: 'donation',
-        element: <Donation />,
-      },
-      {
-        path: 'charge',
-        element: <Charge />,
-      },
-      /* Service Routes */
       {
         path: 'service',
         element: <ServiceDetail />,
@@ -108,7 +129,10 @@ const router = createBrowserRouter([
         path: 'team',
         element: <TeamPage />,
       },
-      /* MyPage Routes */
+      {
+        path: '/test',
+        element: <LiveTest />,
+      },
       {
         path: 'myPage',
         element: <MyPage />,
@@ -141,6 +165,26 @@ const router = createBrowserRouter([
         path: 'myFollow',
         element: <MyFollows />,
       },
+    ],
+  },
+  /** Footer 있는 페이지 */
+  {
+    path: '/',
+    element: <UserFooterRoot />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <MainPage />,
+      },
+      {
+        path: 'donation',
+        element: <Donation />,
+      },
+      {
+        path: 'charge',
+        element: <Charge />,
+      },
       {
         path: '/funding',
         element: <FundingList />,
@@ -150,7 +194,7 @@ const router = createBrowserRouter([
         element: <CreateFunding />,
       },
       {
-        path: '/funding/detail/:id',
+        path: '/funding/detail/:fundIdx',
         element: <FundingDetail />,
       },
       {
@@ -158,15 +202,12 @@ const router = createBrowserRouter([
         element: <CustomerCenter />,
       },
       {
-        path: '/test',
-        element: <LiveTest />,
-      },
-      {
         path: '/cc/:nn', // nn: 공지사항 번호
         element: <NoticeDetail />,
       },
     ],
   },
+  /** 관리자 페이지 */
   {
     path: '/admin',
     element: <AdminRoot />,
@@ -192,14 +233,22 @@ const router = createBrowserRouter([
         path: 'funding',
         element: <AdminFunding />,
       },
+      {
+        path: 'donation',
+        element: <AdminDonation />,
+      },
     ],
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const persistor = persistStore(store);
+
 root.render(
   <Provider store={store}>
-    <RouterProvider router={router} />
+    <PersistGate loading={null} persistor={persistor}>
+      <RouterProvider router={router} />
+    </PersistGate>
   </Provider>,
 );
 

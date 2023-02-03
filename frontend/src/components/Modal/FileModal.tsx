@@ -46,7 +46,7 @@ function FileModal({ isOpen, vmsNum, vmsFile, performFile, deniedNum }: FileModa
           승인
         </Button>
         <Button variant="contained" onClick={onClickDenyBtnHandler} className={styles['deny-btn']}>
-          거절
+          거부
         </Button>
       </DialogActions>
     </Dialog>

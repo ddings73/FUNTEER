@@ -12,3 +12,7 @@ export type FileModalType = {
   performFile: string;
   deniedNum: string;
 };
+
+export type payModalType = {
+  isOpen: boolean;
+};

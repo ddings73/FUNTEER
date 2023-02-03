@@ -17,7 +17,21 @@ export function MainPageContainer() {
           <button className={styles.serviceBtn} type="button">
             서비스 상세보기
           </button>
-          <Link to="/funding/create">펀딩</Link>
+          <p>
+            <Link to="/funding/create" style={{ fontSize: '3rem', color: 'white' }}>
+              펀딩 페이지
+            </Link>
+          </p>
+          <p>
+            <Link to="/charge" style={{ fontSize: '3rem', color: 'white' }}>
+              충전 페이지
+            </Link>
+          </p>
+          <p>
+            <Link to="/admin" style={{ fontSize: '3rem', color: 'white' }}>
+              관리자 페이지
+            </Link>
+          </p>
         </div>
         <div className={styles.bannerImg}>배너 이미지 공간</div>
       </div>
