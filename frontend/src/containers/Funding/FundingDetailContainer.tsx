@@ -15,6 +15,7 @@ import CommentCard from '../../components/Cards/CommentCard';
 export function FundingDetailContainer() {
   const [users, setUsers] = useState(null);
   const { fundIdx } = useParams();
+  // const [likePressed, setLikePressed] = useState(false);
   const [board, setBoard] = useState<ResponseInterface>({
     id: 0,
     title: '',
@@ -28,6 +29,7 @@ export function FundingDetailContainer() {
     currentFundingAmount: 0,
     wishCount: 0,
   });
+  // function setLikeCount() {}
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,7 +75,11 @@ export function FundingDetailContainer() {
         </div>
         <DetailArcodian />
         <div className={styles.mainFooterdiv} />
-        <div className={styles.mainFooterAttatch}>첨부공간</div>
+        <div className={styles.mainFooterAttatch}>
+          <p className={styles.attachTitle}>첨부파일</p>
+          <p className={styles.attachItem}>인증서.hwp</p>
+          <p className={styles.attachItem}>증명서.pdf</p>
+        </div>
         <div className={styles.mainFooterLikeWrapper}>
           <FavoriteIcon className={styles.mainFooterLike} />
           <div className={styles.Likebox}>
