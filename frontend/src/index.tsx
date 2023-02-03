@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
 // import { persistStore } from 'redux-persist';
 // import { PersistGate } from 'redux-persist/integration/react';
+import { config } from 'yargs';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
@@ -57,7 +58,11 @@ function Test() {
   const email = searchParams.get('email');
   const kakaoLogin = async () => {
     try {
-      const response = await http.post('login/kakao', email);
+      const response = await http.post('login/kakao', email, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
       console.log(response);
     } catch (Error) {
       console.log(Error);
