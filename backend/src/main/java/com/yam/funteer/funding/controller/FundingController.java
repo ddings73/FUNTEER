@@ -27,6 +27,7 @@ import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
+import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
@@ -79,7 +80,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
 	@PostMapping("")
-	public  ResponseEntity<?> createFunding(MultipartFile thumbnail, @Valid FundingRequest data) throws IOException {
+	public  ResponseEntity<?> createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException {
 		FundingDetailResponse funding = fundingService.createFunding(thumbnail, data);
 		return ResponseEntity.ok(funding);
 	}
