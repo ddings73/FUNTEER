@@ -1,5 +1,6 @@
 package com.yam.funteer.donation.dto.response;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import com.yam.funteer.common.code.PostType;
@@ -16,6 +17,8 @@ public class DonationBaseRes {
 	private String targetAmount;
 	private String currentAmount;
 	private PostType postType;
+	private LocalDate startDate;
+	private LocalDate endDate;
 
 	public DonationBaseRes(Donation entity,List<String>files){
 		this.id=entity.getId();
@@ -25,6 +28,8 @@ public class DonationBaseRes {
 		this.targetAmount=entity.getAmount().toString();
 		this.currentAmount=entity.getCurrentAmount().toString();
 		this.postType=entity.getPostType();
+		this.startDate=entity.getStartDate();
+		this.endDate=entity.getEndDate();
 	}
 }
 

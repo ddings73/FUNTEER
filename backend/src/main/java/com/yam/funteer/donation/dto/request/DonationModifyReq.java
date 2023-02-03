@@ -1,9 +1,12 @@
 package com.yam.funteer.donation.dto.request;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -19,7 +22,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @Data
@@ -39,10 +41,10 @@ public class DonationModifyReq {
 	@NotBlank
 	private PostType postType;
 
-	public Donation toEntity(Long postId,Long currentAmount){
+	public Donation toEntity(Long postId,Long currentAmount, LocalDate regDate){
 		return Donation.builder()
 			.id(postId)
-			.regDate(LocalDateTime.now())
+			.startDate(regDate)
 			.postGroup(PostGroup.DONATION)
 			.postType(postType)
 			.title(title)
