@@ -28,11 +28,19 @@
       flex-direction: column;
       margin: 2rem 0;
 
+      @include mobile {
+        margin: 1rem 0;
+      }
+
       & h1 {
         font-size: 2.25rem;
         font-weight: bold;
         margin: 4rem 0 2rem 0;
         padding-top: 2rem;
+
+        @include mobile {
+          margin: 1rem 0 2rem 0;
+        }
       }
 
       & nav {
@@ -52,11 +60,16 @@
 
     .right {
       margin: 4rem 0 2rem 0;
+
       & p {
         padding-top: 2rem;
         font-size: 1.4rem;
         font-family: NanumSquareRound;
         color: rgba(0, 0, 0, 0.6);
+      }
+
+      @include mobile {
+        display: none;
       }
     }
   }

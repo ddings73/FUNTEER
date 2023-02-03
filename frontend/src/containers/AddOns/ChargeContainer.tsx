@@ -5,7 +5,7 @@ import { useAppDispatch } from '../../store/hooks';
 import styles from './ChargeContainer.module.scss';
 import { closeModal, openModal } from '../../store/slices/payModalSlice';
 
-// 더미 테이터 타입, 신경 안써도 됨
+// 더미 테이터 타입
 type NoticeType = {
   idx: number;
   text: string;
@@ -53,10 +53,10 @@ const dummyChargeHistory: ChargeHistoryType[] = [
 function ChargeContainer() {
   const dispatch = useAppDispatch();
 
-  const [age, setAge] = React.useState('');
+  const [sort, setSort] = React.useState('date');
 
-  const handleChange = (event: SelectChangeEvent) => {
-    setAge(event.target.value);
+  const changeSortHandler = (event: SelectChangeEvent) => {
+    setSort(event.target.value);
   };
 
   const onClickChargeHandler = () => {
@@ -67,7 +67,6 @@ function ChargeContainer() {
     <div className={styles.container}>
       <div className={styles.contents}>
         <p className={styles.title}>펀티어 충전</p>
-
         <div className={styles['charge-box']}>
           <p>잔액</p>
           <div>
@@ -79,7 +78,6 @@ function ChargeContainer() {
         </div>
         <div className={styles['notice-box']}>
           <p>고지사항 및 안내문</p>
-
           <ul>
             {dummyNotice.map((notice) => (
               <li key={notice.idx}>
@@ -91,15 +89,11 @@ function ChargeContainer() {
         <div className={styles['charge-history-box']}>
           <div className={styles['charge-title-box']}>
             <p>충전 내역 확인</p>
-            <Select value={age} onChange={handleChange} displayEmpty inputProps={{ 'aria-label': 'Without label' }}>
-              <MenuItem value="">
-                <em>None</em>
-              </MenuItem>
-              <MenuItem value={10}>날짜별</MenuItem>
-              <MenuItem value={20}>금액별</MenuItem>
+            <Select value={sort} sx={{ height: '2.5rem' }} onChange={changeSortHandler} displayEmpty inputProps={{ 'aria-label': 'Without label' }}>
+              <MenuItem value="date">날짜순</MenuItem>
+              <MenuItem value="amount">금액순</MenuItem>
             </Select>
           </div>
-
           <table>
             <thead>
               <tr>
