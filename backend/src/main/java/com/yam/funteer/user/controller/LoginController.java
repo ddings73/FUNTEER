@@ -80,8 +80,8 @@ public class LoginController {
         @ApiResponse(code = 500, message = "서버 에러")
     })
     @PostMapping("/login/kakao")
-    public ResponseEntity<LoginResponse> kakaoLogin(@RequestBody String email){
-        LoginRequest loginRequest = new LoginRequest(email, "kakaoPassword");
+    public ResponseEntity<LoginResponse> kakaoLogin(@RequestBody LoginRequest loginRequest){
+        loginRequest.setPassword("kakaoPassword");
         LoginResponse loginResponse = loginService.processKakaoLogin(loginRequest);
         return ResponseEntity.ok(loginResponse);
     }
