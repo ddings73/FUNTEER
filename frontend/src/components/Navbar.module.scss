@@ -91,7 +91,20 @@ $Desktop-max-size: 1001px;
   justify-content: center;
   width: 100px;
   height: 30px;
-  margin-right: 20px;
+  border: none;
+  background-color: transparent;
+  font-family: 'NanumSquare';
+  color: $primary;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  &:hover {
+    color: rgb(0, 17, 110);
+  }
+  &:active {
+    scale: 0.9;
+  }
 }
 .appContainer {
   padding: 0;
@@ -168,6 +181,7 @@ $Desktop-max-size: 1001px;
   backdrop-filter: blur(10.5px);
   -webkit-backdrop-filter: blur(10.5px);
   transition: 1s;
+  z-index: 998;
 }
 
 .megaContainerHidden {
@@ -180,4 +194,5 @@ $Desktop-max-size: 1001px;
   backdrop-filter: blur(10.5px);
   -webkit-backdrop-filter: blur(10.5px);
   transition: 1s;
+  z-index: 998;
 }

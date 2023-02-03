@@ -24,30 +24,26 @@ import NavDataSettings from './NavbarSettingsData';
 /* 이미지 import */
 import logoImg from '../assets/images/FunteerLogo.png';
 /*로그인 Import */
-import { useAppDispatch } from '../store/hooks';
+import { useAppDispatch, useAppSelector } from '../store/hooks';
 import userSlice, { isLoginState, setUserLoginState } from '../store/slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
-import { RootState } from '../store/store';
-import { title } from 'process';
-import { userInfo } from 'os';
 import NavbarMenuData from './NavbarMenuData';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
-function ResponsiveAppBar() {
-  const insertedToken = localStorage.getItem('token');
-  const loginState = useSelector((state) => {
-    return state;
-  });
-  const navigateTo = useNavigate();
 
+function ResponsiveAppBar() {
+  const navigateTo = useNavigate();
   function clickNavigate(address: string) {
     navigateTo(address);
   }
-
+  const [scrollPosition, setScrollPosition] = useState(0);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [ishovered, setIsHovered] = useState(false);
 
+  const updateScroll = () => {
+    setScrollPosition(window.scrollY || document.documentElement.scrollTop);
+  };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -65,15 +61,17 @@ function ResponsiveAppBar() {
     },
   }));
 
-  useEffect(() => {
-    console.log('state 정보: ', loginState);
-  }, [isLoginState]);
-
+  const isLogin = useAppSelector((state) => state.userSlice.isLogin);
+  let menuDataLength: number = NavbarMenuData.length;
   // console.log('로그인임?', isLogin);
+
+  useEffect(() => {
+    window.addEventListener('scroll', updateScroll);
+  });
 
   return (
     <div>
-      <AppBar className={styles.appBar} position="fixed">
+      <AppBar className={styles.appBar} position="fixed" sx={{ backgroundColor: scrollPosition < 10000 ? 'transparent' : 'rgb(255,255,255)' }}>
         <Container className={styles.appContainer} maxWidth="xl">
           <Toolbar disableGutters>
             {/* Desktop 구조 */}
@@ -116,7 +114,7 @@ function ResponsiveAppBar() {
             </Box>
 
             <Box sx={{ flexGrow: 0 }}>
-              <div style={{ display: insertedToken === null ? 'flex' : 'none' }}>
+              <div style={{ display: isLogin ? 'none' : 'flex' }}>
                 <NavLink to="/Login">
                   <button className={styles.accountBtn} type="button">
                     로그인
@@ -128,7 +126,7 @@ function ResponsiveAppBar() {
                   </button>
                 </NavLink>
               </div>
-              <div style={{ display: insertedToken === null ? 'none' : 'flex' }}>
+              <div style={{ display: isLogin ? 'flex' : 'none' }}>
                 <IconButton aria-label="notifi" className={styles.noti}>
                   <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
                     <NotificationsNoneIcon fontSize="large" />
@@ -155,10 +153,12 @@ function ResponsiveAppBar() {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  {NavDataSettings.map((data) => (
-                    <NavLink to={data.path} className={styles.navlinks}>
+                  {NavDataSettings.map((data, i) => (
+                    <NavLink to={data.path} className={styles.navlinks} key={i}>
                       <MenuItem onClick={handleCloseUserMenu}>
-                        <Typography textAlign="center">{data.title}</Typography>
+                        <Typography textAlign="center" sx={{ color: i == menuDataLength - 1 ? 'red' : 'black' }}>
+                          {data.title}
+                        </Typography>
                       </MenuItem>
                     </NavLink>
                   ))}
