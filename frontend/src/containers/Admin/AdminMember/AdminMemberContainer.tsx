@@ -56,10 +56,10 @@ function AdminMemberContainer() {
         </div>
         <ul className={styles['title-line']}>
           <li>이름</li>
-          <li>닉네임</li>
+          <li className={styles.wide}>닉네임</li>
           <li>프로필 사진</li>
-          <li>전화번호</li>
-          <li>이메일</li>
+          <li className={styles.wide}>전화번호</li>
+          <li className={styles.wide}>이메일</li>
           <li>잔액</li>
           <li>상태</li>
           <li>탈퇴 처리</li>
@@ -69,7 +69,7 @@ function AdminMemberContainer() {
             <li>
               <p>{data.name}</p>
             </li>
-            <li>
+            <li className={styles.wide}>
               <p>{data.nickname}</p>
             </li>
             <li>
@@ -77,11 +77,11 @@ function AdminMemberContainer() {
                 <img src={data.profileImageUrl} alt="profileImg" />
               </div>
             </li>
-            <li>
-              <p className={styles['small-font']}>{data.phone}</p>
+            <li className={styles.wide}>
+              <p>{data.phone}</p>
             </li>
-            <li>
-              <p className={styles['small-font']}>{data.email}</p>
+            <li className={styles.wide}>
+              <p>{data.email}</p>
             </li>
             <li>
               <p>{data.money}</p>

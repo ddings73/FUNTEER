@@ -83,9 +83,9 @@ function AdminTeamContainer() {
           </Select>
         </div>
         <ul className={styles['title-line']}>
-          <li>이름</li>
-          <li>이메일</li>
-          <li>대표자 번호</li>
+          <li className={styles.wide}>단체명</li>
+          <li className={styles.wide}>이메일</li>
+          <li className={styles.wide}>대표자 번호</li>
           <li>위촉번호</li>
           <li>최근 실적일</li>
           <li>인증 파일</li>
@@ -93,13 +93,13 @@ function AdminTeamContainer() {
         </ul>
         {filtedTeams.map((data) => (
           <ul key={data.name} className={styles['list-line']}>
-            <li>
+            <li className={styles.wide}>
               <p>{data.name}</p>
             </li>
-            <li>
+            <li className={styles.wide}>
               <p>{data.email}</p>
             </li>
-            <li>
+            <li className={styles.wide}>
               <p>{data.phone}</p>
             </li>
             <li>
