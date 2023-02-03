@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import { BrowserRouter, createBrowserRouter, RouterProvider, useParams } from 'react-router-dom';
+import { BrowserRouter, createBrowserRouter, RouterProvider, useParams, useSearchParams } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from '@emotion/react';
-// import { persistStore } from 'redux-persist';
-// import { PersistGate } from 'redux-persist/integration/react';
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+import { config } from 'yargs';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
@@ -46,9 +47,36 @@ import {
   AdminFunding,
   CustomerCenter,
   NoticeDetail,
+  AdminDonation,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
+import { http } from './api/axios';
+
+function Test() {
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  const email = searchParams.get('email');
+  const data = {
+    email,
+  };
+  const kakaoLogin = async () => {
+    try {
+      const response = await http.post('login/kakao', data, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log(response);
+    } catch (Error) {
+      console.log(Error);
+    }
+  };
+  useEffect(() => {
+    kakaoLogin();
+  }, []);
+  return <h1>ㅎㅇㅎㅇㅎㅇ</h1>;
+}
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
@@ -62,6 +90,13 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+<<<<<<< HEAD
+=======
+        path: 'login/kakao',
+        element: <Test />,
+      },
+      {
+>>>>>>> feat-BE/member
         path: 'findEmail',
         element: <FindEmail />,
       },
@@ -101,27 +136,6 @@ const router = createBrowserRouter([
         path: '/test',
         element: <LiveTest />,
       },
-    ],
-  },
-  /** Footer 있는 페이지 */
-  {
-    path: '/',
-    element: <UserFooterRoot />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        element: <MainPage />,
-      },
-      {
-        path: 'donation',
-        element: <Donation />,
-      },
-      {
-        path: 'charge',
-        element: <Charge />,
-      },
-
       {
         path: 'myPage',
         element: <MyPage />,
@@ -153,6 +167,26 @@ const router = createBrowserRouter([
       {
         path: 'myFollow',
         element: <MyFollows />,
+      },
+    ],
+  },
+  /** Footer 있는 페이지 */
+  {
+    path: '/',
+    element: <UserFooterRoot />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <MainPage />,
+      },
+      {
+        path: 'donation',
+        element: <Donation />,
+      },
+      {
+        path: 'charge',
+        element: <Charge />,
       },
       {
         path: '/funding',
@@ -202,18 +236,22 @@ const router = createBrowserRouter([
         path: 'funding',
         element: <AdminFunding />,
       },
+      {
+        path: 'donation',
+        element: <AdminDonation />,
+      },
     ],
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-// const persistor = persistStore(store);
+const persistor = persistStore(store);
 
 root.render(
   <Provider store={store}>
-    {/* <PersistGate loading={null} persistor={persistor}> */}
-    <RouterProvider router={router} />
-    {/* </PersistGate> */}
+    <PersistGate loading={null} persistor={persistor}>
+      <RouterProvider router={router} />
+    </PersistGate>
   </Provider>,
 );
 

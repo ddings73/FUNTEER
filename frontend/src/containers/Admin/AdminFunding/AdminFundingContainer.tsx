@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { Button } from '@mui/material';
 import styles from './AdminFundingContainer.module.scss';
 import AdminFundingContainerItem, { FundingState } from './AdminFundingContainerItem';
 
 function AdminFundingContainer() {
   const [fundingSearch, setFundingSearch] = useState<string>('');
   const [fundingStateFilter, setFundingStateFilter] = useState<string>(FundingState.All);
+  const [approveState, setApproveState] = useState<string>('처리');
 
   const onFundingSearchInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFundingSearch(e.target.value);
@@ -35,6 +37,15 @@ function AdminFundingContainer() {
     console.log('펀딩 관리 상세 페이지 이동');
   };
 
+  const onStateChangeHandler = (state: string, e: SelectChangeEvent) => {
+    if (state === FundingState.NotFundApproved) {
+      console.log('펀딩 승인 상태 변경 요청');
+    } else if (state === FundingState.NotActApproved) {
+      console.log('활동 종료 상태 변경 요청');
+    }
+    window.location.reload();
+  };
+
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
@@ -57,15 +68,18 @@ function AdminFundingContainer() {
           <li>시작일</li>
           <li>종료일</li>
           <li>상태</li>
+          <li>승인</li>
         </ul>
         {filtedFundings.map((data) => (
-          <button type="button" key={data.id} className={styles['list-line']} onClick={onClickFundingItemHandler}>
+          <div className={styles['list-line']}>
             <li>
               <p>{data.id}</p>
             </li>
-            <li className={styles['title-col']}>
-              <p>{data.title}</p>
-            </li>
+            <button type="button" className={styles['title-col-btn']} onClick={onClickFundingItemHandler}>
+              <li>
+                <p>{data.title}</p>
+              </li>
+            </button>
             <li>
               <p>{data.teamName}</p>
             </li>
@@ -78,7 +92,18 @@ function AdminFundingContainer() {
             <li>
               <p>{data.fundingState}</p>
             </li>
-          </button>
+            <li>
+              <Select
+                value={data.fundingState}
+                onChange={(e) => onStateChangeHandler(data.fundingState, e)}
+                className={data.fundingState.includes('대기') ? styles['show-approve'] : styles['hide-approve']}
+              >
+                <MenuItem value={data.fundingState}>{data.fundingState}</MenuItem>
+                <MenuItem value="approve">승인</MenuItem>
+                <MenuItem value="deny">거부</MenuItem>
+              </Select>
+            </li>
+          </div>
         ))}
       </div>
     </div>
