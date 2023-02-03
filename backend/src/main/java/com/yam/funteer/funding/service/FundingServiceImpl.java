@@ -238,7 +238,21 @@ public class FundingServiceImpl implements FundingService{
 		String[] split = targetMoneyRequest.getAmount().split(",");
 		int amount = Integer.parseInt(String.join("", split));
 
-		TargetMoney targetMoney = new TargetMoney(funding, targetMoneyRequest.getTargetMoneyType(), amount);
+		TargetMoney targetMoney = TargetMoney.builder()
+			.amount(amount)
+			.funding(funding)
+			.build();
+
+		targetMoneyRepository.save(targetMoney);
+
+		if (targetMoneyRequest.getTargetMoneyType().equals("LEVEL_ONE")) {
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_ONE);
+		} else if (targetMoneyRequest.getTargetMoneyType().equals("LEVEL_TWO")) {
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_TWO);
+		} else if (targetMoneyRequest.getTargetMoneyType().equals("LEVEL_THREE")) {
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_THREE);
+		}
+
 
 		List<TargetMoneyDetail> targetMoneyDetails = new ArrayList<>();
 		for (TargetMoneyDetailRequest targetMoneyDetailRequest : targetMoneyRequest.getDescriptions()) {
@@ -247,7 +261,6 @@ public class FundingServiceImpl implements FundingService{
 			targetMoneyDetails.add(targetMoneyDetail);
 		}
 
-		targetMoneyRepository.save(targetMoney);
 		targetMoney.setTargetMoneyDescriptions(targetMoneyDetails);
 		targetMoneyList.add(targetMoney);
 	}
