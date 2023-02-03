@@ -110,21 +110,18 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updateAccount(BaseUserRequest request) {
+    public void updateAccount(UpdateMemberAccountRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
         Member member = validateSameUser(userId, request.getUserId());
 
         String newPassword = request.getPassword().orElseThrow(()->{
             throw new IllegalArgumentException("패스워드는 필수 입력 값입니다.");
         });
-//        member.validatePassword(passwordEncoder, originPassword);
-//
-//        String newPassword = request.getNewPassword().orElseThrow(()->{
-//            throw new IllegalArgumentException("신규 패스워드는 필수 입력 값입니다.");
-//        });
 
-        String pw = passwordEncoder.encode(newPassword);
-        member.changePassword(pw);
+        request.getPassword().ifPresent(newPw -> {
+            String encryptedPw = passwordEncoder.encode(newPw);
+            member.changePassword(encryptedPw);
+        });
     }
 
     @Override
