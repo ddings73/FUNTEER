@@ -110,7 +110,7 @@
           color: red;
         }
       }
-      .funding-list {
+      & .funding-list {
         margin-top: 25px;
         display: flex;
         width: 100%;
@@ -120,4 +120,7 @@
       }
     }
   }
+}
+.funding-list-element {
+  width: 100%;
 }

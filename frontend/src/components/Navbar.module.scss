@@ -1,3 +1,5 @@
+@import '../styles/reset.scss';
+@import '../styles/variable.scss';
 @font-face {
   font-family: 'SEBANG_Gothic_Bold';
   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2104@1.0/SEBANG_Gothic_Bold.woff') format('woff');
@@ -8,11 +10,12 @@
 $Desktop-max-size: 1001px;
 
 .appBar {
-  // position: fixed;
-  height: 80px;
+  height: 75px;
   display: flex;
   background-color: rgb(255, 255, 255) !important;
   justify-content: center;
+  position: relative;
+  z-index: 999;
   & .noti {
     @media (max-width: $Desktop-max-size) {
       display: none;
@@ -88,8 +91,108 @@ $Desktop-max-size: 1001px;
   justify-content: center;
   width: 100px;
   height: 30px;
-  margin-right: 20px;
+  border: none;
+  background-color: transparent;
+  font-family: 'NanumSquare';
+  color: $primary;
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.3s;
+  &:hover {
+    color: rgb(0, 17, 110);
+  }
+  &:active {
+    scale: 0.9;
+  }
 }
 .appContainer {
   padding: 0;
+}
+.pageBox {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  .menuWrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    & .menuBtn {
+      display: flex;
+      flex-direction: column;
+      margin: 30px;
+      position: relative;
+      text-align: left;
+      z-index: 99;
+    }
+    & .menuSubMenu {
+      position: absolute;
+      height: 0px !important;
+      top: -100%;
+      margin: 15px 22px;
+      text-align: left;
+      flex-direction: column;
+      transition: 1s;
+      z-index: 88;
+      .menuSubMenuEl {
+        font-family: 'nanumsquare';
+        font-weight: 600;
+        font-size: 20px;
+        color: rgb(255, 255, 255);
+        text-align: center;
+        margin-bottom: 33px;
+        cursor: pointer;
+        &:hover {
+          color: $primary;
+        }
+      }
+    }
+    & .menuSubMenuHovered {
+      transition: all 1s;
+      position: absolute;
+      top: 100%;
+      margin: 15px 22px;
+      text-align: left;
+      flex-direction: column;
+      z-index: 88;
+      .menuSubMenuEl {
+        font-family: 'nanumsquare';
+        font-weight: 600;
+        font-size: 20px;
+        color: rgb(255, 255, 255);
+        text-align: center;
+        margin-bottom: 33px;
+        cursor: pointer;
+        &:hover {
+          color: $primary;
+        }
+      }
+    }
+  }
+}
+
+.megaContainer {
+  position: fixed;
+  width: 100%;
+  height: 200px;
+  margin-top: 75px;
+  background: rgba(134, 134, 134, 0.5);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.479);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  transition: 1s;
+  z-index: 998;
+}
+
+.megaContainerHidden {
+  position: fixed;
+  width: 100%;
+  height: 0;
+  margin-top: 0px;
+  background: rgba(134, 134, 134, 0.5);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.479);
+  backdrop-filter: blur(10.5px);
+  -webkit-backdrop-filter: blur(10.5px);
+  transition: 1s;
+  z-index: 998;
 }
