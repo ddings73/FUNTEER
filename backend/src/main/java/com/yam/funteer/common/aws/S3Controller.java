@@ -15,8 +15,8 @@ public class S3Controller {
 
 	private final S3Service s3Service;
 
-	@GetMapping("/download/{fileName}")
-	public ResponseEntity<byte[]> download(@PathVariable String fileName) throws IOException {
-		return s3Service.getObject(fileName);
+	@GetMapping("/download/{dir}/{fileName}")
+	public ResponseEntity<byte[]> download(@PathVariable String dir,@PathVariable String fileName) throws IOException {
+		return s3Service.getObject(dir,fileName);
 	}
 }

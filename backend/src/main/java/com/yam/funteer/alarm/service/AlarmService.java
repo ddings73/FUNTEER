@@ -47,7 +47,10 @@ public class AlarmService {
 		}
 
 		emitter.onCompletion(() -> alarmRepository.deleteById(emitterId)); //네트워크 오류
-		emitter.onTimeout(() -> alarmRepository.deleteById(emitterId)); //시간 초과
+		emitter.onTimeout(() -> {
+			alarmRepository.deleteById(emitterId);
+			emitter.complete();
+		}); //시간 초과
 		emitter.onError((e) -> alarmRepository.deleteById(emitterId)); //오류
 
 		// 503 에러를 방지하기 위한 더미 이벤트 전송
