@@ -190,6 +190,8 @@ public class FundingServiceImpl implements FundingService{
 
 		Funding savedPost = fundingRepository.save(funding);
 
+
+//		MultipartFile thumbnail = data.getThumbnail();
 		// s3 변환
 		String thumbnailUrl = awsS3Uploader.upload(thumbnail, "thumbnails/" + savedPost.getId());
 
