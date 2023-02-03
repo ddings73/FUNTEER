@@ -47,6 +47,7 @@ import {
   AdminFunding,
   CustomerCenter,
   NoticeDetail,
+  AdminDonation,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -129,27 +130,6 @@ const router = createBrowserRouter([
         path: '/test',
         element: <LiveTest />,
       },
-    ],
-  },
-  /** Footer 있는 페이지 */
-  {
-    path: '/',
-    element: <UserFooterRoot />,
-    errorElement: <ErrorPage />,
-    children: [
-      {
-        index: true,
-        element: <MainPage />,
-      },
-      {
-        path: 'donation',
-        element: <Donation />,
-      },
-      {
-        path: 'charge',
-        element: <Charge />,
-      },
-
       {
         path: 'myPage',
         element: <MyPage />,
@@ -181,6 +161,26 @@ const router = createBrowserRouter([
       {
         path: 'myFollow',
         element: <MyFollows />,
+      },
+    ],
+  },
+  /** Footer 있는 페이지 */
+  {
+    path: '/',
+    element: <UserFooterRoot />,
+    errorElement: <ErrorPage />,
+    children: [
+      {
+        index: true,
+        element: <MainPage />,
+      },
+      {
+        path: 'donation',
+        element: <Donation />,
+      },
+      {
+        path: 'charge',
+        element: <Charge />,
       },
       {
         path: '/funding',
@@ -229,6 +229,10 @@ const router = createBrowserRouter([
       {
         path: 'funding',
         element: <AdminFunding />,
+      },
+      {
+        path: 'donation',
+        element: <AdminDonation />,
       },
     ],
   },
