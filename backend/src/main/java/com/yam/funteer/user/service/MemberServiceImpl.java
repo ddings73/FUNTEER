@@ -4,26 +4,34 @@ import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.common.code.PostGroup;
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
+import com.yam.funteer.pay.entity.Payment;
+import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
 import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
+import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
 import com.yam.funteer.user.entity.*;
 import com.yam.funteer.user.repository.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service @Slf4j
 @Transactional
@@ -39,6 +47,7 @@ public class MemberServiceImpl implements MemberService {
     private final FollowRepository followRepository;
     private final FundingRepository fundingRepository;
     private final WishRepository wishRepository;
+    private final PaymentRepository paymentRepository;
 
     private final BadgeService badgeService;
 
@@ -154,6 +163,24 @@ public class MemberServiceImpl implements MemberService {
                     wishRepository.save(newWish);
                 });
     }
+
+    @Override
+    public MileageDetailResponse getMileageDetails(MileageDetailRequest request, Pageable pageable) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        Member member = validateSameUser(userId, request.getUserId());
+
+        List<Payment> paymentList = paymentRepository.findAllByUserAndPostPostGroup(member, request.getPostGroup());
+
+        // 펀딩 내역
+
+        // 모금 내역
+
+        // gift 내역
+
+
+        return new MileageDetailResponse();
+    }
+
 
     @Override
     public void chargeMileage(ChargeRequest request) {
