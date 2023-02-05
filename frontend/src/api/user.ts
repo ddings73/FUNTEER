@@ -16,6 +16,11 @@ export const requestSignIn = async (userInfo: UserSignInType) => {
   return res;
 };
 
+export const requestSignOut = async () => {
+  const res = await http.delete('/out');
+  return res;
+};
+
 export const requestEmailDuplConfirm = async (email: string) => {
   const res = await http.get('/confirm/email', {
     params: {
