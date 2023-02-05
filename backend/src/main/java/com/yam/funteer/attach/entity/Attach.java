@@ -45,6 +45,7 @@ public class Attach {
 	public void update(String name, String path) {
 		this.name = name;
 		this.path = path;
+		this.regDate = LocalDateTime.now();
 	}
 
 	public static Attach of(String filename, String path, FileType fileType){
