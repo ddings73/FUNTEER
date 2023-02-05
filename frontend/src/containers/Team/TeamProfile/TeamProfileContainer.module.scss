@@ -2,11 +2,15 @@
 @import '../../../styles/variable.scss';
 
 .container {
-  min-height: 100vh;
   width: 100%;
+  min-height: 100vh;
   height: 100%;
   display: grid;
   grid-template-columns: 250px 1fr;
+
+  @media (max-width: 900px) {
+    display: flex;
+  }
 
   .content {
     width: 100%;
@@ -29,21 +33,31 @@
         width: 95%;
         display: flex;
         justify-content: center;
-        grid-template-rows: 2fr 4fr;
         padding: 1rem;
 
+        @include tablet {
+          flex-direction: column;
+        }
+
+        @include mobile {
+          flex-direction: column;
+        }
+
         .profile-card-img-div {
-          width: 30%;
+          width: 250px;
+          height: 250px;
           display: flex;
           justify-content: center;
           align-items: center;
-          margin: 0 1rem 0 0;
+          margin: 3rem 2rem 2rem 2rem;
+          border-radius: 100%;
+          border: 10px solid $primary;
+          box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
+          overflow: hidden;
 
           & img {
-            width: 300px;
-            height: 300px;
-            overflow: hidden;
-            border-radius: 100%;
+            width: 260px;
+            height: 260px;
           }
         }
 
@@ -55,12 +69,41 @@
           padding: 1rem;
           border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
+          @include tablet {
+            border: none;
+            margin: 0 0 0 2rem;
+          }
+
+          @include mobile {
+            border: none;
+            margin: 0 0 0 2rem;
+          }
+
           .name {
             width: 95%;
+            display: flex;
             margin: 3rem 0 0 0;
-            padding: 0 0 0 1rem;
+            padding: 0 0 0 0.6rem;
             font-size: 1.75rem;
             font-weight: bold;
+
+            .follow-btn-div {
+              margin-left: 1rem;
+
+              &:hover {
+                cursor: pointer;
+              }
+            }
+
+            @include tablet {
+              margin: 0;
+              padding: 0;
+            }
+
+            @include mobile {
+              margin: 0;
+              padding: 0;
+            }
           }
 
           .profile-card-info-content {
@@ -70,9 +113,31 @@
             margin: 3rem 0 0 0;
             padding: 1rem;
 
+            @include tablet {
+              margin: 0;
+              padding: 0;
+              flex-direction: column;
+              justify-content: flex-start;
+            }
+
+            @include mobile {
+              margin: 0;
+              padding: 0;
+              flex-direction: column;
+              justify-content: flex-start;
+            }
+
             .profile-card-info-left {
               display: flex;
               flex-direction: column;
+
+              @include tablet {
+                margin: 1rem 0 0 0;
+              }
+
+              @include mobile {
+                margin: 1rem 0 0 0;
+              }
 
               .profile-card-info-item {
                 display: flex;
@@ -91,13 +156,25 @@
               flex-direction: column;
               justify-content: flex-end;
 
+              @include tablet {
+                margin-top: 1rem;
+              }
+
+              @include mobile {
+                margin-top: 1rem;
+              }
+
               .profile-card-info-btn {
+                max-width: 300px;
                 height: 2rem;
                 margin-bottom: 1rem;
                 display: flex;
                 justify-content: center;
                 align-items: center;
                 text-transform: none;
+
+                @include mobile {
+                }
 
                 & p {
                   margin-left: 0.5rem;
@@ -115,8 +192,20 @@
         justify-content: center;
         align-items: center;
         margin-top: 1rem;
-        padding: 1rem 1rem 2rem 1rem;
+        padding: 1rem 1rem 2.5rem 1rem;
         border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+        @include tablet {
+          width: 90%;
+          margin: 0;
+          padding: 0 0 2.5rem 0;
+        }
+
+        @include mobile {
+          width: 90%;
+          margin: 0;
+          padding: 0 0 2.5rem 0;
+        }
 
         & p {
           width: 90%;
@@ -130,6 +219,16 @@
         width: 80%;
         margin-top: 1rem;
         padding: 1rem;
+
+        @include tablet {
+          margin-top: 2rem;
+          padding: 0rem;
+        }
+
+        @include mobile {
+          margin-top: 2rem;
+          padding: 0rem;
+        }
 
         & h1 {
           font-size: 1.25rem;

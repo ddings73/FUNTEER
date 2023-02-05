@@ -1,11 +1,11 @@
 import { http } from './axios';
 
-export const testRequestTeamAccountInfo = async () => {
+export const requestTeamAccountInfo = async () => {
   const res = await http.get('/team/account');
   return res;
 };
 
-export const testRequestTeamProfileInfo = async () => {
-  const res = await http.get('/team/78/profile');
+export const requestTeamProfileInfo = async (teamId: string | undefined) => {
+  const res = await http.get(`/team/${teamId}/profile`);
   return res;
 };

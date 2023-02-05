@@ -51,7 +51,7 @@ function LoginContainer() {
 
         localStorage.setItem('accessToken', data.token.accessToken);
         localStorage.setItem('refreshToken', data.token.refreshToken);
-        localStorage.setItem('user', data);
+        sessionStorage.setItem('user', JSON.stringify(data));
 
         dispatch(setUserLoginState(true));
         dispatch(setUserType(data.userType));
