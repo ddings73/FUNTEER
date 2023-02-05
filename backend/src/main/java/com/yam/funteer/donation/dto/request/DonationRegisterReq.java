@@ -1,5 +1,6 @@
 package com.yam.funteer.donation.dto.request;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,19 +33,19 @@ public class DonationRegisterReq {
 	private String content;
 	@NotBlank
 	private String title;
-	@NotNull
-	private Long amount;
+	@NotBlank
+	private String amount;
 
 	private List<MultipartFile>files=new ArrayList<>();
 
 	public Donation toEntity(){
 		return Donation.builder()
-			.regDate(LocalDateTime.now())
+			.startDate(LocalDate.now())
 			.postGroup(PostGroup.DONATION)
 			.postType(PostType.DONATION_ACTIVE)
 			.title(title)
 			.content(content)
-			.amount(amount)
+			.amount(Long.parseLong(amount))
 			.currentAmount(Long.valueOf(0))
 			.build();
 	}

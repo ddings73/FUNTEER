@@ -21,6 +21,18 @@ export const requestUploadImage = async (imageBase64: Blob) => {
 
 export const requestCreateFunding = async (fundingData: FundingInterface) => {
   const formData = new FormData();
+<<<<<<< HEAD
+  const entries = Object.entries(fundingData);
+
+  entries.forEach((data) => {
+    const key = data[0];
+    const value = data[1];
+    console.log(typeof value);
+
+    formData.append(`${key}`, value);
+  });
+
+=======
   const entry = Object.entries(fundingData);
 
   entry.forEach((data) => {
@@ -40,6 +52,7 @@ export const requestCreateFunding = async (fundingData: FundingInterface) => {
   // formData.append('targetMoneyLevelOne', JSON.stringify(fundingData.targetMoneyLevelOne));
   // formData.append('targetMoneyLevelTwo', JSON.stringify(fundingData.targetMoneyLevelTwo));
   // formData.append('targetMoneyLevelThree', JSON.stringify(fundingData.targetMoneyLevelThree));
+>>>>>>> feat-BE/member
   const res = await http.post('funding', formData);
   return res;
 };

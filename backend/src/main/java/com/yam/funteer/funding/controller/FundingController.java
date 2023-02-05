@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,7 +16,6 @@ import com.yam.funteer.funding.dto.response.FundingListResponse;
 import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
-import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;

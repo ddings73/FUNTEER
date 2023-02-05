@@ -90,10 +90,13 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
+<<<<<<< HEAD
+=======
         path: 'login/kakao',
         element: <Test />,
       },
       {
+>>>>>>> feat-BE/member
         path: 'findEmail',
         element: <FindEmail />,
       },

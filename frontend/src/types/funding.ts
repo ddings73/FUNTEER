@@ -39,6 +39,11 @@ export type targetMoneyLevelType = {
   descriptions: descriptionType[];
 };
 
+export type amountLevelType = {
+  amount: string;
+  descriptions: descriptionType[];
+};
+
 export type descriptionType = {
   description: string;
 };

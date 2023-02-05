@@ -118,7 +118,7 @@ public class QnaServiceImpl implements QnaService {
 			qnaRepository.save(qnaRegisterReq.toEntity(user,qnaId));
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("qna",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("qna/",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
@@ -151,14 +151,15 @@ public class QnaServiceImpl implements QnaService {
 		if(qna.getUser().getId()==user.getId()) {
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
 			for(PostAttach postAttach:postAttachList){
-				awsS3Uploader.delete("qna",postAttach.getAttach().getPath());
+				awsS3Uploader.delete("qna/",postAttach.getAttach().getPath());
 				postAttachRepository.deleteById(postAttach.getId());
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
 
 			qnaRepository.delete(qna);
-			Reply reply=replyRepository.findByQna(qna).orElseThrow(()->new ReplyNotFoundException());
-			replyRepository.delete(reply);
+			if(replyRepository.findByQna(qna).isPresent()){
+				replyRepository.delete(replyRepository.findByQna(qna).orElseThrow(ReplyNotFoundException::new));
+			}
 
 		}
 		else throw new IllegalArgumentException("접근권한이 없습니다.");

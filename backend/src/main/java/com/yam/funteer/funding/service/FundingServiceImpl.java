@@ -195,7 +195,7 @@ public class FundingServiceImpl implements FundingService{
 
 		savedPost.setThumbnail(thumbnailUrl);
 
-		addTargetMoney(data, funding);
+		addTargetMoney(data, savedPost);
 
 		try {
 			if (data.getHashtags() == null) {
@@ -227,18 +227,33 @@ public class FundingServiceImpl implements FundingService{
 	private void addTargetMoney(FundingRequest data, Funding funding) {
 		List<TargetMoney> targetMoneyList = new ArrayList<>();
 
-		setTargetMoneyListByLevel(data.getTargetMoneyLevelOne(), funding, targetMoneyList);
-		setTargetMoneyListByLevel(data.getTargetMoneyLevelTwo(), funding, targetMoneyList);
-		setTargetMoneyListByLevel(data.getTargetMoneyLevelThree(), funding, targetMoneyList);
+		setTargetMoneyListByLevel(targetMoneyList, funding, data.getTargetMoneyLevelOne());
+		setTargetMoneyListByLevel(targetMoneyList, funding, data.getTargetMoneyLevelTwo());
+		setTargetMoneyListByLevel(targetMoneyList, funding, data.getTargetMoneyLevelThree());
 
 		funding.setTargetMoneyList(targetMoneyList);
 	}
 
-	private void setTargetMoneyListByLevel(TargetMoneyRequest targetMoneyRequest, Funding funding, List<TargetMoney> targetMoneyList) {
+	private void setTargetMoneyListByLevel(List<TargetMoney> targetMoneyList, Funding funding, TargetMoneyRequest targetMoneyRequest) {
 		String[] split = targetMoneyRequest.getAmount().split(",");
 		int amount = Integer.parseInt(String.join("", split));
 
-		TargetMoney targetMoney = new TargetMoney(funding, targetMoneyRequest.getTargetMoneyType(), amount);
+		TargetMoney targetMoney = TargetMoney.builder()
+			.amount(amount)
+			.funding(funding)
+			.targetMoneyType(TargetMoneyType.LEVEL_ONE)
+			.build();
+
+		targetMoneyRepository.save(targetMoney);
+
+		if (targetMoneyRequest.getTargetMoneyType().equals("LEVEL_ONE")) {
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_ONE);
+		} else if (targetMoneyRequest.getTargetMoneyType().equals("LEVEL_TWO")) {
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_TWO);
+		} else if (targetMoneyRequest.getTargetMoneyType().equals("LEVEL_THREE")) {
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_THREE);
+		}
+
 
 		List<TargetMoneyDetail> targetMoneyDetails = new ArrayList<>();
 		for (TargetMoneyDetailRequest targetMoneyDetailRequest : targetMoneyRequest.getDescriptions()) {
@@ -247,7 +262,6 @@ public class FundingServiceImpl implements FundingService{
 			targetMoneyDetails.add(targetMoneyDetail);
 		}
 
-		targetMoneyRepository.save(targetMoney);
 		targetMoney.setTargetMoneyDescriptions(targetMoneyDetails);
 		targetMoneyList.add(targetMoney);
 	}
@@ -347,7 +361,7 @@ public class FundingServiceImpl implements FundingService{
 			targetMoneyRepository.delete(targetMoney);
 		}
 
-		setTargetMoneyListByLevel(data.getTargetMoneyLevelOne(), funding, targetMoneyList);
+		setTargetMoneyListByLevel(targetMoneyList, funding,  data.getTargetMoneyLevelOne());
 		funding.setTargetMoneyList(targetMoneyList);
 	}
 

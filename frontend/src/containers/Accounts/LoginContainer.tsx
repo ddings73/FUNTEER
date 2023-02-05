@@ -4,7 +4,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 // mui
 import { Button, TextField } from '@mui/material';
 
-import { async } from 'q';
 import styles from './LoginContainer.module.scss';
 import { UserSignInType } from '../../types/user';
 import { requestSignIn } from '../../api/user';
@@ -12,7 +11,6 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { closeModal, openModal } from '../../store/slices/modalSlice';
 import { setUserLoginState, setUserType } from '../../store/slices/userSlice';
 import KakaoLogin from '../../assets/images/kakao.png';
-import { http } from '../../api/axios';
 
 function LoginContainer() {
   const navigate = useNavigate();
@@ -65,6 +63,13 @@ function LoginContainer() {
   };
 
   // KAKAO 로그인 요청
+<<<<<<< HEAD
+  const OAuth = () => {
+    const REST_API_KEY = process.env.REACT_APP_KAKAO_LOGIN_API;
+    // const REDIRECT_URI = `http://localhost:3000/login`;
+    const url = `http://localhost:8080/api/v1/oauth2/authorization/kakao`;
+    window.location.href = url;
+=======
   const OAuth = async () => {
     try {
       // const REST_API_KEY = process.env.REACT_APP_KAKAO_LOGIN_API;
@@ -78,6 +83,7 @@ function LoginContainer() {
     } catch (error) {
       console.log(error);
     }
+>>>>>>> feat-BE/member
   };
 
   useEffect(() => {
