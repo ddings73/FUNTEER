@@ -26,6 +26,7 @@ public class TeamProfileResponse extends BaseResponseBody {
     private long followerCnt;
     private String profileImgUrl;
     private String bannerUrl;
+    private boolean followBtn;
 
     public static TeamProfileResponse of(Team team, List<Funding> fundingList, long follwerCnt){
         List<FundingListResponse> collect = fundingList.stream().map(FundingListResponse::from).collect(Collectors.toList());
@@ -43,4 +44,7 @@ public class TeamProfileResponse extends BaseResponseBody {
         return response;
     }
 
+    public void activeFollowBtn() {
+        this.followBtn = true;
+    }
 }
