@@ -14,6 +14,8 @@ import com.siot.IamportRestClient.request.CancelData;
 import com.siot.IamportRestClient.response.IamportResponse;
 import com.siot.IamportRestClient.response.Payment;
 import com.yam.funteer.pay.dto.CancelRequest;
+import com.yam.funteer.pay.exception.ImpossibleRefundException;
+import com.yam.funteer.pay.service.PayService;
 
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 public class PayController {
 
 	private IamportClient iamportClient;
+	private final PayService payService;
 
 	@Value("${iamport.key}")
 	private String impKey;
@@ -37,14 +40,18 @@ public class PayController {
 	}
 
 	@PostMapping("/cancelIamport")
-	public IamportResponse<Payment> cancelByImpUid(@RequestBody CancelRequest cancelRequest) throws IamportResponseException, IOException {
+	public IamportResponse<Payment> cancelByImpUid(@RequestBody CancelRequest cancelRequest) throws
+		IamportResponseException,
+		IOException,
+		ImpossibleRefundException {
 
 		CancelData cancelData = new CancelData(cancelRequest.getImp_uid(), cancelRequest.isImpUid(),
 			cancelRequest.getAmount());
 
 		iamportClient = new IamportClient(impKey, impSecret);
 
-		return null;
+		payService.refundMileage(cancelRequest);
 
+		return iamportClient.cancelPaymentByImpUid(cancelData);
 	}
 }
