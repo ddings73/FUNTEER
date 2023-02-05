@@ -138,11 +138,13 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void followTeam(FollowRequest followRequest) {
-        Member member = memberRepository.findById(followRequest.getMemberId())
+    public void followTeam(Long teamId) {
+        Long memberid = SecurityUtil.getCurrentUserId();
+
+        Member member = memberRepository.findById(memberid)
                 .orElseThrow(UserNotFoundException::new);
 
-        Team team = teamRepository.findById(followRequest.getTeamId())
+        Team team = teamRepository.findById(teamId)
                 .orElseThrow(UserNotFoundException::new);
 
         followRepository.findByMemberAndTeam(member, team)
@@ -153,11 +155,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void wishFunding(WishRequest wishRequest) {
-        Member member = memberRepository.findById(wishRequest.getMemberId())
+    public void wishFunding(Long fundingId) {
+        Long memberId = SecurityUtil.getCurrentUserId();
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(UserNotFoundException::new);
 
-        Funding funding = fundingRepository.findById(wishRequest.getFundingId())
+        Funding funding = fundingRepository.findById(fundingId)
                 .orElseThrow(IllegalArgumentException::new);
 
         wishRepository.findByMemberAndFunding(member, funding)

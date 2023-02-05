@@ -18,6 +18,9 @@ import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.user.dto.request.team.UpdateTeamAccountRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
+import com.yam.funteer.user.entity.User;
+import com.yam.funteer.user.repository.MemberRepository;
+import com.yam.funteer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -43,14 +46,14 @@ public class TeamServiceImpl implements TeamService{
 
 	private final String teamFilePath = "teamFile";
 
-	 private final FundingRepository fundingRepository;
+	private final MemberRepository memberRepository;
+	private final FundingRepository fundingRepository;
 	private final FollowRepository followRepository;
 	private final TeamRepository teamRepository;
-	private final PasswordEncoder passwordEncoder;
 	private final AttachRepository attachRepository;
 	private final TeamAttachRepository teamAttachRepository;
+	private final PasswordEncoder passwordEncoder;
 	private final AwsS3Uploader awsS3Uploader;
-
 	private final BadgeService badgeService;
 
 
@@ -106,7 +109,17 @@ public class TeamServiceImpl implements TeamService{
 
 		long followerCnt = followRepository.countAllByTeam(team);
 
-		return TeamProfileResponse.of(team, fundingList, followerCnt);
+		TeamProfileResponse response = TeamProfileResponse.of(team, fundingList, followerCnt);
+		if(SecurityUtil.isLogin()){
+			Long currentUserId = SecurityUtil.getCurrentUserId();
+			memberRepository.findById(currentUserId).ifPresent(member -> {
+				followRepository.findByMemberAndTeam(member, team).ifPresent(follow -> {
+					response.activeFollowBtn();
+				});
+			});
+		}
+
+		return response;
 	}
 
 	@Override
