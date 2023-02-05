@@ -19,8 +19,8 @@ public interface MemberService {
     MemberAccountResponse getAccountInfo();
     void updateAccount(UpdateMemberAccountRequest request);
 
-    void followTeam(FollowRequest followRequest);
-    void wishFunding(WishRequest wishRequest);
+    void followTeam(Long teamId);
+    void wishFunding(Long fundingId);
 
     MileageDetailResponse getMileageDetails(MileageDetailRequest request, Pageable pageable);
     void chargeMileage(ChargeRequest chargeRequest);
