@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -48,18 +49,18 @@ public class QnaServiceImpl implements QnaService {
 	private final AlarmService alarmService;
 
 	@Override
-	public List<QnaListRes> qnaGetList() {
+	public List<QnaListRes> qnaGetList(int page,int size) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		List<QnaListRes>list;
-
+		PageRequest pageRequest=PageRequest.of(page,size);
 		if(user.getUserType().equals(UserType.ADMIN)){
-			List<Qna>qnaList=qnaRepository.findAllByOrderByIdDesc();
+			List<Qna>qnaList=qnaRepository.findAllByOrderByIdDesc(pageRequest);
 			list=qnaList.stream().map(qna->new QnaListRes(qna)).collect(Collectors.toList());
 
 			return list;
 		}
 
-		List<Qna>qnaList=qnaRepository.findAllByUserOrderByIdDesc(user);
+		List<Qna>qnaList=qnaRepository.findAllByUserOrderByIdDesc(user,pageRequest);
 		list=qnaList.stream().map(qna->new QnaListRes(qna)).collect(Collectors.toList());
 
 		return list;

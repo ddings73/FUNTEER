@@ -3,6 +3,8 @@ package com.yam.funteer.donation.controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,6 +28,7 @@ import com.yam.funteer.donation.service.DonationService;
 import io.swagger.annotations.Api;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 
 @Api(value="Donation",tags="도네이션")
@@ -45,15 +48,14 @@ public class DonationController {
 
 	@ApiOperation(value = "도네이션 리스트")
 	@GetMapping("/list")
-	public ResponseEntity<?> donationGetList() {
-		return ResponseEntity.ok(donationService.donationGetList());
+	public ResponseEntity<?> donationGetList( @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(donationService.donationGetList(page,size));
 	}
 
 	@ApiOperation(value = "도네이션 상세")
 	@GetMapping("/{postId}")
 	public ResponseEntity<?> donationGetDetail(@PathVariable Long postId) throws
 		DonationNotFoundException {
-
 		return ResponseEntity.ok(donationService.donationGetDetail(postId));
 	}
 
