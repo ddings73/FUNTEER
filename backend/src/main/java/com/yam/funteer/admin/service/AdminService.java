@@ -1,9 +1,6 @@
 package com.yam.funteer.admin.service;
 
-import java.util.List;
-
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
-import com.yam.funteer.funding.dto.response.FundingListResponse;
 
 public interface AdminService {
 
