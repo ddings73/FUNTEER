@@ -170,7 +170,7 @@ const router = createBrowserRouter([
         element: <MyFollows />,
       },
       {
-        path: 'team',
+        path: 'team/:teamId',
         element: <TeamProfile />,
       },
     ],

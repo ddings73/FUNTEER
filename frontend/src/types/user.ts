@@ -31,4 +31,6 @@ export type teamProfileType = {
   followerCnt: number;
   description: string;
   fundingList: object;
+  followBtn: boolean;
+  totalFundingAmount: number;
 };
