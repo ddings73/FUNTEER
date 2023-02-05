@@ -10,6 +10,8 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import springfox.documentation.annotations.ApiIgnore;
 
 import org.springframework.http.ResponseEntity;
@@ -120,7 +122,8 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/mileage")
-	public ResponseEntity<MileageDetailResponse> getMileageDetails(@Validated @RequestBody MileageDetailRequest request, Pageable pageable){
+	public ResponseEntity<MileageDetailResponse> getMileageDetails(@Validated @RequestBody MileageDetailRequest request, BindingResult bindingResult,
+								   @PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
 		MileageDetailResponse mileageDetailResponse = memberService.getMileageDetails(request, pageable);
 		return ResponseEntity.ok(mileageDetailResponse);
 	}

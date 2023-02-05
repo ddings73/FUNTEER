@@ -169,16 +169,9 @@ public class MemberServiceImpl implements MemberService {
         Long userId = SecurityUtil.getCurrentUserId();
         Member member = validateSameUser(userId, request.getUserId());
 
-        List<Payment> paymentList = paymentRepository.findAllByUserAndPostPostGroup(member, request.getPostGroup());
-
-        // 펀딩 내역
-
-        // 모금 내역
-
-        // gift 내역
-
-
-        return new MileageDetailResponse();
+        PostGroup postGroup = request.getPostGroup();
+        List<Payment> paymentList = paymentRepository.findAllByUserAndPostPostGroup(member, postGroup);
+        return MileageDetailResponse.of(paymentList);
     }
 
 

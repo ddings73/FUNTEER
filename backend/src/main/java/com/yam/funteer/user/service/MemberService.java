@@ -7,6 +7,8 @@ import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
 import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface MemberService {
 
     void createAccountWithOutProfile(CreateMemberRequest request);

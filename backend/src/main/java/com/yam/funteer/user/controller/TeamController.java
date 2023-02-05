@@ -75,7 +75,7 @@ public class TeamController {
     })
     @GetMapping("/{userId}/profile")
     public ResponseEntity<TeamProfileResponse> getProfile(@PathVariable Long userId,
-                                          @PageableDefault(size=12, direction = Sort.Direction.DESC) Pageable pageable){
+                                          @PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
         TeamProfileResponse teamProfile = teamService.getTeamProfile(userId, pageable);
         return ResponseEntity.ok(teamProfile);
     }
