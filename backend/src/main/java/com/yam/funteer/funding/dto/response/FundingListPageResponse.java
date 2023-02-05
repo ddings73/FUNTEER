@@ -1,6 +1,6 @@
 package com.yam.funteer.funding.dto.response;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,9 +9,9 @@ import lombok.Getter;
 @AllArgsConstructor
 public class FundingListPageResponse {
 
-	private List<FundingListResponse> fundingListResponses;
+	private Page<FundingListResponse> fundingListResponses;
 
-	private int totalFundingCount;
+	private Long totalFundingCount;
 
 	private int successFundingCount;
 
