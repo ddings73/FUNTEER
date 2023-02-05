@@ -24,6 +24,7 @@ import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
+import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
 import com.yam.funteer.funding.service.FundingService;
 
 import io.swagger.annotations.Api;
@@ -45,7 +46,7 @@ public class FundingController {
 	@GetMapping("")
 	public ResponseEntity<FundingListPageResponse> findAllFunding(
 		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "10") int size) {
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
 		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
 		return ResponseEntity.ok(fundingService.findAllFunding(pageRequest));
 	}
@@ -54,7 +55,7 @@ public class FundingController {
 	@GetMapping("/search")
 	public ResponseEntity<Page<FundingListResponse>> findFundingByKeyword(@RequestParam String keyword,
 		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "10") int size) {
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
 		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
 		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword, pageRequest));
 	}
@@ -63,7 +64,7 @@ public class FundingController {
 	@GetMapping("/hasgtag")
 	private ResponseEntity<Page<FundingListResponse>> findFundingByHashtag(@RequestParam String hashtag,
 		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "10") int size) {
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
 		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
 		return ResponseEntity.ok(fundingService.findFundingByHashtag(hashtag, pageRequest));
 	}
@@ -72,7 +73,7 @@ public class FundingController {
 	@GetMapping("/category/{categoryId}")
 	public ResponseEntity<Page<FundingListResponse>> findFundingByCategory(@PathVariable Long categoryId,
 		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "10") int size) {
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
 		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
 		return ResponseEntity.ok(fundingService.findFundingByCategory(categoryId, pageRequest));
 	}
@@ -87,7 +88,9 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
 	@PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-	public  ResponseEntity<?> createFunding(@RequestPart MultipartFile thumbnail, @RequestPart FundingRequest data) throws IOException {
+	public  ResponseEntity<?> createFunding(@RequestPart MultipartFile thumbnail, @RequestPart FundingRequest data) throws
+		IOException,
+		NotAuthenticatedTeamException {
 		FundingDetailResponse funding = fundingService.createFunding(thumbnail, data);
 		return ResponseEntity.ok(funding);
 	}
