@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,8 +41,9 @@ public class NoticeServiceImpl implements NoticeService{
 	private final AwsS3Uploader awsS3Uploader;
 
 	@Override
-	public List<FaqListRes> noticeGetList() {
-		List<Post>postList=postRepository.findAllByPostTypeOrderByIdDesc(PostType.NOTICE);
+	public List<FaqListRes> noticeGetList(int page,int size) {
+		PageRequest pageRequest=PageRequest.of(page,size);
+		List<Post>postList=postRepository.findAllByPostTypeOrderByIdDesc(PostType.NOTICE,pageRequest);
 		List<FaqListRes>noticeList;
 		noticeList=postList.stream().map(notice->new FaqListRes(notice)).collect(Collectors.toList());
 		return noticeList;

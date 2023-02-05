@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.attach.entity.PostAttach;
@@ -31,8 +32,9 @@ public class FaqServiceImpl implements  FaqService{
 	private final PostRepository postRepository;
 
 	@Override
-	public List<FaqListRes> faqGetList() {
-		List<Post>faqList=postRepository.findAllByPostTypeOrderByIdDesc(PostType.FAQ);
+	public List<FaqListRes> faqGetList(int page,int size) {
+		PageRequest pageRequest=PageRequest.of(page,size);
+		List<Post>faqList=postRepository.findAllByPostTypeOrderByIdDesc(PostType.FAQ,pageRequest);
 		List<FaqListRes>faqListRes;
 		faqListRes=faqList.stream().map(faq->new FaqListRes(faq)).collect(Collectors.toList());
 		return faqListRes;
