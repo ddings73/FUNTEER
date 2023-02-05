@@ -13,6 +13,8 @@ import { Link, NavLink } from 'react-router-dom';
 import CircularProgress from '@mui/material/CircularProgress';
 import {useInView} from 'react-intersection-observer'
 import cn from 'classnames'
+import Skeleton from '@mui/material/Skeleton';
+import Typography, { TypographyProps } from '@mui/material/Typography';
 import styles from './FundingListContainer.module.scss';
 import FundingListElement from '../../components/Funding/FundingListElement';
 import { FundingElementType } from '../../types/funding';
@@ -23,6 +25,7 @@ import child from '../../assets/images/funding/categoryIcon/child.png';
 import animal from '../../assets/images/funding/categoryIcon/animal.png';
 import oldman from '../../assets/images/funding/categoryIcon/oldman.png';
 import planet from '../../assets/images/funding/categoryIcon/planet.png';
+import FundingElementSkeleton from '../../components/Skeleton/FundingElementSkeleton';
 
 
 // 한번에 불러올 게시글 수
@@ -186,10 +189,8 @@ function FundingListContainer() {
             </p>
 
             {isLoading  ? ( 
-          <div className={styles['spinner-box']}>   
-            <CircularProgress color="warning" />
-          </div>
-              ) : (
+              <FundingElementSkeleton/>
+                          ) : (
             <div className={styles['funding-list']}>
               {fundingList?.map((funding) => (
                   <FundingListElement {...funding} key={funding.id}  />
