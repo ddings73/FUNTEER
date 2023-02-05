@@ -322,24 +322,24 @@ function CreateFundingContainer() {
           </p>
 
           <div className={styles['date-picker-box']}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} required>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 disablePast
-                label="펀딩 시작 일자를 선택해주세요"
+                label="펀딩 종료 일자를 선택해주세요."
                 inputFormat="YYYY-MM-DD"
                 value={startDate}
                 onChange={(newValue) => {
                   setStartDate(newValue);
                   onChangeDateHandler(newValue, 'startDate');
                 }}
-                renderInput={(params) => <TextField {...params} sx={{ mr: 2, mb: 5, minWidth: 300 }} />}
+                renderInput={(params) => <TextField   {...params} sx={{ mr: 2, mb: 4, minWidth: 100,width:"49%" }} />}
               />
             </LocalizationProvider>
 
             <LocalizationProvider dateAdapter={AdapterDayjs} required>
               <DatePicker
                 disablePast
-                label="펀딩 종료 일자를 선택해주세요"
+                label="펀딩 종료 일자를 선택해주세요."
                 minDate={startDate}
                 inputFormat="YYYY-MM-DD"
                 value={endDate}
@@ -347,7 +347,7 @@ function CreateFundingContainer() {
                   setEndDate(newValue);
                   onChangeDateHandler(newValue, 'endDate');
                 }}
-                renderInput={(params) => <TextField {...params} sx={{ minWidth: 300 }} />}
+                renderInput={(params) => <TextField {...params} sx={{ minWidth: 100,mb:3,width:"49%" }} />}
               />
             </LocalizationProvider>
           </div>
