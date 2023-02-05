@@ -8,7 +8,7 @@ import com.yam.funteer.notice.dto.request.NoticeRegistReq;
 import com.yam.funteer.notice.dto.response.NoticeBaseRes;
 
 public interface NoticeService {
-	List<FaqListRes>noticeGetList();
+	List<FaqListRes>noticeGetList(int page,int size);
 	NoticeBaseRes noticeGetDetail(Long postId);
 	NoticeBaseRes noticeRegister(NoticeRegistReq noticeRegistReq) ;
 	NoticeBaseRes noticeModify(Long postId,NoticeRegistReq noticeRegistReq) ;

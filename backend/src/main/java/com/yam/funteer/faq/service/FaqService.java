@@ -7,7 +7,7 @@ import com.yam.funteer.faq.dto.response.FaqBaseRes;
 import com.yam.funteer.faq.dto.response.FaqListRes;
 
 public interface FaqService {
-	List<FaqListRes>faqGetList();
+	List<FaqListRes>faqGetList(int page,int size);
 	FaqBaseRes faqGetDetail(Long postId);
 	FaqBaseRes faqRegister(FaqRegisterReq faqRegisterReq);
 	FaqBaseRes faqModify(Long postId,FaqRegisterReq faqRegisterReq);
