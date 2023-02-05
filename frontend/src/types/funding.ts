@@ -5,7 +5,7 @@ export type FundingElementType = {
   thumbnail: string;
   title: string;
   fundingDescription: string;
-  amount: number;
+  targetAmount: number;
   currentFundingAmount: number;
   startDate: string;
   endDate: string;
