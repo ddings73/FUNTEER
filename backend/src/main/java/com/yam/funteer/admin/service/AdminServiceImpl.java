@@ -13,6 +13,8 @@ import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.funding.repository.ReportRepository;
 import com.yam.funteer.mail.service.EmailService;
+import com.yam.funteer.user.entity.Team;
+import com.yam.funteer.user.repository.TeamRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService{
+	private final TeamRepository teamRepository;
 
 	private final FundingRepository fundingRepository;
 	private final EmailService emailService;
@@ -47,7 +50,12 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public void acceptReport(Long fundingId) {
+		System.out.println(fundingId);
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		System.out.println(funding);
+		Team team = teamRepository.findById(funding.getTeam().getId()).orElseThrow();
+		System.out.println(team);
+		team.setTotalFundingAmount(funding.getCurrentFundingAmount());
 		funding.setPostType(PostType.REPORT_ACCEPT);
 		badgeService.teamFundingBadges(funding.getTeam());
 	}
