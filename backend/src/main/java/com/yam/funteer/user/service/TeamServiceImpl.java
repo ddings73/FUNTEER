@@ -39,6 +39,8 @@ import com.yam.funteer.user.repository.TeamRepository;
 @RequiredArgsConstructor
 public class TeamServiceImpl implements TeamService{
 
+	private final String teamFilePath = "teamFile";
+
 	 private final FundingRepository fundingRepository;
 	private final FollowRepository followRepository;
 	private final TeamRepository teamRepository;
@@ -68,16 +70,15 @@ public class TeamServiceImpl implements TeamService{
 		MultipartFile performFile = request.getPerformFile();
 
 		// 저장
-		String vmsFilePath = awsS3Uploader.upload(vmsFile, "teamFile");
-		String performFilePath = awsS3Uploader.upload(performFile, "teamFile");
+		String vmsFilePath = awsS3Uploader.upload(vmsFile, teamFilePath);
+		String performFilePath = awsS3Uploader.upload(performFile, teamFilePath);
 
 		List<Attach> attachList = request.getAttachList(vmsFilePath, performFilePath);
-		for(Attach attach : attachList){
+		attachList.forEach(attach -> {
 			attachRepository.save(attach);
 			TeamAttach teamAttach = TeamAttach.of(team, attach);
 			teamAttachRepository.save(teamAttach);
-		}
-
+		});
 	}
 
 	@Override
@@ -118,7 +119,7 @@ public class TeamServiceImpl implements TeamService{
 		String profilePath = awsS3Uploader.upload(profileImgFile, "user");
 		String bannerPath = awsS3Uploader.upload(bannerFile, "user");
 
-		Attach profile = team.getBanner().orElseGet(() -> request.getProfile(profilePath));
+		Attach profile = team.getProfileImg().orElseGet(() -> request.getProfile(profilePath));
 		Attach banner = team.getBanner().orElseGet(() -> request.getBanner(bannerPath));
 
 		updateBannerOrProfile(profileImgFile.getOriginalFilename(), profilePath, profile);
@@ -136,7 +137,7 @@ public class TeamServiceImpl implements TeamService{
 
 		team.validate();
 
-		List<TeamAttach> teamAttaches = teamAttachRepository.findAllByTeamId(team.getId());
+		List<TeamAttach> teamAttaches = teamAttachRepository.findAllByTeam(team);
 		TeamAccountResponse response = TeamAccountResponse.of(team);
 
 		teamAttaches.forEach(teamAttach -> {
@@ -167,12 +168,25 @@ public class TeamServiceImpl implements TeamService{
 			team.changePassword(encryptedPw);
 		});
 
-		request.getVmsFile().ifPresent(multipartFile -> {
 
-		});
+		List<TeamAttach> teamAttaches = teamAttachRepository.findAllByTeam(team);
 
-		request.getPerformFile().ifPresent(multipartFile -> {
+		request.getVmsFile().ifPresent(file -> updateTeamFile(file, teamAttaches, FileType.VMS));
+		request.getPerformFile().ifPresent(file -> updateTeamFile(file, teamAttaches, FileType.PERFORM));
+	}
 
+
+	private void updateTeamFile(MultipartFile file, List<TeamAttach> teamAttaches, FileType fileType){
+		String filePath = awsS3Uploader.upload(file, teamFilePath);
+		Attach attach = Attach.of(file.getOriginalFilename(), filePath, fileType);
+		teamAttaches.forEach(teamAttach -> {
+			Attach savedAttach = teamAttach.getAttach();
+			FileType savedFileType = savedAttach.getFileType();
+			String path = savedAttach.getPath();
+			if(savedFileType.equals(fileType)){
+				teamAttach.updateAttach(attach);
+				awsS3Uploader.delete(teamFilePath, path);
+			}
 		});
 	}
 
@@ -186,7 +200,6 @@ public class TeamServiceImpl implements TeamService{
 
 	private Team validateSameUser(Long i1, Long i2){
 		if(i1 != i2) throw new IllegalArgumentException("동일 회원만 접근할 수 있습니다");
-
 		return teamRepository.findById(i1).orElseThrow(UserNotFoundException::new);
 	}
 
