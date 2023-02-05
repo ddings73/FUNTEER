@@ -18,6 +18,9 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -71,8 +74,9 @@ public class TeamController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @GetMapping("/{userId}/profile")
-    public ResponseEntity<TeamProfileResponse> getProfile(@PathVariable Long userId){
-        TeamProfileResponse teamProfile = teamService.getTeamProfile(userId);
+    public ResponseEntity<TeamProfileResponse> getProfile(@PathVariable Long userId,
+                                          @PageableDefault(size=12, direction = Sort.Direction.DESC) Pageable pageable){
+        TeamProfileResponse teamProfile = teamService.getTeamProfile(userId, pageable);
         return ResponseEntity.ok(teamProfile);
     }
 

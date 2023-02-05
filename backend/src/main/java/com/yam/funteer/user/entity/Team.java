@@ -20,6 +20,8 @@ public class Team extends User{
     @JoinColumn(name = "team_banner")
     private Attach banner;
 
+    private Long totalFundingAmount;
+
     public Optional<Attach> getBanner(){
         return Optional.ofNullable(banner);
     }

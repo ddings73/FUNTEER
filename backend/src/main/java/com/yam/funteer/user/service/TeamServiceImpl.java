@@ -21,6 +21,8 @@ import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -96,10 +98,12 @@ public class TeamServiceImpl implements TeamService{
 
 
 	@Override
-	public TeamProfileResponse getTeamProfile(Long userId) {
+	public TeamProfileResponse getTeamProfile(Long userId, Pageable pageable) {
 		Team team = teamRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-		List<Funding> fundingList = new ArrayList<>(); // fundingRepository.findAllByTeamId(team.getId());
+		Page<Funding> fundingPage = fundingRepository.findByTeam(team, pageable);
+		List<Funding> fundingList = fundingPage.getContent();
+
 		long followerCnt = followRepository.countAllByTeam(team);
 
 		return TeamProfileResponse.of(team, fundingList, followerCnt);
