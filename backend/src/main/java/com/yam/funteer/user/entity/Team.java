@@ -35,4 +35,8 @@ public class Team extends User{
         this.description = description;
     }
 
+    public void setTotalFundingAmount(Long amount) {
+        this.totalFundingAmount += amount;
+    }
+
 }
