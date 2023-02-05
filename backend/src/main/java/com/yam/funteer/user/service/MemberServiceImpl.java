@@ -181,13 +181,13 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void chargeMileage(ChargeRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
-        validateSameUser(userId, request.getUserId());
 
         Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Long amount = request.getAmount();
 
         Charge charge = request.toEntity(member);
         chargeRepository.save(charge);
+        charge.setPayImpUid(request.getImpUid());
         member.charge(amount);
     }
 
