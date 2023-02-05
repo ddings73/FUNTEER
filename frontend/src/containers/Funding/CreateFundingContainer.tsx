@@ -16,6 +16,7 @@ import RoomIcon from '@mui/icons-material/Room';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { fontWeight } from '@mui/system';
+import { log } from 'console';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestUploadImage } from '../../api/funding';
 import { FundingInterface, descriptionType } from '../../types/funding';
@@ -207,21 +208,27 @@ function CreateFundingContainer() {
     setTodoText('');
   };
 
-  const removeTodo = (index: number, level: string) => {
-    console.log('removeTodo', index);
-    console.log('level', level);
+  const removeTodo = (remove: number, level: string) => {
     let prev;
-
+    let next
     switch (level) {
       case 'LEVEL_ONE':
         prev = fundingData.targetMoneyLevelOne.descriptions;
-
+        // eslint-disable-next-line no-case-declarations
+         next = prev.filter((data,index)=>index !== remove )
+        setFundingData({ ...fundingData, targetMoneyLevelOne: { ...fundingData.targetMoneyLevelOne, descriptions: [...next] } });
         break;
       case 'LEVEL_TWO':
         prev = fundingData.targetMoneyLevelTwo.descriptions;
+          // eslint-disable-next-line no-case-declarations
+         next = prev.filter((data,index)=>index !== remove )
+        setFundingData({ ...fundingData, targetMoneyLevelTwo: { ...fundingData.targetMoneyLevelTwo, descriptions: [...next] } });
         break;
       case 'LEVEL_THREE':
         prev = fundingData.targetMoneyLevelThree.descriptions;
+         // eslint-disable-next-line no-case-declarations
+         next = prev.filter((data,index)=>index !== remove )
+        setFundingData({ ...fundingData, targetMoneyLevelThree: { ...fundingData.targetMoneyLevelThree, descriptions: [...next] } });
         break;
 
       default:
