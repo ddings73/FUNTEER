@@ -2,25 +2,18 @@ package com.yam.funteer.badge.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 
-import com.yam.funteer.alarm.service.AlarmService;
-import com.yam.funteer.badge.dto.reponse.BadgeBaseRes;
-import com.yam.funteer.badge.dto.request.BadgeRegisterReq;
 import com.yam.funteer.badge.entity.Badge;
 import com.yam.funteer.badge.repository.BadgeRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.code.UserType;
-import com.yam.funteer.common.security.SecurityUtil;
-import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
-import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.entity.UserBadge;
@@ -131,7 +124,7 @@ public class BadgeServiceImpl implements BadgeService {
 			UserBadge userBadge =
 				userBadgeRepository.findByUserAndBadge(user, badgeRepository.findById(id)
 					.orElseThrow(IllegalArgumentException::new));
-			userBadge.set();
+			userBadge.achieve();
 		}
 	}
 
@@ -142,7 +135,7 @@ public class BadgeServiceImpl implements BadgeService {
 		UserBadge userBadge=userBadgeRepository.findByUserAndBadge(user,badgeRepository.findById(Long.valueOf(1))
 			.orElseThrow(IllegalArgumentException::new));
 		if(amount>=1000000){
-			userBadge.set();
+			userBadge.achieve();
 		}
 	}
 

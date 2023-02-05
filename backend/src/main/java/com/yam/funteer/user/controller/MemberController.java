@@ -111,9 +111,6 @@ public class MemberController {
 		memberService.updateAccount(request);
 	}
 
-	/**
-	 * TODO 미구현
-	 */
 	@ApiOperation(value = "마일리지 조회", notes = "주어진 회원의 마알리지 정보를 조회할 수 있다")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),

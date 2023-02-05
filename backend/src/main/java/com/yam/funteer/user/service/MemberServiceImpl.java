@@ -2,6 +2,7 @@ package com.yam.funteer.user.service;
 
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.badge.repository.BadgeRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.PostGroup;
@@ -48,6 +49,7 @@ public class MemberServiceImpl implements MemberService {
     private final FundingRepository fundingRepository;
     private final WishRepository wishRepository;
     private final PaymentRepository paymentRepository;
+    private final UserBadgeRepository userBadgeRepository;
 
     private final BadgeService badgeService;
 
@@ -86,8 +88,9 @@ public class MemberServiceImpl implements MemberService {
 
         long followCnt = followRepository.countAllByMember(member);
         long wishCnt = wishRepository.countAllByMember(member);
+        List<UserBadge> userBadgeList = userBadgeRepository.findAllByUserId(member.getId());
 
-        return MemberProfileResponse.of(member, wishCnt, followCnt);
+        return MemberProfileResponse.of(member, wishCnt, followCnt, userBadgeList);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.yam.funteer.user.entity;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -39,7 +38,7 @@ public class UserBadge {
 	@ColumnDefault("false")
 	private boolean achieve;
 
-	public void set(){
+	public void achieve(){
 		this.achieve=true;
 	}
 
