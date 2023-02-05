@@ -38,7 +38,7 @@ public class FundingListResponse {
 
 	private String thumbnail;
 
-	private String categoryName;
+	private Long categoryId;
 
 	private HashtagResponse postHashtagList;
 
@@ -63,7 +63,7 @@ public class FundingListResponse {
 			.currentFundingAmount(funding.getCurrentFundingAmount())
 			.targetAmount(targetAmount)
 			.postType(funding.getPostType())
-			.categoryName(funding.getCategory().getName())
+			.categoryId(funding.getCategory().getId())
 			.build();
 
 

@@ -3,6 +3,11 @@ package com.yam.funteer.funding.controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +28,7 @@ import com.yam.funteer.funding.service.FundingService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -37,26 +43,38 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
 	@GetMapping("")
-	public ResponseEntity<FundingListPageResponse> findAllFunding() {
-		return ResponseEntity.ok(fundingService.findAllFunding());
+	public ResponseEntity<FundingListPageResponse> findAllFunding(
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "10") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+		return ResponseEntity.ok(fundingService.findAllFunding(pageRequest));
 	}
 
 	@ApiOperation(value = "펀딩 검색 조회", notes = "검색을 통해 제목과 내용에 키워드가 포함된 펀딩을 조회한다.")
 	@GetMapping("/search")
-	public ResponseEntity<List<FundingListResponse>> findFundingByKeyword(@RequestParam String keyword) {
-		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword));
+	public ResponseEntity<Page<FundingListResponse>> findFundingByKeyword(@RequestParam String keyword,
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "10") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword, pageRequest));
 	}
 
 	@ApiOperation(value = "해시태그별 펀딩 조회", notes = "해시태그별 펀딩 목록을 조회한다.")
 	@GetMapping("/hasgtag")
-	private ResponseEntity<List<FundingListResponse>> findFundingByHashtag(@RequestParam String hashtag) {
-		return ResponseEntity.ok(fundingService.findFundingByHashtag(hashtag));
+	private ResponseEntity<Page<FundingListResponse>> findFundingByHashtag(@RequestParam String hashtag,
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "10") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+		return ResponseEntity.ok(fundingService.findFundingByHashtag(hashtag, pageRequest));
 	}
 
 	@ApiOperation(value = "카테고리별 펀딩 리스트 조회", notes = "카테고리별 펀딩 리스트를 조회한다.")
 	@GetMapping("/category/{categoryId}")
-	public ResponseEntity<List<FundingListResponse>> findFundingByCategory(@PathVariable Long categoryId) {
-		return ResponseEntity.ok(fundingService.findFundingByCategory(categoryId));
+	public ResponseEntity<Page<FundingListResponse>> findFundingByCategory(@PathVariable Long categoryId,
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "10") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+		return ResponseEntity.ok(fundingService.findFundingByCategory(categoryId, pageRequest));
 	}
 
 	@ApiOperation(value = "펀딩 생성 시 s3에 파일업로드", notes = "펀딩 생성 시 s3에 파일을 업로드 한다.")
