@@ -91,7 +91,6 @@ function PayModal({ isOpen }: payModalType) {
             </Tabs>
           </Box>
           <Select onChange={changeAmountHandler}>
-            {/* <MenuItem value="100">100</MenuItem> */}
             <MenuItem value="5000">5,000 원</MenuItem>
             <MenuItem value="10000">10,000 원</MenuItem>
             <MenuItem value="20000">20,000 원</MenuItem>
