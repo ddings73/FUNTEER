@@ -26,6 +26,8 @@ public class TeamProfileResponse extends BaseResponseBody {
     private long followerCnt;
     private String profileImgUrl;
     private String bannerUrl;
+    private String email;
+    private String phone;
 
     public static TeamProfileResponse of(Team team, List<Funding> fundingList, long follwerCnt){
         List<FundingListResponse> collect = fundingList.stream().map(FundingListResponse::from).collect(Collectors.toList());
@@ -33,6 +35,8 @@ public class TeamProfileResponse extends BaseResponseBody {
                 .name(team.getName())
                 .description(team.getDescription())
                 .money(team.getMoney())
+                .email(team.getEmail())
+                .phone(team.getPhone())
                 .totalFundingAmount(team.getTotalFundingAmount())
                 .fundingList(collect)
                 .followerCnt(follwerCnt)
