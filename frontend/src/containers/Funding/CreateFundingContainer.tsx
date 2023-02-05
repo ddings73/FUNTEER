@@ -21,7 +21,7 @@ import { requestCreateFunding, requestUploadImage } from '../../api/funding';
 import { FundingInterface, amountLevelType, descriptionType } from '../../types/funding';
 import defaultThumbnail from '../../assets/images/default-profile-img.svg';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { openModal } from '../../store/slices/modalSlice';
+import { closeModal, openModal } from '../../store/slices/modalSlice';
 import requiredIcon from '../../assets/images/funding/required.svg';
 import uploadIcon from '../../assets/images/funding/upload.svg';
 import { diffDayStartToEnd } from '../../utils/day';
