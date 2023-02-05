@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yam.funteer.common.BaseResponseBody;
@@ -30,8 +31,8 @@ public class QnaController {
 
 	@ApiOperation(value="본인 QnA 리스트")
 	@GetMapping("")
-	public ResponseEntity<?>qnaGetList(){
-		return ResponseEntity.ok(qnaService.qnaGetList());
+	public ResponseEntity<?>qnaGetList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+		return ResponseEntity.ok(qnaService.qnaGetList(page,size));
 	}
 
 

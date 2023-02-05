@@ -1,5 +1,6 @@
 package com.yam.funteer.donation.service;
 
+import java.awt.print.Pageable;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -60,8 +62,9 @@ public class DonationServiceImpl implements DonationService{
 	private final AlarmService alarmService;
 	private final BadgeService badgeService;
 
-	public List<DonationListRes> donationGetList() {
-		List<Donation>donations=donationRepository.findAllByPostTypeOrderByIdDesc(PostType.DONATION_CLOSE);
+	public List<DonationListRes> donationGetList(int page,int size) {
+		PageRequest pageRequest=PageRequest.of(page,size);
+		List<Donation>donations=donationRepository.findAllByPostTypeOrderByIdDesc(PostType.DONATION_CLOSE,pageRequest);
 		List<DonationListRes>list;
 		list=donations.stream().map(donation->new DonationListRes(donation)).collect(Collectors.toList());
 

@@ -14,4 +14,6 @@ import com.yam.funteer.user.entity.UserBadge;
 public interface UserBadgeRepository extends JpaRepository<UserBadge,Long> {
 	List<UserBadge>findAllByBadgePostGroup(PostGroup postGroup);
 	UserBadge findByUserAndBadge(User user, Badge badge);
+
+    List<UserBadge> findAllByUserId(Long userId);
 }

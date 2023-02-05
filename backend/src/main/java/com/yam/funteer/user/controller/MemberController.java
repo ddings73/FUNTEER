@@ -4,11 +4,14 @@ import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
 import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
+import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
 import com.yam.funteer.user.service.MemberService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import springfox.documentation.annotations.ApiIgnore;
 
 import org.springframework.http.ResponseEntity;
@@ -108,9 +111,6 @@ public class MemberController {
 		memberService.updateAccount(request);
 	}
 
-	/**
-	 * TODO 미구현
-	 */
 	@ApiOperation(value = "마일리지 조회", notes = "주어진 회원의 마알리지 정보를 조회할 수 있다")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
@@ -119,9 +119,10 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/mileage")
-	public ResponseEntity getMileage(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
-		validateBinding(bindingResult);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<MileageDetailResponse> getMileageDetails(@Validated @RequestBody MileageDetailRequest request, BindingResult bindingResult,
+								   @PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
+		MileageDetailResponse mileageDetailResponse = memberService.getMileageDetails(request, pageable);
+		return ResponseEntity.ok(mileageDetailResponse);
 	}
 
 
