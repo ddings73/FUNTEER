@@ -32,6 +32,11 @@ export function MainPageContainer() {
               관리자 페이지
             </Link>
           </p>
+          <p>
+            <Link to="/team/88" style={{ fontSize: '3rem', color: 'white' }}>
+              단체 프로필
+            </Link>
+          </p>
         </div>
         <div className={styles.bannerImg}>배너 이미지 공간</div>
       </div>
