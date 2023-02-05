@@ -1,0 +1,52 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+.cardContainer {
+  width: 100%;
+  height: 300px;
+  display: flex;
+  justify-content: space-around;
+  & .cardElement {
+    width: 25%;
+    color: rgb(0, 0, 0);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    & .cardCircle {
+      width: 160px;
+      height: 160px;
+      background: linear-gradient(253.58deg, #ffc000 1.55%, #ff7300 95.8%);
+      border-radius: 50%;
+      position: relative;
+      & .cardImg {
+        width: 100%;
+        bottom: -30px;
+        right: -40px;
+        position: absolute;
+        filter: saturate(50%);
+      }
+    }
+    & .cardTypo {
+      margin-top: 50px;
+      text-align: center;
+
+      & .cardTitle {
+        font-family: 'NanumSquare_ac';
+        font-size: 20px;
+        font-style: normal;
+        font-weight: 800;
+        color: #5c5c5c;
+      }
+
+      & .cardContent {
+        margin-top: 20px;
+        font-family: 'NanumSquare';
+        font-style: normal;
+        font-weight: 700;
+        font-size: 15px;
+        line-height: 17px;
+        color: #797979;
+      }
+    }
+  }
+}
