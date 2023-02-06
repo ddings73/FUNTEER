@@ -25,9 +25,11 @@ import NavDataSettings from './NavbarSettingsData';
 import logoImg from '../assets/images/FunteerLogo.png';
 /*로그인 Import */
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import userSlice, { isLoginState, setUserLoginState } from '../store/slices/userSlice';
+import userSlice, { isLoginState, resetLoginState, setUserLoginState } from '../store/slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import NavbarMenuData from './NavbarMenuData';
+import { requestLogout } from '../api/user';
+import { openModal } from '../store/slices/modalSlice';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
@@ -62,7 +64,18 @@ function ResponsiveAppBar() {
     },
   }));
 
-  const logout = () => {};
+  // 로그아웃
+  const logout = async () => {
+    try {
+      const response = await requestLogout();
+      dispatch(resetLoginState());
+      localStorage.removeItem('accessToken');
+      localStorage.removeItem('refreshToken');
+      navigateTo('/');
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const isLogin = useAppSelector((state) => state.userSlice.isLogin);
   let menuDataLength: number = NavbarMenuData.length;

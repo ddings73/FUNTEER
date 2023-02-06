@@ -22,10 +22,14 @@ export const userSlice = createSlice({
     setUserType: (state, action: PayloadAction<string>) => {
       state.userType = action.payload;
     },
+    resetLoginState: (state) => {
+      state.isLogin = false;
+      state.userType = '';
+    },
   },
 });
 
-export const { setUserLoginState, setUserType } = userSlice.actions;
+export const { setUserLoginState, setUserType, resetLoginState } = userSlice.actions;
 
 export const isLoginState = (state: RootState) => state.userSlice.isLogin;
 

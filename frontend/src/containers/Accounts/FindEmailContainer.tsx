@@ -23,6 +23,8 @@ function FindEmailContainer() {
   };
 
   const findEmail = async () => {
+    console.log(userInfo);
+
     setOnModal(!onModal);
   };
 

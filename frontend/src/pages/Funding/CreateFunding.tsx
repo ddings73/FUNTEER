@@ -5,10 +5,12 @@ import { useAppSelector } from '../../store/hooks';
 
 function CreateFunding() {
   const userType = useAppSelector((state) => state.userSlice.userType);
-  console.log(userType);
+  const isLogin = useAppSelector((state) => state.userSlice.isLogin);
   const navigate = useNavigate();
   useEffect(() => {
-    if (!userType || userType === 'NORMAL') {
+    if (isLogin) {
+      if (userType !== 'TEAM') navigate('/login');
+    } else {
       navigate('/login');
     }
   }, []);

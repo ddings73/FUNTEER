@@ -131,10 +131,15 @@ function CreateFundingContainer() {
     const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
     switch (name) {
       case 'title':
-        setFundingData({ ...fundingData, title: value });
+        if (value.length <= 30) {
+          setFundingData({ ...fundingData, title: value });
+        }
+
         break;
       case 'fundingDescription':
-        setFundingData({ ...fundingData, fundingDescription: value });
+        if (value.length < 40) {
+          setFundingData({ ...fundingData, fundingDescription: value });
+        }
         break;
       case 'LEVEL_ONE':
         setFundingData({ ...fundingData, targetMoneyLevelOne: { ...fundingData.targetMoneyLevelOne, amount: separatorValue } });
@@ -210,24 +215,24 @@ function CreateFundingContainer() {
 
   const removeTodo = (remove: number, level: string) => {
     let prev;
-    let next
+    let next;
     switch (level) {
       case 'LEVEL_ONE':
         prev = fundingData.targetMoneyLevelOne.descriptions;
         // eslint-disable-next-line no-case-declarations
-         next = prev.filter((data,index)=>index !== remove )
+        next = prev.filter((data, index) => index !== remove);
         setFundingData({ ...fundingData, targetMoneyLevelOne: { ...fundingData.targetMoneyLevelOne, descriptions: [...next] } });
         break;
       case 'LEVEL_TWO':
         prev = fundingData.targetMoneyLevelTwo.descriptions;
-          // eslint-disable-next-line no-case-declarations
-         next = prev.filter((data,index)=>index !== remove )
+        // eslint-disable-next-line no-case-declarations
+        next = prev.filter((data, index) => index !== remove);
         setFundingData({ ...fundingData, targetMoneyLevelTwo: { ...fundingData.targetMoneyLevelTwo, descriptions: [...next] } });
         break;
       case 'LEVEL_THREE':
         prev = fundingData.targetMoneyLevelThree.descriptions;
-         // eslint-disable-next-line no-case-declarations
-         next = prev.filter((data,index)=>index !== remove )
+        // eslint-disable-next-line no-case-declarations
+        next = prev.filter((data, index) => index !== remove);
         setFundingData({ ...fundingData, targetMoneyLevelThree: { ...fundingData.targetMoneyLevelThree, descriptions: [...next] } });
         break;
 
@@ -289,7 +294,15 @@ function CreateFundingContainer() {
           <p className={styles.title}>
             펀딩 제목 <img className={styles.required} src={requiredIcon} alt="" />
           </p>
-          <input type="text" name="title" className={styles['input-text']} onChange={onChangeTextHandler} placeholder="제목을 입력해주세요" required />
+          <input
+            type="text"
+            value={fundingData.title}
+            name="title"
+            className={styles['input-text']}
+            onChange={onChangeTextHandler}
+            placeholder="제목을 입력해주세요"
+            required
+          />
         </div>
 
         <div className={styles['funding-description-box']}>
@@ -302,6 +315,7 @@ function CreateFundingContainer() {
             onChange={onChangeTextHandler}
             className={styles['input-text']}
             placeholder="진행하는 펀딩에 대해 간단히 설명해 주세요."
+            value={fundingData.fundingDescription}
             required
           />
         </div>
@@ -339,7 +353,7 @@ function CreateFundingContainer() {
                   setStartDate(newValue);
                   onChangeDateHandler(newValue, 'startDate');
                 }}
-                renderInput={(params) => <TextField   {...params} sx={{ mr: 2, mb: 4, minWidth: 100,width:"49%" }} />}
+                renderInput={(params) => <TextField {...params} sx={{ mr: 2, mb: 4, minWidth: 100, width: '49%' }} />}
               />
             </LocalizationProvider>
 
@@ -354,7 +368,7 @@ function CreateFundingContainer() {
                   setEndDate(newValue);
                   onChangeDateHandler(newValue, 'endDate');
                 }}
-                renderInput={(params) => <TextField {...params} sx={{ minWidth: 100,mb:3,width:"49%" }} />}
+                renderInput={(params) => <TextField {...params} sx={{ minWidth: 100, mb: 3, width: '49%' }} />}
               />
             </LocalizationProvider>
           </div>
