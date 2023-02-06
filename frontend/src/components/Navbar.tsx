@@ -28,12 +28,14 @@ import { useAppDispatch, useAppSelector } from '../store/hooks';
 import userSlice, { isLoginState, setUserLoginState } from '../store/slices/userSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import NavbarMenuData from './NavbarMenuData';
+import { requestSignOut } from '../api/user';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
 
 function ResponsiveAppBar() {
   const navigateTo = useNavigate();
+  const dispatch = useDispatch();
   function clickNavigate(address: string) {
     navigateTo(address);
   }
@@ -60,6 +62,10 @@ function ResponsiveAppBar() {
       padding: '0 4px',
     },
   }));
+
+  async function logoutFunc() {
+
+  }
 
   const isLogin = useAppSelector((state) => state.userSlice.isLogin);
   let menuDataLength: number = NavbarMenuData.length;
@@ -153,15 +159,51 @@ function ResponsiveAppBar() {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  {NavDataSettings.map((data, i) => (
-                    <NavLink to={data.path} className={styles.navlinks} key={i}>
-                      <MenuItem onClick={handleCloseUserMenu}>
-                        <Typography textAlign="center" sx={{ color: i == menuDataLength - 1 ? 'red' : 'black' }}>
-                          {data.title}
-                        </Typography>
-                      </MenuItem>
-                    </NavLink>
-                  ))}
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography
+                      textAlign="center"
+                      onClick={() => {
+                        navigateTo('/myPage');
+                      }}
+                    >
+                      마이페이지
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography
+                      textAlign="center"
+                      onClick={() => {
+                        navigateTo('/myFunding');
+                      }}
+                    >
+                      나의 펀딩 내역
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography
+                      textAlign="center"
+                      onClick={() => {
+                        navigateTo('/myDonates');
+                      }}
+                    >
+                      도네이션 내역
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography
+                      textAlign="center"
+                      onClick={() => {
+                        navigateTo('/myBadges');
+                      }}
+                    >
+                      1:1 문의 내역
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography textAlign="center" sx={{ color: 'red' }} onClick={logoutFunc}>
+                      로그아웃
+                    </Typography>
+                  </MenuItem>
                 </Menu>
               </div>
             </Box>
