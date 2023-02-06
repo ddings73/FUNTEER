@@ -28,6 +28,7 @@ import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
@@ -49,6 +50,7 @@ import com.yam.funteer.funding.entity.TargetMoneyDetail;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.exception.InsufficientBalanceException;
+import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
@@ -141,7 +143,7 @@ public class FundingServiceImpl implements FundingService{
 		Page<FundingListResponse> collect = fundingRepository.findAll(pageable).map(m -> FundingListResponse.from(m));
 		List<Funding> successFundingList = fundingRepository.findAllByPostType(PostType.REPORT_ACCEPT);
 
-		Long totalFundingCount = collect.stream().count();
+		Long totalFundingCount = fundingRepository.findAll().stream().count();
 		int successFundingCount = successFundingList.size();
 
 		Long totalFundingAmount = 0L;
@@ -155,15 +157,20 @@ public class FundingServiceImpl implements FundingService{
 
 
 	@Override
-	public FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException {
+	public FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws
+		IOException,
+		NotAuthenticatedTeamException {
 		// 인증 완료된 team 아니면 펀딩 작성 못함
+		Long currentUserId = SecurityUtil.getCurrentUserId();
+		Team team = teamRepository.findById(currentUserId).orElseThrow();
+
+		if (team.getUserType() != UserType.TEAM) {
+			throw new NotAuthenticatedTeamException();
+		}
 
 		// category 들고오기
 		Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
-		// // Team
-		Long currentUserId = SecurityUtil.getCurrentUserId();
-		Team team = teamRepository.findById(currentUserId).orElseThrow();
 
 		// time 변환
 		LocalDate startDate = LocalDate.parse(data.getStartDate(),

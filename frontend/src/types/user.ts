@@ -21,3 +21,14 @@ export type teamSignUpType = {
   vmsFile: Blob;
   performFile: Blob;
 };
+
+export type teamProfileType = {
+  profileImgUrl: string;
+  name: string;
+  email: string;
+  phone: string;
+  money: number;
+  followerCnt: number;
+  description: string;
+  fundingList: object;
+};

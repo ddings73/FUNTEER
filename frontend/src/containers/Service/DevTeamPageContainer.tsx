@@ -1,6 +1,6 @@
 import React from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
-import styles from './TeamPageContainer.module.scss';
+import styles from './DevTeamPageContainer.module.scss';
 import f1 from '../../assets/images/teamProfile/김진호.jpg';
 import f2 from '../../assets/images/teamProfile/백준봉.jpg';
 import f3 from '../../assets/images/teamProfile/김승섭.jpg';

@@ -32,8 +32,8 @@ import lombok.RequiredArgsConstructor;
 @Api(tags ={"관리자"})
 public class 	AdminController {
 
-	AdminService adminService;
-	FundingService fundingService;
+	private final AdminService adminService;
+	private final FundingService fundingService;
 
 	@ApiOperation(value = "개인 회원 목록 조회", notes = "개인 회원 목록을 조회한다.")
 	@GetMapping("/members")

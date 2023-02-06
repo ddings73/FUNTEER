@@ -17,11 +17,14 @@ import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
+import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
 
 public interface FundingService {
 	Page<FundingListResponse> findFundingByCategory(Long categoryId, Pageable pageable);
 
-	FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException;
+	FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws
+		IOException,
+		NotAuthenticatedTeamException;
 
 	FundingDetailResponse findFundingById(Long id);
 

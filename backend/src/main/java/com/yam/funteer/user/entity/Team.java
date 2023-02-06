@@ -20,6 +20,8 @@ public class Team extends User{
     @JoinColumn(name = "team_banner")
     private Attach banner;
 
+    private Long totalFundingAmount;
+
     public Optional<Attach> getBanner(){
         return Optional.ofNullable(banner);
     }
@@ -33,4 +35,12 @@ public class Team extends User{
         this.description = description;
     }
 
+    public void addTotalFundingAmount(Long amount) {
+        this.totalFundingAmount += amount;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return getId() == ((Team)obj).getId();
+    }
 }
