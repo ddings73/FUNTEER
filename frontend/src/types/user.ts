@@ -48,3 +48,8 @@ export interface userInfoInterface {
   name: string;
   phone: string;
 }
+
+export interface changeUserInfoInterface {
+  password:string
+  newPassword:string
+}
