@@ -8,7 +8,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { Button, Icon, IconButton, TextField, Typography } from '@mui/material';
+import { Button, FormControl, Icon, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
@@ -16,6 +17,7 @@ import RoomIcon from '@mui/icons-material/Room';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { fontWeight } from '@mui/system';
+import { log } from 'console';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestUploadImage } from '../../api/funding';
 import { FundingInterface, amountLevelType, descriptionType } from '../../types/funding';
@@ -52,7 +54,7 @@ function CreateFundingContainer() {
     thumbnail: new Blob(),
     title: '',
     fundingDescription: '',
-    categoryId: 1,
+    categoryId: 0,
     content: '',
     startDate: '',
     endDate: '',
@@ -130,10 +132,15 @@ function CreateFundingContainer() {
     const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
     switch (name) {
       case 'title':
-        setFundingData({ ...fundingData, title: value });
+        if (value.length <= 30) {
+          setFundingData({ ...fundingData, title: value });
+        }
+
         break;
       case 'fundingDescription':
-        setFundingData({ ...fundingData, fundingDescription: value });
+        if (value.length < 40) {
+          setFundingData({ ...fundingData, fundingDescription: value });
+        }
         break;
       case 'LEVEL_ONE':
         setFundingData({ ...fundingData, targetMoneyLevelOne: { ...fundingData.targetMoneyLevelOne, amount: separatorValue } });
@@ -207,6 +214,38 @@ function CreateFundingContainer() {
     setTodoText('');
   };
 
+  const removeTodo = (remove: number, level: string) => {
+    let prev;
+    let next;
+    switch (level) {
+      case 'LEVEL_ONE':
+        prev = fundingData.targetMoneyLevelOne.descriptions;
+        // eslint-disable-next-line no-case-declarations
+        next = prev.filter((data, index) => index !== remove);
+        setFundingData({ ...fundingData, targetMoneyLevelOne: { ...fundingData.targetMoneyLevelOne, descriptions: [...next] } });
+        break;
+      case 'LEVEL_TWO':
+        prev = fundingData.targetMoneyLevelTwo.descriptions;
+        // eslint-disable-next-line no-case-declarations
+        next = prev.filter((data, index) => index !== remove);
+        setFundingData({ ...fundingData, targetMoneyLevelTwo: { ...fundingData.targetMoneyLevelTwo, descriptions: [...next] } });
+        break;
+      case 'LEVEL_THREE':
+        prev = fundingData.targetMoneyLevelThree.descriptions;
+        // eslint-disable-next-line no-case-declarations
+        next = prev.filter((data, index) => index !== remove);
+        setFundingData({ ...fundingData, targetMoneyLevelThree: { ...fundingData.targetMoneyLevelThree, descriptions: [...next] } });
+        break;
+
+      default:
+        break;
+    }
+  };
+
+  const onChangeCategory = (event: SelectChangeEvent) => {
+    setFundingData({ ...fundingData, categoryId: Number(event.target.value) });
+  };
+
   useEffect(() => {
     const htmlString = `  
     <h1>프로젝트 소개</h1>
@@ -256,11 +295,39 @@ function CreateFundingContainer() {
             </div>
           </div>
         </div>
+
+        <div className={styles['funding-category-box']}>
+          <p className={styles.title}>
+            펀딩 카테고리 설정 <img className={styles.required} src={requiredIcon} alt="" />
+          </p>
+
+          <div className={styles['category-box']}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">카테고리 설정</InputLabel>
+              <Select labelId="demo-simple-select-label" id="demo-simple-select" label="카테고리 설정" onChange={onChangeCategory}>
+                <MenuItem defaultValue={0}>카테고리를 선택해주세요.</MenuItem>
+                <MenuItem value={1}>아동</MenuItem>
+                <MenuItem value={2}>노인</MenuItem>
+                <MenuItem value={3}>동물</MenuItem>
+                <MenuItem value={4}>장애인</MenuItem>
+                <MenuItem value={5}>환경</MenuItem>
+              </Select>
+            </FormControl>
+          </div>
+        </div>
         <div className={styles['funding-title-box']}>
           <p className={styles.title}>
             펀딩 제목 <img className={styles.required} src={requiredIcon} alt="" />
           </p>
-          <input type="text" name="title" className={styles['input-text']} onChange={onChangeTextHandler} placeholder="제목을 입력해주세요" required />
+          <input
+            type="text"
+            value={fundingData.title}
+            name="title"
+            className={styles['input-text']}
+            onChange={onChangeTextHandler}
+            placeholder="제목을 입력해주세요"
+            required
+          />
         </div>
 
         <div className={styles['funding-description-box']}>
@@ -273,6 +340,7 @@ function CreateFundingContainer() {
             onChange={onChangeTextHandler}
             className={styles['input-text']}
             placeholder="진행하는 펀딩에 대해 간단히 설명해 주세요."
+            value={fundingData.fundingDescription}
             required
           />
         </div>
@@ -300,24 +368,24 @@ function CreateFundingContainer() {
           </p>
 
           <div className={styles['date-picker-box']}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} required>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 disablePast
-                label="펀딩 시작 일자를 선택해주세요"
+                label="펀딩 종료 일자를 선택해주세요."
                 inputFormat="YYYY-MM-DD"
                 value={startDate}
                 onChange={(newValue) => {
                   setStartDate(newValue);
                   onChangeDateHandler(newValue, 'startDate');
                 }}
-                renderInput={(params) => <TextField {...params} sx={{ mr: 2, mb: 5, minWidth: 300 }} />}
+                renderInput={(params) => <TextField {...params} sx={{ mr: 2, mb: 4, minWidth: 100, width: '49%' }} />}
               />
             </LocalizationProvider>
 
             <LocalizationProvider dateAdapter={AdapterDayjs} required>
               <DatePicker
                 disablePast
-                label="펀딩 종료 일자를 선택해주세요"
+                label="펀딩 종료 일자를 선택해주세요."
                 minDate={startDate}
                 inputFormat="YYYY-MM-DD"
                 value={endDate}
@@ -325,7 +393,7 @@ function CreateFundingContainer() {
                   setEndDate(newValue);
                   onChangeDateHandler(newValue, 'endDate');
                 }}
-                renderInput={(params) => <TextField {...params} sx={{ minWidth: 300 }} />}
+                renderInput={(params) => <TextField {...params} sx={{ minWidth: 100, mb: 3, width: '49%' }} />}
               />
             </LocalizationProvider>
           </div>

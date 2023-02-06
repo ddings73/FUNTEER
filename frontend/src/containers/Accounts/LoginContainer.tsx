@@ -49,11 +49,9 @@ function LoginContainer() {
 
         localStorage.setItem('accessToken', data.token.accessToken);
         localStorage.setItem('refreshToken', data.token.refreshToken);
-        localStorage.setItem('user', data);
+        sessionStorage.setItem('user', JSON.stringify(data));
 
-        dispatch(setUserLoginState(true));
-        dispatch(setUserType(data.userType));
-
+        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId }));
         navigate('/');
       }
     } catch (error) {
@@ -63,13 +61,6 @@ function LoginContainer() {
   };
 
   // KAKAO 로그인 요청
-<<<<<<< HEAD
-  const OAuth = () => {
-    const REST_API_KEY = process.env.REACT_APP_KAKAO_LOGIN_API;
-    // const REDIRECT_URI = `http://localhost:3000/login`;
-    const url = `http://localhost:8080/api/v1/oauth2/authorization/kakao`;
-    window.location.href = url;
-=======
   const OAuth = async () => {
     try {
       // const REST_API_KEY = process.env.REACT_APP_KAKAO_LOGIN_API;
@@ -83,7 +74,6 @@ function LoginContainer() {
     } catch (error) {
       console.log(error);
     }
->>>>>>> feat-BE/member
   };
 
   useEffect(() => {

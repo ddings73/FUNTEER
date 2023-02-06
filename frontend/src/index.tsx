@@ -52,35 +52,13 @@ import {
   AdminNotice,
   AdminFaq,
   AdminLive,
+  AdminNoticeCreate,
+  TeamEdit,
+  Kakao,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
-
-function Test() {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const email = searchParams.get('email');
-  const data = {
-    email,
-  };
-  const kakaoLogin = async () => {
-    try {
-      const response = await http.post('login/kakao', data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log(response);
-    } catch (Error) {
-      console.log(Error);
-    }
-  };
-  useEffect(() => {
-    kakaoLogin();
-  }, []);
-  return <h1>ㅎㅇㅎㅇㅎㅇ</h1>;
-}
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
@@ -94,13 +72,10 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-<<<<<<< HEAD
-=======
         path: 'login/kakao',
-        element: <Test />,
+        element: <Kakao />,
       },
       {
->>>>>>> feat-BE/member
         path: 'findEmail',
         element: <FindEmail />,
       },
@@ -173,8 +148,12 @@ const router = createBrowserRouter([
         element: <MyFollows />,
       },
       {
-        path: 'team',
+        path: 'team/:teamId',
         element: <TeamProfile />,
+      },
+      {
+        path: 'teamedit/:teamId',
+        element: <TeamEdit />,
       },
     ],
   },
@@ -260,6 +239,10 @@ const router = createBrowserRouter([
         path: 'live',
         element: <AdminLive />,
       },
+      {
+        path: 'noticecreate',
+        element: <AdminNoticeCreate />,
+      }
     ],
   },
 ]);

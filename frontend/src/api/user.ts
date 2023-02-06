@@ -96,3 +96,17 @@ export const requestUserInfo = async () => {
   const response = await http.get(`member/account`);
   return response;
 };
+
+export const requestFollow = async (teamId: string | undefined) => {
+  const res = await http.put(`member/follow/${teamId}`);
+  return res;
+};
+
+/**
+ * @name 로그아웃
+ * @method DELETE
+ */
+export const requestLogout = async () => {
+  const response = await http.delete('out');
+  return response;
+};
