@@ -22,7 +22,7 @@ function KakaoContainer() {
       });
       localStorage.setItem('accessToken', response.data.token.accessToken);
       localStorage.setItem('refreshToken', response.data.token.refreshToken);
-      dispatch(setUserLoginState(true));
+      dispatch(setUserLoginState({ isLogin: true, userType: response.data.userType, userId: response.data.userId }));
       dispatch(setUserType('USER'));
       window.location.href = '/';
     } catch (Error) {
