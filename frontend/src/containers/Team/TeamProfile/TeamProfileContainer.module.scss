@@ -5,17 +5,12 @@
   width: 100%;
   min-height: 100vh;
   height: 100%;
-  display: grid;
-  grid-template-columns: 250px 1fr;
-
-  @media (max-width: 900px) {
-    display: flex;
-  }
+  display: flex;
+  margin-top: 77.6px;
 
   .content {
     width: 100%;
     height: 100%;
-    margin-top: 77.6px;
     display: flex;
     justify-content: center;
 
@@ -44,20 +39,36 @@
         }
 
         .profile-card-img-div {
-          width: 250px;
-          height: 250px;
+          width: 300px;
+          height: 300px;
+          position: relative;
           display: flex;
           justify-content: center;
           align-items: center;
-          margin: 3rem 2rem 2rem 2rem;
-          border-radius: 100%;
-          border: 10px solid $primary;
-          box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
-          overflow: hidden;
+          margin: 3.5rem 2rem 2rem 4rem;
 
-          & img {
+          .profile-card-img-inner {
             width: 260px;
             height: 260px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 100%;
+            overflow: hidden;
+
+            & img {
+              width: 260px;
+              height: 260px;
+              border-radius: 100%;
+            }
+          }
+
+          @include tablet {
+            margin: 0 0 1rem 0;
+          }
+
+          @include mobile {
+            margin: 0 0 1rem 0;
           }
         }
 
@@ -82,6 +93,7 @@
           .name {
             width: 95%;
             display: flex;
+            align-items: center;
             margin: 3rem 0 0 0;
             padding: 0 0 0 0.6rem;
             font-size: 1.75rem;
@@ -103,6 +115,27 @@
             @include mobile {
               margin: 0;
               padding: 0;
+            }
+
+            .setting {
+              font-size: 40px;
+              margin-left: 0.5rem;
+              color: rgba(0, 0, 0, 0.4);
+              transition: 2s;
+
+              &:hover {
+                cursor: pointer;
+                color: rgba(0, 0, 0, 0.6);
+                transform: rotate(180deg);
+              }
+
+              @include tablet {
+                font-size: 30px;
+              }
+
+              @include mobile {
+                font-size: 20px;
+              }
             }
           }
 
@@ -208,7 +241,7 @@
         }
 
         & p {
-          width: 90%;
+          width: 100%;
           color: rgba(0, 0, 0, 0.8);
           line-height: 2rem;
           font-family: NanumSquareRound;
@@ -216,7 +249,7 @@
       }
 
       .funding-div {
-        width: 80%;
+        width: 85%;
         margin-top: 1rem;
         padding: 1rem;
 

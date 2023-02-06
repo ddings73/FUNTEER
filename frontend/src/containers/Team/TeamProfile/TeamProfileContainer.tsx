@@ -1,31 +1,32 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { BsPiggyBankFill, BsBookmarkHeartFill, BsFillHeartFill, BsBookmarkHeart, BsFillTelephoneFill } from 'react-icons/bs';
-import FavoriteTwoToneIcon from '@mui/icons-material/FavoriteTwoTone';
 import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 import Button from '@mui/material/Button';
 import EmailIcon from '@mui/icons-material/Email';
-import { requestTeamAccountInfo, requestTeamProfileInfo } from '../../../api/team';
+import SettingsIcon from '@mui/icons-material/Settings';
+import { requestTeamProfileInfo } from '../../../api/team';
 import TeamSideBarList from '../../../components/TeamPageSideBar/TeamSideBarList';
-import styles from './TeamProfileContainer.module.scss';
-import defaultImage from '../../../assets/images/default-profile-img.svg';
 import { teamProfileType } from '../../../types/user';
 import { requestFollow } from '../../../api/user';
+import styles from './TeamProfileContainer.module.scss';
+import defaultImage from '../../../assets/images/default-profile-img.svg';
 
 function TeamProfileContainer() {
+  const navigate = useNavigate();
   const { teamId } = useParams();
-  const [userId, setUserId] = useState<number>(0);
+  const [userId, setUserId] = useState<string | undefined>('');
   const [userType, setUserType] = useState<string>('');
+  const [isFollowing, setIsFollowing] = useState<boolean>(false);
+  const [followerCnt, setFollowerCnt] = useState<number>(0);
   const [teamProfileInfo, setTeamProfileInfo] = useState<teamProfileType>({
     profileImgUrl: '',
     name: '',
     email: '',
     phone: '',
     money: 0,
-    followerCnt: 0,
     description: '',
     fundingList: [],
-    followBtn: false,
     totalFundingAmount: 0,
   });
 
@@ -35,6 +36,8 @@ function TeamProfileContainer() {
       const response = await requestTeamProfileInfo(teamId);
       console.log('단체 프로필 정보', response);
       setTeamProfileInfo((prev) => ({ ...prev, ...response.data }));
+      setIsFollowing(response.data.followBtn);
+      setFollowerCnt(response.data.followerCnt);
     } catch (error) {
       console.error(error);
     }
@@ -44,7 +47,7 @@ function TeamProfileContainer() {
   useEffect(() => {
     if (!userId || !userType) {
       const userData = sessionStorage.getItem('user');
-      setUserId(userData ? JSON.parse(userData).userId : null);
+      setUserId(userData ? JSON.parse(userData).userId.toString() : null);
       setUserType(userData ? JSON.parse(userData).userType : null);
     }
     requestTeamInfo();
@@ -55,17 +58,34 @@ function TeamProfileContainer() {
     try {
       const response = await requestFollow(teamId);
       console.log(response);
+      if (response.status === 200) {
+        if (isFollowing) {
+          setFollowerCnt(followerCnt - 1);
+        } else {
+          setFollowerCnt(followerCnt + 1);
+        }
+        setIsFollowing(!isFollowing);
+      }
     } catch (error) {
       console.error(error);
     }
   };
 
-  /** 팔로우 반영 */
-  // useEffect(() => {}, [teamProfileInfo.followBtn]);
+  /** 프로필 수정 버튼 */
+  const onClickSetting = async () => {
+    navigate(`../teamedit/${teamId}`, {
+      state: {
+        teamId,
+        profileImgUrl: teamProfileInfo.profileImgUrl,
+        name: teamProfileInfo.name,
+        description: teamProfileInfo.description,
+      },
+    });
+  };
 
   return (
     <div className={styles.container}>
-      <TeamSideBarList />
+      {userId === teamId && <TeamSideBarList teamId={teamId} />}
       <div className={styles.content}>
         <div className={styles['content-inner']}>
           {/* 프로필 카드 */}
@@ -80,16 +100,21 @@ function TeamProfileContainer() {
                 {teamProfileInfo.name}
                 {userType === 'NORMAL' && (
                   <div className={styles['follow-btn-div']}>
-                    {teamProfileInfo.followBtn && <BsBookmarkHeartFill color="red" onClick={onClickFollowBtn} className={styles['follow-btn']} />}
-                    {!teamProfileInfo.followBtn && <BsBookmarkHeart color="red" onClick={onClickFollowBtn} className={styles['follow-btn']} />}
+                    {isFollowing && <BsBookmarkHeartFill color="red" onClick={onClickFollowBtn} className={styles['follow-btn']} />}
+                    {!isFollowing && <BsBookmarkHeart color="red" onClick={onClickFollowBtn} className={styles['follow-btn']} />}
                   </div>
                 )}
+                {userId === teamId && <SettingsIcon className={styles.setting} onClick={onClickSetting} />}
               </h1>
               <div className={styles['profile-card-info-content']}>
                 <div className={styles['profile-card-info-left']}>
                   <div className={styles['profile-card-info-item']}>
-                    <BsPiggyBankFill color="rgba(236, 153, 75, 1)" />
-                    <p className={styles.money}>저금통: {teamProfileInfo.money.toLocaleString('ko-KR')} 원</p>
+                    {userId === teamId && (
+                      <>
+                        <BsPiggyBankFill color="rgba(236, 153, 75, 1)" />
+                        <p className={styles.money}>저금통: {teamProfileInfo.money.toLocaleString('ko-KR')} 원</p>
+                      </>
+                    )}
                   </div>
                   <div className={styles['profile-card-info-item']}>
                     <FaMoneyBillWaveAlt color="rgba(236, 153, 75, 1)" />
@@ -97,7 +122,7 @@ function TeamProfileContainer() {
                   </div>
                   <div className={styles['profile-card-info-item']}>
                     <BsFillHeartFill color="rgba(236, 153, 75, 1)" />
-                    <p>팔로워: {teamProfileInfo.followerCnt.toLocaleString('ko-KR')} 명</p>
+                    <p>팔로워: {followerCnt.toLocaleString('ko-KR')} 명</p>
                   </div>
                 </div>
                 <div className={styles['profile-card-info-right']}>

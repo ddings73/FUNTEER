@@ -15,10 +15,11 @@ import { useInView } from 'react-intersection-observer';
 import cn from 'classnames';
 import Skeleton from '@mui/material/Skeleton';
 import Typography, { TypographyProps } from '@mui/material/Typography';
+import { async } from 'q';
 import styles from './FundingListContainer.module.scss';
 import FundingListElement from '../../components/Funding/FundingListElement';
 import { FundingElementType } from '../../types/funding';
-import { requestFundingList, requestFundingSearch, requestNextFundingList } from '../../api/funding';
+import { requestCategoryFundingList, requestFundingList, requestFundingSearch, requestNextFundingList } from '../../api/funding';
 // icon
 import disable from '../../assets/images/funding/categoryIcon/disable.png';
 import child from '../../assets/images/funding/categoryIcon/child.png';
@@ -30,23 +31,11 @@ import FundingElementSkeleton from '../../components/Skeleton/FundingElementSkel
 // 한번에 불러올 게시글 수
 const size = 12;
 const categoryList = [
-  {
-    url: disable,
-    caption: '장애인',
-  },
-  {
-    url: child,
-    caption: '아동',
-  },
-  { url: animal, caption: '동물' },
-  {
-    url: oldman,
-    caption: '노인',
-  },
-  {
-    url: planet,
-    caption: '환경',
-  },
+  { id: 4, url: disable, caption: '장애인' },
+  { id: 1, url: child, caption: '아동' },
+  { id: 3, url: animal, caption: '동물' },
+  { id: 2, url: oldman, caption: '노인' },
+  { id: 5, url: planet, caption: '환경' },
 ];
 function FundingListContainer() {
   const [fundingList, setFundingList] = useState<FundingElementType[]>([]);
@@ -110,6 +99,21 @@ function FundingListContainer() {
       console.error(error);
     }
   };
+  const onToggleCategory = async (categoryId: number) => {
+    try {
+      console.log(categoryId);
+
+      setSelectCategory(categoryId);
+      setIsLoading(true);
+      const response = await requestCategoryFundingList(categoryId);
+      setFundingList([...response.data.content]);
+      setTotalFundingCount(response.data.numberOfElements);
+      setIsLoading(false);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
     initFundingList();
@@ -120,11 +124,6 @@ function FundingListContainer() {
       nextFundingList();
     }
   }, [inView]);
-
-  const onToggleCategory = (index: number) => {
-    console.log(index);
-    setSelectCategory(index);
-  };
 
   useEffect(() => {
     console.log(selectCategory);
@@ -151,9 +150,8 @@ function FundingListContainer() {
           </div>
         </div>
         <div className={styles['category-box']}>
-          {categoryList.map((item, index) => (
-            // eslint-disable-next-line react/no-array-index-key
-            <div aria-hidden="true" onClick={() => onToggleCategory(index)} className={cn(styles.link, index === selectCategory ? styles.toggle : '')} key={index}>
+          {categoryList.map((item) => (
+            <div aria-hidden="true" onClick={() => onToggleCategory(item.id)} className={cn(styles.link, item.id === selectCategory ? styles.toggle : '')} key={item.id}>
               <img src={item.url} className={styles.icon} alt={item.caption} />
               <span>{item.caption} </span>
             </div>

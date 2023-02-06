@@ -52,6 +52,7 @@ import {
   AdminNotice,
   AdminFaq,
   AdminLive,
+  TeamEdit,
   Kakao,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
@@ -148,6 +149,10 @@ const router = createBrowserRouter([
       {
         path: 'team/:teamId',
         element: <TeamProfile />,
+      },
+      {
+        path: 'teamedit/:teamId',
+        element: <TeamEdit />,
       },
     ],
   },

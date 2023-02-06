@@ -8,7 +8,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { Button, Icon, IconButton, TextField, Typography } from '@mui/material';
+import { Button, FormControl, Icon, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { SelectChangeEvent } from '@mui/material/Select';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
@@ -53,7 +54,7 @@ function CreateFundingContainer() {
     thumbnail: new Blob(),
     title: '',
     fundingDescription: '',
-    categoryId: 1,
+    categoryId: 0,
     content: '',
     startDate: '',
     endDate: '',
@@ -241,6 +242,10 @@ function CreateFundingContainer() {
     }
   };
 
+  const onChangeCategory = (event: SelectChangeEvent) => {
+    setFundingData({ ...fundingData, categoryId: Number(event.target.value) });
+  };
+
   useEffect(() => {
     const htmlString = `  
     <h1>프로젝트 소개</h1>
@@ -288,6 +293,26 @@ function CreateFundingContainer() {
               </p>
               <input ref={thumbnailRef} type="file" accept="image/*" onChange={onFileHandler} className={styles['thumbnail-upload-input']} required />
             </div>
+          </div>
+        </div>
+
+        <div className={styles['funding-category-box']}>
+          <p className={styles.title}>
+            펀딩 카테고리 설정 <img className={styles.required} src={requiredIcon} alt="" />
+          </p>
+
+          <div className={styles['category-box']}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">카테고리 설정</InputLabel>
+              <Select labelId="demo-simple-select-label" id="demo-simple-select" label="카테고리 설정" onChange={onChangeCategory}>
+                <MenuItem defaultValue={0}>카테고리를 선택해주세요.</MenuItem>
+                <MenuItem value={1}>아동</MenuItem>
+                <MenuItem value={2}>노인</MenuItem>
+                <MenuItem value={3}>동물</MenuItem>
+                <MenuItem value={4}>장애인</MenuItem>
+                <MenuItem value={5}>환경</MenuItem>
+              </Select>
+            </FormControl>
           </div>
         </div>
         <div className={styles['funding-title-box']}>
