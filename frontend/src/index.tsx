@@ -51,6 +51,7 @@ import {
   AdminNotice,
   AdminFaq,
   AdminLive,
+  TeamEdit,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -93,12 +94,10 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-
         path: 'login/kakao',
         element: <Test />,
       },
       {
-
         path: 'findEmail',
         element: <FindEmail />,
       },
@@ -171,8 +170,12 @@ const router = createBrowserRouter([
         element: <MyFollows />,
       },
       {
-        path: 'team',
+        path: 'team/:teamId',
         element: <TeamProfile />,
+      },
+      {
+        path: 'teamedit/:teamId',
+        element: <TeamEdit />,
       },
     ],
   },
