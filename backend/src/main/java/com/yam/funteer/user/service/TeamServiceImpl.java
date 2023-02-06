@@ -131,17 +131,22 @@ public class TeamServiceImpl implements TeamService{
 		MultipartFile bannerFile = request.getBanner();
 		MultipartFile profileImgFile = request.getProfileImg();
 
-		request.validateBannerAndProfile();
+		Attach profile = team.getProfileImg().orElse(null);
+		Attach banner = team.getBanner().orElse(null);
 
-		String profilePath = awsS3Uploader.upload(profileImgFile, "user");
-		String bannerPath = awsS3Uploader.upload(bannerFile, "user");
+		if(!request.getProfileImg().isEmpty()) {
+			request.validateProfile();
+			String profilePath = awsS3Uploader.upload(profileImgFile, "user");
+			profile = team.getProfileImg().orElseGet(() -> request.getProfile(profilePath));
+			updateBannerOrProfile(profileImgFile.getOriginalFilename(), profilePath, profile);
+		}
 
-		Attach profile = team.getProfileImg().orElseGet(() -> request.getProfile(profilePath));
-		Attach banner = team.getBanner().orElseGet(() -> request.getBanner(bannerPath));
-
-		updateBannerOrProfile(profileImgFile.getOriginalFilename(), profilePath, profile);
-		updateBannerOrProfile(bannerFile.getOriginalFilename(), bannerPath, banner);
-		// 파일 관리 끝
+		if(!request.getBanner().isEmpty()) {
+			request.validateBanner();
+			String bannerPath = awsS3Uploader.upload(bannerFile, "user");
+			banner = team.getBanner().orElseGet(() -> request.getBanner(bannerPath));
+			updateBannerOrProfile(bannerFile.getOriginalFilename(), bannerPath, banner);
+		}
 
 		String description = request.getDescription();
 		team.update(profile, banner, description);

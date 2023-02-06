@@ -9,8 +9,10 @@ import com.yam.funteer.live.dto.StartRecordingRequest;
 import com.yam.funteer.live.entity.Live;
 import com.yam.funteer.live.repository.LiveRepository;
 import com.yam.funteer.user.entity.Team;
+import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.TeamRepository;
 
+import com.yam.funteer.user.repository.UserRepository;
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +36,11 @@ public class LiveServiceImpl implements LiveService{
     private final Map<String, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
     private final Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
 
-    private final TeamRepository teamRepository;
+    private final UserRepository userRepository;
     private final LiveRepository liveRepository;
     private final FundingRepository fundingRepository;
+
+    private Long userId = 81L;
 
     @PostConstruct
     public void init(){
@@ -45,13 +49,15 @@ public class LiveServiceImpl implements LiveService{
 
     @Override
     public JSONObject initializeSession(CreateConnectionRequest request) {
-        Long userId = 81L;//SecurityUtil.getCurrentUserId();
-        Team team = teamRepository.findById(userId)
+        Long userId = this.userId;//SecurityUtil.getCurrentUserId();
+        this.userId = this.userId == 81L ? 83L : 81L;
+
+        User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         String sessionName = request.getSessionName();
 
-        UserType userType = team.getUserType();
+        UserType userType = user.getUserType();
         OpenViduRole role = userType.getOpenviduRole();
         ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
                 .role(role).build();
@@ -66,7 +72,7 @@ public class LiveServiceImpl implements LiveService{
                 .orElseThrow(IllegalArgumentException::new);
 
             Team fundingTeam = funding.getTeam();
-            if(!fundingTeam.equals(team)) throw new IllegalArgumentException("비정상적인 접근입니다");
+            if(!fundingTeam.equals(user)) throw new IllegalArgumentException("비정상적인 접근입니다");
 
             return createNewSession(sessionName, role, connectionProperties, funding);
         }
