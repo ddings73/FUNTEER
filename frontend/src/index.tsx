@@ -52,6 +52,7 @@ import {
   AdminNotice,
   AdminFaq,
   AdminLive,
+  AdminNoticeCreate,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -94,13 +95,10 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-<<<<<<< HEAD
-=======
         path: 'login/kakao',
         element: <Test />,
       },
       {
->>>>>>> feat-BE/member
         path: 'findEmail',
         element: <FindEmail />,
       },
@@ -260,6 +258,10 @@ const router = createBrowserRouter([
         path: 'live',
         element: <AdminLive />,
       },
+      {
+        path: 'noticecreate',
+        element: <AdminNoticeCreate />,
+      }
     ],
   },
 ]);
