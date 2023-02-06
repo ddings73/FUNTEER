@@ -39,7 +39,7 @@ export const AdminSideBarItem: adminSideBarDataType[] = [
   },
   {
     title: '공지사항 관리',
-    path: 'announcement',
+    path: 'notice',
     icon: <AiIcons.AiFillExclamationCircle color="white" />,
   },
   {

@@ -1,5 +1,5 @@
 import swal from 'sweetalert2';
-import { paymentSuccessRequest } from '../api/charge';
+import { paymentSuccessRequest } from '../api/payment';
 import { CallBackParams, PayParams } from '../types/payment';
 
 const callback: (response: CallBackParams) => void = async (response) => {

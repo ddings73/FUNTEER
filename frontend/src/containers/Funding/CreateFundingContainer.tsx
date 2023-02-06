@@ -16,12 +16,13 @@ import RoomIcon from '@mui/icons-material/Room';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { fontWeight } from '@mui/system';
+import { log } from 'console';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestUploadImage } from '../../api/funding';
 import { FundingInterface, descriptionType } from '../../types/funding';
 import defaultThumbnail from '../../assets/images/default-profile-img.svg';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { openModal } from '../../store/slices/modalSlice';
+import { closeModal, openModal } from '../../store/slices/modalSlice';
 import requiredIcon from '../../assets/images/funding/required.svg';
 import uploadIcon from '../../assets/images/funding/upload.svg';
 import { diffDayStartToEnd } from '../../utils/day';
@@ -207,21 +208,27 @@ function CreateFundingContainer() {
     setTodoText('');
   };
 
-  const removeTodo = (index: number, level: string) => {
-    console.log('removeTodo', index);
-    console.log('level', level);
+  const removeTodo = (remove: number, level: string) => {
     let prev;
-
+    let next
     switch (level) {
       case 'LEVEL_ONE':
         prev = fundingData.targetMoneyLevelOne.descriptions;
-
+        // eslint-disable-next-line no-case-declarations
+         next = prev.filter((data,index)=>index !== remove )
+        setFundingData({ ...fundingData, targetMoneyLevelOne: { ...fundingData.targetMoneyLevelOne, descriptions: [...next] } });
         break;
       case 'LEVEL_TWO':
         prev = fundingData.targetMoneyLevelTwo.descriptions;
+          // eslint-disable-next-line no-case-declarations
+         next = prev.filter((data,index)=>index !== remove )
+        setFundingData({ ...fundingData, targetMoneyLevelTwo: { ...fundingData.targetMoneyLevelTwo, descriptions: [...next] } });
         break;
       case 'LEVEL_THREE':
         prev = fundingData.targetMoneyLevelThree.descriptions;
+         // eslint-disable-next-line no-case-declarations
+         next = prev.filter((data,index)=>index !== remove )
+        setFundingData({ ...fundingData, targetMoneyLevelThree: { ...fundingData.targetMoneyLevelThree, descriptions: [...next] } });
         break;
 
       default:
@@ -322,24 +329,24 @@ function CreateFundingContainer() {
           </p>
 
           <div className={styles['date-picker-box']}>
-            <LocalizationProvider dateAdapter={AdapterDayjs} required>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 disablePast
-                label="펀딩 시작 일자를 선택해주세요"
+                label="펀딩 종료 일자를 선택해주세요."
                 inputFormat="YYYY-MM-DD"
                 value={startDate}
                 onChange={(newValue) => {
                   setStartDate(newValue);
                   onChangeDateHandler(newValue, 'startDate');
                 }}
-                renderInput={(params) => <TextField {...params} sx={{ mr: 2, mb: 5, minWidth: 300 }} />}
+                renderInput={(params) => <TextField   {...params} sx={{ mr: 2, mb: 4, minWidth: 100,width:"49%" }} />}
               />
             </LocalizationProvider>
 
             <LocalizationProvider dateAdapter={AdapterDayjs} required>
               <DatePicker
                 disablePast
-                label="펀딩 종료 일자를 선택해주세요"
+                label="펀딩 종료 일자를 선택해주세요."
                 minDate={startDate}
                 inputFormat="YYYY-MM-DD"
                 value={endDate}
@@ -347,7 +354,7 @@ function CreateFundingContainer() {
                   setEndDate(newValue);
                   onChangeDateHandler(newValue, 'endDate');
                 }}
-                renderInput={(params) => <TextField {...params} sx={{ minWidth: 300 }} />}
+                renderInput={(params) => <TextField {...params} sx={{ minWidth: 100,mb:3,width:"49%" }} />}
               />
             </LocalizationProvider>
           </div>

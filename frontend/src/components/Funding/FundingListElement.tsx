@@ -21,13 +21,14 @@ const ProgressBar = styled.div<{ gage: number }>`
 `;
 
 function FundingListElement(funding: FundingElementType) {
-  const { id, thumbnail, title, startDate, postType, postDate, fundingDescription, endDate, currentFundingAmount, amount } = funding;
+  const { id, thumbnail, title, startDate, postType, postDate, fundingDescription, endDate, currentFundingAmount, targetAmount } = funding;
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
+  
   const enoughMoney = useMemo(() => {
-    return Math.floor((currentFundingAmount / amount) * 100);
-  }, [currentFundingAmount, amount]);
+    return Math.floor((currentFundingAmount / targetAmount) * 100);
+  }, [currentFundingAmount, targetAmount]);
 
   const moveFundingDetail = () => {
     navigate(`${pathname}/detail/${id}`);
