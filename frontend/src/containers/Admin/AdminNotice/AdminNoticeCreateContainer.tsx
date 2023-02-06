@@ -4,11 +4,21 @@ import Button from '@mui/material/Button';
 import { requestUploadImage } from '../../../api/funding';
 import styles from './AdminNoticeCreateContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
+import { requestCreateNotice } from "../../../api/admin";
+import { NoticeInterface } from "../../../types/notice";
 
 
 function AdminNoticeCreateContainer() {
     const [file, setFile] = useState<FileList>();
     const [fileList, setFileList] = useState([]);
+    
+    // 파일 타입 지정 필요 
+
+    const [noticeData, setNoticeData] = useState<NoticeInterface> ({
+      files: new FileList,
+      title: '',
+      content: '',
+    })
 
     const editorRef = useRef<ToastEditor>(null);
 
@@ -23,7 +33,7 @@ function AdminNoticeCreateContainer() {
 
         const url = await requestUploadImage(blob);
 
-        callback(url, 'NoticeContents 이미지');
+        // callback(url, 'NoticeContents 이미지');
     };
 
     const onChangeFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,6 +41,18 @@ function AdminNoticeCreateContainer() {
         setFile(e.target.files)
       }
     }
+
+    const createNotice = async()=>{
+      try{
+        const response =await requestCreateNotice(noticeData);
+        console.log(response);
+        
+      }
+      catch(error){
+        console.log(error)
+      }
+    }
+
 
     return (
         <div className={styles.container}>
@@ -63,7 +85,7 @@ function AdminNoticeCreateContainer() {
 
           </div>
         <div className={styles['btn-div']}>
-          <Button variant="contained" className={styles.submit}>
+          <Button variant="contained" className={styles.submit} onClick={createNotice}>
             등록
           </Button>
         </div>

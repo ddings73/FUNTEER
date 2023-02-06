@@ -39,6 +39,7 @@ import {
   MyPage,
   AdminMain,
   AdminMember,
+  AdminNoticeCreate,
   LogOut,
   AdminTeam,
   FundingList,
@@ -54,6 +55,7 @@ import {
   AdminLive,
   TeamEdit,
   Kakao,
+
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -229,6 +231,10 @@ const router = createBrowserRouter([
       {
         path: 'notice',
         element: <AdminNotice />,
+      },
+      {
+        path:"notice/noticecreate",
+        element:<AdminNoticeCreate />
       },
       {
         path: 'faq',
