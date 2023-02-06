@@ -16,7 +16,6 @@ export const requestSignIn = async (userInfo: UserSignInType) => {
   return res;
 };
 
-
 export const requestEmailDuplConfirm = async (email: string) => {
   const res = await http.get('/confirm/email', {
     params: {
@@ -101,4 +100,13 @@ export const requestUserInfo = async () => {
 export const requestFollow = async (teamId: string | undefined) => {
   const res = await http.put(`member/follow/${teamId}`);
   return res;
+};
+
+/**
+ * @name 로그아웃
+ * @method DELETE
+ */
+export const requestLogout = async () => {
+  const response = await http.delete('out');
+  return response;
 };
