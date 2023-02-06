@@ -17,6 +17,7 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.sun.istack.NotNull;
@@ -46,6 +47,8 @@ public class User {
 	private @NotNull String email;
 	private String password;
 	private @NotNull String name;
+
+	@Column(unique = true)
 	private String phone;
 	@OneToOne
 	@JoinColumn(name = "profile_id")
@@ -55,6 +58,7 @@ public class User {
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
 	private UserType userType;
+	private Long totalPayAmount;
 
 	public Optional<Attach> getProfileImg(){
 		return Optional.ofNullable(this.profileImg);
@@ -71,7 +75,14 @@ public class User {
 	public void signOut(UserType userType){
 		this.userType = userType;
 	}
-	public boolean isResign(){return this.userType.equals(UserType.NORMAL_RESIGN) || this.userType.equals(UserType.TEAM_RESIGN);}
+	public void validate(){
+		switch(userType){
+			case NORMAL_RESIGN:
+			case TEAM_RESIGN: throw new AccessDeniedException("탈퇴한 회원입니다.");
+			case KAKAO: throw new AccessDeniedException("카카오 회원은 카카오로 로그인해주세요");
+			case TEAM_WAIT: throw new AccessDeniedException("가입 대기중인 회원입니다.");
+		}
+	}
 	public void validatePassword(PasswordEncoder passwordEncoder, String password){
 		if(!passwordEncoder.matches(password, this.password))
 			throw new IllegalArgumentException();

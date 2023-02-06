@@ -52,6 +52,7 @@ import {
   AdminNotice,
   AdminFaq,
   AdminLive,
+  AdminNoticeCreate,
   TeamEdit,
   Kakao,
 } from './pages/index';
@@ -238,6 +239,10 @@ const router = createBrowserRouter([
         path: 'live',
         element: <AdminLive />,
       },
+      {
+        path: 'noticecreate',
+        element: <AdminNoticeCreate />,
+      }
     ],
   },
 ]);

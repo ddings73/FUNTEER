@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.entity;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -22,7 +23,14 @@ import lombok.NoArgsConstructor;
 public class ReportDetail {
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-	@ManyToOne
+
+	public ReportDetail(Report report, String description, Long amount) {
+		this.report = report;
+		this.description = description;
+		this.amount = amount;
+	}
+
+	@ManyToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "report_id")
 	private Report report;
 	private String description;

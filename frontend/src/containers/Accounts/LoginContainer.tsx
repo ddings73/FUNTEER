@@ -4,7 +4,6 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 // mui
 import { Button, TextField } from '@mui/material';
 
-import { async } from 'q';
 import styles from './LoginContainer.module.scss';
 import { UserSignInType } from '../../types/user';
 import { requestSignIn } from '../../api/user';
@@ -12,7 +11,6 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { closeModal, openModal } from '../../store/slices/modalSlice';
 import { setUserLoginState, setUserType } from '../../store/slices/userSlice';
 import KakaoLogin from '../../assets/images/kakao.png';
-import { http } from '../../api/axios';
 
 function LoginContainer() {
   const navigate = useNavigate();

@@ -1,14 +1,17 @@
 package com.yam.funteer.user.controller;
 
-import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.user.dto.request.*;
-import com.yam.funteer.user.dto.response.MemberAccountResponse;
-import com.yam.funteer.user.dto.response.MemberProfileResponse;
+import com.yam.funteer.user.dto.request.member.*;
+import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
+import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
+import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
 import com.yam.funteer.user.service.MemberService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import springfox.documentation.annotations.ApiIgnore;
 
 import org.springframework.http.ResponseEntity;
@@ -17,9 +20,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/member")
@@ -61,7 +62,6 @@ public class MemberController {
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "성공"),
 			@ApiResponse(code = 400, message = "잘못된 요청정보"),
-			@ApiResponse(code = 401, message = "사용자 인증실패"),
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/{userId}/profile")
@@ -79,9 +79,9 @@ public class MemberController {
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/profile")
-	public void modifyProfile(@Validated @ModelAttribute UpdateProfileRequest updateProfileRequest, BindingResult bindingResult){
+	public void modifyProfile(@Validated @ModelAttribute UpdateMemberProfileRequest request, BindingResult bindingResult){
 		validateBinding(bindingResult);
-		memberService.updateProfile(updateProfileRequest);
+		memberService.updateProfile(request);
 	}
 
 	@ApiOperation(value = "회원정보 조회", notes = "회원의 개인정보( 이메일, 이름, 전화번호 )를 조회합니다.")
@@ -91,10 +91,10 @@ public class MemberController {
 		@ApiResponse(code = 401, message = "인증 실패"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@GetMapping("/{userId}/account")
-	public ResponseEntity<MemberAccountResponse> getInfo(@PathVariable Long userId){
-		MemberAccountResponse account = memberService.getAccount(userId);
-		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(account);
+	@GetMapping("/account")
+	public ResponseEntity<MemberAccountResponse> getInfo(){
+		MemberAccountResponse account = memberService.getAccountInfo();
+		return ResponseEntity.ok(account);
 	}
 
 
@@ -102,17 +102,15 @@ public class MemberController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
 		@ApiResponse(code = 400, message = "잘못된 요청정보"),
+		@ApiResponse(code = 401, message = "사용자 인증실패"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/account")
-	public void modifyAccount(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult) {
+	public void modifyAccount(@Validated @RequestBody UpdateMemberAccountRequest request, BindingResult bindingResult) {
 		validateBinding(bindingResult);
-		memberService.updateAccount(baseUserRequest);
+		memberService.updateAccount(request);
 	}
 
-	/**
-	 * TODO 미구현, 마일리지를 프로필 조회때 같이 가져오는게 아니었나?
-	 */
 	@ApiOperation(value = "마일리지 조회", notes = "주어진 회원의 마알리지 정보를 조회할 수 있다")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
@@ -121,9 +119,10 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/mileage")
-	public ResponseEntity getMileage(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
-		validateBinding(bindingResult);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<MileageDetailResponse> getMileageDetails(@Validated @RequestBody MileageDetailRequest request, BindingResult bindingResult,
+								   @PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
+		MileageDetailResponse mileageDetailResponse = memberService.getMileageDetails(request, pageable);
+		return ResponseEntity.ok(mileageDetailResponse);
 	}
 
 
@@ -152,10 +151,9 @@ public class MemberController {
 		@ApiResponse(code = 401, message = "사용자 인증실패"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@PutMapping("/follow")
-	public ResponseEntity followTeam(@Validated @RequestBody FollowRequest followRequest, BindingResult bindingResult){
-		validateBinding(bindingResult);
-		memberService.followTeam(followRequest);
+	@PutMapping("/follow/{teamId}")
+	public ResponseEntity followTeam(@PathVariable Long teamId){
+		memberService.followTeam(teamId);
 		return ResponseEntity.ok().build();
 	}
 
@@ -168,9 +166,8 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/like")
-	public ResponseEntity wishFunding(@Validated @RequestBody WishRequest wishRequest, BindingResult bindingResult){
-		validateBinding(bindingResult);
-		memberService.wishFunding(wishRequest);
+	public ResponseEntity wishFunding(@PathVariable Long fundingId){
+		memberService.wishFunding(fundingId);
 		return ResponseEntity.ok().build();
 	}
 

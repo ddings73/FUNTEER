@@ -2,7 +2,7 @@ import axios, { AxiosInstance } from 'axios';
 import { requestUpdateToken } from './auth';
 
 export const http: AxiosInstance = axios.create({
-  baseURL: 'https://i8e204.p.ssafy.io/api/v1',
+  baseURL: 'http://i8e204.p.ssafy.io/api/v1',
   withCredentials: true,
 });
 http.interceptors.request.use(

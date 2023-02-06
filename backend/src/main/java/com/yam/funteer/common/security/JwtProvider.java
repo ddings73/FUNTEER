@@ -33,7 +33,7 @@ public class JwtProvider {
     private String secretKey;
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
-    private final long accessPeriod = 1000L * 60L * 60L; // 1시간
+    private final long accessPeriod = 1000L * 60L * 60L * 24L; // 1시간 + 23시간
     private final long refreshPeriod = 1000L * 60L * 60L * 24L; // 1일
     @PostConstruct
     protected void init(){
@@ -46,39 +46,29 @@ public class JwtProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        Date now = new Date();
+        String userId = authentication.getName();
+        return createToken(userId, authorities);
+    }
 
+    public TokenInfo generateTokenForOAuth(String userId){
+        String authorities = UserType.KAKAO.getAuthority();
+        return createToken(userId, authorities);
+    }
+
+    public TokenInfo createToken(String userId, String authorities){
+
+        Date now = new Date();
         String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(userId)
                 .claim(AUTHORITIES_KEY, authorities) // 권한
                 .setExpiration(new Date(now.getTime() + accessPeriod)) // 만료기간
                 .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
                 .compact();
         String refreshToken = Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(userId)
                 .setExpiration(new Date(now.getTime() + refreshPeriod)) // 만료기간
                 .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
                 .compact();
-
-        return TokenInfo.of(BEARER_TYPE, accessToken, refreshToken);
-    }
-
-    public TokenInfo generateTokenForOAuth(String userId){
-        String authorities = UserType.KAKAO.getAuthority();
-
-        Date now = new Date();
-
-        String accessToken = Jwts.builder()
-            .setSubject(userId)
-            .claim(AUTHORITIES_KEY, authorities) // 권한
-            .setExpiration(new Date(now.getTime() + accessPeriod)) // 만료기간
-            .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
-            .compact();
-        String refreshToken = Jwts.builder()
-            .setSubject(userId)
-            .setExpiration(new Date(now.getTime() + refreshPeriod)) // 만료기간
-            .signWith(SignatureAlgorithm.HS512, secretKey) // 서명
-            .compact();
 
         return TokenInfo.of(BEARER_TYPE, accessToken, refreshToken);
     }
@@ -106,6 +96,7 @@ public class JwtProvider {
 
 
     public boolean validateToken(String token) {
+        if(token == null) return false;
         try {
             Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token);
             return true;
@@ -122,10 +113,14 @@ public class JwtProvider {
     }
 
     // claim 파싱
-    private Claims parseClaims(String accessToken){
-        return Jwts.parserBuilder()
-                .setSigningKey(secretKey).build()
-                .parseClaimsJws(accessToken)
-                .getBody();
+    private Claims parseClaims(String token){
+            return Jwts.parserBuilder()
+                    .setSigningKey(secretKey).build()
+                    .parseClaimsJws(token)
+                    .getBody();
+    }
+
+    public Long getUserId(String token){
+        return Long.valueOf(parseClaims(token).getSubject());
     }
 }

@@ -32,29 +32,25 @@ public class ReplyController {
 
 	@ApiOperation(value="답변 상세글")
 	@GetMapping("/{qnaId}/reply")
-	public ResponseEntity<?> replyGetDetail(@PathVariable Long qnaId) throws
-		QnaNotFoundException {
+	public ResponseEntity<?> replyGetDetail(@PathVariable Long qnaId) {
 		return ResponseEntity.ok(replyService.replyGetDetail(qnaId));
 	}
 
 	@ApiOperation(value="답변 등록")
 	@PostMapping("/{qnaId}/reply")
-	public ResponseEntity<?> replyRegister(@PathVariable Long qnaId,@RequestBody QnaReplyReq qnaReplyReq) throws
-		QnaNotFoundException {
+	public ResponseEntity<?> replyRegister(@PathVariable Long qnaId,@RequestBody QnaReplyReq qnaReplyReq) {
 		return ResponseEntity.ok(replyService.replyRegister(qnaId,qnaReplyReq));
 	}
 
 	@ApiOperation(value="답변 수정")
 	@PutMapping("/{qnaId}/reply")
-	public ResponseEntity<?> replyModify(@PathVariable Long qnaId,@RequestBody QnaReplyReq qnaReplyReq) throws
-		QnaNotFoundException {
+	public ResponseEntity<?> replyModify(@PathVariable Long qnaId,@RequestBody QnaReplyReq qnaReplyReq){
 		return ResponseEntity.ok(replyService.replyModify(qnaId,qnaReplyReq));
 	}
 
 	@ApiOperation(value = "답변 삭제")
 	@DeleteMapping("/{qnaId}/reply")
-	public ResponseEntity<? extends BaseResponseBody> replyDelete(@PathVariable Long qnaId) throws
-		QnaNotFoundException {
+	public ResponseEntity<? extends BaseResponseBody> replyDelete(@PathVariable Long qnaId){
 		replyService.replyDelete(qnaId);
 		return ResponseEntity.ok(BaseResponseBody.of("Success"));
 	}

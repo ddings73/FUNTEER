@@ -1,6 +1,5 @@
 package com.yam.funteer.user.controller;
 
-import com.yam.funteer.user.dto.request.EmailConfirmRequest;
 import com.yam.funteer.user.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +11,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import javax.validation.constraints.NotBlank;
 
 @RestController
 @RequiredArgsConstructor
@@ -49,7 +50,7 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 에러"),
     })
     @PutMapping("/forget/pw") // 대기
-    public ResponseEntity forgetPassword(@RequestBody EmailConfirmRequest emailConfirmRequest){
+    public ResponseEntity forgetPassword(){
 
         return ResponseEntity.ok().build();
     }
@@ -62,7 +63,7 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 에러"),
     })
     @GetMapping("/confirm/email")
-    public ResponseEntity confirmEmail(@RequestParam String email){
+    public ResponseEntity confirmEmail(@RequestParam @NotBlank String email){
         userService.confirmEmail(email);
         return ResponseEntity.ok().build();
     }
@@ -74,7 +75,7 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 에러"),
     })
     @GetMapping("/confirm/name")
-    public ResponseEntity confirmName(@RequestParam String name){
+    public ResponseEntity confirmName(@RequestParam @NotBlank String name){
         userService.confirmName(name);
         return ResponseEntity.ok().build();
     }
@@ -86,8 +87,20 @@ public class UserController {
             @ApiResponse(code = 500, message = "서버 에러"),
     })
     @GetMapping("/confirm/nickname")
-    public ResponseEntity confirmNickname(@RequestParam String nickname){
+    public ResponseEntity confirmNickname(@RequestParam @NotBlank String nickname){
         userService.confirmNickname(nickname);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiOperation(value="전화번호 중복검증", notes = "회원의 전화번호가 중복되는지 검사합니다")
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 409, message = "전화번호 중복"),
+        @ApiResponse(code = 500, message = "서버 에러"),
+    })
+    @GetMapping("/confirm/phone")
+    public ResponseEntity confirmPhoneNumber(@RequestParam @NotBlank String phone){
+        userService.confirmPhone(phone);
         return ResponseEntity.ok().build();
     }
 }

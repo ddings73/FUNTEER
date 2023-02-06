@@ -3,6 +3,8 @@ package com.yam.funteer.donation.controller;
 import java.io.IOException;
 import java.util.List;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.donation.dto.request.DonationModifyReq;
 import com.yam.funteer.donation.exception.DonationNotFoundException;
 import com.yam.funteer.donation.dto.request.DonationJoinReq;
 import com.yam.funteer.donation.dto.request.DonationRegisterReq;
@@ -25,6 +28,7 @@ import com.yam.funteer.donation.service.DonationService;
 import io.swagger.annotations.Api;
 
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 
 @Api(value="Donation",tags="도네이션")
@@ -36,17 +40,22 @@ public class DonationController {
 
 	private final DonationService donationService;
 
-	@ApiOperation(value = "도네이션 리스트")
+	@ApiOperation(value="현재 진행 중인 도네이션")
 	@GetMapping("")
-	public ResponseEntity<?> donationGetList() {
-		return ResponseEntity.ok(donationService.donationGetList());
+	public ResponseEntity<?> currentDonation() {
+		return ResponseEntity.ok(donationService.donationGetCurrent());
+	}
+
+	@ApiOperation(value = "도네이션 리스트")
+	@GetMapping("/list")
+	public ResponseEntity<?> donationGetList( @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(donationService.donationGetList(page,size));
 	}
 
 	@ApiOperation(value = "도네이션 상세")
 	@GetMapping("/{postId}")
 	public ResponseEntity<?> donationGetDetail(@PathVariable Long postId) throws
 		DonationNotFoundException {
-
 		return ResponseEntity.ok(donationService.donationGetDetail(postId));
 	}
 
@@ -61,18 +70,15 @@ public class DonationController {
 
 	@ApiOperation(value = "도네이션 등록", notes = "<strong>userId,타이틀,내용,금액 필수<strong>.")
 	@PostMapping("")
-	public ResponseEntity<?> donationRegister(@RequestPart(value = "donationRegisterReq") DonationRegisterReq donationRegisterReq,
-		@RequestPart (value = "files",required = false)List<MultipartFile>files) {
-		return ResponseEntity.ok(donationService.donationRegister(donationRegisterReq,files));
+	public ResponseEntity<?> donationRegister( DonationRegisterReq donationRegisterReq) {
+		return ResponseEntity.ok(donationService.donationRegister(donationRegisterReq));
 	}
 
 	@ApiOperation(value = "도네이션 수정", notes = "<strong>postId, userId,타이틀,내용,금액 필수<strong>.")
 	@PutMapping("/{postId}")
-	public ResponseEntity<?> donationModify(@PathVariable Long postId,@RequestPart(value ="donationModifyReq" ) DonationRegisterReq donationModifyrReq,
-		@RequestParam (value = "files",required = false) List<MultipartFile>files) throws
+	public ResponseEntity<?> donationModify(@PathVariable Long postId, DonationModifyReq donationModifyrReq) throws
 		DonationNotFoundException{
-
-		return ResponseEntity.ok(donationService.donationModify(postId,donationModifyrReq,files));
+		return ResponseEntity.ok(donationService.donationModify(postId,donationModifyrReq));
 	}
 
 }
