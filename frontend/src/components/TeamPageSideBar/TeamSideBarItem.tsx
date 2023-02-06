@@ -16,13 +16,8 @@ export const SideBarData: SideBarDataType[] = [
     icon: <AiIcons.AiFillHome />,
   },
   {
-    title: '팀 정보 수정',
-    path: '/teamEditProfile',
-    icon: <BsIcons.BsFillPersonFill />,
-  },
-  {
     title: '도네이션 내역',
-    path: '/teamDonates',
+    path: '/teamdonate',
     icon: <BiIcons.BiDonateHeart />,
   },
 ];

@@ -28,9 +28,7 @@ export type teamProfileType = {
   email: string;
   phone: string;
   money: number;
-  followerCnt: number;
   description: string;
   fundingList: object;
-  followBtn: boolean;
   totalFundingAmount: number;
 };
