@@ -110,3 +110,12 @@ export const requestLogout = async () => {
   const response = await http.delete('out');
   return response;
 };
+
+/**
+ * @name 유저프로필조회
+ * @method GET
+ */
+export const requestUserProfile = async (userId: string) => {
+  const response = await http.get(`member/${userId}/profile`);
+  return response;
+};

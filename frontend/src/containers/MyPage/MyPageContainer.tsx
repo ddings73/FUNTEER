@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import EmailIcon from '@mui/icons-material/Email';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -9,10 +9,20 @@ import { useLocation } from 'react-router-dom';
 import SideBarList from '../../components/MyPageSideBar/SideBarList';
 import styles from './MyPageContainer.module.scss';
 import ProfileSvg from '../../assets/images/default-profile-img.svg';
-import { requestUserInfo } from '../../api/user';
+import { requestUserInfo, requestUserProfile } from '../../api/user';
+import { useAppSelector } from '../../store/hooks';
+import { userProfileInterface } from '../../types/user';
 
 export function MyPageContainer() {
+  const userId = useAppSelector((state) => state.userSlice.userId);
   const { pathname } = useLocation();
+  const [userProfile, setUserProfile] = useState<userProfileInterface>({
+    nickname: '',
+    profileUrl: '',
+    money: 0,
+    wishCnt: 0,
+    followingCnt: 0,
+  });
   console.log(pathname);
 
   const handleCopyClipBoard = async (text: string, type: string) => {
@@ -27,8 +37,8 @@ export function MyPageContainer() {
 
   const getRequestUserInfo = async () => {
     try {
-      const response = await requestUserInfo();
-      console.log(response);
+      const response = await requestUserProfile(userId);
+      setUserProfile({ ...response.data });
     } catch (error) {
       console.log(error);
     }
@@ -55,21 +65,20 @@ export function MyPageContainer() {
                   <img className={styles.profilePic} src={ProfileSvg} alt="" />
                 </div>
                 <div className={styles.data}>
-                  <h2>김승섭</h2>
-                  <span>광안리어쩌고닉네임</span>
+                  <h2>{userProfile.nickname}</h2>
                 </div>
                 <div className={styles.row}>
                   <div className={styles.info}>
                     <h3>팔로우</h3>
-                    <span>3</span>
+                    <span>{userProfile.followingCnt}</span>
                   </div>
                   <div className={styles.info}>
                     <h3>찜한 펀딩</h3>
-                    <span>100</span>
+                    <span>{userProfile.followingCnt}</span>
                   </div>
                   <div className={styles.info}>
                     <h3>총 기부</h3>
-                    <span>0</span>
+                    <span>{userProfile.money}</span>
                   </div>
                 </div>
                 <div className={styles.buttons}>

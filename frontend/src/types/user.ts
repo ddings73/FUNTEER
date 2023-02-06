@@ -1,3 +1,5 @@
+import { string } from 'yargs';
+
 export type UserSignInType = {
   email: string;
   password: string;
@@ -34,3 +36,17 @@ export type teamProfileType = {
   followBtn: boolean;
   totalFundingAmount: number;
 };
+
+export interface userProfileInterface {
+  nickname: string;
+  profileUrl: string;
+  money: number;
+  wishCnt: number;
+  followingCnt: number;
+}
+
+export interface userInfoInterface {
+  email: string;
+  name: string;
+  phone: string;
+}
