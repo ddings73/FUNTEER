@@ -35,8 +35,12 @@ public class Team extends User{
         this.description = description;
     }
 
-    public void setTotalFundingAmount(Long amount) {
+    public void addTotalFundingAmount(Long amount) {
         this.totalFundingAmount += amount;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return getId() == ((Team)obj).getId();
+    }
 }

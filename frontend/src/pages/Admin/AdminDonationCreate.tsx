@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AdminDonationContainer from '../../containers/Admin/AdminDonation/AdminDonationContainer';
+import AdminDonationCreateContainer from '../../containers/Admin/AdminDonation/AdminDonationCreateContainer';
 import { useAppSelector } from '../../store/hooks';
 
-function AdminDonation() {
+function AdminDonationCreate() {
   const userType = useAppSelector((state) => state.userSlice.userType);
   console.log(userType);
   const navigate = useNavigate();
@@ -12,6 +12,6 @@ function AdminDonation() {
       navigate('/login');
     }
   }, []);
-  return <AdminDonationContainer />;
+  return <AdminDonationCreateContainer />;
 }
-export default AdminDonation;
+export default AdminDonationCreate;
