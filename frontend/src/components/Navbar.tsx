@@ -64,18 +64,7 @@ function ResponsiveAppBar() {
   }));
 
   async function logoutFunc() {
-    try {
-      const response = await requestSignOut();
-      if (response.status === 200) {
-        localStorage.removeItem('token');
-        dispatch(setUserLoginState(false));
-        alert('로그아웃 되었습니다.');
-        navigateTo('/');
-      }
-    } catch (error) {
-      console.error(error);
-      alert('로그아웃 실패');
-    }
+
   }
 
   const isLogin = useAppSelector((state) => state.userSlice.isLogin);
