@@ -45,7 +45,7 @@ public class LiveServiceImpl implements LiveService{
 
     @Override
     public JSONObject initializeSession(CreateConnectionRequest request) {
-        Long userId = 69L;//SecurityUtil.getCurrentUserId();
+        Long userId = 81L;//SecurityUtil.getCurrentUserId();
         Team team = teamRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
