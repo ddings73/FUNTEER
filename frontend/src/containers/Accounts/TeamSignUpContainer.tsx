@@ -6,7 +6,8 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { s1000, s1500, w1500, customAlert } from '../../utils/customAlert';
 import { teamSignUpType } from '../../types/user';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
-import { requestEmailDuplConfirm, requestNameDuplConfirm, requestTeamSignUp } from '../../api/user';
+import { requestEmailDuplConfirm, requestNameDuplConfirm } from '../../api/user';
+import { requestTeamSignUp } from '../../api/team';
 import styles from './TeamSignUpContainer.module.scss';
 
 function TeamSignUpContainer() {
