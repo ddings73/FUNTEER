@@ -29,8 +29,7 @@ public class UpdateTeamProfileRequest extends UpdateProfileRequest {
                 .regDate(LocalDateTime.now())
                 .build();
     }
-    public void validateBannerAndProfile(){
-        validateProfile();
+    public void validateBanner() {
         try {
             if(!FileUtil.validImgFile(banner.getInputStream()))
                 throw new IllegalArgumentException("이미지파일만 업로드 할 수 있습니다.");
