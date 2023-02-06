@@ -131,13 +131,11 @@ public class TeamServiceImpl implements TeamService{
 		MultipartFile bannerFile = request.getBanner();
 		MultipartFile profileImgFile = request.getProfileImg();
 
-		Attach profile = team.getProfileImg().orElse(null);
-		Attach banner = team.getBanner().orElse(null);
 
 		if(profileImgFile != null) {
 			request.validateProfile();
 			String profilePath = awsS3Uploader.upload(profileImgFile, "user");
-			profile = team.getProfileImg().orElseGet(() -> request.getProfile(profilePath));
+			Attach profile = team.getProfileImg().orElseGet(() -> request.getProfile(profilePath));
 
 			if(profile.getId() == null){
 				attachRepository.save(profile);
@@ -150,7 +148,7 @@ public class TeamServiceImpl implements TeamService{
 		if(bannerFile != null) {
 			request.validateBanner();
 			String bannerPath = awsS3Uploader.upload(bannerFile, "user");
-			banner = team.getBanner().orElseGet(() -> request.getBanner(bannerPath));
+			Attach banner = team.getBanner().orElseGet(() -> request.getBanner(bannerPath));
 			if(banner.getId() == null){
 				attachRepository.save(banner);
 				team.updateBanner(banner);

@@ -98,7 +98,6 @@ public class MemberServiceImpl implements MemberService {
         Long userId = SecurityUtil.getCurrentUserId();
         Member member = validateSameUser(userId, request.getUserId());
 
-        request.validateProfile();
         MultipartFile profileImg = request.getProfileImg();
 
         if(profileImg != null) {
