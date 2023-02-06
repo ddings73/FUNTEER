@@ -63,7 +63,7 @@ public class User {
 	public Optional<Attach> getProfileImg(){
 		return Optional.ofNullable(this.profileImg);
 	}
-	protected void updateProfile(Attach profileImg){
+	public void updateProfile(Attach profileImg){
 		this.profileImg = profileImg;
 	}
 	public void charge(Long amount) {
