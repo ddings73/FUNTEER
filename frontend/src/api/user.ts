@@ -70,24 +70,6 @@ export const requestMemberSignUp = async (memberSignUpInfo: memberSignUpType) =>
   return res;
 };
 
-export const requestTeamSignUp = async (teamSignUpInfo: teamSignUpType) => {
-  const formData = new FormData();
-  const entries = Object.entries(teamSignUpInfo);
-
-  entries.forEach((data) => {
-    const key = data[0];
-    if (key !== 'passwordCheck') {
-      const value = data[1];
-
-      formData.append(`${key}`, value);
-    }
-  });
-
-  const res = await http.post('team', formData);
-
-  return res;
-};
-
 /**
  * 유저 정보 조회 API
  * @method GET
