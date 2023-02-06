@@ -13,18 +13,18 @@ public class DonationBaseRes {
 	private Long id;
 	private String title;
 	private String content;
-	private List<String>files;
+	private String file;
 	private String targetAmount;
 	private String currentAmount;
 	private PostType postType;
 	private LocalDate startDate;
 	private LocalDate endDate;
 
-	public DonationBaseRes(Donation entity,List<String>files){
+	public DonationBaseRes(Donation entity,String file){
 		this.id=entity.getId();
 		this.title=entity.getTitle();
 		this.content=entity.getContent();
-		this.files=files;
+		this.file=file;
 		this.targetAmount=entity.getAmount().toString();
 		this.currentAmount=entity.getCurrentAmount().toString();
 		this.postType=entity.getPostType();
