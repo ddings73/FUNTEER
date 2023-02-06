@@ -53,9 +53,7 @@ function LoginContainer() {
         localStorage.setItem('refreshToken', data.token.refreshToken);
         sessionStorage.setItem('user', JSON.stringify(data));
 
-        dispatch(setUserLoginState(true));
-        dispatch(setUserType(data.userType));
-
+        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId }));
         navigate('/');
       }
     } catch (error) {

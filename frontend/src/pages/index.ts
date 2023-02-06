@@ -7,6 +7,7 @@ export { default as MemberSignUp } from './Accounts/MemberSignUp';
 export { default as TeamSignUp } from './Accounts/TeamSignUp';
 export { default as SignUp } from './Accounts/SignUp';
 export { default as LogOut } from './Accounts/LogOut';
+export { default as Kakao } from './Accounts/Kakao';
 
 export { default as ErrorPage } from './AddOns/ErrorPage';
 export { default as Charge } from './AddOns/Charge';
