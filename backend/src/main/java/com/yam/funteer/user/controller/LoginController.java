@@ -39,7 +39,7 @@ public class LoginController {
         if(bindingResult.hasErrors()){
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
             fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));
-            return ResponseEntity.badRequest().build();
+            throw new IllegalArgumentException(fieldErrors.get(0).getDefaultMessage());
         }
         LoginResponse loginResponse = loginService.processLogin(loginRequest);
         return ResponseEntity.ok(loginResponse);
@@ -79,10 +79,10 @@ public class LoginController {
         @ApiResponse(code = 400, message = "잘못된 요청 값, 아이디 혹은 비밀번호가 다르거나 데이터가 다 오지않음"),
         @ApiResponse(code = 500, message = "서버 에러")
     })
-    @GetMapping("/login/kakao/{userId}")
-    public ResponseEntity<LoginResponse> kakaoLogin(@PathVariable String userId){
-        LoginRequest loginRequest = new LoginRequest(userId, "kakaoPassword");
-        LoginResponse loginResponse = loginService.processLogin(loginRequest);
+    @PostMapping("/login/kakao")
+    public ResponseEntity<LoginResponse> kakaoLogin(@RequestBody LoginRequest loginRequest){
+        loginRequest.setPassword("kakaoPassword");
+        LoginResponse loginResponse = loginService.processKakaoLogin(loginRequest);
         return ResponseEntity.ok(loginResponse);
     }
 }

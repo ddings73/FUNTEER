@@ -7,13 +7,20 @@ import Button from '@mui/material/Button';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import swal from 'sweetalert2';
 import QuestionContainerItem from './QuestionContainerItem';
 import styles from './QuestionContainer.module.scss';
+import requiredIcon from '../../../assets/images/funding/required.svg';
+import { customAlert, w1500 } from '../../../utils/customAlert';
 
 export default function QuestionContainer() {
   const navigate = useNavigate();
 
   const [createMode, setCreateMode] = useState<boolean>(false);
+  const [questionCreateInfo, setQuestionCreateInfo] = useState({
+    title: '',
+    content: '',
+  });
 
   const onClickCreateQuesBtnHandler = () => {
     setCreateMode(true);
@@ -23,7 +30,17 @@ export default function QuestionContainer() {
     setCreateMode(false);
   };
 
+  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setQuestionCreateInfo({ ...questionCreateInfo, [name]: value });
+  };
+
   const onClickPostBtnHandler = () => {
+    if (!questionCreateInfo.title || !questionCreateInfo.content) {
+      customAlert(w1500, '문의 정보를 입력해주세요.');
+      return;
+    }
     console.log('문의 등록 요청');
     setCreateMode(false);
   };
@@ -43,13 +60,15 @@ export default function QuestionContainer() {
               <Accordion sx={{ boxShadow: 'none' }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                   <div>
-                    <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquareRound' }}>{data.ques}</Typography>
+                    <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquareRound' }}>{data.content}</Typography>
                     <p className={styles.state}>{data.state}</p>
                   </div>
                 </AccordionSummary>
-                <AccordionDetails sx={{ backgroundColor: 'rgb(255, 254, 253)', padding: '2rem', boxShadow: '0px 0px 20px rgba(255, 132, 0, 0.02) inset' }}>
-                  <Typography sx={{ fontSize: '1rem', lineHeight: '2rem', fontFamily: 'NanumSquareRound' }}>{data.ans}</Typography>
-                </AccordionDetails>
+                {data.ans && (
+                  <AccordionDetails sx={{ backgroundColor: 'rgb(255, 254, 253)', padding: '2rem', boxShadow: '0px 0px 20px rgba(255, 132, 0, 0.02) inset' }}>
+                    <Typography sx={{ fontSize: '1rem', lineHeight: '2rem', fontFamily: 'NanumSquareRound' }}>{data.ans}</Typography>
+                  </AccordionDetails>
+                )}
               </Accordion>
             ))}
           </div>
@@ -60,12 +79,14 @@ export default function QuestionContainer() {
         <div className={styles['ques-create']}>
           <div className={styles['title-label']}>
             <p>제목</p>
+            <img src={requiredIcon} alt="required icon" />
           </div>
-          <TextField id="standard-basic" variant="standard" color="warning" className={styles['title-input']} />
+          <TextField name="title" id="outlined-basic" variant="outlined" color="warning" className={styles['title-input']} onChange={onChangeHandler} />
           <div className={styles['content-label']}>
             <p>내용</p>
+            <img src={requiredIcon} alt="required icon" />
           </div>
-          <TextField id="outlined-multiline-static" multiline rows={10} color="warning" className={styles['content-input']} />
+          <TextField name="content" id="outlined-multiline-static" multiline rows={10} color="warning" className={styles['content-input']} onChange={onChangeHandler} />
           <div className={styles['submit-btn-div']}>
             <Button variant="contained" onClick={onClickCancelBtnHandler}>
               취소

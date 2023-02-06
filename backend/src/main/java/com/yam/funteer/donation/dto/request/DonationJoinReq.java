@@ -13,11 +13,11 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Data
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 public class DonationJoinReq {
-	@NotNull
-	private Long paymentAmount;
+	@NotBlank
+	private String paymentAmount;
 }

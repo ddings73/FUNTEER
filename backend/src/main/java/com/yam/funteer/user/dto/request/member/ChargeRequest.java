@@ -14,14 +14,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class ChargeRequest{
 
-	@NotNull
-	private Long userId;
 	private Long amount;
+
+	private String impUid;
 	public Charge toEntity(Member member){
 		return Charge.builder()
 				.member(member)
 				.amount(this.amount)
 				.chargeDate(LocalDateTime.now())
+				.possibleRefund(1)
 				.build();
 	}
 }

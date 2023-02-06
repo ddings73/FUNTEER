@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yam.funteer.common.BaseResponseBody;
@@ -27,8 +28,8 @@ public class FaqController {
 
 	@ApiOperation(value = "faq List")
 	@GetMapping("")
-	public ResponseEntity<?>FaqGetList(){
-		return ResponseEntity.ok(faqService.faqGetList());
+	public ResponseEntity<?>FaqGetList(@RequestParam int page,@RequestParam int size){
+		return ResponseEntity.ok(faqService.faqGetList(page,size));
 	}
 
 	@ApiOperation(value = "faq 등록")

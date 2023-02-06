@@ -12,20 +12,28 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
+import com.yam.funteer.funding.dto.request.TargetMoneyDetailRequest;
 import com.yam.funteer.funding.dto.request.TargetMoneyRequest;
-import com.yam.funteer.funding.dto.response.CommentResponse;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
 import com.yam.funteer.funding.dto.response.FundingListPageResponse;
 import com.yam.funteer.funding.dto.response.FundingListResponse;
@@ -33,22 +41,22 @@ import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
-import com.yam.funteer.funding.dto.response.HashtagResponse;
-import com.yam.funteer.funding.dto.response.TargetMoneyResponse;
 import com.yam.funteer.funding.entity.Category;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.funding.entity.ReportDetail;
 import com.yam.funteer.funding.entity.TargetMoney;
+import com.yam.funteer.funding.entity.TargetMoneyDetail;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.exception.InsufficientBalanceException;
-import com.yam.funteer.funding.exception.NotFoundHashtagException;
+import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.repository.ReportDetailRepository;
 import com.yam.funteer.funding.repository.ReportRepository;
+import com.yam.funteer.funding.repository.TargetMoneyDetailRepository;
 import com.yam.funteer.funding.repository.TargetMoneyRepository;
 import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
@@ -94,18 +102,21 @@ public class FundingServiceImpl implements FundingService{
 
 	private final CommentRepository commentRepository;
 
+	private final TargetMoneyDetailRepository targetMoneyDetailRepository;
+
+	private final BadgeService badgeService;
+
 
 	@Override
-	public List<FundingListResponse> findFundingByKeyword(String keyword) {
-		List<Funding> byTitleContaining = fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword);
-		List<FundingListResponse> collect = byTitleContaining.stream()
-			.map(funding -> FundingListResponse.from(funding))
-			.collect(Collectors.toList());
+	public Page<FundingListResponse> findFundingByKeyword(String keyword, Pageable pageable) {
+		Page<FundingListResponse> collect = fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword,
+			pageable).map(m -> FundingListResponse.from(m));
 		return collect;
 	}
 
 	@Override
-	public List<FundingListResponse> findFundingByHashtag(String hashtag) {
+	public Page<FundingListResponse> findFundingByHashtag(String hashtag, Pageable pageable) {
+		// 해시태그 없으면 발생하는 Exception 넣기
 		Long hashtagId = hashTagRepository.findByName(hashtag).get().getId();
 		List<PostHashtag> byHashtag = postHashtagRepository.findByHashtagId(hashtagId);
 		List<Funding> posts = new ArrayList<>();
@@ -113,51 +124,53 @@ public class FundingServiceImpl implements FundingService{
 			Optional<Funding> funding = fundingRepository.findById(postHashtag.getPost().getId());
 			posts.add(funding.get());
 		}
-		List<FundingListResponse> collect = posts.stream()
-			.map(funding -> FundingListResponse.from(funding))
-			.collect(Collectors.toList());
-		return collect;
+		List<FundingListResponse> collect = posts.stream().map(m -> FundingListResponse.from(m)).collect(Collectors.toList());
+		Page<FundingListResponse> collect2 = new PageImpl<>(collect.subList(0, collect.size()), pageable, collect.size());
+		return collect2;
 
 	}
 
 
 	@Override
-	public List<FundingListResponse> findFundingByCategory(Long categoryId) {
+	public Page<FundingListResponse> findFundingByCategory(Long categoryId, Pageable pageable) {
 		Category category = categoryRepository.findById(categoryId).orElseThrow();
-		List<Funding> allByCategory = fundingRepository.findAllByCategory(category);
-		List<FundingListResponse> collect = allByCategory.stream()
-			.map(funding -> FundingListResponse.from(funding))
-			.collect(Collectors.toList());
+		Page<FundingListResponse> collect = fundingRepository.findAllByCategory(category, pageable).map(m -> FundingListResponse.from(m));
 		return collect;
 	}
 
 	@Override
-	public FundingListPageResponse findAllFunding() {
-		List<FundingListResponse> collect = fundingRepository.findAll().stream().map(m -> FundingListResponse.from(m)).collect(Collectors.toList());
+	public FundingListPageResponse findAllFunding(Pageable pageable) {
+		Page<FundingListResponse> collect = fundingRepository.findAll(pageable).map(m -> FundingListResponse.from(m));
 		List<Funding> successFundingList = fundingRepository.findAllByPostType(PostType.REPORT_ACCEPT);
 
-		int totalFundingCount = collect.size();
+		Long totalFundingCount = fundingRepository.findAll().stream().count();
 		int successFundingCount = successFundingList.size();
 
 		Long totalFundingAmount = 0L;
 		for (Funding funding : successFundingList) {
 			totalFundingAmount += funding.getCurrentFundingAmount();
 		}
+
 		FundingListPageResponse fundingListPageResponse = new FundingListPageResponse(collect, totalFundingCount, successFundingCount, totalFundingAmount);
 		return fundingListPageResponse;
 	}
 
 
 	@Override
-	public FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException {
+	public FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws
+		IOException,
+		NotAuthenticatedTeamException {
 		// 인증 완료된 team 아니면 펀딩 작성 못함
+		Long currentUserId = SecurityUtil.getCurrentUserId();
+		Team team = teamRepository.findById(currentUserId).orElseThrow();
+
+		if (team.getUserType() != UserType.TEAM) {
+			throw new NotAuthenticatedTeamException();
+		}
 
 		// category 들고오기
 		Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
-		// // Team
-		Long currentUserId = SecurityUtil.getCurrentUserId();
-		Team team = teamRepository.findById(currentUserId).orElseThrow();
 
 		// time 변환
 		LocalDate startDate = LocalDate.parse(data.getStartDate(),
@@ -189,19 +202,16 @@ public class FundingServiceImpl implements FundingService{
 
 		savedPost.setThumbnail(thumbnailUrl);
 
-		addTargetMoney(data, funding);
+		addTargetMoney(data, savedPost);
 
-		try {
+
 			if (data.getHashtags() == null) {
-				throw new NotFoundHashtagException();
-			}
+
+				}
 			List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
 			List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
 			addPostHashtags(funding, hashtags);
 
-		} catch (NotFoundHashtagException e) {
-			e.printStackTrace();
-		}
 
 
 		return FundingDetailResponse.from(savedPost);
@@ -222,13 +232,43 @@ public class FundingServiceImpl implements FundingService{
 	private void addTargetMoney(FundingRequest data, Funding funding) {
 		List<TargetMoney> targetMoneyList = new ArrayList<>();
 
-		for (TargetMoneyRequest tm : data.getTargetMoneyRequestList()) {
-			TargetMoney targetMoney = new TargetMoney(funding, tm.getTargetMoneyType(), tm.getAmount(), tm.getDescription());
-			targetMoneyRepository.save(targetMoney);
-			targetMoneyList.add(targetMoney);
-		}
+		setTargetMoneyListByLevel(targetMoneyList, funding, data.getTargetMoneyLevelOne());
+		setTargetMoneyListByLevel(targetMoneyList, funding, data.getTargetMoneyLevelTwo());
+		setTargetMoneyListByLevel(targetMoneyList, funding, data.getTargetMoneyLevelThree());
 
 		funding.setTargetMoneyList(targetMoneyList);
+	}
+
+	private void setTargetMoneyListByLevel(List<TargetMoney> targetMoneyList, Funding funding, TargetMoneyRequest targetMoneyRequest) {
+		String[] split = targetMoneyRequest.getAmount().split(",");
+		int amount = Integer.parseInt(String.join("", split));
+
+		TargetMoney targetMoney = TargetMoney.builder()
+			.amount(amount)
+			.funding(funding)
+			.targetMoneyType(TargetMoneyType.LEVEL_ONE)
+			.build();
+
+		targetMoneyRepository.save(targetMoney);
+
+		if (targetMoneyRequest.getTargetMoneyType().equals("LEVEL_ONE")) {
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_ONE);
+		} else if (targetMoneyRequest.getTargetMoneyType().equals("LEVEL_TWO")) {
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_TWO);
+		} else if (targetMoneyRequest.getTargetMoneyType().equals("LEVEL_THREE")) {
+			targetMoney.setTargetMoneyType(TargetMoneyType.LEVEL_THREE);
+		}
+
+
+		List<TargetMoneyDetail> targetMoneyDetails = new ArrayList<>();
+		for (TargetMoneyDetailRequest targetMoneyDetailRequest : targetMoneyRequest.getDescriptions()) {
+			TargetMoneyDetail targetMoneyDetail = new TargetMoneyDetail(targetMoney, targetMoneyDetailRequest.getDescription());
+			targetMoneyDetailRepository.save(targetMoneyDetail);
+			targetMoneyDetails.add(targetMoneyDetail);
+		}
+
+		targetMoney.setTargetMoneyDescriptions(targetMoneyDetails);
+		targetMoneyList.add(targetMoney);
 	}
 
 	private List<Hashtag> saveNotExistHashTags(List<Hashtag> hashtagList) {
@@ -260,23 +300,13 @@ public class FundingServiceImpl implements FundingService{
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
 		fundingDetailResponse.setWishCount(wishCount);
 
-		// 해시태그
-
 		// 목표금액
-		List<TargetMoneyResponse> targetMoneyResponsesLevelOne = targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(id, TargetMoneyType.LEVEL_ONE);
-		List<TargetMoneyResponse> targetMoneyResponsesLevelTwo = targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(id, TargetMoneyType.LEVEL_TWO);
-		List<TargetMoneyResponse> targetMoneyResponsesLevelThree = targetMoneyRepository.findAllByFundingIdAndTargetMoneyType(id, TargetMoneyType.LEVEL_THREE);
-
-		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyResponsesLevelOne);
-		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyResponsesLevelTwo);
-		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyResponsesLevelThree);
-
-		// 댓글
-
-		List<CommentResponse> comments = funding.getComments()
-			.stream()
-			.map(comment -> CommentResponse.from((Comment)comment))
-			.collect(Collectors.toList());
+		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
+			id, TargetMoneyType.LEVEL_ONE));
+		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
+			id, TargetMoneyType.LEVEL_TWO));
+		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
+			id, TargetMoneyType.LEVEL_THREE));
 
 		return fundingDetailResponse;
 	}
@@ -331,17 +361,12 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	private void setTargetMoney(FundingRequest data, Funding funding) {
-		List<TargetMoney> targetMoneyList = funding.getTargetMoneyList();
+		List<TargetMoney> targetMoneyList = new ArrayList<>();
 		for (TargetMoney targetMoney : funding.getTargetMoneyList()) {
 			targetMoneyRepository.delete(targetMoney);
 		}
 
-		for (TargetMoneyRequest tm : data.getTargetMoneyRequestList()) {
-			TargetMoney targetMoney = new TargetMoney(funding, tm.getTargetMoneyType(), tm.getAmount(),
-				tm.getDescription());
-			targetMoneyRepository.save(targetMoney);
-		}
-
+		setTargetMoneyListByLevel(targetMoneyList, funding,  data.getTargetMoneyLevelOne());
 		funding.setTargetMoneyList(targetMoneyList);
 	}
 
@@ -372,8 +397,12 @@ public class FundingServiceImpl implements FundingService{
 
 		List<ReportDetail> reportDetails = new ArrayList<>();
 		for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
+
+			String[] split = fundingReportDetailRequest.getAmount().split(",");
+			Long result = Long.parseLong(String.join("", split));
+
 			ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
-				fundingReportDetailRequest.getAmount());
+				result);
 			reportDetailRepository.save(reportDetail);
 			reportDetails.add(reportDetail);
 		}
@@ -412,8 +441,12 @@ public class FundingServiceImpl implements FundingService{
 		List<ReportDetail> reportDetails = new ArrayList<>();
 
 		for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
+
+			String[] split = fundingReportDetailRequest.getAmount().split(",");
+			Long result = Long.parseLong(String.join("", split));
+
 			ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
-				fundingReportDetailRequest.getAmount());
+				result);
 			reportDetailRepository.save(reportDetail);
 			reportDetails.add(reportDetail);
 		}
@@ -451,13 +484,16 @@ public class FundingServiceImpl implements FundingService{
 		Long memberId = SecurityUtil.getCurrentUserId();
 		Member member = memberRepository.findById(memberId).orElseThrow();
 
+		String[] split = data.getAmount().split(",");
+		Long amount = Long.parseLong(String.join("", split));
+
 		try {
-			if (member.getMoney() < data.getAmount()) {
+			if (member.getMoney() < amount) {
 				throw new InsufficientBalanceException("잔액 부족");
 			}
 
 			Payment payment = Payment.builder()
-				.amount(data.getAmount())
+				.amount(amount)
 				.post(funding)
 				.payDate(LocalDateTime.now())
 				.user(member)
@@ -465,8 +501,12 @@ public class FundingServiceImpl implements FundingService{
 
 			paymentRepository.save(payment);
 
-			member.setMoney(member.getMoney() - data.getAmount());
-			funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + data.getAmount());
+			member.setMoney(member.getMoney() - amount);
+			funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + amount);
+
+			badgeService.postBadges(member, PostGroup.FUNDING);
+			badgeService.totalPayAmount(member);
+
 
 		} catch ( InsufficientBalanceException e) {
 			String message = e.getMessage();
@@ -475,7 +515,7 @@ public class FundingServiceImpl implements FundingService{
 		}
 	}
 
-	// 자정이 되면 StartDate가 당일인 펀딩들 중 승인 안료된 펀딩을 진행중으로 변경, 펀딩 금액에 따라 완료/실패 여부 판단
+	// 자정이 되면 StartDate 가 당일인 펀딩들 중 승인 안료된 펀딩을 진행중으로 변경, 펀딩 금액에 따라 완료/실패 여부 판단
 	@Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
 	public void changeStatusFunding() {
 		List<Funding> all = fundingRepository.findAllByStartDate(LocalDate.now());
@@ -486,8 +526,18 @@ public class FundingServiceImpl implements FundingService{
 		}
 
 		List<Funding> allByEndDate = fundingRepository.findAllByEndDate(LocalDate.now().minusDays(1));
+
 		for (Funding funding : allByEndDate) {
-			if (funding.getCurrentFundingAmount() >= funding.getTargetMoneyList().get(0).getAmount()) {
+
+			Long targetAmount = 0L;
+
+			for (TargetMoney targetMoney : funding.getTargetMoneyList()) {
+				if (targetMoney.getTargetMoneyType() == TargetMoneyType.LEVEL_ONE) {
+					targetAmount += targetMoney.getAmount();
+				}
+			}
+
+			if (funding.getCurrentFundingAmount() >= targetAmount) {
 				funding.setPostType(PostType.FUNDING_COMPLETE);
 			} else {
 				funding.setPostType(PostType.FUNDING_FAIL);

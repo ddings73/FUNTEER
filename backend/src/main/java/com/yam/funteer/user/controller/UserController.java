@@ -91,4 +91,16 @@ public class UserController {
         userService.confirmNickname(nickname);
         return ResponseEntity.ok().build();
     }
+
+    @ApiOperation(value="전화번호 중복검증", notes = "회원의 전화번호가 중복되는지 검사합니다")
+    @ApiResponses({
+        @ApiResponse(code = 200, message = "성공"),
+        @ApiResponse(code = 409, message = "전화번호 중복"),
+        @ApiResponse(code = 500, message = "서버 에러"),
+    })
+    @GetMapping("/confirm/phone")
+    public ResponseEntity confirmPhoneNumber(@RequestParam @NotBlank String phone){
+        userService.confirmPhone(phone);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -2,27 +2,37 @@ package com.yam.funteer.user.service;
 
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.badge.repository.BadgeRepository;
+import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.common.code.PostGroup;
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
+import com.yam.funteer.pay.entity.Payment;
+import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
 import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
+import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
 import com.yam.funteer.user.entity.*;
 import com.yam.funteer.user.repository.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service @Slf4j
 @Transactional
@@ -38,6 +48,10 @@ public class MemberServiceImpl implements MemberService {
     private final FollowRepository followRepository;
     private final FundingRepository fundingRepository;
     private final WishRepository wishRepository;
+    private final PaymentRepository paymentRepository;
+    private final UserBadgeRepository userBadgeRepository;
+
+    private final BadgeService badgeService;
 
 
     @Override
@@ -49,6 +63,7 @@ public class MemberServiceImpl implements MemberService {
         request.encryptPassword(passwordEncoder);
         Member member = request.toMember();
         memberRepository.save(member);
+        badgeService.initBadges(member);
     }
 
     @Override
@@ -73,8 +88,9 @@ public class MemberServiceImpl implements MemberService {
 
         long followCnt = followRepository.countAllByMember(member);
         long wishCnt = wishRepository.countAllByMember(member);
+        List<UserBadge> userBadgeList = userBadgeRepository.findAllByUserId(member.getId());
 
-        return MemberProfileResponse.of(member, wishCnt, followCnt);
+        return MemberProfileResponse.of(member, wishCnt, followCnt, userBadgeList);
     }
 
     @Override
@@ -106,29 +122,29 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void updateAccount(BaseUserRequest request) {
+    public void updateAccount(UpdateMemberAccountRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
         Member member = validateSameUser(userId, request.getUserId());
 
-        String newPassword = request.getPassword().orElseThrow(()->{
+        String password = request.getPassword().orElseThrow(()->{
             throw new IllegalArgumentException("패스워드는 필수 입력 값입니다.");
         });
-//        member.validatePassword(passwordEncoder, originPassword);
-//
-//        String newPassword = request.getNewPassword().orElseThrow(()->{
-//            throw new IllegalArgumentException("신규 패스워드는 필수 입력 값입니다.");
-//        });
+        member.validatePassword(passwordEncoder, password);
 
-        String pw = passwordEncoder.encode(newPassword);
-        member.changePassword(pw);
+        request.getNewPassword().ifPresent(newPw -> {
+            String encryptedPw = passwordEncoder.encode(newPw);
+            member.changePassword(encryptedPw);
+        });
     }
 
     @Override
-    public void followTeam(FollowRequest followRequest) {
-        Member member = memberRepository.findById(followRequest.getMemberId())
+    public void followTeam(Long teamId) {
+        Long memberid = SecurityUtil.getCurrentUserId();
+
+        Member member = memberRepository.findById(memberid)
                 .orElseThrow(UserNotFoundException::new);
 
-        Team team = teamRepository.findById(followRequest.getTeamId())
+        Team team = teamRepository.findById(teamId)
                 .orElseThrow(UserNotFoundException::new);
 
         followRepository.findByMemberAndTeam(member, team)
@@ -139,11 +155,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void wishFunding(WishRequest wishRequest) {
-        Member member = memberRepository.findById(wishRequest.getMemberId())
+    public void wishFunding(Long fundingId) {
+        Long memberId = SecurityUtil.getCurrentUserId();
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(UserNotFoundException::new);
 
-        Funding funding = fundingRepository.findById(wishRequest.getFundingId())
+        Funding funding = fundingRepository.findById(fundingId)
                 .orElseThrow(IllegalArgumentException::new);
 
         wishRepository.findByMemberAndFunding(member, funding)
@@ -154,15 +171,26 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MileageDetailResponse getMileageDetails(MileageDetailRequest request, Pageable pageable) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        Member member = validateSameUser(userId, request.getUserId());
+
+        PostGroup postGroup = request.getPostGroup();
+        List<Payment> paymentList = paymentRepository.findAllByUserAndPostPostGroup(member, postGroup);
+        return MileageDetailResponse.of(paymentList);
+    }
+
+
+    @Override
     public void chargeMileage(ChargeRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
-        validateSameUser(userId, request.getUserId());
 
         Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Long amount = request.getAmount();
 
         Charge charge = request.toEntity(member);
         chargeRepository.save(charge);
+        charge.setPayImpUid(request.getImpUid());
         member.charge(amount);
     }
 

@@ -35,4 +35,11 @@ public class UserServiceImpl implements UserService{
             throw new DuplicateInfoException("중복되는 닉네임입니다.");
         });
     }
+
+    @Override
+    public void confirmPhone(String phone) {
+        userRepository.findByPhone(phone).ifPresent(member->{
+            throw new DuplicateInfoException("중복되는 전화번호입니다.");
+        });
+    }
 }

@@ -1,11 +1,11 @@
 package com.yam.funteer.donation.dto.request;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -19,11 +19,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @Data
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -32,33 +31,23 @@ public class DonationRegisterReq {
 	private String content;
 	@NotBlank
 	private String title;
-	@NotNull
-	private Long amount;
+	@NotBlank
+	private String amount;
 
-	private List<MultipartFile>files=new ArrayList<>();
+	private MultipartFile file;
 
 	public Donation toEntity(){
 		return Donation.builder()
-			.regDate(LocalDateTime.now())
+			.startDate(LocalDate.now())
 			.postGroup(PostGroup.DONATION)
 			.postType(PostType.DONATION_ACTIVE)
 			.title(title)
 			.content(content)
-			.amount(amount)
+			.amount(Long.parseLong(amount))
+			.currentAmount(Long.valueOf(0))
 			.build();
 	}
 
-	public Donation toEntity(Long postId){
-		return Donation.builder()
-			.id(postId)
-			.regDate(LocalDateTime.now())
-			.postGroup(PostGroup.DONATION)
-			.postType(PostType.DONATION_ACTIVE)
-			.title(title)
-			.content(content)
-			.amount(amount)
-			.build();
-	}
 
 	public Attach toAttachEntity(String path,String name){
 		return Attach.builder()

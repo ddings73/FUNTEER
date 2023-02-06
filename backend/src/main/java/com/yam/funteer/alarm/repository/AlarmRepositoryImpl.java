@@ -21,7 +21,6 @@ public class AlarmRepositoryImpl implements AlarmRepository {
 	@Override
 	public SseEmitter save(String emitterId, SseEmitter sseEmitter) {
 		emitters.put(emitterId, sseEmitter);
-		log.info(String.valueOf(emitters));
 		return sseEmitter;
 	}
 
@@ -31,21 +30,16 @@ public class AlarmRepositoryImpl implements AlarmRepository {
 	}
 
 	@Override
-	public Map<String, SseEmitter> findAllEmitterStartWithById(String userId) {
+	public Map<String, SseEmitter> findAllEmitterStartWithByEmail(String email) {
 		return emitters.entrySet().stream() //여러개의 Emitter가 존재할 수 있기떄문에 stream 사용
-			.filter(entry -> entry.getKey().startsWith(userId))
+			.filter(entry -> entry.getKey().startsWith(email))
 			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
 	@Override
-	public Map<String, SseEmitter> findAllEmitterStartWithByUserIdInList(List userIds) {
-		return null;
-	}
-
-	@Override
-	public Map<String, Object> findAllEventCacheStartWithById(String userId) {
+	public Map<String, Object> findAllEventCacheStartWithByEmail(String email) {
 		return emitters.entrySet().stream()
-			.filter(entry -> entry.getKey().startsWith(userId))
+			.filter(entry -> entry.getKey().startsWith(email))
 			.collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 	}
 
@@ -72,3 +66,4 @@ public class AlarmRepositoryImpl implements AlarmRepository {
 		});
 	}
 }
+

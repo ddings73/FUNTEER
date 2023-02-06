@@ -34,12 +34,12 @@ export const AdminSideBarItem: adminSideBarDataType[] = [
   },
   {
     title: '자체 기부 관리',
-    path: 'donate',
+    path: 'donation',
     icon: <FaIcons.FaMoneyBillWave color="white" />,
   },
   {
     title: '공지사항 관리',
-    path: 'announcement',
+    path: 'notice',
     icon: <AiIcons.AiFillExclamationCircle color="white" />,
   },
   {

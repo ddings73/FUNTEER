@@ -7,7 +7,6 @@
   margin-top: 77.594px;
   display: flex;
   justify-content: center;
-  font-family: NanumSquareRound;
 
   .contents {
     display: flex;
@@ -19,7 +18,7 @@
 
     .title {
       font-weight: bold;
-      font-size: 3rem;
+      font-size: 2.5rem;
       margin: 5rem 0 2rem 0;
 
       @include tablet {
@@ -38,7 +37,8 @@
       margin: 0 1rem;
       padding: 0.5rem;
       min-width: 250px;
-      width: 50%;
+      width: 60%;
+      font-family: NanumSquareRound;
 
       & input {
         @include mobile {

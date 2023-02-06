@@ -36,14 +36,15 @@ public class CreateTeamRequest extends CreateAccountRequest {
 
     public Team toTeam(){
         return Team.builder()
-                .email(email)
-                .password(password)
-                .name(name)
-                .phone(phone)
-                .userType(UserType.TEAM_WAIT)
-                .money(0L)
-                .regDate(LocalDateTime.now())
-                .build();
+            .email(email)
+            .password(password)
+            .name(name)
+            .phone(phone)
+            .userType(UserType.TEAM_WAIT)
+            .money(0L)
+            .totalFundingAmount(0L)
+            .regDate(LocalDateTime.now())
+            .build();
     }
 
     public void encryptPassword(PasswordEncoder passwordEncoder) {

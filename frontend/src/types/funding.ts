@@ -1,9 +1,11 @@
+import { string } from 'yargs';
+
 export type FundingElementType = {
   id: number;
   thumbnail: string;
   title: string;
   fundingDescription: string;
-  amount: number;
+  targetAmount: number;
   currentFundingAmount: number;
   startDate: string;
   endDate: string;
@@ -26,10 +28,22 @@ export interface FundingInterface {
   startDate: string;
   hashtags: string;
   endDate: string;
-  amount1: number;
-  description1: string;
-  amount2: number;
-  description2: string;
-  amount3: number;
-  description3: string;
+  targetMoneyLevelOne: targetMoneyLevelType;
+  targetMoneyLevelTwo: targetMoneyLevelType;
+  targetMoneyLevelThree: targetMoneyLevelType;
 }
+
+export type targetMoneyLevelType = {
+  amount: string;
+  targetMoneyType: string;
+  descriptions: descriptionType[];
+};
+
+export type amountLevelType = {
+  amount: string;
+  descriptions: descriptionType[];
+};
+
+export type descriptionType = {
+  description: string;
+};
