@@ -26,17 +26,9 @@ public class Live {
 	@ManyToOne
 	@JoinColumn(name = "funding_id")
 	private Funding funding;
-
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 	private String sessionId;
-
-	/**
-	 * TODO 라이브에 입장하기 위해서는 SessionName이 필요함, 따라서 SessionName을 저장해야함
-	 * @param sessionId
-	 * @param funding
-	 * @return
-	 */
 
 	public static Live of(String sessionId, Funding funding) {
 		return Live.builder()

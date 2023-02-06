@@ -5,7 +5,11 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateSessionRequest {
+public class CreateConnectionRequest {
     private String sessionName;
     private Long fundingId;
+
+    public String getSessionName(){
+        return "Session_"+sessionName;
+    }
 }
