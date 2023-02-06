@@ -134,14 +134,14 @@ public class TeamServiceImpl implements TeamService{
 		Attach profile = team.getProfileImg().orElse(null);
 		Attach banner = team.getBanner().orElse(null);
 
-		if(!request.getProfileImg().isEmpty()) {
+		if(profileImgFile != null) {
 			request.validateProfile();
 			String profilePath = awsS3Uploader.upload(profileImgFile, "user");
 			profile = team.getProfileImg().orElseGet(() -> request.getProfile(profilePath));
 			updateBannerOrProfile(profileImgFile.getOriginalFilename(), profilePath, profile);
 		}
 
-		if(!request.getBanner().isEmpty()) {
+		if(bannerFile != null) {
 			request.validateBanner();
 			String bannerPath = awsS3Uploader.upload(bannerFile, "user");
 			banner = team.getBanner().orElseGet(() -> request.getBanner(bannerPath));
