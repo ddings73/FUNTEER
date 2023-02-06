@@ -1,5 +1,6 @@
 import * as React from 'react';
-// import { useRef, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
+// Material UI Imports
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -15,55 +16,42 @@ import MenuItem from '@mui/material/MenuItem';
 import Badge from '@mui/material/Badge';
 import { styled } from '@mui/material/styles';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
-import { Link } from 'react-router-dom';
+/*eslint-disable*/
+/*기타 Imports */
+import { Link, Outlet, NavLink, useNavigate, Navigate } from 'react-router-dom';
 import styles from './Navbar.module.scss';
+import NavDataSettings from './NavbarSettingsData';
 /* 이미지 import */
 import logoImg from '../assets/images/FunteerLogo.png';
+/*로그인 Import */
+import { useAppDispatch, useAppSelector } from '../store/hooks';
+import userSlice, { isLoginState, setUserLoginState } from '../store/slices/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import NavbarMenuData from './NavbarMenuData';
 
-// type MenuSets = { name: string; items: string[] };
-// const menuItems: MenuSets[] = [
-//   {
-//     name: 'serviceIntro',
-//     items: ['temp1', 'temp2', 'temp3'],
-//   },
-//   {
-//     name: 'funds',
-//     items: ['temp1', 'temp2', 'temp3'],
-//   },
-//   {
-//     name: 'charities',
-//     items: ['temp1', 'temp2', 'temp3'],
-//   },
-//   {
-//     name: 'liveShow',
-//     items: ['temp1', 'temp2', 'temp3'],
-//   },
-//   {
-//     name: 'helps',
-//     items: ['temp1', 'temp2', 'temp3'],
-//   },
-// ];
-const pages = ['서비스소개', '펀딩서비스', '기부서비스', '라이브방송', '고객센터'];
+const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
 
 function ResponsiveAppBar() {
-  const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const navigateTo = useNavigate();
+  function clickNavigate(address: string) {
+    navigateTo(address);
+  }
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [ishovered, setIsHovered] = useState(false);
 
-  const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElNav(event.currentTarget);
+  const updateScroll = () => {
+    setScrollPosition(window.scrollY || document.documentElement.scrollTop);
   };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
 
-  const handleCloseNavMenu = () => {
-    setAnchorElNav(null);
-  };
-
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
   const StyledBadge = styled(Badge)(({ theme }) => ({
     '& .MuiBadge-badge': {
       right: -3,
@@ -73,104 +61,123 @@ function ResponsiveAppBar() {
     },
   }));
 
-  return (
-    <AppBar className={styles.appBar} position="static">
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          {/* Desktop 구조 */}
-          <Link to="/">
-            <img className={styles.logoImg} src={logoImg} alt="logoImg" />
-          </Link>
-          <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-            <IconButton size="large" aria-label="account of current user" aria-controls="menu-appbar" aria-haspopup="true" onClick={handleOpenNavMenu} color="inherit">
-              <MenuIcon className={styles.iconBtn} sx={{ display: { xs: 'flex', md: 'none' } }} />
-            </IconButton>
+  const isLogin = useAppSelector((state) => state.userSlice.isLogin);
+  let menuDataLength: number = NavbarMenuData.length;
+  // console.log('로그인임?', isLogin);
 
-            <Menu
-              className={styles.navItems}
-              id="menu-appbar"
-              anchorEl={anchorElNav}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
+  useEffect(() => {
+    window.addEventListener('scroll', updateScroll);
+  });
+
+  return (
+    <div>
+      <AppBar className={styles.appBar} position="fixed" sx={{ backgroundColor: scrollPosition < 10000 ? 'transparent' : 'rgb(255,255,255)' }}>
+        <Container className={styles.appContainer} maxWidth="xl">
+          <Toolbar disableGutters>
+            {/* Desktop 구조 */}
+            <Link to="/">
+              <img className={styles.logoImg} src={logoImg} alt="logoImg" />
+            </Link>
+
+            <Box
+              sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}
+              className={styles.pageBox}
+              onMouseOut={() => {
+                setIsHovered(false);
               }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'left',
-              }}
-              open={Boolean(anchorElNav)}
-              onClose={handleCloseNavMenu}
-              sx={{
-                display: { md: 'none' },
+              onMouseOver={() => {
+                setIsHovered(true);
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
-                </MenuItem>
+                <div className={styles.menuWrapper} key={page.title}>
+                  <Button key={page.title} sx={{ my: 2, color: 'white', display: 'block', ml: 2 }} className={styles.menuBtn}>
+                    {page.title}
+                  </Button>
+                  <ul
+                    className={ishovered ? styles.menuSubMenuHovered : styles.menuSubMenu}
+                    onMouseOut={() => {
+                      setIsHovered(false);
+                    }}
+                    onMouseOver={() => {
+                      setIsHovered(true);
+                    }}
+                  >
+                    {page.subRoutes.map((Menu, i) => (
+                      <li className={styles.menuSubMenuEl} key={i} onClick={() => clickNavigate(page.subPath[i])}>
+                        {Menu}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))}
-            </Menu>
-          </Box>
+            </Box>
 
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href=""
-            sx={{
-              flexGrow: 1,
-              display: { md: 'none' },
-            }}
-          >
-            <img className={styles.logoImgMobile} src={logoImg} alt="logoImgMobile" />
-          </Typography>
-          <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' }, justifyContent: 'space-between', alignItems: 'center', ml: 20, mr: 20 }}>
-            {pages.map((page) => (
-              <Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }} className={styles.menuBtn}>
-                {page}
-              </Button>
-            ))}
-          </Box>
-          {/* badgeContent에 알림 변수 위치 */}
-          <IconButton aria-label="notifi" className={styles.noti}>
-            <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
-              <NotificationsNoneIcon fontSize="large" />
-            </StyledBadge>
-          </IconButton>
-
-          <Box sx={{ flexGrow: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+            <Box sx={{ flexGrow: 0 }}>
+              <div style={{ display: isLogin ? 'none' : 'flex' }}>
+                <NavLink to="/Login">
+                  <button className={styles.accountBtn} type="button">
+                    로그인
+                  </button>
+                </NavLink>
+                <NavLink to="/signup">
+                  <button className={styles.accountBtn} type="button">
+                    회원가입
+                  </button>
+                </NavLink>
+              </div>
+              <div style={{ display: isLogin ? 'flex' : 'none' }}>
+                <IconButton aria-label="notifi" className={styles.noti}>
+                  <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
+                    <NotificationsNoneIcon fontSize="large" />
+                  </StyledBadge>
+                </IconButton>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: '45px' }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {NavDataSettings.map((data, i) => (
+                    <NavLink to={data.path} className={styles.navlinks} key={i}>
+                      <MenuItem onClick={handleCloseUserMenu}>
+                        <Typography textAlign="center" sx={{ color: i == menuDataLength - 1 ? 'red' : 'black' }}>
+                          {data.title}
+                        </Typography>
+                      </MenuItem>
+                    </NavLink>
+                  ))}
+                </Menu>
+              </div>
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+      <div
+        onMouseOut={() => {
+          setIsHovered(false);
+        }}
+        onMouseOver={() => {
+          setIsHovered(true);
+        }}
+        className={ishovered ? styles.megaContainer : styles.megaContainerHidden}
+      />
+    </div>
   );
 }
 export default ResponsiveAppBar;

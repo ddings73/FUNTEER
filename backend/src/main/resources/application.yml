@@ -16,27 +16,10 @@ spring:
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
-  security:
-    oauth2:
-      client:
-        registration:
-          kakao:
-            client-id: 970d563bd84d3d5567c55c038b457795
-            client-secret: nvJ20Evwyql1y3Uhc98SoUutKtmBvCWt
-            redirect-uri: "http://localhost:8080/api/v1/login/oauth2/code/kakao"
-            authorization-grant-type: authorization_code
-            client-name: Kakao
-            client-authentication-method: POST
-            scope:
-              - profile_nickname
-              - account_email
-
-        provider:
-          kakao:
-            authorization-uri: https://kauth.kakao.com/oauth/authorize
-            token-uri: https://kauth.kakao.com/oauth/token
-            user-info-uri: https://kapi.kakao.com/v2/user/me
-            user-name-attribute: id
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 
 logging:
   level:

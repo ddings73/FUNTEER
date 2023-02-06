@@ -10,15 +10,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 @Entity
 @Table(name = "charge")
-@Getter
+@Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Charge {
@@ -29,4 +26,18 @@ public class Charge {
 	private Member member;
 	private Long amount;
 	private LocalDateTime chargeDate;
+
+
+	// 아임포트에서 구분하는 pk
+	private String payImpUid;
+
+	// 환불 가능한지 판단용
+	private int possibleRefund;
+
+	public void setPossibleRefund() {
+		this.possibleRefund = 0;
+	}
+	public void setPayImpUid(String payImpUid) {
+		this.payImpUid = payImpUid;
+	}
 }

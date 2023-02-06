@@ -1,10 +1,10 @@
 package com.yam.funteer.donation.exception;
 
-public class DonationNotFoundException extends Exception {
-	public DonationNotFoundException() {
-	}
+import lombok.Getter;
 
-	public DonationNotFoundException(String s) {
-		super(s);
+@Getter
+public class DonationNotFoundException extends RuntimeException {
+	public DonationNotFoundException() {
+		super("해당 도네이션이 없습니다.");
 	}
 }

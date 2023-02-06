@@ -1,13 +1,19 @@
 package com.yam.funteer.donation.dto.request;
+import javax.validation.constraints.NotBlank;
 
-import com.yam.funteer.user.entity.User;
-
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-@Getter@Setter
+@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class DonationJoinReq {
-	private Long userId;
-	private Long paymentAmount;
+	@NotBlank
+	private String paymentAmount;
 
 }
