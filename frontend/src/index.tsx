@@ -249,7 +249,7 @@ const router = createBrowserRouter([
         element: <AdminDonation />,
       },
       {
-        path: '/donation/create',
+        path: 'donation/create',
         element: <AdminDonationCreate />,
       },
       {

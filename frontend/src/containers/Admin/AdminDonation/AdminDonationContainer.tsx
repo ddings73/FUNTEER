@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router';
 import MenuItem from '@mui/material/MenuItem';
-import { async } from 'q';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import styles from './AdminDonationListContainer.module.scss';
 import AdminDonationContainerItem, { DonationState } from './AdminDonationContainerItem';
-import { http } from '../../../api/axios';
 
 function AdminDonationContainer() {
+  const navigate=useNavigate();
 
   const onStateChangeHandler = (state: string, e: SelectChangeEvent) => {
     if (state === DonationState.ACTIVE) {
@@ -20,15 +20,15 @@ function AdminDonationContainer() {
 
   const onClickDonationRegister=()=>{
     console.log("작성페이지로");
-
-
+    // admin/donation/creat
+    navigate('create');
   }
 
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
         <h1 className={styles.title}>도네이션 관리</h1>
-        <button type="button" onClick={onClickDonationRegister}>도네이션 작성</button>
+        <button type="button" onClick={onClickDonationRegister} style={{margin:'0rem 0rem 1rem auto'}}>도네이션 작성</button>
 
         <ul className={styles['title-line']}>
           <li>번호</li>

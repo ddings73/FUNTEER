@@ -8,7 +8,7 @@ function AdminDonation() {
   console.log(userType);
   const navigate = useNavigate();
   useEffect(() => {
-    if (!userType || userType === 'ADMIN') {
+    if (!userType || !(userType === 'ADMIN')) {
       navigate('/login');
     }
   }, []);
