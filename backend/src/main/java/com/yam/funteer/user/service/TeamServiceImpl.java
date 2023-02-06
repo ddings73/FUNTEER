@@ -138,18 +138,29 @@ public class TeamServiceImpl implements TeamService{
 			request.validateProfile();
 			String profilePath = awsS3Uploader.upload(profileImgFile, "user");
 			profile = team.getProfileImg().orElseGet(() -> request.getProfile(profilePath));
-			updateBannerOrProfile(profileImgFile.getOriginalFilename(), profilePath, profile);
+
+			if(profile.getId() == null){
+				attachRepository.save(profile);
+				team.updateProfile(profile);
+			}else{
+				profile.update(profileImgFile.getOriginalFilename(), profilePath);
+			}
 		}
 
 		if(bannerFile != null) {
 			request.validateBanner();
 			String bannerPath = awsS3Uploader.upload(bannerFile, "user");
 			banner = team.getBanner().orElseGet(() -> request.getBanner(bannerPath));
-			updateBannerOrProfile(bannerFile.getOriginalFilename(), bannerPath, banner);
+			if(banner.getId() == null){
+				attachRepository.save(banner);
+				team.updateBanner(banner);
+			}else{
+				banner.update(bannerFile.getOriginalFilename(), bannerPath);
+			}
 		}
 
 		String description = request.getDescription();
-		team.update(profile, banner, description);
+		team.updateDescription(description);
 	}
 
 	@Override
@@ -210,14 +221,6 @@ public class TeamServiceImpl implements TeamService{
 				awsS3Uploader.delete(teamFilePath, path);
 			}
 		});
-	}
-
-	private void updateBannerOrProfile(String filename, String path, Attach attach){
-		if(attach.getId() == null){
-			attachRepository.save(attach);
-		}else{
-			attach.update(filename, path);
-		}
 	}
 
 	private Team validateSameUser(Long i1, Long i2){
