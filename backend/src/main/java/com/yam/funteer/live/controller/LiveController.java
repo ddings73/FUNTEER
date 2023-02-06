@@ -1,19 +1,19 @@
 package com.yam.funteer.live.controller;
 
-import com.yam.funteer.live.dto.CreateSessionRequest;
+import com.yam.funteer.live.dto.CreateConnectionRequest;
+import com.yam.funteer.live.dto.StartRecordingRequest;
 import com.yam.funteer.live.service.LiveService;
-import io.openvidu.java.client.*;
+
+import io.openvidu.java.client.Recording;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController @Slf4j
 @RequestMapping("/openvidu")
@@ -24,23 +24,9 @@ public class LiveController {
     private final LiveService liveService;
 
     @PostMapping("/sessions")
-    public ResponseEntity<JSONObject> initializeSession(@RequestBody CreateSessionRequest request) throws OpenViduJavaClientException, OpenViduHttpException {
+    public ResponseEntity<JSONObject> initializeSession(@RequestBody CreateConnectionRequest request){
         JSONObject response = liveService.initializeSession(request);
         return ResponseEntity.ok(response);
-    }
-    
-    @PostMapping("/sessions/{sessionId}/connections")
-    public ResponseEntity<String> createConnection(@PathVariable String sessionId,
-                                                   @RequestBody(required = false) Map<String, Object> params) throws OpenViduJavaClientException, OpenViduHttpException {
-//        Session session = openVidu.getActiveSession(sessionId);
-//        if(session == null){
-//            return ResponseEntity.notFound().build();
-//        }
-//
-//        ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
-//        Connection connection = session.createConnection(properties);
-//        return ResponseEntity.ok(connection.getToken());
-        return null;
     }
 
     @PostMapping("/sessions/leave")
@@ -50,5 +36,23 @@ public class LiveController {
 
         liveService.leaveSession(sessionName, token);
         return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/recording/start")
+    public ResponseEntity startRecording(@RequestBody StartRecordingRequest request){
+        Recording recording = liveService.startRecording(request);
+        return ResponseEntity.ok(recording);
+    }
+
+    @PostMapping("/recording/stop/{recordingId}")
+    public ResponseEntity stopRecording(@PathVariable String recordingId){
+        Recording recording = liveService.stopRecording(recordingId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/recording/{recordingId}")
+    public ResponseEntity<Recording> getRecording(@PathVariable String recordingId){
+        Recording recording = liveService.getRecording(recordingId);
+        return ResponseEntity.ok(recording);
     }
 }
