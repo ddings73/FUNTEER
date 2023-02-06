@@ -11,90 +11,180 @@
   font-style: normal;
 }
 /*============================================*/
+
+.container::before {
+  content: '';
+  background: url('../../assets/images/mainPage/space.jpg') no-repeat center center fixed;
+  background-size: cover;
+  opacity: 0.3;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  transition: 1s;
+}
+.container_scrolled::before {
+  content: '';
+  background: white;
+  background-size: cover;
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  transition: 1s;
+}
 .container {
-  width: 100%;
+  background-color: #060416;
+  position: relative;
+  min-width: 100%;
   min-height: 500vh;
   box-sizing: border-box;
   display: flex;
-  justify-content: center;
-  background: linear-gradient(180deg, #15133c 49.64%, rgba(255, 255, 255, 0) 98.67%);
+  flex-direction: column;
+  overflow: hidden;
+  top: 0;
+  align-items: center;
+  transition: background-color 1s;
+}
+.container_scrolled {
+  background-color: #0b0627;
+  position: relative;
+  min-width: 100%;
+  min-height: 500vh;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  top: 0;
+  align-items: center;
+  transition: background-color 1s;
+}
+// 배너 섹션
+.bannerContainer {
+  display: flex;
+  color: white;
+  width: 30%;
+  height: 80vh;
+  margin-top: 13%;
+  // border: 1px solid rgb(255, 255, 255);
+  transition: 0.5s;
+  transition: background-color 3s;
+  @media (max-width: 900px) {
+    text-align: center;
+    justify-content: center;
+  }
+  // 배너 좌측 타이포 섹션
+  & .typoBox {
+    position: relative;
+    width: 50%;
+    margin-left: 200px;
+    margin-top: 2%;
+    height: 30% auto;
+    margin-right: 0;
+    // border: 1px solid rgb(255, 255, 255);
 
-  & .bannerContainer {
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    width: 80%;
-    height: 80vh;
-    margin-top: 10%;
-    border: 1px solid rgb(255, 255, 255);
-    transition: 0.5s;
     @media (max-width: 900px) {
-      text-align: center;
-      justify-content: center;
+      width: 100%;
     }
 
-    & .typoBox {
-      margin: 2%;
-      height: 30% auto;
-      border: 1px solid rgb(255, 255, 255);
+    & .logoTypo {
+      /* 정해진 폰트 규격 사용할 것 - 아래는 임시 크기*/
+      font-family: 'Arita-buri-SemiBold';
+      font-size: 3vw;
+      line-height: 4.5vw;
+      // border: 1px solid rgb(255, 255, 255);
 
-      @media (max-width: 900px) {
-        width: 100%;
-      }
-
-      & .logoTypo {
-        /* 정해진 폰트 규격 사용할 것 - 아래는 임시 크기*/
-        font-family: 'Arita-buri-SemiBold';
-        font-size: 3vw;
-        line-height: 4.5vw;
-        border: 1px solid rgb(255, 255, 255);
-
-        & .logoStrong {
-          background: linear-gradient(261.5deg, #ffd2b2 59.63%, #fd6f08 102.79%);
-          color: transparent;
-          -webkit-background-clip: text;
-          border: 1px solid rgb(255, 255, 255);
-        }
-      }
-
-      & .subLogoTypo {
-        /* 정해진 폰트 규격 - 아래는 임시 크기*/
-        font-family: 'NanumSquare';
-        margin-top: 5%;
-        font-size: 2vw;
-        border: 1px solid rgb(255, 255, 255);
-      }
-
-      & .serviceBtn {
-        width: 200px;
-        height: 60px;
-        margin-top: 10%;
-
-        background-color: transparent;
-        border: 2px solid rgba(255, 255, 255, 0.72);
-        border-radius: 20px;
-        color: white;
-
-        font-family: 'NanumSquare';
-        font-size: large;
-        transition: 0.5s;
-        cursor: pointer;
-        &:hover {
-          opacity: 0.5;
-        }
-        @media (max-width: 600px) {
-          scale: 50%;
-        }
+      & .logoStrong {
+        background: linear-gradient(261.5deg, #ffd2b2 59.63%, #fd6f08 102.79%);
+        color: transparent;
+        -webkit-background-clip: text;
+        // border: 1px solid rgb(255, 255, 255);
       }
     }
 
-    & .bannerImg {
-      margin: 1%;
-      width: 45%;
+    & .subLogoTypo {
+      /* 정해진 폰트 규격 - 아래는 임시 크기*/
+      font-family: 'NanumSquare';
+      margin-top: 5%;
+      font-size: 1.5vw;
+      color: rgba(185, 185, 185, 0.671);
+      // border: 1px solid rgb(255, 255, 255);
+    }
+
+    & .serviceBtn {
+      width: 200px;
+      height: 60px;
+      margin-top: 8%;
+
+      background-color: transparent;
+      border: 2px solid rgba(255, 255, 255, 0.72);
+      border-radius: 20px;
+      color: white;
+
+      font-family: 'NanumSquare';
+      font-size: large;
+      transition: 0.5s;
+      cursor: pointer;
+      &:hover {
+        opacity: 0.5;
+      }
+      @media (max-width: 600px) {
+        scale: 50%;
+      }
+    }
+  }
+  // 배너 우측 이미지 섹션
+}
+.infoBanner {
+  margin-top: 40%;
+  min-width: 1300px;
+  z-index: 100;
+}
+.fundLists {
+  margin-top: 30%;
+  width: 80%;
+  height: auto;
+  z-index: 100;
+  overflow: visible !important;
+}
+
+.bannerImg {
+  width: 60% !important;
+  // border: 1px solid rgb(216, 36, 36);
+  @media (max-width: 900px) {
+    display: none;
+  }
+  & .planets {
+    position: relative;
+    & .planet {
+      margin-top: 5%;
+      margin-left: 20%;
+      width: 1000px;
+    }
+    & .astWrap {
+      position: absolute;
+      top: 15%;
+      left: 5%;
       display: flex;
-      border: 1px solid rgb(255, 255, 255);
-      @media (max-width: 900px) {
-        display: none;
+
+      & .ast {
+        border: 1px solid #ffffff;
+        margin-left: 5%;
+        margin-top: 20%;
+        width: 150px;
+      }
+
+      & .astCnt {
+        width: 150px;
+        height: 130px;
+        transform: scaleX(-1) rotate(35deg);
+        transition: 3s ease-in-out;
+        border: 1px solid #ff0000;
+        // -webkit-animation: floatY 5s linear infinite;
+        // -moz-animation: floatY 5s linear infinite;
+        // -o-animation: floatY 5s linear infinite;
       }
     }
   }

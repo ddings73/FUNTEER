@@ -30,7 +30,7 @@ import lombok.RequiredArgsConstructor;
 
 @Api(value="Donation",tags="도네이션")
 @RestController
-@RequestMapping("/donation")
+@RequestMapping("")
 @RequiredArgsConstructor
 
 public class DonationController {
@@ -38,26 +38,26 @@ public class DonationController {
 	private final DonationService donationService;
 
 	@ApiOperation(value="현재 진행 중인 도네이션")
-	@GetMapping("")
+	@GetMapping("/donation")
 	public ResponseEntity<?> currentDonation() {
 		return ResponseEntity.ok(donationService.donationGetCurrent());
 	}
 
 	@ApiOperation(value = "도네이션 리스트")
-	@GetMapping("/list")
+	@GetMapping("/donation/list")
 	public ResponseEntity<?> donationGetList( @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 		return ResponseEntity.ok(donationService.donationGetList(page,size));
 	}
 
 	@ApiOperation(value = "도네이션 상세")
-	@GetMapping("/{postId}")
+	@GetMapping("/donation/{postId}")
 	public ResponseEntity<?> donationGetDetail(@PathVariable Long postId) throws
 		DonationNotFoundException {
 		return ResponseEntity.ok(donationService.donationGetDetail(postId));
 	}
 
 	@ApiOperation(value = "도네이션 참여", notes = "<strong>userId, 금액 필수<strong>.")
-	@PostMapping("/{postId}/pay")
+	@PostMapping("/donation/{postId}/pay")
 	public ResponseEntity<? extends BaseResponseBody> donationJoin(@PathVariable Long postId,@RequestBody
 		DonationJoinReq donationJoinReq)throws DonationNotFoundException{
 
@@ -66,16 +66,17 @@ public class DonationController {
 	}
 
 	@ApiOperation(value = "도네이션 등록", notes = "<strong>userId,타이틀,내용,금액 필수<strong>.")
-	@PostMapping("")
+	@PostMapping("/admin/donation")
 	public ResponseEntity<?> donationRegister( DonationRegisterReq donationRegisterReq) {
 		return ResponseEntity.ok(donationService.donationRegister(donationRegisterReq));
 	}
 
-	@ApiOperation(value = "도네이션 수정", notes = "<strong>postId, userId,타이틀,내용,금액 필수<strong>.")
-	@PutMapping("/{postId}")
+	@ApiOperation(value = "도네이션 수정", notes = "<strong>postId, userId,타이틀,내용,금액, postType 필수<strong>.")
+	@PutMapping("/admin/donation/{postId}")
 	public ResponseEntity<?> donationModify(@PathVariable Long postId, DonationModifyReq donationModifyrReq) throws
 		DonationNotFoundException{
 		return ResponseEntity.ok(donationService.donationModify(postId,donationModifyrReq));
+
 	}
 
 }

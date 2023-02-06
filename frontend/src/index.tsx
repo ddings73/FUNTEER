@@ -3,15 +3,13 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { BrowserRouter, createBrowserRouter, RouterProvider, useParams, useSearchParams } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { ThemeProvider } from '@emotion/react';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
-import { config } from 'yargs';
-import App from './App';
+
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
 /*  */
-import { theme } from './theme/theme';
+
 import UserRoot from './roots/UserRoot';
 import AdminRoot from './roots/AdminRoot';
 import UserFooterRoot from './roots/UserFooterRoot';
@@ -48,6 +46,7 @@ import {
   CustomerCenter,
   NoticeDetail,
   AdminDonation,
+  AdminDonationCreate,
   TeamProfile,
   AdminNotice,
   AdminFaq,
@@ -94,13 +93,12 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-<<<<<<< HEAD
-=======
+
         path: 'login/kakao',
         element: <Test />,
       },
       {
->>>>>>> feat-BE/member
+
         path: 'findEmail',
         element: <FindEmail />,
       },
@@ -247,6 +245,10 @@ const router = createBrowserRouter([
       {
         path: 'donation',
         element: <AdminDonation />,
+      },
+      {
+        path: 'donation/create',
+        element: <AdminDonationCreate />,
       },
       {
         path: 'notice',

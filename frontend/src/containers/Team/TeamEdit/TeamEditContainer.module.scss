@@ -1,0 +1,120 @@
+@import '../../../styles/reset.scss';
+@import '../../../styles/variable.scss';
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  margin-top: 77.6px;
+
+  .content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+
+    .content-inner {
+      max-width: 1100px;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      padding: 1rem;
+      background-color: #fcfcfc;
+
+      .left {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+
+        .profile-card-img-div {
+          width: 300px;
+          height: 300px;
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+
+          .profile-card-img-inner {
+            width: 260px;
+            height: 260px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 100%;
+            overflow: hidden;
+
+            & img {
+              width: 260px;
+              height: 260px;
+              border-radius: 100%;
+            }
+          }
+
+          .camera-div {
+            width: 70px;
+            height: 70px;
+            position: absolute;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 100%;
+            padding: 0rem;
+            background-color: rgb(223, 223, 223);
+            border: 5px solid #fcfcfc;
+            right: 11px;
+            bottom: 11px;
+
+            &:hover {
+              cursor: pointer;
+              transition: 0.5s;
+              background-color: rgb(212, 212, 212);
+            }
+
+            .camera {
+              width: 40px;
+              height: 40px;
+            }
+
+            .img-input {
+              display: none;
+            }
+          }
+        }
+      }
+
+      .right {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        margin: 0 0 0 1rem;
+        padding: 2rem;
+        font-family: NanumSquare;
+
+        .name {
+          font-size: 1.5rem;
+          font-weight: bold;
+          color: rgb(52, 52, 52);
+        }
+
+        .label {
+          margin: 2rem 0 1rem 0.5rem;
+          font-size: 1.125rem;
+          font-weight: bold;
+          color: rgb(88, 88, 88);
+        }
+      }
+    }
+  }
+}
+
+// .content-inner {
+//   border: 1px solid red;
+//   .left {
+//     border: 1px solid orange;
+//   }
+//   .right {
+//     border: 1px solid orange;
+//   }
+// }
