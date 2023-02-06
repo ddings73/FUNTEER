@@ -1,14 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { BsCameraFill } from 'react-icons/bs';
-import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import EmailIcon from '@mui/icons-material/Email';
-import { requestTeamProfileInfo } from '../../../api/team';
 import TeamSideBarList from '../../../components/TeamPageSideBar/TeamSideBarList';
-import { teamProfileType } from '../../../types/user';
-import { requestFollow } from '../../../api/user';
 import styles from './TeamEditContainer.module.scss';
 import defaultImage from '../../../assets/images/default-profile-img.svg';
 
@@ -55,6 +49,7 @@ function TeamEditContainer() {
             <p className={styles.name}>{teamEditInfo.name}</p>
             <p className={styles.label}>단체 설명</p>
             <TextField
+              color="warning"
               name="description"
               id="standard-multiline-flexible"
               multiline
@@ -62,7 +57,7 @@ function TeamEditContainer() {
               maxRows={7}
               variant="outlined"
               value={teamEditInfo.description}
-              sx={{ fontSize: '1.125rem' }}
+              sx={{ fontSize: '1.125rem', marginLeft: '0.2rem' }}
               onChange={onChangeDescription}
             />
           </div>

@@ -99,7 +99,7 @@
         }
 
         .label {
-          margin: 2rem 0 1rem 0;
+          margin: 2rem 0 1rem 0.5rem;
           font-size: 1.125rem;
           font-weight: bold;
           color: rgb(88, 88, 88);
@@ -109,14 +109,12 @@
   }
 }
 
-.content-inner {
-  border: 1px solid red;
-
-  .left {
-    border: 1px solid orange;
-  }
-
-  .right {
-    border: 1px solid orange;
-  }
-}
+// .content-inner {
+//   border: 1px solid red;
+//   .left {
+//     border: 1px solid orange;
+//   }
+//   .right {
+//     border: 1px solid orange;
+//   }
+// }
