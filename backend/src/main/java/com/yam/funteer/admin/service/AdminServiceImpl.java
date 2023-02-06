@@ -55,7 +55,7 @@ public class AdminServiceImpl implements AdminService{
 		System.out.println(funding);
 		Team team = teamRepository.findById(funding.getTeam().getId()).orElseThrow();
 		System.out.println(team);
-		team.setTotalFundingAmount(funding.getCurrentFundingAmount());
+		team.addTotalFundingAmount(funding.getCurrentFundingAmount());
 		funding.setPostType(PostType.REPORT_ACCEPT);
 		badgeService.teamFundingBadges(funding.getTeam());
 	}

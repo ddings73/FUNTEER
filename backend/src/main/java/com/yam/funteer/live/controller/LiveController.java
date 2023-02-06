@@ -1,47 +1,58 @@
 package com.yam.funteer.live.controller;
 
-import io.openvidu.java.client.*;
-import org.springframework.beans.factory.annotation.Value;
+import com.yam.funteer.live.dto.CreateConnectionRequest;
+import com.yam.funteer.live.dto.StartRecordingRequest;
+import com.yam.funteer.live.service.LiveService;
+
+import io.openvidu.java.client.Recording;
+import io.swagger.annotations.Api;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import net.minidev.json.JSONObject;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.PostConstruct;
 import java.util.Map;
 
-@RestController
+@RestController @Slf4j
 @RequestMapping("/openvidu")
+@Api(tags = {"라이브"})
+@RequiredArgsConstructor
 public class LiveController {
 
-    @Value("${OPENVIDU.URL}")
-    private String OPENVIDU_URL;
-
-    @Value("${OPENVIDU.SECRET}")
-    private String OPENVIDU_SECRET;
-
-    private OpenVidu openVidu;
-
-    @PostConstruct
-    public void init(){
-        this.openVidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
-    }
+    private final LiveService liveService;
 
     @PostMapping("/sessions")
-    public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params) throws OpenViduJavaClientException, OpenViduHttpException {
-        SessionProperties properties = SessionProperties.fromJson(params).build();
-        Session session = openVidu.createSession(properties);
-        return ResponseEntity.ok(session.getSessionId());
+    public ResponseEntity<JSONObject> initializeSession(@RequestBody CreateConnectionRequest request){
+        JSONObject response = liveService.initializeSession(request);
+        return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/sessions/{sessionId}/connections")
-    public ResponseEntity<String> createConnection(@PathVariable String sessionId,
-                                                   @RequestBody(required = false) Map<String, Object> params) throws OpenViduJavaClientException, OpenViduHttpException {
-        Session session = openVidu.getActiveSession(sessionId);
-        if(session == null){
-            return ResponseEntity.notFound().build();
-        }
+    @PostMapping("/sessions/leave")
+    public ResponseEntity leaveSession(@RequestBody Map<String, String> params){
+        String sessionName = params.get("sessionName");
+        String token = params.get("token");
 
-        ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
-        Connection connection = session.createConnection(properties);
-        return ResponseEntity.ok(connection.getToken());
+        liveService.leaveSession(sessionName, token);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/recording/start")
+    public ResponseEntity startRecording(@RequestBody StartRecordingRequest request){
+        Recording recording = liveService.startRecording(request);
+        return ResponseEntity.ok(recording);
+    }
+
+    @PostMapping("/recording/stop/{recordingId}")
+    public ResponseEntity stopRecording(@PathVariable String recordingId){
+        Recording recording = liveService.stopRecording(recordingId);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/recording/{recordingId}")
+    public ResponseEntity<Recording> getRecording(@PathVariable String recordingId){
+        Recording recording = liveService.getRecording(recordingId);
+        return ResponseEntity.ok(recording);
     }
 }

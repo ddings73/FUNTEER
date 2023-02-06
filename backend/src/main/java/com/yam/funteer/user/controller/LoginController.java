@@ -39,7 +39,7 @@ public class LoginController {
         if(bindingResult.hasErrors()){
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
             fieldErrors.forEach(fieldError -> log.info(fieldError.getDefaultMessage()));
-            return ResponseEntity.badRequest().build();
+            throw new IllegalArgumentException(fieldErrors.get(0).getDefaultMessage());
         }
         LoginResponse loginResponse = loginService.processLogin(loginRequest);
         return ResponseEntity.ok(loginResponse);

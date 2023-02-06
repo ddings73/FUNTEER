@@ -20,8 +20,6 @@ const rootReducer = combineReducers({
   payModalSlice,
 });
 
-// const persistedReducer = persistReducer(persistConfig, rootReducer);
-
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({

@@ -22,7 +22,7 @@ import {
   TeamSignUp,
   FindPassword,
   Login,
-  TeamPage,
+  DevTeamPage,
   ServiceDetail,
   FindEmail,
   ResetPassword,
@@ -48,6 +48,10 @@ import {
   CustomerCenter,
   NoticeDetail,
   AdminDonation,
+  TeamProfile,
+  AdminNotice,
+  AdminFaq,
+  AdminLive,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -129,8 +133,8 @@ const router = createBrowserRouter([
         element: <ServiceDetail />,
       },
       {
-        path: 'team',
-        element: <TeamPage />,
+        path: 'devteam',
+        element: <DevTeamPage />,
       },
       {
         path: '/test',
@@ -167,6 +171,10 @@ const router = createBrowserRouter([
       {
         path: 'myFollow',
         element: <MyFollows />,
+      },
+      {
+        path: 'team',
+        element: <TeamProfile />,
       },
     ],
   },
@@ -239,6 +247,18 @@ const router = createBrowserRouter([
       {
         path: 'donation',
         element: <AdminDonation />,
+      },
+      {
+        path: 'notice',
+        element: <AdminNotice />,
+      },
+      {
+        path: 'faq',
+        element: <AdminFaq />,
+      },
+      {
+        path: 'live',
+        element: <AdminLive />,
       },
     ],
   },

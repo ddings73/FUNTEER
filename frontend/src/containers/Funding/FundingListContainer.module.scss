@@ -10,6 +10,8 @@
     width: 100%;
     height: 100%;
     margin: 0 auto;
+    padding: 0 15px;
+
 
     .title-box {
       margin-top: 80px;
@@ -23,6 +25,14 @@
         & p {
           font-weight: bold;
           font-size: 3rem;
+          line-height: 1.2;
+        }
+
+        @include tablet(){
+          display: none;
+        }
+        @include mobile(){
+          display: none;
         }
       }
       .statistic-box {
@@ -32,6 +42,16 @@
         justify-content: space-between;
         background-color: $primary;
         border-radius: 20px;
+
+        @include tablet(){
+          width: 100%;
+          height: 100px;
+        }
+        @include mobile(){
+          width: 100%;
+          height: 70px;
+
+        }
 
         & div {
           width: 50%;
@@ -56,25 +76,49 @@
       margin-top: 90px;
       display: flex;
       justify-content: center;
-      & .link {
-        text-decoration: none;
+
+
+       .link {
+        border: none;
+        background-color: white;
         text-align: center;
         padding: 15px;
         margin: 0 15px;
         border-radius: 100%;
         transition: all 0.3s;
+
+
         filter: grayscale(1);
         opacity: 0.7;
 
-        &:hover {
-          filter: grayscale(0);
-          opacity: 1;
+        @include tablet(){
+        padding: 10px;
+        margin: 0 10px;
         }
+        
+        @include mobile(){
+          padding: 5px;
+        margin: 0 10px;
+        }
+        // &:hover {
+        //   filter: grayscale(0);
+        //   opacity: 1;
+        // }
         & .icon {
           display: block;
           width: 54px;
           height: 54px;
           margin-bottom: 10px;
+
+          @include tablet(){
+            width: 44px;
+            height: 44px;
+          }
+          
+          @include mobile(){
+            width: 44px;
+            height: 44px;
+          }
         }
 
         & span {
@@ -83,6 +127,11 @@
           font-weight: bold;
           letter-spacing: 2.5px;
         }
+      }
+      
+      .toggle { 
+        filter: grayscale(0);
+        opacity: 1;
       }
     }
 
@@ -99,9 +148,17 @@
       }
     }
     .funding-list-box {
+      position: relative;
       margin-top: 50px;
       display: flex;
       flex-direction: column;
+
+      .spinner-box{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+      }
 
       & p {
         font-size: 1rem;
@@ -117,10 +174,15 @@
         flex-direction: row;
         justify-content: flex-start;
         flex-wrap: wrap;
+
+        & .nextLoading-box{
+          width: 100%;
+          left: 50%;
+          text-align: center;
+        }
       }
     }
   }
 }
-.funding-list-element {
-  width: 100%;
-}
+
+

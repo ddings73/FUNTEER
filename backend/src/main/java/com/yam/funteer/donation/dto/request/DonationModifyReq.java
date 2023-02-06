@@ -5,8 +5,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -22,6 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 @Data
@@ -36,8 +35,8 @@ public class DonationModifyReq {
 	private String title;
 	@NotBlank
 	private String amount;
-
-	private List<MultipartFile>files=new ArrayList<>();
+	@NotBlank
+	private MultipartFile file;
 	@NotBlank
 	private PostType postType;
 
@@ -63,3 +62,4 @@ public class DonationModifyReq {
 	}
 
 }
+
