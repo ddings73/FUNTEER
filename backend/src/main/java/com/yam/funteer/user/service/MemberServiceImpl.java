@@ -101,7 +101,7 @@ public class MemberServiceImpl implements MemberService {
         request.validateProfile();
         MultipartFile profileImg = request.getProfileImg();
 
-        if(!profileImg.isEmpty()) {
+        if(profileImg != null) {
             String filePath = awsS3Uploader.upload(profileImg, "user");
             Attach profile = member.getProfileImg().orElseGet(() -> request.getProfile(filePath));
 
