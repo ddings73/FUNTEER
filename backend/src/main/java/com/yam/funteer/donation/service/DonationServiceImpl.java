@@ -1,11 +1,7 @@
 package com.yam.funteer.donation.service;
 
-import java.awt.print.Pageable;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -30,7 +26,6 @@ import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.donation.dto.request.DonationModifyReq;
 import com.yam.funteer.donation.dto.request.DonationRegisterReq;
 import com.yam.funteer.donation.dto.response.DonationBaseRes;
-import com.yam.funteer.donation.dto.response.DonationJoinUserRes;
 import com.yam.funteer.donation.dto.response.DonationListRes;
 import com.yam.funteer.donation.entity.Donation;
 import com.yam.funteer.donation.exception.DonationNotFoundException;
@@ -73,18 +68,9 @@ public class DonationServiceImpl implements DonationService{
 
 	public DonationBaseRes donationGetDetail(Long postId) {
 		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
+		PostAttach postAttach=postAttachRepository.findFirstByPost(donation);
 
-		List<String>attachList=new ArrayList<>();
-		if(postAttachRepository.findAllByPost(donation).size()>0){
-			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donation);
-
-			if(postAttachList.size()>0) {
-				for (PostAttach postAttach : postAttachList) {
-					attachList.add(postAttach.getAttach().getPath());
-				}
-			}
-		}
-		return new DonationBaseRes(donation,attachList);
+		return new DonationBaseRes(donation,postAttach.getAttach().getPath());
 	}
 
 	@Override
@@ -125,11 +111,8 @@ public class DonationServiceImpl implements DonationService{
 			Donation donation=donationRepository.save(donationRegisterReq.toEntity());
 			List<String>attachList=new ArrayList<>();
 
-			List<MultipartFile>files=donationRegisterReq.getFiles();
-			if(!files.isEmpty()) {
-				for (MultipartFile file : files) {
-					if (file.isEmpty())
-						break;
+			MultipartFile file=donationRegisterReq.getFile();
+
 					String fileUrl = awsS3Uploader.upload(file, "donation");
 					Attach attach = donationRegisterReq.toAttachEntity(fileUrl, file.getOriginalFilename());
 					PostAttach postAttach = PostAttach.builder()
@@ -140,9 +123,8 @@ public class DonationServiceImpl implements DonationService{
 					attachRepository.save(attach);
 					postAttachRepository.save(postAttach);
 
-				}
-			}
-			return new DonationBaseRes(donation,attachList);
+
+			return new DonationBaseRes(donation,fileUrl);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
@@ -171,22 +153,18 @@ public class DonationServiceImpl implements DonationService{
 			}
 
 			List<String>attachList=new ArrayList<>();
-			List<MultipartFile>files=donationModifyReq.getFiles();
-			if(!files.isEmpty()) {
-				for (MultipartFile file : files) {
-					if (file.isEmpty())
-						break;
-					String fileUrl = awsS3Uploader.upload(file, "donation");
-					Attach attach = donationModifyReq.toAttachEntity(fileUrl, file.getOriginalFilename());
-					PostAttach postAttach = PostAttach.builder()
-						.attach(attach)
-						.post(donation)
-						.build();
-					attachList.add(fileUrl);
-					attachRepository.save(attach);
-					postAttachRepository.save(postAttach);
-				}
-			}
+			MultipartFile file=donationModifyReq.getFile();
+
+			String fileUrl = awsS3Uploader.upload(file, "donation");
+			Attach attach = donationModifyReq.toAttachEntity(fileUrl, file.getOriginalFilename());
+			PostAttach postAttach = PostAttach.builder()
+				.attach(attach)
+				.post(donation)
+				.build();
+
+			attachRepository.save(attach);
+			postAttachRepository.save(postAttach);
+
 			if(donationModifyReq.getPostType().equals(PostType.DONATION_CLOSE)){
 				donation.setEndDate();
 				List<Payment>paymentList=paymentRepository.findAllByPost(donation);
@@ -195,7 +173,7 @@ public class DonationServiceImpl implements DonationService{
 				List<String> userEmailList=userList.stream().map(User::getEmail).collect(Collectors.toList());
 				alarmService.sendList(userEmailList,donation.getTitle()+" 종료되었습니다. 참여감사띠~!~!","/donation/"+postId);
 			}
-			return new DonationBaseRes(donation,attachList);
+			return new DonationBaseRes(donation,fileUrl);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 }
