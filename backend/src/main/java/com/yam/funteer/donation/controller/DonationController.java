@@ -71,7 +71,7 @@ public class DonationController {
 		return ResponseEntity.ok(donationService.donationRegister(donationRegisterReq));
 	}
 
-	@ApiOperation(value = "도네이션 수정", notes = "<strong>postId, userId,타이틀,내용,금액 필수<strong>.")
+	@ApiOperation(value = "도네이션 수정", notes = "<strong>postId, userId,타이틀,내용,금액 필수 <strong>.")
 	@PutMapping("/{postId}")
 	public ResponseEntity<?> donationModify(@PathVariable Long postId, DonationModifyReq donationModifyrReq) throws
 		DonationNotFoundException{
