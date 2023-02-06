@@ -227,130 +227,151 @@ function MemberSignUpContainer() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.contents}>
-        <h1 className={styles.title}>개인 회원가입</h1>
-        <div className={styles['form-div']}>
-          <div className={styles['form-div-inner']}>
-            <p>이름</p>
-            <TextField name="name" margin="dense" placeholder="이름을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
-
-            <p>
-              이메일
-              {!emailDuplConfirmed && (
-                <a href="./" onClick={onClickEmailDuplBtnHandler} className={styles['dupl-btn']}>
-                  중복체크
-                </a>
+      <div className={styles.area}>
+        <div className={styles.contents}>
+          <h1 className={styles.title}>개인 회원가입</h1>
+          <div className={styles['form-div']}>
+            <div id="form-div-inner">
+              <p>이름</p>
+              <TextField name="name" margin="dense" placeholder="이름을 입력해주세요." variant="outlined" onChange={onChangeHandler} sx={{ background: 'white' }} />
+              <p>
+                이메일
+                {!emailDuplConfirmed && (
+                  <a href="./" onClick={onClickEmailDuplBtnHandler} className={styles['dupl-btn']}>
+                    중복체크
+                  </a>
+                )}
+              </p>
+              {checkEmailAuth && <p className={styles['authed-email']}>{memberSignUpInfo.email}</p>}
+              {!checkEmailAuth && (
+                <div className={styles['not-shadow']}>
+                  <TextField name="email" margin="dense" placeholder="이메일을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+                  <Button className={styles['auth-button']} variant="contained" onClick={handleClickAuthEmail}>
+                    {buttonText}
+                  </Button>
+                </div>
               )}
-            </p>
-            {checkEmailAuth && <p className={styles['authed-email']}>{memberSignUpInfo.email}</p>}
-            {!checkEmailAuth && (
-              <div className={styles['not-shadow']}>
-                <TextField name="email" margin="dense" placeholder="이메일을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
-                <Button className={styles['auth-button']} variant="contained" onClick={handleClickAuthEmail}>
-                  {buttonText}
-                </Button>
+              {emailAuthButtonPushed && (
+                <div className={styles['auth-input-div']}>
+                  <input
+                    type="text"
+                    name="authNumber"
+                    placeholder="인증번호를 입력해주세요."
+                    className={styles['auth-number-input']}
+                    onChange={onAuthNumberChangeHandler}
+                  />
+                  <Button className={styles['auth-check-button']} variant="contained" onClick={checkAuthNumber}>
+                    인증
+                  </Button>
+                </div>
+              )}
+
+              <p>비밀번호</p>
+              <div className={styles['pw-div']}>
+                <TextField
+                  name="password"
+                  type={!passwordVisibility ? 'password' : ''}
+                  margin="dense"
+                  placeholder="비밀번호를 입력해주세요."
+                  variant="outlined"
+                  onChange={onChangeHandler}
+                />{' '}
+                {passwordVisibility && (
+                  <Visibility
+                    onClick={() => {
+                      setPasswordVisibility(!passwordVisibility);
+                    }}
+                    className={styles['pwv-btn']}
+                  />
+                )}
+                {!passwordVisibility && (
+                  <VisibilityOff
+                    onClick={() => {
+                      setPasswordVisibility(!passwordVisibility);
+                    }}
+                    className={styles['pwv-btn']}
+                  />
+                )}
               </div>
-            )}
-            {emailAuthButtonPushed && (
-              <div className={styles['auth-input-div']}>
-                <input
-                  type="text"
-                  name="authNumber"
-                  placeholder="인증번호를 입력해주세요."
-                  className={styles['auth-number-input']}
-                  onChange={onAuthNumberChangeHandler}
+
+              <p>비밀번호 확인</p>
+              <div className={styles['pw-div']}>
+                <TextField
+                  name="passwordCheck"
+                  type={!passwordCheckVisibility ? 'password' : ''}
+                  margin="dense"
+                  placeholder="비밀번호를 입력해주세요."
+                  variant="outlined"
+                  onChange={onChangeHandler}
+                  sx={{ background: 'white' }}
                 />
-                <Button className={styles['auth-check-button']} variant="contained" onClick={checkAuthNumber}>
-                  인증
-                </Button>
+                {passwordCheckVisibility && (
+                  <Visibility
+                    onClick={() => {
+                      setPasswordCheckVisibility(!passwordCheckVisibility);
+                    }}
+                    className={styles['pwv-btn']}
+                  />
+                )}
+                {!passwordCheckVisibility && (
+                  <VisibilityOff
+                    onClick={() => {
+                      setPasswordCheckVisibility(!passwordCheckVisibility);
+                    }}
+                    className={styles['pwv-btn']}
+                  />
+                )}
               </div>
-            )}
 
-            <p>비밀번호</p>
-            <div className={styles['pw-div']}>
-              <TextField
-                name="password"
-                type={!passwordVisibility ? 'password' : ''}
-                margin="dense"
-                placeholder="비밀번호를 입력해주세요."
-                variant="outlined"
-                onChange={onChangeHandler}
-              />{' '}
-              {passwordVisibility && (
-                <Visibility
-                  onClick={() => {
-                    setPasswordVisibility(!passwordVisibility);
-                  }}
-                  className={styles['pwv-btn']}
-                />
-              )}
-              {!passwordVisibility && (
-                <VisibilityOff
-                  onClick={() => {
-                    setPasswordVisibility(!passwordVisibility);
-                  }}
-                  className={styles['pwv-btn']}
-                />
-              )}
-            </div>
+              <p>
+                닉네임
+                {!nicknameDuplConfirmed && (
+                  <a href="./" onClick={onClickNicknameDuplBtnHandler} className={styles['dupl-btn']}>
+                    중복체크
+                  </a>
+                )}
+              </p>
+              <TextField sx={{ background: 'white' }} name="nickname" margin="dense" placeholder="닉네임을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
 
-            <p>비밀번호 확인</p>
-            <div className={styles['pw-div']}>
+              <p>
+                휴대폰 번호
+                {!phoneDuplConfirmed && (
+                  <a href="./" onClick={onClickPhoneDuplBtnHandler} className={styles['dupl-btn']}>
+                    중복체크
+                  </a>
+                )}
+              </p>
               <TextField
-                name="passwordCheck"
-                type={!passwordCheckVisibility ? 'password' : ''}
+                sx={{ background: 'white' }}
+                name="phone"
                 margin="dense"
-                placeholder="비밀번호를 입력해주세요."
+                placeholder="휴대폰 번호를 입력해주세요."
                 variant="outlined"
                 onChange={onChangeHandler}
               />
-              {passwordCheckVisibility && (
-                <Visibility
-                  onClick={() => {
-                    setPasswordCheckVisibility(!passwordCheckVisibility);
-                  }}
-                  className={styles['pwv-btn']}
-                />
-              )}
-              {!passwordCheckVisibility && (
-                <VisibilityOff
-                  onClick={() => {
-                    setPasswordCheckVisibility(!passwordCheckVisibility);
-                  }}
-                  className={styles['pwv-btn']}
-                />
-              )}
-            </div>
 
-            <p>
-              닉네임
-              {!nicknameDuplConfirmed && (
-                <a href="./" onClick={onClickNicknameDuplBtnHandler} className={styles['dupl-btn']}>
-                  중복체크
-                </a>
-              )}
-            </p>
-            <TextField name="nickname" margin="dense" placeholder="닉네임을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
-
-            <p>
-              휴대폰 번호
-              {!phoneDuplConfirmed && (
-                <a href="./" onClick={onClickPhoneDuplBtnHandler} className={styles['dupl-btn']}>
-                  중복체크
-                </a>
-              )}
-            </p>
-            <TextField name="phone" margin="dense" placeholder="휴대폰 번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
-
-            {/* <p>계좌번호</p>
+              {/* <p>계좌번호</p>
             <TextField name="accountNumber" margin="dense" placeholder="계좌번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} /> */}
 
-            <Button className={styles['signup-button']} variant="contained" onClick={requestSignUp}>
-              회원가입
-            </Button>
+              <Button className={styles['signup-button']} variant="contained" onClick={requestSignUp}>
+                회원가입
+              </Button>
+            </div>
           </div>
         </div>
       </div>
+      <ul className={styles.circles}>
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+      </ul>
     </div>
   );
 }
