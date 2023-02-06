@@ -176,6 +176,10 @@ const router = createBrowserRouter([
         element: <Charge />,
       },
       {
+        path: 'charge',
+        element: <Charge />,
+      },
+      {
         path: '/funding',
         element: <FundingList />,
       },
