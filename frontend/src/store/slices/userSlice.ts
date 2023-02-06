@@ -5,19 +5,23 @@ import { RootState } from '../store';
 export interface UserStateInterface {
   isLogin: boolean;
   userType: string;
+  userId: string;
 }
 
 const initialState: UserStateInterface = {
   isLogin: false,
   userType: '',
+  userId: '',
 };
 
 export const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUserLoginState: (state, action: PayloadAction<boolean>) => {
-      state.isLogin = action.payload;
+    setUserLoginState: (state, action: PayloadAction<UserStateInterface>) => {
+      state.isLogin = action.payload.isLogin;
+      state.userType = action.payload.userType;
+      state.userId = action.payload.userId;
     },
     setUserType: (state, action: PayloadAction<string>) => {
       state.userType = action.payload;
@@ -25,6 +29,7 @@ export const userSlice = createSlice({
     resetLoginState: (state) => {
       state.isLogin = false;
       state.userType = '';
+      state.userId = '';
     },
   },
 });
