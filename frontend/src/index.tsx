@@ -43,6 +43,7 @@ import {
   AdminTeam,
   FundingList,
   CreateFunding,
+  AdminDonationCreate,
   AdminTeamDeny,
   AdminFunding,
   CustomerCenter,
@@ -94,13 +95,12 @@ const router = createBrowserRouter([
         element: <Login />,
       },
       {
-<<<<<<< HEAD
-=======
+
         path: 'login/kakao',
         element: <Test />,
       },
       {
->>>>>>> feat-BE/member
+
         path: 'findEmail',
         element: <FindEmail />,
       },
@@ -247,6 +247,10 @@ const router = createBrowserRouter([
       {
         path: 'donation',
         element: <AdminDonation />,
+      },
+      {
+        path: '/donation/create',
+        element: <AdminDonationCreate />,
       },
       {
         path: 'notice',
