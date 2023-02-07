@@ -1,12 +1,37 @@
 import { Button } from '@mui/material';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import styles from './AdminNoticeContainer.module.scss'; // <- css 코드 여기서 작성
-import AdminNoticeContainerItem, { AdminNoticeContainerItemType } from './AdminNoticeContainerItem';
+import { requestNoticeList } from '../../../api/admin';
+
+export type AdminNoticeContainerItemType = {
+  id: number;
+  title: string;
+  content: string;
+  regDate: string;
+  files: string;
+};
 
 function AdminNoticeContainer() {
+
+
   const navigate = useNavigate();
-  const {pathname} =useLocation()
+  const {pathname} = useLocation()
+  const [noticeList, setNoticeList] = useState<AdminNoticeContainerItemType[]>([]);
+
+  const requestNotice = async () => {
+    try {
+      const response = await requestNoticeList();
+      console.log(response)
+      setNoticeList(response.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(() => {
+    requestNotice();
+  }, [])
 
   /** 여기서 함수, 변수 선언하거나 axios 요청 */
   const onClickCreateBtn = () => {
@@ -18,7 +43,7 @@ function AdminNoticeContainer() {
   } 
 
   const onClickNoticeHandler = (data: AdminNoticeContainerItemType, e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`./${data.id}`, { state: { data } });
+    navigate(`../../cc/${data.id}`, { state: { requestNoticeList } });
   };
 
   /** 아래는 TSX 문법, HTML 코드 작성 */
@@ -36,29 +61,37 @@ function AdminNoticeContainer() {
           <li> </li>
 
         </ul>
-        {AdminNoticeContainerItem.map((data) => (
-          <button
-          type="button"
+        {noticeList.map((data) => (
+          <ul
           key={data.id}
           className={styles['list-line']}
-          onClick={(e) => {
-            onClickNoticeHandler(data, e);
-          }}
         >
           <li className={styles['mobile-none']}>
             <p>{data.id}</p>
           </li>
-          <li>
-            <p>{data.title}</p>
-          </li>
+            <button
+            type="button"
+            style={{ width: '250px',
+            display: 'flex',
+            justifyContent: 'center',
+            border: 'none',
+            backgroundColor: 'inherit',
+            fontFamily: 'NanumSquareRound',
+            fontWeight: 'bold',
+            fontSize: '1rem', }}
+            onClick={(e) => {
+            onClickNoticeHandler(data, e);
+          }}>{data.title}</button>
           <li>
             <p>{data.regDate}</p>
           </li>
+          <li>
           <button type="button" onClick={onClickDeletebtn} className={styles['withdraw-btn']}>
             X
           </button>
-        </button>
-        ))}
+          </li>
+        </ul>
+     ))}
       </div>
     </div>
   );

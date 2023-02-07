@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Editor as ToastEditor } from '@toast-ui/react-editor';
+import { useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
 import { requestUploadImage } from '../../../api/funding';
 import styles from './AdminNoticeCreateContainer.module.scss';
@@ -9,23 +10,27 @@ import { NoticeInterface } from "../../../types/notice";
 
 
 function AdminNoticeCreateContainer() {
-    const [file, setFile] = useState<FileList>();
-    const [fileList, setFileList] = useState([]);
-    
-    // 파일 타입 지정 필요 
+  const navigate = useNavigate();
+  
+  const [files, setFiles] = useState<File[]>([]);
 
-    const [noticeData, setNoticeData] = useState<NoticeInterface> ({
-      files: new FileList,
-      title: '',
-      content: '',
-    })
-
+  const [noticeData, setNoticeData] = useState<NoticeInterface> ({
+    files: [],
+    title: '',
+    content: '',
+  })
+  
+  const onChangeTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNoticeData({ ...noticeData, title: e.target.value} )
+    }
+  
     const editorRef = useRef<ToastEditor>(null);
 
     const editorChangeHandler = (e: any) => {
         const text = editorRef.current?.getInstance().getHTML();
-    
-      };
+        setNoticeData({ ...noticeData, content: text });
+  
+    };
 
         
     const onUploadImage = async (blob: Blob, callback: any) => {
@@ -33,18 +38,20 @@ function AdminNoticeCreateContainer() {
 
         const url = await requestUploadImage(blob);
 
-        // callback(url, 'NoticeContents 이미지');
+        callback(url, 'NoticeContents 이미지');
     };
 
     const onChangeFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
-        setFile(e.target.files)
+        files.push(e.target.files[0])
+        console.log(files)
       }
     }
 
     const createNotice = async()=>{
       try{
         const response =await requestCreateNotice(noticeData);
+        navigate(-1)
         console.log(response);
         
       }
@@ -61,8 +68,12 @@ function AdminNoticeCreateContainer() {
         <div className={styles['label-div']}>
           <p>제목</p> <img src={requiredIcon} alt="required icon" />
         </div>
-
-        <input name="title" type="text" className={styles['email-title']} placeholder="제목을 입력해주세요." />
+        <input 
+          value={noticeData.title}
+          onChange={onChangeTextHandler} 
+          name="title" type="text" 
+          className={styles['email-title']} 
+          placeholder="제목을 입력해주세요." />
           <div className={styles['label-div']}>
           <p>내용</p> <img src={requiredIcon} alt="required icon" />
           </div>
