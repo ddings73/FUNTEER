@@ -21,16 +21,19 @@ function TeamEditContainer() {
   const [changePw, setChangePw] = useState<boolean>(false);
   /** 비밀번호 가시 버튼 */
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
-  /** 비밀번호 */
+  /** 비밀번호 초기 값 */
   const initialPasswordInfo = {
     password: '',
     newPassword: '',
     newPasswordCheck: '',
   };
+  /** 비밀번호 정보 */
   const [passwordInfo, setPasswordInfo] = useState(initialPasswordInfo);
   /** 실적 파일 변경 펼치기 */
   const [changePerform, setChangePerform] = useState<boolean>(false);
-  /** 실적 파일 변경 */
+  /** 실적 파일 비밀번호 */
+  const [performPassword, setPerformPassword] = useState('');
+  /** 실적 파일 */
   const [performFile, setPerformFile] = useState<File | null>(null);
 
   /** 이미지 수정 */
@@ -55,7 +58,6 @@ function TeamEditContainer() {
   /** 단체 설명 입력 */
   const onChangeDescription = (e: React.ChangeEvent<HTMLInputElement>) => {
     setDesChanged(true);
-    console.log(teamEditInfo.description);
     setTeamEditInfo({ ...teamEditInfo, description: e.target.value });
   };
 
@@ -107,6 +109,11 @@ function TeamEditContainer() {
     }
   };
 
+  /** 실적 파일용 비밀번호 변경 */
+  const onChangePerformPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPerformPassword(e.target.value);
+  };
+
   /** 실적 파일 변경 */
   const onChangePerform = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -123,7 +130,7 @@ function TeamEditContainer() {
   /** 실적 파일 변경 요청 */
   const onClickPerformChange = async () => {
     try {
-      const response = await requestChangePerform(teamEditInfo.teamId, performFile);
+      const response = await requestChangePerform(teamEditInfo.teamId, performPassword, performFile);
       customAlert(s1000, '실적 파일이 변경되었습니다.');
       console.log(response);
     } catch (error) {
@@ -150,7 +157,7 @@ function TeamEditContainer() {
               </div>
             </div>
             <div className={styles.right}>
-              <p className={styles.name}>{teamEditInfo.name}</p>
+              <p className={styles.name}>프로필 수정</p>
               <p className={styles.label}>단체 설명</p>
               <TextField
                 color="warning"
@@ -171,16 +178,7 @@ function TeamEditContainer() {
               )}
             </div>
           </div>
-          <div
-            style={{
-              width: '90%',
-              height: '0',
-              margin: '2rem auto 1rem auto',
-              borderBottom: '1px solid rgba(0, 0, 0, 0.15)',
-            }}
-          >
-            {' '}
-          </div>
+          <div className={styles.hr1}> </div>
           <div className={styles['pr-div']}>
             <div className={styles.item}>
               <div className={styles['pw-label']}>
@@ -227,16 +225,7 @@ function TeamEditContainer() {
                 </>
               )}
             </div>
-            <div
-              style={{
-                width: '85%',
-                height: '0',
-                margin: '2rem auto',
-                borderBottom: '1px solid rgba(0, 0, 0, 0.1)',
-              }}
-            >
-              {' '}
-            </div>
+            <div className={styles.hr2}> </div>
             <div className={styles.item}>
               <div className={styles['perform-label']}>
                 <p>봉사 실적 파일 변경</p>
@@ -248,6 +237,14 @@ function TeamEditContainer() {
               )}
               {changePerform && (
                 <div>
+                  <input
+                    name="password"
+                    type="password"
+                    placeholder="비밀번호 입력"
+                    style={{ marginTop: '0.5rem' }}
+                    className={styles['pw-input']}
+                    onChange={onChangePerformPassword}
+                  />
                   <label htmlFor="file">
                     <input type="file" onChange={onChangePerform} />
                   </label>

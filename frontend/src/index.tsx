@@ -52,6 +52,7 @@ import {
   AdminFaq,
   AdminLive,
   TeamEdit,
+  TeamDonation,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -176,6 +177,10 @@ const router = createBrowserRouter([
       {
         path: 'teamedit/:teamId',
         element: <TeamEdit />,
+      },
+      {
+        path: 'teamdonation/:teamId',
+        element: <TeamDonation />,
       },
     ],
   },
