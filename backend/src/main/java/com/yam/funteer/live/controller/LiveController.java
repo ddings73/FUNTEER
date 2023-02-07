@@ -37,10 +37,4 @@ public class LiveController {
         liveService.leaveSession(request);
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/recording/{recordingId}")
-    public ResponseEntity<Recording> getRecording(@PathVariable String recordingId){
-        Recording recording = liveService.getRecording(recordingId);
-        return ResponseEntity.ok(recording);
-    }
 }

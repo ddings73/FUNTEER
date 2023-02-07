@@ -11,8 +11,6 @@ import io.openvidu.java.client.Recording;
 
 public interface LiveService {
 	CreateConnectionResponse initializeSession(CreateConnectionRequest sessionName);
-
     void leaveSession(SessionLeaveRequest request);
 
-	Recording getRecording(String recordingId);
 }
