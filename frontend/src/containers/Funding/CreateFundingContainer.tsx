@@ -20,7 +20,7 @@ import { fontWeight } from '@mui/system';
 import { log } from 'console';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestUploadImage } from '../../api/funding';
-import { FundingInterface, descriptionType } from '../../types/funding';
+import { FundingInterface, amountLevelType, descriptionType } from '../../types/funding';
 import defaultThumbnail from '../../assets/images/default-profile-img.svg';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { closeModal, openModal } from '../../store/slices/modalSlice';
@@ -451,7 +451,6 @@ function CreateFundingContainer() {
                 addTodos={addTodos}
                 level="LEVEL_ONE"
                 todoText={todoText}
-                removeTodo={removeTodo}
               />
             </TabPanel>
 
@@ -464,7 +463,6 @@ function CreateFundingContainer() {
                 addTodos={addTodos}
                 level="LEVEL_TWO"
                 todoText={todoText}
-                removeTodo={removeTodo}
               />
             </TabPanel>
 
@@ -477,7 +475,6 @@ function CreateFundingContainer() {
                 addTodos={addTodos}
                 level="LEVEL_THREE"
                 todoText={todoText}
-                removeTodo={removeTodo}
               />
             </TabPanel>
             <div className={styles['stage-button-box']}>

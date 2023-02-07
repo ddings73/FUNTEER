@@ -1,20 +1,18 @@
 package com.yam.funteer.funding.entity;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Optional;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.springframework.boot.util.LambdaSafe;
-import org.springframework.lang.Nullable;
-
-import com.yam.funteer.funding.dto.FundingRequest;
 import com.yam.funteer.post.entity.Comment;
 import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.entity.PostHashtag;
@@ -46,6 +44,9 @@ public class Funding extends Post {
 
 	private String fundingDescription;
 
+	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Report report;
+
 	public void setTargetMoneyList(List<TargetMoney> targetMoneyList) {
 		this.targetMoneyList = targetMoneyList;
 	}
@@ -54,13 +55,13 @@ public class Funding extends Post {
 		this.hashtags = hashtags;
 	}
 
-	@OneToMany(mappedBy = "funding")
+	@OneToMany(mappedBy = "funding", cascade = CascadeType.ALL)
 	private List<TargetMoney> targetMoneyList;
 
-	@OneToMany(mappedBy = "post")
+	@OneToMany(mappedBy = "post", cascade = CascadeType.ALL)
 	private List<PostHashtag> hashtags;
 
-	@OneToMany(mappedBy = "funding")
+	@OneToMany(mappedBy = "funding", cascade = CascadeType.ALL)
 	private List<Comment> comments;
 
 	public void setEndDate(LocalDate endDate) {
@@ -88,4 +89,13 @@ public class Funding extends Post {
 	public void setCurrentFundingAmount(Long amount) {
 		this.currentFundingAmount = amount;
 	}
+
+	public Optional<List<Comment>> getComments(){
+		return Optional.ofNullable(this.comments);
+	}
+
+	public Optional<List<PostHashtag>> getPostHashtags() {
+		return Optional.ofNullable(this.hashtags);
+	}
+
 }

@@ -14,10 +14,9 @@ import com.yam.funteer.qna.exception.QnaNotFoundException;
 
 
 public interface QnaService {
-	List<QnaListRes>qnaGetList();
-	QnaBaseRes qnaRegister(QnaRegisterReq qnaRegisterReq,List<MultipartFile>files);
-	QnaBaseRes qnaGetDetail(Long qnaId) throws QnaNotFoundException;
-	QnaBaseRes qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq,List<MultipartFile>files) throws
-		QnaNotFoundException;
-	void qnaDelete(Long qnaId) throws QnaNotFoundException;
+	List<QnaListRes>qnaGetList(int page,int size);
+	QnaBaseRes qnaRegister(QnaRegisterReq qnaRegisterReq);
+	QnaBaseRes qnaGetDetail(Long qnaId);
+	QnaBaseRes qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq);
+	void qnaDelete(Long qnaId) ;
 }

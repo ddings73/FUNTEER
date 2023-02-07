@@ -1,12 +1,8 @@
 package com.yam.funteer.common.security.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.user.dto.response.TokenInfo;
-import com.yam.funteer.user.entity.Member;
-import com.yam.funteer.user.entity.User;
-import com.yam.funteer.user.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,40 +11,29 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Map;
 
 @Component @Slf4j
 @RequiredArgsConstructor
-public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
-    private final JwtProvider jwtProvider;
-    private final ObjectMapper objectMapper;
-
+public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Override
     @Transactional
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        String userId = (String)oAuth2User.getAttributes().get("userId");
-        TokenInfo tokenInfo = jwtProvider.generateTokenForOAuth(userId);
+        String email = (String)oAuth2User.getAttributes().get("email");
 
-        String jsonStr = objectMapper.writeValueAsString(tokenInfo);
-
-        System.out.println(jsonStr);
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.setStatus(HttpServletResponse.SC_OK);
-        response.getWriter().write(jsonStr);
-
-        // response.sendRedirect("http://localhost:3000/oauth2/redirect");
+        String targetURI = UriComponentsBuilder.fromUriString("https://i8e204.p.ssafy.io/login/kakao")//https://i8e204.p.ssafy.io/login/kakao")
+            .queryParam("email", email).toUriString();
+        getRedirectStrategy().sendRedirect(request, response, targetURI);
     }
 }

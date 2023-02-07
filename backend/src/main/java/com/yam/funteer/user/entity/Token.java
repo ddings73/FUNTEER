@@ -1,6 +1,5 @@
 package com.yam.funteer.user.entity;
 
-import com.yam.funteer.user.entity.User;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,7 +14,14 @@ public class Token {
     private Long id;
     private String refreshToken;
 
-    public void updateToken(String refreshToken) {
+    public static Token from(Long userId, String refreshToken) {
+        return Token.builder()
+                .id(userId)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
+    public void update(String refreshToken) {
         this.refreshToken = refreshToken;
     }
 }

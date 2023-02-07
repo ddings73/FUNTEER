@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Optional;
 import java.util.UUID;
 
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
@@ -80,8 +81,9 @@ public class AwsS3Uploader {
 	public void delete(String directory, String path) {
 		String[] split = path.split("/");
 		String fileName = split[split.length - 1];
-		System.out.println(fileName);
-		log.info("File Delete : " + fileName);
-		amazonS3Client.deleteObject(bucket, directory + fileName);
+
+		log.info("File Delete : " + directory + "/" + fileName);
+		amazonS3Client.deleteObject(bucket, directory + "/" + fileName);
 	}
+
 }

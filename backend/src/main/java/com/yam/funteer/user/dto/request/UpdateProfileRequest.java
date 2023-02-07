@@ -22,11 +22,10 @@ import java.time.LocalDateTime;
 public class UpdateProfileRequest{
 	@NotNull
 	private Long userId;
-	private @NotBlank String nickname;
-	private @NotNull MultipartFile profileImg;
-	private boolean display;
 
-    public Attach getAttach(String filename) {
+	protected MultipartFile profileImg;
+
+    public Attach getProfile(String filename) {
 		return Attach.builder()
 				.name(profileImg.getOriginalFilename())
 				.path(filename)
@@ -35,9 +34,9 @@ public class UpdateProfileRequest{
 				.build();
     }
 
-	public void validateProfileType(){
+	public void validateProfile(){
 		try {
-			if(!FileUtil.validImgFile(this.profileImg.getInputStream()))
+			if(!FileUtil.validImgFile(profileImg.getInputStream()))
 				throw new IllegalArgumentException("이미지파일만 업로드 할 수 있습니다.");
 		} catch (IOException e) {
 			throw new RuntimeException(e);

@@ -1,5 +1,5 @@
-import { NoticeInterface } from "../types/notice";
-import { http } from "./axios"
+import { NoticeInterface } from '../types/notice';
+import { http } from './axios';
 
 export const requestCreateNotice = async(noticeData:NoticeInterface)=>{
     const formData = new FormData();
@@ -28,5 +28,4 @@ export const requestNoticeList = async () => {
     return res;
   };
   
-  
-  
+

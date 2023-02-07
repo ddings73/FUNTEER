@@ -10,7 +10,7 @@ export const NavbarMenuData: NavbarMenuDataType[] = [
   {
     title: '서비스소개',
     subRoutes: ['서비스 소개', '운영팀 소개'],
-    subPath: ['service', 'team'],
+    subPath: ['service', 'devteam'],
   },
   {
     title: '펀딩서비스',
