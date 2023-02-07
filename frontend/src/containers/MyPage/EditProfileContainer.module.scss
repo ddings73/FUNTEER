@@ -18,7 +18,7 @@
       background-size: cover;
       & .contentBox {
         display: flex;
-        margin: 15% auto;
+        margin: 10% auto;
         width: 100%;
         height: 700px;
         align-items: center;
@@ -34,9 +34,7 @@
 }
 .main {
   width: 100%;
-  height: 100vh;
   display: flex;
-  align-items: center;
   justify-content: center;
 
   & .profileCard {
@@ -66,8 +64,16 @@
       }
     }
     & .buttons {
+      width: 100%;
+      height: 50px;
       display: flex;
-      margin-top: 20px;
+       .btn {
+        width: 100%;
+        background-color: $primary;
+        font-size: 1.1rem;
+        line-height: 50px;
+        font-weight: bold;
+      }
     }
 
     & .image {
@@ -84,4 +90,9 @@
       }
     }
   }
+}
+
+.error-text{
+  color: red;
+  font-size: 0.7rem;
 }
