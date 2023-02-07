@@ -16,7 +16,6 @@ function AdminDonationCreateContainer() {
   /** 여기서 함수, 변수 선언하거나 axios 요청 */
   const navigate=useNavigate();
   const [filePreview, setFilePreview] = useState<string>();
-  const fileRef=useRef<HTMLInputElement>(null);
   const editorRef = useRef<ToastEditor>(null);
   const [donationData,setDonationData]=useState<DonationInterface>({
     file: null,
@@ -35,14 +34,9 @@ function AdminDonationCreateContainer() {
     if(!e.target.files){
       return;
     }
+    console.log(e.target.files[0])
     const fileUpload=e.target.files[0];
     setDonationData({...donationData, file: fileUpload})
-    // console.log(fileUpload);
-    const reader=new FileReader();
-    reader.readAsDataURL(fileUpload);
-    reader.onloadend = () => {
-      setFilePreview(reader.result as string);
-    };
   }
 
   /** onChangeTextHandler */
@@ -109,7 +103,7 @@ function AdminDonationCreateContainer() {
         <div className={styles['label-div']}>
           <p>첨부파일</p><img src={requiredIcon} alt="required icon" />
         </div>
-        <input ref={fileRef} type="file" style={{margin:'0.5rem 0 1rem 0', width: '710px'}} accept="image/*" onChange={onFileHandler} className={styles['thumbnail-upload-input']} required />
+        <input type="file" style={{margin:'0.5rem 0 1rem 0', width: '710px'}} accept="image/*" onChange={onFileHandler} className={styles['thumbnail-upload-input']} required />
         <div className={styles['btn-div']}>
           <Button variant="contained" className={styles.submit}>
             취소

@@ -15,7 +15,7 @@ export const requestCreateDonation = async (donationData: DonationInterface) => 
   entry.forEach((data) => {
     const key = data[0];
     const value = data[1];
-    formData.append(`${key}`, `${value}`);
+    formData.append(`${key}`, value);
   });
   
   const res = await http.post('admin/donation', formData);
@@ -31,7 +31,7 @@ export const requestModifyDonation = async (donationIdx:number, donationData: Do
   entry.forEach((data) => {
     const key = data[0];
     const value = data[1];
-    formData.append(`${key}`, `${value}`);
+    formData.append(`${key}`, value);
   });
   
   const res = await http.put(`admin/donation/${donationIdx}`, formData);

@@ -16,6 +16,6 @@ export interface DonationInterface {
   title: string;
   content: string | undefined;
   amount:string;
-  file:Blob | null;
+  file:Blob|null;
 }
 
