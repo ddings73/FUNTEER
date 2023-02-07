@@ -3,13 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { BrowserRouter, createBrowserRouter, RouterProvider, useParams, useSearchParams } from 'react-router-dom';
 import { Provider } from 'react-redux';
+import { ThemeProvider } from '@emotion/react';
 import { persistStore } from 'redux-persist';
 import { PersistGate } from 'redux-persist/integration/react';
-
+import { config } from 'yargs';
+import App from './App';
 import reportWebVitals from './reportWebVitals';
 import store from './store/store';
 /*  */
-
+import { theme } from './theme/theme';
 import UserRoot from './roots/UserRoot';
 import AdminRoot from './roots/AdminRoot';
 import UserFooterRoot from './roots/UserFooterRoot';
@@ -37,6 +39,7 @@ import {
   MyPage,
   AdminMain,
   AdminMember,
+  AdminNoticeCreate,
   LogOut,
   AdminTeam,
   FundingList,
@@ -46,42 +49,18 @@ import {
   CustomerCenter,
   NoticeDetail,
   AdminDonation,
-  AdminDonationCreate,
   TeamProfile,
   AdminNotice,
   AdminFaq,
   AdminLive,
   TeamEdit,
+  Kakao,
+
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
 import Kakao from './pages/Accounts/Kakao';
-
-function Test() {
-  const [searchParams, setSearchParams] = useSearchParams();
-
-  const email = searchParams.get('email');
-  const data = {
-    email,
-  };
-  const kakaoLogin = async () => {
-    try {
-      const response = await http.post('login/kakao', data, {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      console.log(response);
-    } catch (Error) {
-      console.log(Error);
-    }
-  };
-  useEffect(() => {
-    kakaoLogin();
-  }, []);
-  return <h1>ㅎㅇㅎㅇㅎㅇ</h1>;
-}
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
@@ -199,10 +178,6 @@ const router = createBrowserRouter([
         element: <Charge />,
       },
       {
-        path: 'charge',
-        element: <Charge />,
-      },
-      {
         path: '/funding',
         element: <FundingList />,
       },
@@ -255,12 +230,12 @@ const router = createBrowserRouter([
         element: <AdminDonation />,
       },
       {
-        path: 'donation/create',
-        element: <AdminDonationCreate />,
-      },
-      {
         path: 'notice',
         element: <AdminNotice />,
+      },
+      {
+        path:"notice/noticecreate",
+        element:<AdminNoticeCreate />
       },
       {
         path: 'faq',
