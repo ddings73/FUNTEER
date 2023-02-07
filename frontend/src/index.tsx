@@ -60,7 +60,6 @@ import {
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
-import Kakao from './pages/Accounts/Kakao';
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
