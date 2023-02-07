@@ -54,7 +54,7 @@
       & .barWrapper {
         display: flex;
         & .progressBar {
-          width: 60%;
+          width: 50%;
           background: rgb(129, 129, 129);
           background: linear-gradient(90deg, rgba(49, 49, 52, 1) 0%, rgb(82, 82, 82) 0%, rgb(143, 143, 143) 100%);
           border-radius: 15px;
@@ -73,7 +73,7 @@
           }
         }
         & .funStatusNum {
-          width: 10%;
+          width: 20%;
           margin-left: 10px;
           color: rgb(49, 49, 52);
           font-weight: 600;

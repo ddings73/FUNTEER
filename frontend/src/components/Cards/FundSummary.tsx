@@ -19,6 +19,7 @@ export interface ResponseInterface {
   targetMoneyListLevelThree: Array<targetType>;
   currentFundingAmount: number;
   wishCount: number;
+  fundingDescription: string;
 }
 type targetType = {
   amount?: number;
@@ -27,7 +28,8 @@ type targetType = {
 };
 
 export function FundSummary(board: ResponseInterface) {
-  const { title, start, end, content, targetMoneyListLevelThree, thumbnail } = board;
+  // const [description]
+  const { title, start, end, content, targetMoneyListLevelThree, thumbnail, fundingDescription } = board;
   // console.log('타겟 머니', typeof targetMoneyListLevelThree[0]?.amount);
   // console.log('타겟 머니 amount', targetMonies[2].amount);
 
@@ -37,11 +39,12 @@ export function FundSummary(board: ResponseInterface) {
         <img className={styles.cardImage} src={thumbnail} alt="altImg" />
         <div className={styles.cardDetail}>
           <div className={styles.fundTitle}>{title}</div>
-          <div className={styles.fundSubTitle}>{content}</div>
+          <div className={styles.fundSubTitle}>{}</div>
           <div className={styles.barWrapper}>
             <div className={styles.object}> 목표금액: {targetMoneyListLevelThree[0]?.amount}원</div>
             <div className={styles.progressBar}>
-              <div className={styles.status}>10%</div>
+              <div className={styles.status} />
+              <p className={styles.statusNum}>10%</p>
             </div>
           </div>
           <div className={styles.teamArea}>
