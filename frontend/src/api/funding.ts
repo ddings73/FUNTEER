@@ -82,3 +82,13 @@ export const requestCategoryFundingList = async (categoryId: number) => {
   const response = await http.get(`funding/category/${categoryId}`);
   return response;
 };
+
+/*
+ * 펀딩 상세 호출
+ * @method PUT
+ */
+export const requestWish = async (fundingId?: number) => {
+  const res = await http.put(`member/like/?fundingId=${fundingId}`);
+  console.log(res);
+  return res;
+};
