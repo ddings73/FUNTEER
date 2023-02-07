@@ -12,9 +12,9 @@
     max-height: 200px;
     box-sizing: border-box;
     overflow: hidden;
-    border: 3px solid #000;
     font-size: medium;
     display: flex;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
     & .cardImage {
       width: 20%;
       object-fit: cover;
@@ -54,15 +54,17 @@
       & .barWrapper {
         display: flex;
         & .progressBar {
-          width: 60%;
-          background-color: rgb(110, 110, 110);
+          width: 50%;
+          background: rgb(129, 129, 129);
+          background: linear-gradient(90deg, rgba(49, 49, 52, 1) 0%, rgb(82, 82, 82) 0%, rgb(143, 143, 143) 100%);
           border-radius: 15px;
           display: flex;
           padding: 3px;
           height: 10px;
           & .status {
-            width: 70%;
-            background-color: rgb(116, 194, 92);
+            width: 40%;
+            background: rgb(49, 49, 52);
+            background: linear-gradient(90deg, rgba(49, 49, 52, 1) 0%, rgba(255, 166, 0, 1) 0%, rgb(255, 136, 0) 100%);
             color: white;
             padding: 1%;
             text-align: right;
@@ -71,9 +73,32 @@
           }
         }
         & .funStatusNum {
-          width: 10%;
+          width: 20%;
           margin-left: 10px;
+          color: rgb(49, 49, 52);
+          font-weight: 600;
         }
+      }
+    }
+    & .joinDetail {
+      font-family: 'nanumsquare';
+      background: rgb(49, 49, 52);
+      background: linear-gradient(90deg, rgba(49, 49, 52, 1) 0%, rgba(255, 255, 255, 1) 0%, rgb(240, 240, 240) 59%);
+      width: 20%;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      & .fundAmount {
+        font-size: 1.5rem;
+        line-height: 150%;
+        & span {
+          font-weight: 800;
+        }
+      }
+      & .joinDate {
+        margin-top: 20px;
       }
     }
   }
