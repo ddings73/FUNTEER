@@ -166,8 +166,6 @@ public class TeamServiceImpl implements TeamService{
 		Team team = teamRepository.findById(SecurityUtil.getCurrentUserId())
 			.orElseThrow(UserNotFoundException::new);
 
-		team.validate();
-
 		List<TeamAttach> teamAttaches = teamAttachRepository.findAllByTeam(team);
 		TeamAccountResponse response = TeamAccountResponse.of(team);
 

@@ -84,7 +84,6 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        member.validate();
 
         long followCnt = followRepository.countAllByMember(member);
         long wishCnt = wishRepository.countAllByMember(member);
@@ -124,7 +123,6 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(userid)
             .orElseThrow(UserNotFoundException::new);
 
-        member.validate();
         return MemberAccountResponse.of(member);
     }
 
