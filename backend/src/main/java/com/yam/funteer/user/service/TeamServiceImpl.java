@@ -190,7 +190,7 @@ public class TeamServiceImpl implements TeamService{
 		Team team = validateSameUser(userId, request.getUserId());
 
 		String password = request.getPassword().orElseThrow(()-> {
-			throw new IllegalArgumentException("비밀번호가 다릅니다");
+			throw new IllegalArgumentException("비밀번호가 필요합니다");
 		});
 		team.validatePassword(passwordEncoder, password);
 
