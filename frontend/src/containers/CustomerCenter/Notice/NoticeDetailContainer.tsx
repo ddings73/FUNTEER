@@ -19,7 +19,6 @@ export type NoticeDetailType = {
 function NoticleDetailContainer() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { noticeId } = useParams();
 
   const data = location.state.data as NoticeDetailType;
 
@@ -57,10 +56,10 @@ function NoticleDetailContainer() {
           )}
         </div>
         <hr />
-
+        <p className={styles['post-date']}>첨부파일</p>
         { NoticeDetail.files.map((file) => 
           <div>
-          <a href={file}>{file}</a>
+          <span>파일이름 파일아이콘</span><a href={file}>{file}</a>
           </div>
         )}
         <button type="button" className={styles.back} onClick={() => navigate(-1)}>

@@ -2,10 +2,15 @@ import { NoticeInterface } from '../types/notice';
 import { http } from './axios';
 
 export const requestCreateNotice = async(noticeData:NoticeInterface)=>{
+    
     const formData = new FormData();
+
     formData.append('title', noticeData.title)
     formData.append('content', noticeData.content as string)
-    formData.append('files',new Blob([JSON.stringify(noticeData.files)], { type: 'application/json '}))
+    noticeData.files.forEach(file => {
+        formData.append('files', file)
+        
+    });
 
     const response = await http.post('/notice', formData)
     return response;
