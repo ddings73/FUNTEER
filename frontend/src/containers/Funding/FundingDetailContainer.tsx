@@ -26,11 +26,14 @@ export function FundingDetailContainer() {
     category: '',
     content: '',
     fundingDescription: '',
-    targetMoneyListLevelThree: [],
-    currentFundingAmount: 0,
+    targetMoneyListLevelThree: {},
+    currentFundingAmount: '',
     wishCount: 0,
   });
   // function setLikeCount() {}
+  const handleLikeClick = () => {
+    console.log('눌림');
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -70,19 +73,24 @@ export function FundingDetailContainer() {
           {' '}
           <FundSummary {...board} />
         </div>
-        <div className={styles.mainContent}>123</div>
+        <div className={styles.mainContent}>
+          <div dangerouslySetInnerHTML={{ __html: board.content }} className={styles.mainContentInner} />
+        </div>
+        <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard}>
           <TeamInfo />
         </div>
         <DetailArcodian />
-        <div className={styles.mainFooterdiv} />
+
         <div className={styles.mainFooterAttatch}>
           <p className={styles.attachTitle}>첨부파일</p>
           <p className={styles.attachItem}>인증서.hwp</p>
           <p className={styles.attachItem}>증명서.pdf</p>
         </div>
         <div className={styles.mainFooterLikeWrapper}>
-          <FavoriteIcon className={styles.mainFooterLike} />
+          <button className={styles.mainFooterLikeButton} onClick={handleLikeClick} type="button">
+            <FavoriteIcon className={styles.mainFooterLike} />
+          </button>
           <div className={styles.Likebox}>
             <div className={styles.mainFooterLikeTest}> 펀딩 찜</div>
             <div className={styles.mainFooterLikeTestSub}> 찜 수 {board.wishCount}</div>
