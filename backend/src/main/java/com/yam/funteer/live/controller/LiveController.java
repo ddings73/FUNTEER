@@ -1,6 +1,8 @@
 package com.yam.funteer.live.controller;
 
 import com.yam.funteer.live.dto.CreateConnectionRequest;
+import com.yam.funteer.live.dto.CreateConnectionResponse;
+import com.yam.funteer.live.dto.SessionLeaveRequest;
 import com.yam.funteer.live.dto.StartRecordingRequest;
 import com.yam.funteer.live.service.LiveService;
 
@@ -24,29 +26,15 @@ public class LiveController {
     private final LiveService liveService;
 
     @PostMapping("/sessions")
-    public ResponseEntity<JSONObject> initializeSession(@RequestBody CreateConnectionRequest request){
-        JSONObject response = liveService.initializeSession(request);
+    public ResponseEntity<CreateConnectionResponse> initializeSession(@RequestBody CreateConnectionRequest request){
+        CreateConnectionResponse response = liveService.initializeSession(request);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/sessions/leave")
-    public ResponseEntity leaveSession(@RequestBody Map<String, String> params){
-        String sessionName = params.get("sessionName");
-        String token = params.get("token");
+    public ResponseEntity leaveSession(@RequestBody SessionLeaveRequest request){
 
-        liveService.leaveSession(sessionName, token);
-        return ResponseEntity.ok().build();
-    }
-
-    @PostMapping("/recording/start")
-    public ResponseEntity startRecording(@RequestBody StartRecordingRequest request){
-        Recording recording = liveService.startRecording(request);
-        return ResponseEntity.ok(recording);
-    }
-
-    @PostMapping("/recording/stop/{recordingId}")
-    public ResponseEntity stopRecording(@PathVariable String recordingId){
-        Recording recording = liveService.stopRecording(recordingId);
+        liveService.leaveSession(request);
         return ResponseEntity.ok().build();
     }
 
