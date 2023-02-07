@@ -55,12 +55,10 @@ import {
   AdminLive,
   TeamEdit,
   Kakao,
-
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
-import Kakao from './pages/Accounts/Kakao';
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
@@ -234,8 +232,8 @@ const router = createBrowserRouter([
         element: <AdminNotice />,
       },
       {
-        path:"notice/noticecreate",
-        element:<AdminNoticeCreate />
+        path: 'notice/noticecreate',
+        element: <AdminNoticeCreate />,
       },
       {
         path: 'faq',
