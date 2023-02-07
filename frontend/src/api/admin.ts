@@ -16,6 +16,11 @@ export const requestDeleteNotice = async(noticeId:string)=> {
     return response;
 }
 
+export const requestNoticeDetail = async(noticeId:string | undefined) => {
+    const response = await http.get(`/notice/${noticeId}`)
+    return response;
+}
+
 /**
  * 공지사항 리스트 호출 API
  * @method GET
@@ -27,5 +32,7 @@ export const requestNoticeList = async () => {
   
     return res;
   };
+
+
   
 

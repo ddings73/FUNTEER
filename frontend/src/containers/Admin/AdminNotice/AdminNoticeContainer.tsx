@@ -8,7 +8,7 @@ export type AdminNoticeContainerItemType = {
   id: number;
   title: string;
   content: string;
-  regDate: string;
+  localDate: string;
   files: string;
 };
 
@@ -43,7 +43,7 @@ function AdminNoticeContainer() {
   } 
 
   const onClickNoticeHandler = (data: AdminNoticeContainerItemType, e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`../../cc/${data.id}`, { state: { requestNoticeList } });
+    navigate(`../../cc/${data.id}`, { state: { data } });
   };
 
   /** 아래는 TSX 문법, HTML 코드 작성 */
@@ -83,7 +83,7 @@ function AdminNoticeContainer() {
             onClickNoticeHandler(data, e);
           }}>{data.title}</button>
           <li>
-            <p>{data.regDate}</p>
+            <p>{data.localDate}</p>
           </li>
           <li>
           <button type="button" onClick={onClickDeletebtn} className={styles['withdraw-btn']}>
