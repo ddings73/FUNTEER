@@ -3,6 +3,9 @@ import TextField from '@mui/material/TextField';
 import styles from './CommentCard.module.scss';
 import profileTemp from '../../assets/images/default-profile-img.svg';
 
+/** 필요 데이터
+ *  등록 유저 프로필 사진, 닉네임, 내용, 등록 시간
+ */
 export function CommentCard() {
   return (
     <div className={styles.cardContainer}>

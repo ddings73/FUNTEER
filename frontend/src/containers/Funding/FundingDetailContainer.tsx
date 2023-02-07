@@ -4,7 +4,6 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useParams } from 'react-router-dom';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
-import { http } from '../../api/axios';
 import { ResponseInterface } from '../../components/Cards/FundSummary';
 import { requestFundingDetail } from '../../api/funding';
 import TeamInfo from '../../components/Cards/TeamInfoCard';
@@ -15,7 +14,6 @@ import CommentCard from '../../components/Cards/CommentCard';
 export function FundingDetailContainer() {
   const [users, setUsers] = useState(null);
   const { fundIdx } = useParams();
-  // const [likePressed, setLikePressed] = useState(false);
   const [board, setBoard] = useState<ResponseInterface>({
     id: 0,
     title: '',
@@ -29,24 +27,25 @@ export function FundingDetailContainer() {
     targetMoneyListLevelThree: {},
     currentFundingAmount: '',
     wishCount: 0,
+    comments: [],
   });
-  // function setLikeCount() {}
   const handleLikeClick = () => {
     console.log('눌림');
+    console.log(board.comments);
   };
 
+  // 펀딩 상세 게시물 로드
+  const fetchData = async () => {
+    try {
+      const response = await requestFundingDetail(fundIdx);
+      console.log('res: ', response);
+      console.log('data res: ', response.data);
+      setBoard(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await requestFundingDetail(fundIdx);
-        console.log('res: ', response);
-        console.log('data res: ', response.data);
-        setBoard(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
     fetchData();
   }, []);
 
@@ -102,8 +101,6 @@ export function FundingDetailContainer() {
         </div>
         <div className={styles.mainFooterdiv} />
         <div className={styles.mainComments}>
-          <CommentCard />
-          <CommentCard />
           <CommentCard />
         </div>
       </div>

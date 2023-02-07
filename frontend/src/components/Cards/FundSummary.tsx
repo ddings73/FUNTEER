@@ -15,11 +15,18 @@ export interface ResponseInterface {
   currentFundingAmount: string;
   wishCount: number;
   fundingDescription: string;
+  comments: commentType[];
 }
 type targetType = {
   amount?: string;
   targetMoneyType?: string;
   description?: string;
+};
+type commentType = {
+  memberNickName: string;
+  content: string;
+  memberProfileImg: string;
+  regDate: string;
 };
 
 export function FundSummary(board: ResponseInterface) {
