@@ -46,4 +46,5 @@ export { default as Donation } from './Donation/Donation';
 export { default as NoticeDetail } from './CustomerCenter/NoticeDetail';
 
 export { default as TeamProfile } from './TeamPage/TeamProfile';
-export { default as TeamEdit } from './TeamPage/TeamProfile';
+export { default as TeamEdit } from './TeamPage/TeamEdit';
+export { default as TeamDonation } from './TeamPage/TeamDonation';

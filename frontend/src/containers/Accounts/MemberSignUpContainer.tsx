@@ -258,7 +258,14 @@ function MemberSignUpContainer() {
               {checkEmailAuth && <p className={styles['authed-email']}>{memberSignUpInfo.email}</p>}
               {!checkEmailAuth && (
                 <div className={styles['not-shadow']}>
-                  <TextField name="email" margin="dense" placeholder="이메일을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+                  <TextField
+                    name="email"
+                    margin="dense"
+                    placeholder="이메일을 입력해주세요."
+                    variant="outlined"
+                    onChange={onChangeHandler}
+                    sx={{ background: 'white' }}
+                  />
                   <Button className={styles['auth-button']} variant="contained" onClick={handleClickAuthEmail}>
                     {buttonText}
                   </Button>
@@ -288,6 +295,7 @@ function MemberSignUpContainer() {
                   placeholder="비밀번호를 입력해주세요."
                   variant="outlined"
                   onChange={onChangeHandler}
+                  sx={{ background: 'white' }}
                 />{' '}
                 {passwordVisibility && (
                   <Visibility

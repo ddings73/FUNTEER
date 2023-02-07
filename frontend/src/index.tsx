@@ -54,8 +54,8 @@ import {
   AdminFaq,
   AdminLive,
   TeamEdit,
+  TeamDonation,
   Kakao,
-
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -156,6 +156,10 @@ const router = createBrowserRouter([
         path: 'teamedit/:teamId',
         element: <TeamEdit />,
       },
+      {
+        path: 'teamdonation/:teamId',
+        element: <TeamDonation />,
+      },
     ],
   },
   /** Footer 있는 페이지 */
@@ -233,8 +237,8 @@ const router = createBrowserRouter([
         element: <AdminNotice />,
       },
       {
-        path:"notice/noticecreate",
-        element:<AdminNoticeCreate />
+        path: 'notice/noticecreate',
+        element: <AdminNoticeCreate />,
       },
       {
         path: 'faq',

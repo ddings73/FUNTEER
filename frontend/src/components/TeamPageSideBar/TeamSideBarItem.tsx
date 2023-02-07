@@ -17,7 +17,7 @@ export const SideBarData: SideBarDataType[] = [
   },
   {
     title: '도네이션 내역',
-    path: '/teamdonate',
+    path: '/teamdonation',
     icon: <BiIcons.BiDonateHeart />,
   },
 ];
