@@ -72,9 +72,9 @@ function PayModal({ isOpen }: payModalType) {
 
   return (
     <Dialog fullWidth maxWidth="sm" open={isOpen}>
-      <DialogTitle>결제 정보 입력</DialogTitle>
+      <DialogTitle sx={{ fontFamily: 'NanumSquare' }}>결제 정보 입력</DialogTitle>
       <DialogContent>
-        <DialogContentText>결제 방식과 금액을 선택해주세요.</DialogContentText>
+        <DialogContentText sx={{ fontFamily: 'NanumSquare' }}>결제 방식과 금액을 선택해주세요.</DialogContentText>
         <FormControl color="warning" sx={{ mt: 2, width: '100%' }}>
           <Box sx={{ width: '100%' }}>
             <Tabs
@@ -86,25 +86,40 @@ function PayModal({ isOpen }: payModalType) {
               value={tab}
               selectionFollowsFocus
             >
-              <Tab value="card" label="카드" />
-              <Tab value="vbank" label="가상계좌" />
+              <Tab value="card" label="카드" sx={{ fontFamily: 'NanumSquare' }} />
+              <Tab value="vbank" label="가상계좌" sx={{ fontFamily: 'NanumSquare' }} />
             </Tabs>
           </Box>
-          <Select onChange={changeAmountHandler}>
-            <MenuItem value="5000">5,000 원</MenuItem>
-            <MenuItem value="10000">10,000 원</MenuItem>
-            <MenuItem value="20000">20,000 원</MenuItem>
-            <MenuItem value="30000">30,000 원</MenuItem>
-            <MenuItem value="50000">50,000 원</MenuItem>
-            <MenuItem value="100000">100,000 원</MenuItem>
+          <Select onChange={changeAmountHandler} sx={{ fontFamily: 'NanumSquare' }}>
+            <MenuItem value="10" sx={{ fontFamily: 'NanumSquare' }}>
+              10 원
+            </MenuItem>
+            <MenuItem value="5000" sx={{ fontFamily: 'NanumSquare' }}>
+              5,000 원
+            </MenuItem>
+            <MenuItem value="10000" sx={{ fontFamily: 'NanumSquare' }}>
+              10,000 원
+            </MenuItem>
+            <MenuItem value="20000" sx={{ fontFamily: 'NanumSquare' }}>
+              20,000 원
+            </MenuItem>
+            <MenuItem value="30000" sx={{ fontFamily: 'NanumSquare' }}>
+              30,000 원
+            </MenuItem>
+            <MenuItem value="50000" sx={{ fontFamily: 'NanumSquare' }}>
+              50,000 원
+            </MenuItem>
+            <MenuItem value="100000" sx={{ fontFamily: 'NanumSquare' }}>
+              100,000 원
+            </MenuItem>
           </Select>
         </FormControl>
       </DialogContent>
       <DialogActions>
-        <Button color="warning" variant="contained" sx={{ margin: '0rem 0.5rem 1rem auto' }} onClick={onClickPayBtn}>
+        <Button color="warning" variant="contained" sx={{ margin: '0rem 0.5rem 1rem auto', fontFamily: 'NanumSquare' }} onClick={onClickPayBtn}>
           결제
         </Button>
-        <Button color="warning" variant="contained" sx={{ margin: '0rem 2rem 1rem auto' }} onClick={onClickCloseBtn}>
+        <Button color="warning" variant="contained" sx={{ margin: '0rem 2rem 1rem auto', fontFamily: 'NanumSquare' }} onClick={onClickCloseBtn}>
           취소
         </Button>
       </DialogActions>
