@@ -37,7 +37,7 @@ export type teamProfileType = {
 
 export interface userProfileInterface {
   nickname: string;
-  profileUrl: string;
+  profileImgUrl: string;
   money: number;
   wishCnt: number;
   followingCnt: number;
@@ -50,6 +50,6 @@ export interface userInfoInterface {
 }
 
 export interface changeUserInfoInterface {
-  password:string
-  newPassword:string
+  password: string;
+  newPassword: string;
 }

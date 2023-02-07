@@ -102,54 +102,48 @@ export const requestUserProfile = async (userId: string) => {
   return response;
 };
 
-
 /**
  * @name 유저정보수정
- * @param userInfo 
- * @param userId 
- * @returns 
+ * @param userInfo
+ * @param userId
+ * @returns
  */
-export const requestModifyUserInfo = async (userInfo:changeUserInfoInterface,userId:string)=>{
-
+export const requestModifyUserInfo = async (userInfo: changeUserInfoInterface, userId: string) => {
   const data = {
-    newPassword:userInfo.newPassword,
-    password:userInfo.password,
-    userId:Number(userId)
-  }
-  const response = await http.put('member/account',data)
+    newPassword: userInfo.newPassword,
+    password: userInfo.password,
+    userId: Number(userId),
+  };
+  const response = await http.put('member/account', data);
   return response;
-}
-
+};
 
 /**
  * @name 유저프로필공개설정
- * @param display 
- * @param userId 
- * @returns 
+ * @param display
+ * @param userId
+ * @returns
  */
-export const requestModifyUserDisplay =async(display:boolean, userId:string)=>{
-  console.log(display,userId)
-  const data ={
-    display,
-    userId:Number(userId)
-  }
-  const response = await http.put('member/profile',data)
+export const requestModifyUserDisplay = async (display: boolean, userId: string) => {
+  const formData = new FormData();
+  formData.append('display', String(display));
+  formData.append('userId', userId);
+  const response = await http.put('member/profile', formData);
   return response;
-}
+};
 
 /**
  * @name 유저프로필수정
- * @param profileImage 
- * @param userId 
- * @returns 
+ * @param profileImage
+ * @param userId
+ * @returns
  */
 
-export const requestModifyUserProfileImage = async(profileImage:Blob ,userId:string)=>{
+export const requestModifyUserProfileImage = async (profileImage: Blob, userId: string) => {
   const formDate = new FormData();
-  formDate.append('profileImg',profileImage)
-  formDate.append('userId',userId)
+  formDate.append('profileImg', profileImage);
+  formDate.append('userId', userId);
 
-
-  const response = await http.put('member/profile',formDate)
-  return response
-}
+  const response = await http.put('member/profile', formDate);
+  return response;
+};

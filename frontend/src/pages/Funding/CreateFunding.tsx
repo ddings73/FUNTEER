@@ -9,9 +9,9 @@ function CreateFunding() {
   const navigate = useNavigate();
   useEffect(() => {
     if (isLogin) {
-      if (userType !== 'TEAM') navigate('/login');
+      if (userType !== 'TEAM') navigate('/login', { replace: true });
     } else {
-      navigate('/login');
+      navigate('/login', { replace: true });
     }
   }, []);
   return <CreateFundingContainer />;
