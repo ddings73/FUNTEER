@@ -237,8 +237,8 @@ const router = createBrowserRouter([
         element: <AdminNotice />,
       },
       {
-        path:"notice/noticecreate",
-        element:<AdminNoticeCreate />
+        path: 'notice/noticecreate',
+        element: <AdminNoticeCreate />,
       },
       {
         path: 'faq',

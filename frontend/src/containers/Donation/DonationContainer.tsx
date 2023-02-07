@@ -10,6 +10,14 @@ import styles from './DonationContainer.module.scss';
 import { useAppSelector } from '../../store/hooks';
 import ListTable from '../../components/Table/ListTable';
 import { requestCurrentDonation } from '../../api/donation';
+import { requestUserProfile } from '../../api/user';
+
+/**
+ * * 유저가 현재 가진돈은 계산해놨음
+ * * 기부하기 클릭 시 모달같은거 띄워서 얼마 기부할 지 체크
+ *  * 돈이 부족할때 처리
+ *
+ */
 
 type ResponseInterface = {
   title: string;
@@ -21,6 +29,8 @@ type ResponseInterface = {
 };
 
 function DonationContainer() {
+  const userId = useAppSelector((state) => state.userSlice.userId);
+  const [userMoney, setUserMoney] = useState<number>(0);
   const [donBoard, setDonBoard] = useState<ResponseInterface>({
     title: '',
     content: '',
@@ -30,19 +40,36 @@ function DonationContainer() {
     startDate: '',
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await requestCurrentDonation();
-        console.log('res: ', response);
-        console.log('data res: ', response.data);
-        setDonBoard(response.data);
-      } catch (error) {
-        console.log(error);
-      }
-    };
+  const onClickDonation = async () => {
+    console.log('click');
+  };
 
+  const fetchData = async () => {
+    try {
+      const response = await requestCurrentDonation();
+      console.log('res: ', response);
+      console.log('data res: ', response.data);
+      setDonBoard(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // 회원 마일리지 초기 설정
+  const setInitUserMoney = async () => {
+    try {
+      const response = await requestUserProfile(userId);
+      console.log(response.data.money);
+
+      setUserMoney(response.data.money);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
+    setInitUserMoney();
   }, []);
   return (
     <div className={styles.container}>
@@ -56,7 +83,7 @@ function DonationContainer() {
             <div className={styles.right}>
               <p className={styles.title}>{donBoard.title}</p>
               <p className={styles.text}>{donBoard.content}</p>
-              <Button className={styles.donButton} type="button">
+              <Button className={styles.donButton} onClick={onClickDonation} type="button">
                 기부 참여
               </Button>
             </div>
