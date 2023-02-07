@@ -177,11 +177,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MileageDetailResponse getMileageDetails(MileageDetailRequest request, Pageable pageable) {
+    public MileageDetailResponse getMileageDetails(PostGroup postGroup, Pageable pageable) {
         Long userId = SecurityUtil.getCurrentUserId();
-        Member member = validateSameUser(userId, request.getUserId());
+        Member member = memberRepository.findById(userId)
+            .orElseThrow(UserNotFoundException::new);
 
-        PostGroup postGroup = request.getPostGroup();
         List<Payment> paymentList = paymentRepository.findAllByUserAndPostPostGroup(member, postGroup);
         return MileageDetailResponse.of(paymentList);
     }

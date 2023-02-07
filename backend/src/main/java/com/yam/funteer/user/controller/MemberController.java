@@ -1,5 +1,6 @@
 package com.yam.funteer.user.controller;
 
+import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
@@ -119,9 +120,9 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/mileage")
-	public ResponseEntity<MileageDetailResponse> getMileageDetails(@Validated @RequestBody MileageDetailRequest request, BindingResult bindingResult,
+	public ResponseEntity<MileageDetailResponse> getMileageDetails(PostGroup postGroup,
 								   @PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
-		MileageDetailResponse mileageDetailResponse = memberService.getMileageDetails(request, pageable);
+		MileageDetailResponse mileageDetailResponse = memberService.getMileageDetails(postGroup, pageable);
 		return ResponseEntity.ok(mileageDetailResponse);
 	}
 
