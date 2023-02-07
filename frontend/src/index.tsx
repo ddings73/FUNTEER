@@ -56,6 +56,7 @@ import {
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
+import Kakao from './pages/Accounts/Kakao';
 
 function Test() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -95,7 +96,7 @@ const router = createBrowserRouter([
       },
       {
         path: 'login/kakao',
-        element: <Test />,
+        element: <Kakao />,
       },
       {
         path: 'findEmail',
