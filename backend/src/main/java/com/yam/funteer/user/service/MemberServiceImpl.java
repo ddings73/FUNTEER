@@ -114,7 +114,7 @@ public class MemberServiceImpl implements MemberService {
             }
         }
 
-        member.updateDisplay(request.isDisplay());
+        member.updateDisplay(request.getDisplay());
     }
 
     @Override
