@@ -106,6 +106,8 @@ public class MemberServiceImpl implements MemberService {
             String filePath = awsS3Uploader.upload(profileImg, "user");
             Attach profile = member.getProfileImg().orElseGet(() -> request.getProfile(filePath));
 
+            log.info("{}", profile);
+            log.info(filePath);
             if (profile.getId() == null) {
                 attachRepository.save(profile);
                 member.updateProfile(profile);
