@@ -44,12 +44,14 @@ function AdminNoticeCreateContainer() {
     const onChangeFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
         files.push(e.target.files[0])
+        setNoticeData({ ...noticeData, files: [...files]});
         console.log(files)
       }
     }
 
     const createNotice = async()=>{
       try{
+        
         const response =await requestCreateNotice(noticeData);
         navigate(-1)
         console.log(response);
