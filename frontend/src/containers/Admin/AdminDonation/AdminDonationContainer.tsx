@@ -4,13 +4,31 @@ import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import styles from './AdminDonationListContainer.module.scss';
 import AdminDonationContainerItem, { DonationState } from './AdminDonationContainerItem';
+import { requestDonationStatus } from '../../../api/donation';
+import { DonationStatusModi } from '../../../types/donation';
 
 function AdminDonationContainer() {
+
+  const [donationStatusModi, setDonationStatusModi] = useState<DonationStatusModi>(
+    {
+      postType:"",
+      donationId:0
+    }
+  );
   const navigate=useNavigate();
 
-  const onStateChangeHandler = (state: string, e: SelectChangeEvent) => {
+  const onStateChangeHandler = async (id: number, state: string, e: SelectChangeEvent) => {
     if (state === DonationState.ACTIVE) {
-      console.log('도네이션 종료');
+      
+      // long id requesetBody =>json 
+      setDonationStatusModi({...donationStatusModi,postType:state})
+      setDonationStatusModi({...donationStatusModi,donationId:id})
+      try{
+        const response=await requestDonationStatus(donationStatusModi);
+        console.log(response);
+      }catch(error){
+        console.log(error);
+      }
     } 
     window.location.reload();
   };
@@ -67,7 +85,7 @@ function AdminDonationContainer() {
             <li>
             <Select
                 value={data.donationState}
-                onChange={(e) => onStateChangeHandler(data.donationState, e)}
+                onChange={(e) => onStateChangeHandler(data.id, data.donationState, e)}
                 className={data.donationState.includes('진행중') ? styles['show-approve'] : styles['hide-approve']}
               >
                 <MenuItem value={data.donationState}>{data.donationState}</MenuItem>

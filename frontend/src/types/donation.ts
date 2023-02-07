@@ -12,6 +12,11 @@ export type DonationElementType = {
   file:string;
 };
 
+export interface DonationStatusModi {
+  donationId:number|0;
+  postType:string;
+}
+
 export interface DonationInterface {
   title: string;
   content: string | undefined;

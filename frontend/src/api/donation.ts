@@ -1,4 +1,4 @@
-import { DonationElementType, DonationInterface } from '../types/donation';
+import { DonationElementType, DonationInterface, DonationStatusModi } from '../types/donation';
 import { http } from './axios';
 
 
@@ -63,6 +63,14 @@ export const requestDonationList = async () => {
 };
 
 
+
+export const requestAdminDonationList = async () => {
+  const res = await http.get('admin/donation');
+  console.log(res);
+
+  return res;
+};
+
 /*
  * 도네이션 상세 호출
  * @method GET
@@ -70,6 +78,19 @@ export const requestDonationList = async () => {
 
 export const requestDonationDetail = async (donationIdx?: number) => {
   const res = await http.get(`donation/${donationIdx}`);
+  console.log(res);
+  return res;
+};
+
+
+/**
+ * 상태 변경
+ * @RequestBody Long postId, PostType postType
+ * @method Put (admin/donation)
+ */
+
+export const requestDonationStatus = async (donationStatusModi:DonationStatusModi) => {
+  const res = await http.put(`admin/donation${donationStatusModi}`,JSON);
   console.log(res);
   return res;
 };
