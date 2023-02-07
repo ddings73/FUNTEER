@@ -47,43 +47,35 @@ export const requestChangeProfileImg = async (teamId: string, profileImg: Blob) 
 
 /** 단체 설명 수정 */
 export const requestChangeDescription = async (teamId: string, description: string) => {
-  const userId: number = +teamId;
+  const formData = new FormData();
 
-  const data = {
-    userId,
-    description,
-  };
+  formData.append('userId', teamId);
+  formData.append('description', description);
 
-  console.log(data);
-
-  const res = await http.put('team/profile', data);
+  const res = await http.put('team/profile', formData);
 
   return res;
 };
 
 /** 단체 비밀번호 수정 */
 export const requestChangePassword = async (teamId: string, password: string, newPassword: string) => {
-  const userId: number = +teamId;
+  const formData = new FormData();
 
-  const data = {
-    userId,
-    password,
-    newPassword,
-  };
+  formData.append('userId', teamId);
+  formData.append('password', password);
+  formData.append('newPassword', newPassword);
 
-  console.log(data);
-
-  const res = await http.put('team/account', data);
+  const res = await http.put('team/account', formData);
 
   return res;
 };
 
 /** 단체 실적 파일 수정 */
-export const requestChangePerform = async (teamId: string, performFile: File | null) => {
+export const requestChangePerform = async (teamId: string, password: string, performFile: File | null) => {
   const formData = new FormData();
-  console.log(performFile);
 
   formData.append('userId', teamId);
+  formData.append('password', password);
   if (performFile) {
     formData.append('performFile', performFile);
   }

@@ -1,0 +1,121 @@
+@import '../../../styles/reset.scss';
+@import '../../../styles/variable.scss';
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  padding-top: 77.6px;
+  font-family: NanumSquare !important;
+
+  .content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+
+    .content-inner {
+      max-width: 1160px;
+      width: 100%;
+      min-height: 100vh;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      padding: 4rem;
+      background-color: #fdfdfd;
+
+      .title {
+        margin: 6rem 0 0 0;
+        font-size: 1.75rem;
+
+        @include mobile {
+          margin: 2rem 0 0 1rem;
+          font-size: 1.25rem;
+        }
+
+        & span {
+          font-weight: bold;
+        }
+      }
+
+      .title-line {
+        width: 100%;
+        height: 2.5rem;
+        display: grid;
+        grid-template-columns: 1fr 3fr 2fr 1fr 1fr;
+        margin: 4rem 0 0 0;
+        background-color: #fff9f5;
+        border-bottom: 1px solid #ffefe2;
+
+        @include mobile {
+          display: flex;
+          justify-content: space-around;
+
+          .mobile-none {
+            display: none;
+          }
+        }
+
+        & li {
+          display: flex;
+          align-items: center;
+          padding: 0 0 0 1rem;
+          font-size: 1.125rem;
+
+          @include mobile {
+            width: 100px;
+            justify-content: center;
+            padding: 0;
+            font-size: 1rem;
+          }
+        }
+
+        .text-center {
+          padding: 0rem;
+          justify-self: center;
+        }
+      }
+
+      .content-line {
+        width: 100%;
+        height: 2.5rem;
+        display: grid;
+        grid-template-columns: 1fr 3fr 2fr 1fr 1fr;
+        border-bottom: 1px solid #fcf5ef;
+
+        &:hover {
+          background-color: #fffdfa;
+        }
+
+        @include mobile {
+          display: flex;
+          justify-content: space-around;
+
+          .mobile-none {
+            display: none;
+          }
+        }
+
+        & li {
+          display: flex;
+          align-items: center;
+          padding: 0 0 0 1rem;
+          font-size: 1.125rem;
+
+          @include mobile {
+            width: 100px;
+            justify-content: center;
+            padding: 0;
+            font-size: 1rem;
+          }
+        }
+
+        .text-center {
+          padding: 0rem;
+          justify-self: center;
+        }
+      }
+    }
+  }
+}
