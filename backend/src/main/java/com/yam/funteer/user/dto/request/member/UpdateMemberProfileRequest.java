@@ -12,5 +12,5 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateMemberProfileRequest extends UpdateProfileRequest {
-    private Boolean display;
+    private boolean display;
 }
