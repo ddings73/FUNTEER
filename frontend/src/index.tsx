@@ -53,6 +53,7 @@ import {
   TeamProfile,
   AdminNotice,
   AdminFaq,
+  AdminFaqCreate,
   AdminLive,
   TeamEdit,
   Kakao,
@@ -244,6 +245,10 @@ const router = createBrowserRouter([
       {
         path: 'faq',
         element: <AdminFaq />,
+      },
+      {
+        path: 'faq/create',
+        element: <AdminFaqCreate />,
       },
       {
         path: 'live',

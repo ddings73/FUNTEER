@@ -5,19 +5,18 @@ import { Editor as ToastEditor } from '@toast-ui/react-editor';
 import { Button } from '@mui/material';
 import requiredIcon from '../../../assets/images/funding/required.svg';
 import { useAppDispatch } from '../../../store/hooks';
-import { closeModal, openModal } from '../../../store/slices/modalSlice';
-import styles from './AdminDonationContainer.module.scss'; // <- css 코드 여기서 작성
+import styles from './AdminCreateContainer.module.scss'; // <- css 코드 여기서 작성
 import { http } from '../../../api/axios';
+import { FaqInterface } from '../../../types/faq';
+import { requestCreateFaq } from '../../../api/faq';
 
 
 function AdminFaqCreateContainer() {
   /** 여기서 함수, 변수 선언하거나 axios 요청 */
   const navigate=useNavigate();
   const dispatch=useAppDispatch();
-  const [filePreview, setFilePreview] = useState<string>();
-  const fileRef=useRef<HTMLInputElement>(null);
   const editorRef = useRef<ToastEditor>(null);
-  const [faqData,setFaqData]=useState({
+  const [faqData,setFaqData]=useState<FaqInterface>({
     title:'',
     content:'',
   })
@@ -35,7 +34,6 @@ function AdminFaqCreateContainer() {
 
   /** 취소 */
   const onClickBackHandler = () => {
-    dispatch(closeModal());
     navigate(-1);
   };
 
@@ -51,22 +49,9 @@ function AdminFaqCreateContainer() {
   /** 등록 버튼 */
   const onCreateDonation=async()=>{
     try{
-    
-      const formData = new FormData();
-      const entry = Object.entries(faqData);
-      
-      entry.forEach((data) => {
-        const key = data[0];
-        const value = data[1];
-        formData.append(`${key}`, `${value}`);
-      });
-        
-      const res = await http.post('admin/faq', formData);
-
-      if(res.status===200){
-        dispatch(openModal({isOpen:true,title:'도네이션 생성 성공',content : '도네이션 생성에 성공했습니다.',handleModal}));
-      }
-      console.log(res);
+      const response=await requestCreateFaq(faqData);
+      navigate(-1);
+      console.log(response);
     }catch(error){
       console.log(error);
     }
