@@ -8,8 +8,6 @@ export const http: AxiosInstance = axios.create({
 http.interceptors.request.use(
   function (config) {
     config.headers.Authorization = `Bearer ${localStorage.getItem('accessToken')}`;
-    console.log(config.headers);
-
     return config;
   },
   function (error) {
@@ -25,7 +23,6 @@ http.interceptors.response.use(
   async function (error) {
     if (error.response && error.response.status === 401) {
       // const refreshToken = JSON.parse(localStorage.getItem('refreshToken'));
-      console.log('responseError', error);
       const refreshToken = localStorage.getItem('refreshToken');
       if (!refreshToken) {
         return error;
@@ -34,10 +31,10 @@ http.interceptors.response.use(
         const response = await requestUpdateToken();
         localStorage.setItem('accessToken', response?.data.accessToken);
         localStorage.setItem('refreshToken', response?.data.refreshToken);
+        return await http.request(error.config);
       } catch (e) {
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
-        console.log(e);
       }
       return Promise.reject(error);
     }

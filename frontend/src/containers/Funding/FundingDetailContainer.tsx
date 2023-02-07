@@ -25,6 +25,7 @@ export function FundingDetailContainer() {
     thumbnail: '',
     category: '',
     content: '',
+    fundingDescription: '',
     targetMoneyListLevelThree: [],
     currentFundingAmount: 0,
     wishCount: 0,

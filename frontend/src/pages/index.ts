@@ -7,6 +7,7 @@ export { default as MemberSignUp } from './Accounts/MemberSignUp';
 export { default as TeamSignUp } from './Accounts/TeamSignUp';
 export { default as SignUp } from './Accounts/SignUp';
 export { default as LogOut } from './Accounts/LogOut';
+export{default as Kakao} from './Accounts/Kakao'
 
 export { default as ErrorPage } from './AddOns/ErrorPage';
 export { default as Charge } from './AddOns/Charge';
@@ -24,6 +25,7 @@ export { default as AdminDonation } from './Admin/AdminDonation';
 export { default as AdminNotice } from './Admin/AdminNotice';
 export { default as AdminFaq } from './Admin/AdminFaq';
 export { default as AdminLive } from './Admin/AdminLive';
+export { default as AdminNoticeCreate } from './Admin/AdminNoticeCreate';
 
 export { default as MyPage } from './MyPage/MyPage';
 export { default as EditProfile } from './MyPage/EditProfile';

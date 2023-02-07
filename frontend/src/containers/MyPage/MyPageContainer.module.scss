@@ -62,16 +62,13 @@
       height: 150px;
       width: 150px;
       & .profilePic {
-  
         width: 100%;
         height: 100%;
         object-fit: cover;
         border-radius: 50%;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
-
-
       }
-      & .plus{
+      & .plus {
         width: 48px;
         height: 48px;
         bottom: 0;
@@ -80,10 +77,9 @@
         color: rgba(236, 153, 75, 1);
       }
 
-      & input[type="file"]{
+      & input[type='file'] {
         display: none;
       }
- 
     }
     & .data {
       display: flex;
