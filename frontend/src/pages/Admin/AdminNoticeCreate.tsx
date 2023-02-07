@@ -1,10 +1,8 @@
-import React from 'react'
-import AdminNoticeCreateContainer from '../../containers/Admin/AdminNotice/AdminNoticeCreateContainer'
+import React from 'react';
+import AdminNoticeCreateContainer from '../../containers/Admin/AdminNotice/AdminNoticeCreateContainer';
 
 function AdminNoticeCreate() {
-  return (
-    <AdminNoticeCreateContainer/>
-  )
+  return <AdminNoticeCreateContainer />;
 }
 
-export default AdminNoticeCreate
+export default AdminNoticeCreate;
