@@ -1,5 +1,6 @@
 package com.yam.funteer.donation.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,14 +129,30 @@ public class DonationServiceImpl implements DonationService{
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
+	@Override
+	public void donationStatusModify(Long id, PostType postType) {
+		Donation donationOrigin=donationRepository.findById(id).orElseThrow(()->new DonationNotFoundException());
+		if(postType.equals(PostType.DONATION_ACTIVE)){
+			Donation donation=Donation.builder()
+				.startDate(donationOrigin.getStartDate())
+				.title(donationOrigin.getTitle())
+				.amount(donationOrigin.getAmount())
+				.currentAmount(donationOrigin.getCurrentAmount())
+				.content(donationOrigin.getContent())
+				.endDate(LocalDate.now())
+				.id(id).postGroup(PostGroup.DONATION).postType(PostType.DONATION_CLOSE).build();
+			donationRepository.save(donation);
+		}
 
-	public void donationDelete(Long postId) throws DonationNotFoundException{
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Donation donation = donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
-		if(user.getUserType().equals(UserType.ADMIN)) {
-			donationRepository.delete(donation);
-		}else throw new IllegalArgumentException();
 	}
+
+	// public DonationBaseRes donationDelete(Long postId) throws DonationNotFoundException{
+	// 	User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
+	// 	Donation donation = donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
+	// 	if(user.getUserType().equals(UserType.ADMIN)) {
+	// 		donationRepository.delete(donation);
+	// 	}else throw new IllegalArgumentException();
+	// }
 
 
 	public DonationBaseRes donationModify(Long postId, DonationModifyReq donationModifyReq){

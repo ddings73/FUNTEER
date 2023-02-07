@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.post.entity.Post;
 
 import lombok.AccessLevel;
@@ -33,4 +34,5 @@ public class Donation extends Post {
 	public void setEndDate(){
 		this.endDate= LocalDate.now();
 	}
+
 }
