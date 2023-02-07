@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,7 +19,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 @Data
@@ -36,7 +34,7 @@ public class DonationRegisterReq {
 	@NotBlank
 	private String amount;
 
-	private List<MultipartFile>files=new ArrayList<>();
+	private MultipartFile file;
 
 	public Donation toEntity(){
 		return Donation.builder()

@@ -1,15 +1,16 @@
 package com.yam.funteer.live.service;
 
 import com.yam.funteer.common.code.UserType;
-import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
-import com.yam.funteer.live.dto.CreateSessionRequest;
+import com.yam.funteer.live.dto.CreateConnectionRequest;
+import com.yam.funteer.live.dto.StartRecordingRequest;
 import com.yam.funteer.live.entity.Live;
 import com.yam.funteer.live.repository.LiveRepository;
-import com.yam.funteer.user.entity.User;
-import com.yam.funteer.user.repository.UserRepository;
+import com.yam.funteer.user.entity.Team;
+import com.yam.funteer.user.repository.TeamRepository;
+
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,8 +32,9 @@ public class LiveServiceImpl implements LiveService{
     private OpenVidu openVidu;
     private final Map<String, Session> mapSessions = new ConcurrentHashMap<>();
     private final Map<String, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
+    private final Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
 
-    private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
     private final LiveRepository liveRepository;
     private final FundingRepository fundingRepository;
 
@@ -42,29 +44,32 @@ public class LiveServiceImpl implements LiveService{
     }
 
     @Override
-    public JSONObject initializeSession(CreateSessionRequest request) {
-        Long userId = SecurityUtil.getCurrentUserId();
-        User user = userRepository.findById(userId)
+    public JSONObject initializeSession(CreateConnectionRequest request) {
+        Long userId = 81L;//SecurityUtil.getCurrentUserId();
+        Team team = teamRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
         String sessionName = request.getSessionName();
 
-        UserType userType = user.getUserType();
+        UserType userType = team.getUserType();
         OpenViduRole role = userType.getOpenviduRole();
         ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
                 .role(role).build();
 
-        JSONObject response = null;
         if(mapSessions.containsKey(sessionName)){
             log.info("이미 생성된 세션 참여 => {}", sessionName);
-            response = joinExistingSession(sessionName, role, connectionProperties);
+            return joinExistingSession(sessionName, role, connectionProperties);
         }else {
             log.info("새로운 세션 생성 => {}", sessionName);
 
-            Funding funding = fundingRepository.findById(request.getFundingId()).orElseThrow(IllegalArgumentException::new);
-            response = createNewSession(sessionName, role, connectionProperties, funding);
+            Funding funding = fundingRepository.findById(request.getFundingId())
+                .orElseThrow(IllegalArgumentException::new);
+
+            Team fundingTeam = funding.getTeam();
+            if(!fundingTeam.equals(team)) throw new IllegalArgumentException("비정상적인 접근입니다");
+
+            return createNewSession(sessionName, role, connectionProperties, funding);
         }
-        return response;
     }
 
     @Override
@@ -94,6 +99,38 @@ public class LiveServiceImpl implements LiveService{
         log.error("sessionId가 이상함");
     }
 
+    @Override
+    public Recording startRecording(StartRecordingRequest request) {
+        RecordingProperties properties = request.toRecordingProperties();
+
+        try {
+            String sessionId = request.getSessionId();
+            this.sessionRecordings.put(sessionId, true);
+            Recording recording = this.openVidu.startRecording(sessionId, properties);
+            return recording;
+        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Recording getRecording(String recordingId) {
+        try {
+            return this.openVidu.getRecording(recordingId);
+        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Recording stopRecording(String recordingId) {
+        try {
+            return this.openVidu.stopRecording(recordingId);
+        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     private JSONObject createNewSession(String sessionName, OpenViduRole role
             , ConnectionProperties connectionProperties, Funding funding){
         try {
@@ -109,7 +146,7 @@ public class LiveServiceImpl implements LiveService{
             mapSessionNamesTokens.get(sessionName).put(token, role);
 
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("tokwn", token);
+            jsonObject.put("token", token);
             return jsonObject;
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());

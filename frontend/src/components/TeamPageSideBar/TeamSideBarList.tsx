@@ -16,7 +16,7 @@ export function TeamSideBarList({ teamId }: teamSideBarProps) {
     <Paper className={styles.paperContainer}>
       <div className={styles.menuList}>
         {SideBarData.map((data) => (
-          <NavLink to={data.path.concat(`/${teamId}`)} className={({ isActive }) => (isActive ? styles.NavActive : styles.NavInActive)}>
+          <NavLink key={data.path} to={data.path.concat(`/${teamId}`)} className={({ isActive }) => (isActive ? styles.NavActive : styles.NavInActive)}>
             <div className={styles.menuItem}>
               <ListItemIcon className={styles.menuIcon}>{data.icon}</ListItemIcon>
               <Typography variant="inherit">{data.title}</Typography>

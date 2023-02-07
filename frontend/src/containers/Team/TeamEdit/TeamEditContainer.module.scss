@@ -6,10 +6,11 @@
   min-height: 100vh;
   height: 100%;
   display: flex;
-  margin-top: 77.6px;
+  padding-top: 77.6px;
 
   .content {
     width: 100%;
+    min-height: 100vh;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -17,92 +18,210 @@
     .content-inner {
       max-width: 1100px;
       width: 100%;
+      min-height: 100vh;
       height: 100%;
       display: flex;
+      flex-direction: column;
       padding: 1rem;
       background-color: #fcfcfc;
 
-      .left {
+      .info-div {
+        width: 100%;
+        max-height: 364px;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 2rem;
 
-        .profile-card-img-div {
-          width: 300px;
-          height: 300px;
-          position: relative;
+        .left {
           display: flex;
           justify-content: center;
           align-items: center;
+          padding: 2rem;
 
-          .profile-card-img-inner {
-            width: 260px;
-            height: 260px;
+          .profile-card-img-div {
+            width: 300px;
+            height: 300px;
+            position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
-            border-radius: 100%;
-            overflow: hidden;
 
-            & img {
+            .profile-card-img-inner {
               width: 260px;
               height: 260px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              border: 2px solid rgba(0, 0, 0, 0.1);
               border-radius: 100%;
+              overflow: hidden;
+
+              & img {
+                width: 260px;
+                height: 260px;
+                border-radius: 100%;
+              }
+            }
+
+            .camera-div {
+              width: 70px;
+              height: 70px;
+              position: absolute;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              border-radius: 100%;
+              padding: 0rem;
+              background-color: rgb(223, 223, 223);
+              border: 5px solid #fcfcfc;
+              right: 11px;
+              bottom: 11px;
+
+              &:hover {
+                cursor: pointer;
+                transition: 0.5s;
+                background-color: rgb(212, 212, 212);
+              }
+
+              .camera {
+                width: 40px;
+                height: 40px;
+              }
+
+              .img-input {
+                display: none;
+              }
             }
           }
+        }
 
-          .camera-div {
-            width: 70px;
-            height: 70px;
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 100%;
-            padding: 0rem;
-            background-color: rgb(223, 223, 223);
-            border: 5px solid #fcfcfc;
-            right: 11px;
-            bottom: 11px;
+        .right {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          margin: 0 0 0 1rem;
+          padding: 2rem;
+          font-family: NanumSquare;
+
+          .name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: rgb(52, 52, 52);
+          }
+
+          .label {
+            margin: 2rem 0 1rem 0.5rem;
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: rgb(88, 88, 88);
+          }
+
+          .des-btn {
+            width: 40px;
+            margin: 0.5rem 0 0 auto;
+            padding: 0;
+            border: none;
+            background-color: inherit;
 
             &:hover {
               cursor: pointer;
-              transition: 0.5s;
-              background-color: rgb(212, 212, 212);
-            }
-
-            .camera {
-              width: 40px;
-              height: 40px;
-            }
-
-            .img-input {
-              display: none;
+              opacity: 0.8;
             }
           }
         }
       }
 
-      .right {
-        width: 100%;
+      .pr-div {
         display: flex;
         flex-direction: column;
-        margin: 0 0 0 1rem;
-        padding: 2rem;
-        font-family: NanumSquare;
+        margin: 2rem 0 0 0;
+        padding: 1rem;
 
-        .name {
-          font-size: 1.5rem;
-          font-weight: bold;
-          color: rgb(52, 52, 52);
-        }
+        .item {
+          margin-left: 6rem;
 
-        .label {
-          margin: 2rem 0 1rem 0.5rem;
-          font-size: 1.125rem;
-          font-weight: bold;
-          color: rgb(88, 88, 88);
+          .pw-label {
+            display: flex;
+            align-items: center;
+            margin: 0 0 0.7rem 0;
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: rgb(88, 88, 88);
+
+            .eye {
+              margin: 0 0 0 0.5rem;
+              font-size: 22px;
+              color: rgba(0, 0, 0, 0.4);
+
+              &:hover {
+                cursor: pointer;
+                color: rgba(0, 0, 0, 0.6);
+              }
+            }
+          }
+
+          .change-btn {
+            margin: 0 0 0 0.3rem;
+          }
+
+          .pw-input {
+            display: block;
+            height: 30px;
+            width: 30%;
+            min-width: 150px;
+            margin-bottom: 0.5rem;
+            padding: 0 0.5rem;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+            border-radius: 4px;
+          }
+
+          .pw-btn-div {
+            margin-top: 1rem;
+
+            .pw-btn {
+              width: 40px;
+              padding: 0;
+              border: none;
+              background-color: inherit;
+
+              &:hover {
+                cursor: pointer;
+                opacity: 0.8;
+              }
+            }
+          }
+
+          .perform-label {
+            display: flex;
+            align-items: center;
+            margin: 0 0 0.9rem 0;
+            font-size: 1.125rem;
+            font-weight: bold;
+            color: rgb(88, 88, 88);
+          }
+
+          input[type='file']::file-selector-button {
+            width: 100px;
+            height: 30px;
+            margin: 0 0.5rem 0 0;
+            background: $primary;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-size: 0.75rem;
+            cursor: pointer;
+          }
+
+          .perform-btn {
+            width: 40px;
+            margin-top: 1rem;
+            padding: 0;
+            border: none;
+            background-color: inherit;
+
+            &:hover {
+              cursor: pointer;
+              opacity: 0.8;
+            }
+          }
         }
       }
     }
@@ -111,10 +230,16 @@
 
 // .content-inner {
 //   border: 1px solid red;
-//   .left {
+//   .info-div {
 //     border: 1px solid orange;
+//     .left {
+//       border: 1px solid green;
+//     }
+//     .right {
+//       border: 1px solid green;
+//     }
 //   }
-//   .right {
+//   .pr-div {
 //     border: 1px solid orange;
 //   }
 // }
