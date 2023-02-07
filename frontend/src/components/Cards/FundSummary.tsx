@@ -1,10 +1,5 @@
-import React from 'react';
-import HomeIcon from '@mui/icons-material/Home';
-import EmailIcon from '@mui/icons-material/Email';
-import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
-import thumbNail from '../../assets/images/funding/funding_thumbnail.png';
+import React, { useEffect, useState } from 'react';
 import styles from './FundSummary.module.scss';
-import ProfileSvg from '../../assets/images/default-profile-img.svg';
 import TeamInfo from './TeamInfoCard';
 
 export interface ResponseInterface {
@@ -16,22 +11,33 @@ export interface ResponseInterface {
   thumbnail: string;
   category: string;
   content: string;
-  targetMoneyListLevelThree: Array<targetType>;
-  currentFundingAmount: number;
+  targetMoneyListLevelThree: targetType;
+  currentFundingAmount: string;
   wishCount: number;
   fundingDescription: string;
 }
 type targetType = {
-  amount?: number;
+  amount?: string;
   targetMoneyType?: string;
   description?: string;
 };
 
 export function FundSummary(board: ResponseInterface) {
-  // const [description]
-  const { title, start, end, content, targetMoneyListLevelThree, thumbnail, fundingDescription } = board;
-  // console.log('타겟 머니', typeof targetMoneyListLevelThree[0]?.amount);
-  // console.log('타겟 머니 amount', targetMonies[2].amount);
+  const { title, start, end, content, targetMoneyListLevelThree, thumbnail, fundingDescription, currentFundingAmount } = board;
+
+  const sub = (fundingDescription: string) => {
+    if (fundingDescription.length > 50) {
+      return fundingDescription.substring(0, 50).concat('...');
+    }
+    return fundingDescription;
+  };
+
+  function calc(tar: string, cur: string) {
+    const newTar = Number(tar?.replaceAll(',', ''));
+    const newCur = Number(cur?.replaceAll(',', ''));
+
+    return Math.round((newCur / newTar) * 100);
+  }
 
   return (
     <div className={styles.cardContainer}>
@@ -39,12 +45,13 @@ export function FundSummary(board: ResponseInterface) {
         <img className={styles.cardImage} src={thumbnail} alt="altImg" />
         <div className={styles.cardDetail}>
           <div className={styles.fundTitle}>{title}</div>
-          <div className={styles.fundSubTitle}>{}</div>
+          <div className={styles.fundSubTitle}>{sub(fundingDescription)}</div>
           <div className={styles.barWrapper}>
-            <div className={styles.object}> 목표금액: {targetMoneyListLevelThree[0]?.amount}원</div>
+            <div className={styles.object}> 목표금액: {targetMoneyListLevelThree.amount}원</div>
             <div className={styles.progressBar}>
-              <div className={styles.status} />
-              <p className={styles.statusNum}>10%</p>
+              <div className={styles.status} style={{ width: `${calc(targetMoneyListLevelThree.amount as string, currentFundingAmount)}%` }}>
+                <p className={styles.statusNum}>{calc(targetMoneyListLevelThree.amount as string, currentFundingAmount)}%</p>
+              </div>
             </div>
           </div>
           <div className={styles.teamArea}>
