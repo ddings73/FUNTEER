@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import styles from './AdminDonationListContainer.module.scss';
 import AdminDonationContainerItem, { DonationState } from './AdminDonationContainerItem';
-import { requestDonationStatus } from '../../../api/donation';
-import { DonationStatusModi } from '../../../types/donation';
+import { requestAdminDonationList, requestDonationStatus, requestNextAdminDonationList } from '../../../api/donation';
+import { DonationElementType, DonationStatusModi } from '../../../types/donation';
+import styles from './AdminDonationListContainer.module.scss';
 
 function AdminDonationContainer() {
-
+  const size = 10;
+  const [donationList, setDonationList] = useState<DonationElementType[]>([]);
+  const [ref, inView] = useInView();
   const [donationStatusModi, setDonationStatusModi] = useState<DonationStatusModi>(
     {
       postType:"",
@@ -42,6 +45,20 @@ function AdminDonationContainer() {
     navigate('create');
   }
 
+  const requestDonationList = async () => {
+    try {
+      const response = await requestAdminDonationList(size);
+      console.log(response)
+      setDonationList(response.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(()=>{
+    requestDonationList();
+  },[])
+
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
@@ -57,7 +74,8 @@ function AdminDonationContainer() {
           <li>종료일</li>
           <li>상태</li>
         </ul>
-        {AdminDonationContainerItem.map((data) => (
+        
+        {donationList.map((data) => (
           <div className={styles['list-line']}>
             <li>
               <p>{data.id}</p>
@@ -68,7 +86,7 @@ function AdminDonationContainer() {
               </li>
             </button>
             <li>
-              <p>{data.targetAmount}</p>
+              <p>{data.amount}</p>
             </li>
             <li>
               <p>{data.currentDonationAmount}</p>
@@ -80,16 +98,16 @@ function AdminDonationContainer() {
               <p>{data.endDate}</p>
             </li>
             <li>
-              <p>{data.donationState}</p>
+              <p>{data.postType}</p>
             </li>
             <li>
             <Select
-                value={data.donationState}
-                onChange={(e) => onStateChangeHandler(data.id, data.donationState, e)}
-                className={data.donationState.includes('진행중') ? styles['show-approve'] : styles['hide-approve']}
+                value={data.postType}
+                onChange={(e) => onStateChangeHandler(data.id, data.postType, e)}
+                className={data.postType.includes('ACTIVE') ? styles['show-approve'] : styles['hide-approve']}
               >
-                <MenuItem value={data.donationState}>{data.donationState}</MenuItem>
-                <MenuItem value="CLOSE">종료</MenuItem>
+                <MenuItem value={data.postType}>진행중</MenuItem>
+                <MenuItem value='DONATION_CLOSE'>종료</MenuItem>
               </Select>
             </li>
           </div>

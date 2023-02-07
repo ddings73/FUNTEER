@@ -55,11 +55,23 @@ export const requestFaqList = async () => {
 
 
 
-export const requestAdminFaqList = async () => {
-  const res = await http.get('admin/faq');
+export const requestAdminFaqList = async (size: number) => {
+  const res = await http.get(`admin/faq?size=${size}`);
   console.log(res);
 
   return res;
+};
+
+
+/**
+ * @name 다음 faq리스트호출
+ * @returns
+ */
+export const requestNextAdminFaqList = async (currentPage: number, size: number) => {
+  console.log(currentPage, size);
+
+  const response = await http.get(`admin/faq/?page=${currentPage + 1}&size=${size}`);
+  return response;
 };
 
 /*

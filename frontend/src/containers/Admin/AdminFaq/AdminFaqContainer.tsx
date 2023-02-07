@@ -1,20 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
+import { requestAdminFaqList, requestNextAdminFaqList } from '../../../api/faq';
+import { DonationElementType } from '../../../types/donation';
+import { FaqElementType } from '../../../types/faq';
 import styles from './AdminFaqContainer.module.scss'; // <- css 코드 여기서 작성
 import AdminFaqContainerItem from './AdminFaqContainerItem';
 
 function AdminFaqContainer() {
+  const size = 10;
+  const [faqList, setFaqList] = useState<FaqElementType[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [nextLoading, setNextLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(-1);
+  const [isLastPage, setIsLastPAge] = useState<boolean>(false);
+  const [ref, inView] = useInView();
   const navigate=useNavigate();
 
   const onClickFaqItemHandler = () => {
-    console.log('도네이션 관리 상세 페이지 이동');
+    console.log('Faq 관리 상세 페이지 이동');
   };
 
   const onClickFaqRegister=()=>{
     console.log("작성페이지로");
-    // admin/faq/creat
     navigate('create');
   }
+
+  const initFaqList = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await requestAdminFaqList(10);
+      setFaqList([...data.faqListResponse.content]);
+      setCurrentPage(data.faqListResponse.number);
+      setIsLastPAge(data.faqListResponse.last);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const nextFaqList = async () => {
+    try {
+      setNextLoading(true);
+      const { data } = await requestNextAdminFaqList(currentPage, size);
+      setFaqList([...faqList, ...data.faqListResponses.content]);
+      setCurrentPage(data.faqListResponses.number);
+      setIsLastPAge(data.faqListResponses.last);
+      setNextLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    initFaqList();
+  }, []);
+
+  useEffect(() => {
+    if (inView && !isLastPage) {
+      nextFaqList();
+    }
+  }, [inView]);
+
   return (
     <div className={styles.container}>
     <div className={styles.contents}>
@@ -27,7 +74,8 @@ function AdminFaqContainer() {
         <li>등록일</li>
        
       </ul>
-      {AdminFaqContainerItem.map((data) => (
+      
+      {faqList.map((data) => (
         <div className={styles['list-line']}>
           <li>
             <p>{data.id}</p>
@@ -38,7 +86,7 @@ function AdminFaqContainer() {
             </li>
           </button>
           <li>
-            <p>{data.postDate}</p>
+            <p>{data.localDate}</p>
           </li>
         </div>
       ))}

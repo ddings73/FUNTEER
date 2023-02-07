@@ -14,7 +14,7 @@ export default function FAQContainer() {
       <div className={styles['user-type-div']}>
         <h1 className={styles.title}>후원자 분들이 많이 문의했어요.</h1>
         {FAQContainerMemberItem.map((data) => (
-          <Accordion sx={{ boxShadow: 'none' }}>
+          <Accordion key={data.ques} sx={{ boxShadow: 'none' }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
               <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquareRound' }}>{data.ques}</Typography>
             </AccordionSummary>
@@ -27,7 +27,7 @@ export default function FAQContainer() {
       <div className={styles['user-type-div']}>
         <h1 className={styles.title}>봉사 단체에서 많이 문의했어요.</h1>
         {FAQContainerTeamItem.map((data) => (
-          <Accordion sx={{ boxShadow: 'none' }}>
+          <Accordion key={data.ques} sx={{ boxShadow: 'none' }}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
               <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquareRound' }}>{data.ques}</Typography>
             </AccordionSummary>

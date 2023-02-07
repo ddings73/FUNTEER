@@ -55,8 +55,8 @@ export const requestCurrentDonation=async()=>{
  * @method GET
  */
 
-export const requestDonationList = async () => {
-  const res = await http.get('donation/list');
+export const requestDonationList = async(size: number) => {
+  const res = await http.get(`donation/list?size=${size}`);
   console.log(res);
 
   return res;
@@ -64,11 +64,23 @@ export const requestDonationList = async () => {
 
 
 
-export const requestAdminDonationList = async () => {
-  const res = await http.get('admin/donation');
+export const requestAdminDonationList = async (size: number) => {
+  const res = await http.get(`admin/donation?size=${size}`);
   console.log(res);
 
   return res;
+};
+
+
+/**
+ * @name 다음자체모금리스트호출
+ * @returns
+ */
+export const requestNextAdminDonationList = async (currentPage: number, size: number) => {
+  console.log(currentPage, size);
+
+  const response = await http.get(`donation/?page=${currentPage + 1}&size=${size}`);
+  return response;
 };
 
 /*
