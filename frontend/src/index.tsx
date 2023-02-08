@@ -59,7 +59,8 @@ import {
   TeamDonation,
   Kakao,
   CreateLive,
-  LiveRoom,
+  PublisherLiveRoom,
+  SubscribeLiveRoom,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -169,8 +170,12 @@ const router = createBrowserRouter([
         element: <CreateLive />,
       },
       {
-        path: 'liveRoom/:username',
-        element: <LiveRoom />,
+        path: 'publisherLiveRoom/:username',
+        element: <PublisherLiveRoom />,
+      },
+      {
+        path: 'subscribeLiveRoom/:sessionName',
+        element: <SubscribeLiveRoom />,
       },
     ],
   },
