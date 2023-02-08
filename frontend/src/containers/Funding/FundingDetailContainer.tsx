@@ -4,14 +4,58 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useParams } from 'react-router-dom';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
-import { ResponseInterface } from '../../components/Cards/FundSummary';
 import { requestFundingDetail } from '../../api/funding';
 import TeamInfo from '../../components/Cards/TeamInfoCard';
 import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
 import CommentCard from '../../components/Cards/CommentCard';
+import './FundingDetailContainer.scss';
+
+export interface ResponseInterface {
+  id: number;
+  title: string;
+  start: string;
+  end: string;
+  postDate: string;
+  thumbnail: string;
+  category: string;
+  content: string;
+  targetMoneyListLevelThree: targetType;
+  currentFundingAmount: string;
+  wishCount: number;
+  fundingDescription: string;
+  comments: commentType[];
+  team: teamType;
+}
+export type commentType = {
+  memberNickName: string;
+  content: string;
+  memberProfileImg: string;
+  regDate: string;
+};
+export type teamType = {
+  email: string;
+  name: string;
+  phone: string;
+  profileImgUrl: string;
+  // performFileUrl: string;
+  // vmsFileUrl: string;
+};
+type targetType = {
+  amount?: string;
+  targetMoneyType?: string;
+  description?: string;
+};
 
 export function FundingDetailContainer() {
+  const [commentList, setCommentList] = useState([
+    {
+      memberNickName: '',
+      content: '',
+      memberProfileImg: '',
+      regDate: '',
+    },
+  ]);
   const [users, setUsers] = useState(null);
   const { fundIdx } = useParams();
   const [board, setBoard] = useState<ResponseInterface>({
@@ -28,6 +72,12 @@ export function FundingDetailContainer() {
     currentFundingAmount: '',
     wishCount: 0,
     comments: [],
+    team: {
+      email: '',
+      name: '',
+      phone: '',
+      profileImgUrl: '',
+    },
   });
   const handleLikeClick = () => {
     console.log('눌림');
@@ -41,14 +91,24 @@ export function FundingDetailContainer() {
       console.log('res: ', response);
       console.log('data res: ', response.data);
       setBoard(response.data);
+      setCommentList([...board.comments]);
     } catch (error) {
       console.log(error);
     }
   };
+
+  // 게시물 댓글 로드
   useEffect(() => {
     fetchData();
   }, []);
 
+  // 정렬 체크박스
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+  function checkHandler(e: React.ChangeEvent<HTMLInputElement> | undefined) {
+    setIsChecked(!isChecked);
+  }
+
+  console.log('commentList', commentList);
   return (
     <div className={styles.bodyContainer}>
       <div className={styles.banner}>
@@ -77,7 +137,8 @@ export function FundingDetailContainer() {
         </div>
         <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard}>
-          <TeamInfo />
+          {/* <TeamInfo {...board.team} /> */}
+          123
         </div>
         <DetailArcodian />
 
@@ -95,13 +156,34 @@ export function FundingDetailContainer() {
             <div className={styles.mainFooterLikeTestSub}> 찜 수 {board.wishCount}</div>
           </div>
         </div>
-        <div className={styles.mainFooterdiv} />
+        <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.mainCommentSubmit}>
           <CommentCardSubmit />
         </div>
-        <div className={styles.mainFooterdiv} />
+        <div className={styles.toggles}>
+          <p>정렬 기준</p>
+          <div className="toggle-button-cover">
+            <div className="button-cover">
+              <div className="button r" id="button-3">
+                <input type="checkbox" className="checkbox" checked={isChecked} onChange={(e) => checkHandler(e)} />
+                <div className="knobs" />
+                <div className="layer" />
+              </div>
+            </div>
+          </div>
+        </div>
         <div className={styles.mainComments}>
-          <CommentCard />
+          {commentList.reverse().map((comment) => {
+            return (
+              <CommentCard
+                memberNickName={comment.memberNickName}
+                content={comment.content}
+                memberProfileImg={comment.memberProfileImg}
+                regDate={comment.regDate}
+                key={comment.regDate}
+              />
+            );
+          })}
         </div>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { async } from 'q';
+// import { commentType } from '../components/Cards/CommentCardSubmit';
 import { FundingInterface } from '../types/funding';
 import { http } from './axios';
 
@@ -96,8 +97,9 @@ export const requestWish = async (fundingId?: string) => {
 /*
  * 펀딩 응원 댓글
  * @method POST
+ * @param {commentType} commentData
  */
-// export const postFundingComment = async (fundingId?: string, commentData: commentType) => {
-//   const res = await http.post(`funding/?fundingId=${fundingId}/comment`, commentData);
-//   return res.data;
-// };
+export const postFundingComment = async (commentData: string, fundingId?: string) => {
+  const res = await http.post(`funding/${fundingId}/comment`, { content: commentData });
+  return res;
+};
