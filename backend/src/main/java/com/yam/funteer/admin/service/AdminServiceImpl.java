@@ -48,17 +48,17 @@ public class AdminServiceImpl implements AdminService{
 	private final BadgeService badgeService;
 
 	@Override
-	public List<MemberListResponse> findMembersWithPageable(Pageable pageable) {
-		Page<Member> memberPage = memberRepository.findAll(pageable);
-		List<MemberListResponse> memberList = memberPage.stream().map(MemberListResponse::of).collect(Collectors.toList());
-		return memberList;
+	public MemberListResponse findMembersWithPageable(String keyword, Pageable pageable) {
+		Page<Member> memberPage = memberRepository.findAllByNameContaining(keyword, pageable);
+		return MemberListResponse.of(memberPage);
 	}
 
 	@Override
-	public List<TeamListResponse> findTeamWithPageable(Pageable pageable) {
-		Page<Team> teamPage = teamRepository.findAll(pageable);
+	public TeamListResponse findTeamWithPageable(String keyword, Pageable pageable) {
 
-		List<TeamListResponse> teamList = teamPage.stream().map(team -> {
+		Page<Team> teamPage = teamRepository.findAllByNameContaining(keyword, pageable);
+
+		List<TeamListResponse.TeamInfo> list = teamPage.stream().map(team -> {
 			List<TeamAttach> teamAttachList = teamAttachRepository.findAllByTeam(team);
 			String vmsFilePath = null, perFormFilePath = null;
 			for(TeamAttach teamAttach : teamAttachList){
@@ -69,10 +69,10 @@ public class AdminServiceImpl implements AdminService{
 					default: break;
 				}
 			};
-			return TeamListResponse.of(team, vmsFilePath, perFormFilePath);
+			return TeamListResponse.TeamInfo.of(team, vmsFilePath, perFormFilePath);
 		}).collect(Collectors.toList());
 
-		return teamList;
+		return TeamListResponse.of(teamPage, list);
 	}
 
 	@Override
