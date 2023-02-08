@@ -7,7 +7,7 @@ export { default as MemberSignUp } from './Accounts/MemberSignUp';
 export { default as TeamSignUp } from './Accounts/TeamSignUp';
 export { default as SignUp } from './Accounts/SignUp';
 export { default as LogOut } from './Accounts/LogOut';
-export{default as Kakao} from './Accounts/Kakao'
+export { default as Kakao } from './Accounts/Kakao';
 
 export { default as ErrorPage } from './AddOns/ErrorPage';
 export { default as Charge } from './AddOns/Charge';
@@ -48,3 +48,6 @@ export { default as NoticeDetail } from './CustomerCenter/NoticeDetail';
 export { default as TeamProfile } from './TeamPage/TeamProfile';
 export { default as TeamEdit } from './TeamPage/TeamEdit';
 export { default as TeamDonation } from './TeamPage/TeamDonation';
+
+export { default as CreateLive } from './LIVE/CreateLive';
+export { default as LiveRoom } from './LIVE/LiveRoom';
