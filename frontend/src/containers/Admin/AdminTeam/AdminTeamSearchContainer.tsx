@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import { AiOutlineSearch, AiOutlineClose } from 'react-icons/ai';
@@ -10,52 +10,32 @@ import { useAppDispatch, useAppSelector } from '../../../store/hooks';
 import { RootState } from '../../../store/store';
 import { requestTeams, requestWithdrawTeam } from '../../../api/admin';
 import { AdminTeamInterface } from '../../../types/user';
-import styles from './AdminTeamContainer.module.scss';
+import styles from './AdminTeamSearchContainer.module.scss';
 
-function AdminTeamContainer() {
+function AdminTeamSearchContainer() {
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  /** dn: 가입 승인 거부된 팀의 유저 번호 */
+  const [keyword, setKeyword] = useState<string>('');
   const dn = useAppSelector((state: RootState) => state.fileModalSlice.deniedNum);
   const [page, setPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState<number>(0);
   const [pageTeams, setPageTeams] = useState<AdminTeamInterface[]>([]);
-  const [teamSearch, setTeamSearch] = useState<string>('');
   // const [TeamStateFilter, setTeamStateFilter] = useState<string>(TeamState.All);
 
   useEffect(() => {
-    requestPageTeams();
-  }, [page]);
+    if (!keyword) {
+      setKeyword(location.state.keyword);
+    } else {
+      requestPageTeams();
+    }
+  }, [keyword, page]);
 
-  /** dn이 변하면 해당 팀에게 사유를 안내하기 위한 페이지로 이동 */
   useEffect(() => {
     if (dn) {
       goDenyPage();
     }
   }, [dn]);
-
-  /** 검색창 입력 */
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTeamSearch(e.target.value);
-  };
-
-  /** 검색 */
-  const handleClickSearch = (e: React.MouseEvent<SVGElement>) => {
-    navigate('./search', {
-      state: {
-        keyword: teamSearch,
-      },
-    });
-  };
-
-  /** 엔터 검색 */
-  const handleEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    navigate('./search', {
-      state: {
-        keyword: teamSearch,
-      },
-    });
-  };
 
   /** 필터 변경 */
   // const onTeamStateFilterChangeHandler = (e: SelectChangeEvent) => {
@@ -75,14 +55,13 @@ function AdminTeamContainer() {
   //   return filter;
   // });
 
-  /** 필수 파일 확인 버튼 */
   const handleFileBtn = (id: number, vf: string, pf: string, e: React.MouseEvent<HTMLButtonElement>) => {
     dispatch(openModal({ isOpen: true, userId: id.toString(), vmsFileUrl: vf, performFileUrl: pf, deniedNum: '' }));
   };
 
   /** 거부 페이지 이동 함수 */
   const goDenyPage = () => {
-    navigate(`deny/${dn}`, {
+    navigate(`../team/deny/${dn}`, {
       state: {
         dn,
       },
@@ -103,7 +82,7 @@ function AdminTeamContainer() {
   const requestPageTeams = async () => {
     setPageTeams([]);
     try {
-      const response = await requestTeams(page - 1, 8);
+      const response = await requestTeams(page - 1, 8, keyword);
       console.log(response);
       setMaxPage(response.data.totalPages);
       setPageTeams(response.data.userList);
@@ -133,17 +112,9 @@ function AdminTeamContainer() {
     <div className={styles.container}>
       <div className={styles.contents}>
         <h1 className={styles.title}>단체 회원관리</h1>
-        <div className={styles['search-div']}>
-          <TextField color="warning" label="단체 검색" variant="outlined" className={styles['search-input']} onChange={handleSearchChange} onKeyPress={handleEnter} />
-          <AiOutlineSearch onClick={handleClickSearch} />
-          {/* <Select value={TeamStateFilter} onChange={onTeamStateFilterChangeHandler} sx={{ height: '40px' }}>
-            {teamStateSet.map((state) => (
-              <MenuItem key={state} value={state}>
-                {state}
-              </MenuItem>
-            ))}
-          </Select> */}
-        </div>
+        <h3 className={styles.keyword}>
+          검색어: <span>{keyword}</span>
+        </h3>
         <ul className={styles['title-line']}>
           <li>번호</li>
           <li>단체명</li>
@@ -188,4 +159,4 @@ function AdminTeamContainer() {
   );
 }
 
-export default AdminTeamContainer;
+export default AdminTeamSearchContainer;
