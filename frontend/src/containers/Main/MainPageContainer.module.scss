@@ -149,6 +149,32 @@
   z-index: 100;
   overflow: visible !important;
 }
+.volunLists {
+  margin-top: 30%;
+  width: 80%;
+  height: auto;
+  z-index: 100;
+  overflow: visible !important;
+}
+.donate {
+  margin-top: 10%;
+  width: 100%;
+  height: auto;
+  z-index: 100;
+  position: relative;
+}
+.waveBack {
+  position: absolute;
+  width: 100%;
+  height: auto;
+  z-index: 101;
+}
+.waveBack2 {
+  margin-top: 10%;
+  height: auto;
+  width: 100%;
+  z-index: 110;
+}
 
 .bannerImg {
   width: 60% !important;
