@@ -8,7 +8,6 @@ import requiredIcon from '../../../assets/images/funding/required.svg';
 import { requestCreateNotice } from "../../../api/admin";
 import { NoticeInterface } from "../../../types/notice";
 
-
 function AdminNoticeCreateContainer() {
   const navigate = useNavigate();
   
@@ -42,15 +41,15 @@ function AdminNoticeCreateContainer() {
     };
 
     const onChangeFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let temp:File[] =[];
       if (e.target.files) {
         const list = e.target.files
         Object.entries(list).forEach((el)=>{
-          // setNoticeData({...noticeData, [...files, el]})
-         const prev = noticeData.files;
-         console.log(prev)
-         console.log(el)
-         setNoticeData({ ...noticeData, files:[...prev, el[1]]});                
+          temp = [...temp, el[1]]
         })
+        const prev = noticeData.files
+        setNoticeData({ ...noticeData, files:[...prev, ...temp]});                
+        console.log("temp",temp)
       }
     }
 
@@ -104,6 +103,9 @@ function AdminNoticeCreateContainer() {
           <p>파일첨부</p> <img style={{marginRight:'1rem'}} src={requiredIcon} alt="required icon" />
           <input type="file" multiple onChange={onChangeFiles}/>
           </div>
+          { noticeData.files.map((file) => (
+            <p>{file.name}</p>
+          ))}
         <div className={styles['btn-div']}>
           <Button variant="contained" className={styles.submit} onClick={createNotice}>
             등록
