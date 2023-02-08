@@ -2,6 +2,8 @@ package com.yam.funteer.admin.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yam.funteer.admin.dto.MemberListResponse;
+import com.yam.funteer.admin.dto.TeamFileConfirmRequest;
 import com.yam.funteer.admin.dto.TeamListResponse;
 import com.yam.funteer.admin.service.AdminService;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
@@ -30,33 +33,51 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 @Api(tags ={"관리자"})
-public class 	AdminController {
+public class AdminController {
 
 	private final AdminService adminService;
 	private final FundingService fundingService;
 
 	@ApiOperation(value = "개인 회원 목록 조회", notes = "개인 회원 목록을 조회한다.")
 	@GetMapping("/members")
-	public ResponseEntity<List<MemberListResponse>> findAllMembers() {
-		return null;
+	public ResponseEntity<List<MemberListResponse>> findAllMembers(@PageableDefault(size = 8)Pageable pageable) {
+		List<MemberListResponse> memberList = adminService.findMembersWithPageable(pageable);
+		return ResponseEntity.ok(memberList);
 	}
 
 	@ApiOperation(value = "단체 회원 목록 조회", notes = "단체 회원 목록을 조회한다.")
 	@GetMapping("/team")
-	public ResponseEntity<List<TeamListResponse>> findAllTeam() {
-		return null;
+	public ResponseEntity<List<TeamListResponse>> findAllTeam(@PageableDefault(size = 8) Pageable pageable) {
+		List<TeamListResponse> teamList = adminService.findTeamWithPageable(pageable);
+		return ResponseEntity.ok(teamList);
 	}
 
 	@ApiOperation(value = "개인 회원 탈퇴 처리", notes = "개인 회원을 탈퇴 처리한다.")
-	@DeleteMapping("/member")
-	public ResponseEntity<?> deleteMember(@RequestParam Long memberId) {
-		return null;
+	@DeleteMapping("/member/{memberId}")
+	public ResponseEntity deleteMember(@PathVariable Long memberId) {
+		adminService.resignMember(memberId);
+		return ResponseEntity.ok("개인회원 탈퇴완료");
 	}
 
 	@ApiOperation(value = "단체 회원 탈퇴 처리", notes = "단체 회원을 탈퇴 처리한다.")
-	@DeleteMapping("/team")
-	public ResponseEntity<?> deleteTeam(@RequestParam Long teamId) {
-		return null;
+	@DeleteMapping("/team/{teamId}")
+	public ResponseEntity<?> deleteTeam(@PathVariable Long teamId) {
+		adminService.resignTeam(teamId);
+		return ResponseEntity.ok("단체회원 탈퇴완료");
+	}
+
+	@ApiOperation(value = "VMS파일 검토여부", notes = "(일단) 거절 시에는 거절메시지가 이메일로 전송.")
+	@PutMapping("/team/{teamId}/vms")
+	public ResponseEntity  confirmVmsFile(@PathVariable Long teamId, @RequestBody TeamFileConfirmRequest request){
+		adminService.confirmVmsFile(teamId, request);
+		return ResponseEntity.ok("처리가 완료되었습니다.");
+	}
+
+	@ApiOperation(value = "실적파일 검토여부", notes = "(일단) 거절 시에는 거절메시지가 이메일로 전송.")
+	@PutMapping("/team/{teamId}/perform")
+	public ResponseEntity  confirmPerformFile(@PathVariable Long teamId, @RequestBody TeamFileConfirmRequest request){
+		adminService.confirmPerformFile(teamId, request);
+		return ResponseEntity.ok("처리가 완료되었습니다.");
 	}
 
 	@ApiOperation(value = "펀딩 삭제", notes = "펀딩을 삭제한다.")

@@ -1,5 +1,6 @@
 package com.yam.funteer.attach.repository;
 
+import com.yam.funteer.attach.FileType;
 import com.yam.funteer.user.entity.Team;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,4 +10,6 @@ import java.util.List;
 
 public interface TeamAttachRepository extends JpaRepository<TeamAttach, Long> {
     List<TeamAttach> findAllByTeam(Team team);
+
+    TeamAttach findByTeamAndAttachFileType(Team team, FileType vms);
 }

@@ -2,6 +2,7 @@ package com.yam.funteer.funding.repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,4 +28,6 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 	List<Funding> findAllByTeamAndPostType(Team team,PostType postType);
 
 	Page<Funding> findByTeam(Team team, Pageable pageable);
+
+	Optional<Funding> findByFundingId(Long fundingId);
 }
