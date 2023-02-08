@@ -2,7 +2,9 @@ package com.yam.funteer.mail.controller;
 
 import java.util.Map;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,9 +27,19 @@ public class MailController {
 		@ApiResponse(code = 200, message = "성공"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@PostMapping("/mail/send")
-	public ResponseEntity<Map<String, String>> emailSend(@RequestParam String email) throws Exception {
-		String confirmCode = emailService.sendSimpleMessage(email);
-		return ResponseEntity.ok(Map.of("confirmCode", confirmCode));
+	@GetMapping("/mail/send")
+	public ResponseEntity emailSend(@RequestParam String email) throws Exception {
+		emailService.sendSimpleMessage(email);
+		return ResponseEntity.ok("인증 메일이 전송되었습니다.");
+	}
+
+	@ApiOperation(value = "이메일 인증코드 검증", notes = "입력받은 메일과 인증코드를 검증한다")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 400, message = "인증 실패")
+	})
+	@GetMapping("/mail/confirm")
+	public ResponseEntity emailCodeConfirm(@RequestParam String email, @RequestParam String code){
+		return emailService.confirmCode(email, code) ? ResponseEntity.ok("이메일 인증에 성공하였습니다.") : ResponseEntity.badRequest().body("이메일 인증에 실패하였습니다.");
 	}
 }
