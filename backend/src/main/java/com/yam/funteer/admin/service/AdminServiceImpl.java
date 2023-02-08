@@ -1,9 +1,15 @@
 package com.yam.funteer.admin.service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.yam.funteer.admin.dto.MemberListResponse;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
@@ -13,7 +19,9 @@ import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.funding.repository.ReportRepository;
 import com.yam.funteer.mail.service.EmailService;
+import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
+import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -24,14 +32,21 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class AdminServiceImpl implements AdminService{
+	private final MemberRepository memberRepository;
 	private final TeamRepository teamRepository;
-
 	private final FundingRepository fundingRepository;
 	private final EmailService emailService;
 	private final ReportRepository reportRepository;
 
 	private final BadgeService badgeService;
 
+	@Override
+	public List<MemberListResponse> findMembersWithPageable(Pageable pageable) {
+		Page<Member> memberPage = memberRepository.findAll(pageable);
+		List<MemberListResponse> memberList = memberPage.stream().map(MemberListResponse::of).collect(Collectors.toList());
+
+		return memberList;
+	}
 
 	@Override
 	public void acceptFunding(Long fundingId) {
