@@ -2,6 +2,8 @@ package com.yam.funteer.admin.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,21 +32,23 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 @Api(tags ={"관리자"})
-public class 	AdminController {
+public class AdminController {
 
 	private final AdminService adminService;
 	private final FundingService fundingService;
 
 	@ApiOperation(value = "개인 회원 목록 조회", notes = "개인 회원 목록을 조회한다.")
 	@GetMapping("/members")
-	public ResponseEntity<List<MemberListResponse>> findAllMembers() {
-		return null;
+	public ResponseEntity<List<MemberListResponse>> findAllMembers(@PageableDefault(size = 8)Pageable pageable) {
+		List<MemberListResponse> memberList = adminService.findMembersWithPageable(pageable);
+		return ResponseEntity.ok(memberList);
 	}
 
 	@ApiOperation(value = "단체 회원 목록 조회", notes = "단체 회원 목록을 조회한다.")
 	@GetMapping("/team")
-	public ResponseEntity<List<TeamListResponse>> findAllTeam() {
-		return null;
+	public ResponseEntity<List<TeamListResponse>> findAllTeam(@PageableDefault(size = 8) Pageable pageable) {
+		List<TeamListResponse> teamList = adminService.findTeamWithPageable(pageable);
+		return ResponseEntity.ok(teamList);
 	}
 
 	@ApiOperation(value = "개인 회원 탈퇴 처리", notes = "개인 회원을 탈퇴 처리한다.")
