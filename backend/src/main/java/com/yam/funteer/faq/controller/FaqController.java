@@ -28,7 +28,7 @@ public class FaqController {
 
 	@ApiOperation(value = "faq List")
 	@GetMapping("")
-	public ResponseEntity<?>FaqGetList(@RequestParam int page,@RequestParam int size){
+	public ResponseEntity<?>FaqGetList(@RequestParam(defaultValue = "0") int page,@RequestParam int size){
 		return ResponseEntity.ok(faqService.faqGetList(page,size));
 	}
 
