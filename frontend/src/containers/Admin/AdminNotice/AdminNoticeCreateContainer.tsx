@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Editor as ToastEditor } from '@toast-ui/react-editor';
 import { useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
@@ -43,15 +43,20 @@ function AdminNoticeCreateContainer() {
 
     const onChangeFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files) {
-        files.push(e.target.files[0])
-        setNoticeData({ ...noticeData, files: [...files]});
-        console.log(files)
+        const list = e.target.files
+        Object.entries(list).forEach((el)=>{
+          // setNoticeData({...noticeData, [...files, el]})
+         const prev = noticeData.files;
+         console.log(prev)
+         console.log(el)
+         setNoticeData({ ...noticeData, files:[...prev, el[1]]});                
+        })
       }
     }
 
     const createNotice = async()=>{
       try{
-        
+      
         const response =await requestCreateNotice(noticeData);
         navigate(-1)
         console.log(response);
@@ -62,6 +67,9 @@ function AdminNoticeCreateContainer() {
       }
     }
 
+    useEffect(()=>{
+      console.log(noticeData)
+    },[noticeData])
 
     return (
         <div className={styles.container}>
@@ -95,7 +103,6 @@ function AdminNoticeCreateContainer() {
           <div className={styles['label-div']} style={{marginTop:'1.5rem'}}>
           <p>파일첨부</p> <img style={{marginRight:'1rem'}} src={requiredIcon} alt="required icon" />
           <input type="file" multiple onChange={onChangeFiles}/>
-
           </div>
         <div className={styles['btn-div']}>
           <Button variant="contained" className={styles.submit} onClick={createNotice}>
