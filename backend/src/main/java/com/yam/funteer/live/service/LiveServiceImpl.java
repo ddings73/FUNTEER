@@ -221,7 +221,7 @@ public class LiveServiceImpl implements LiveService{
 
 
                 log.info("녹화 시작 ===========> {}", sessionId);
-                
+                log.info("recordingProperties name => {}", recordingProperties.name());
                 Recording recording = this.openVidu.startRecording(sessionId, recordingProperties);
                 log.info("{}에 대한 녹화 시작, outputMode = {}, hasAudio = {}, hasVideo = {}"
                         , sessionName, recording.getOutputMode(), recording.hasAudio(), recording.hasVideo());
