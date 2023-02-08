@@ -143,6 +143,7 @@ class VideoRoomComponent extends Component {
       videoSource: undefined,
     });
     const devices = await this.OV.getDevices();
+    console.log('devicesssssssssssssssssssss',devices)
     const videoDevices = devices.filter((device) => device.kind === 'videoinput');
 
     const publisher = this.OV.initPublisher(undefined, {
@@ -170,6 +171,7 @@ class VideoRoomComponent extends Component {
       });
       localUser.setStreamManager(publisher);
     } else {
+      console.log("subscriberssssssssssssssssssssss",this.state.subscribers)
       localUser.setStreamManager(this.state.subscribers[0].getStreamManager());
     }
 
@@ -188,6 +190,7 @@ class VideoRoomComponent extends Component {
 
   updateSubscribers() {
     const subscribers = this.remotes;
+    console.log('remooooooooooo',this.remotes)
     this.setState(
       {
         subscribers,
@@ -263,6 +266,8 @@ class VideoRoomComponent extends Component {
     this.state.session.on('streamCreated', (event) => {
       const subscriber = this.state.session.subscribe(event.stream, undefined);
 
+      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!',subscriber)
+
       const newUser = new UserModel();
       newUser.setStreamManager(subscriber);
       newUser.setConnectionId(event.stream.connection.connectionId);
@@ -270,10 +275,19 @@ class VideoRoomComponent extends Component {
 
       const nickname = event.stream.connection.data.split('%')[0];
       newUser.setNickname(JSON.parse(nickname).clientData);
-
+      
+      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!  newUSER!!!!!!!!!!!!!!!',newUser)
       this.remotes.push(newUser);
+      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!  newUSER!!!!!!!!!!!!!!! remote!!!!!!!!!',this.remotes)
+
+
+      this.updateSubscribers();
       if (this.localUserAccessAllowed) {
-        this.updateSubscribers();
+        console.log("뜨루루루루")
+   
+      }
+      else{
+        console.log("왜 뽈스노")
       }
     });
   }
