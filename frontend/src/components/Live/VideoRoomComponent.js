@@ -160,6 +160,7 @@ class VideoRoomComponent extends Component {
     console.log(publisher.openvidu.role);
 
     this.updateSubscribers();
+    console.log("subscriberssssssssssssssssssssss",this.state.subscribers)
     if (publisher.openvidu.role === 'PUBLISHER') {
       publisher.on('accessAllowed', () => {
         this.state.session.publish(publisher).then(() => {
