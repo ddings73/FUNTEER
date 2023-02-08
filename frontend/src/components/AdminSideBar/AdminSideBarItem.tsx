@@ -42,11 +42,6 @@ export const AdminSideBarItem: adminSideBarDataType[] = [
     path: 'faq',
     icon: <AiIcons.AiFillQuestionCircle color="white" />,
   },
-  {
-    title: '라이브 관리',
-    path: 'live',
-    icon: <BsIcons.BsBroadcastPin color="white" />,
-  },
 ];
 
 export default AdminSideBarItem;
