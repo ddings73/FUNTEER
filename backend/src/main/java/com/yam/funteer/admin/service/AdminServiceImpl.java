@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.admin.dto.MemberListResponse;
+import com.yam.funteer.admin.dto.TeamFileConfirmRequest;
 import com.yam.funteer.admin.dto.TeamListResponse;
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
@@ -18,6 +19,7 @@ import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
+import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.Report;
@@ -43,7 +45,6 @@ public class AdminServiceImpl implements AdminService{
 	private final FundingRepository fundingRepository;
 	private final EmailService emailService;
 	private final ReportRepository reportRepository;
-
 	private final BadgeService badgeService;
 
 	@Override
@@ -75,6 +76,43 @@ public class AdminServiceImpl implements AdminService{
 	}
 
 	@Override
+	public void resignMember(Long memberId) {
+		Member member = memberRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
+		member.signOut();
+	}
+
+	@Override
+	public void resignTeam(Long teamId) {
+		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
+		team.signOut();
+	}
+
+
+	// 미완성
+	@Override
+	public void confirmVmsFile(Long teamId, TeamFileConfirmRequest request) {
+		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
+		TeamAttach teamAttach = teamAttachRepository.findByTeamAndAttachFileType(team, FileType.VMS);
+		request.getRejectComment().ifPresentOrElse(comment -> {
+			teamAttach.reject(comment);
+		}, ()-> {
+			teamAttach.submit();
+		});
+	}
+
+	// 미완성
+	@Override
+	public void confirmPerformFile(Long teamId, TeamFileConfirmRequest request) {
+		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
+		TeamAttach teamAttach = teamAttachRepository.findByTeamAndAttachFileType(team, FileType.PERFORM);
+		request.getRejectComment().ifPresentOrElse(comment -> {
+			teamAttach.reject(comment);
+		}, ()-> {
+			teamAttach.submit();
+		});
+	}
+
+	@Override
 	public void acceptFunding(Long fundingId) {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
 		funding.setPostType(PostType.FUNDING_ACCEPT);
@@ -91,11 +129,11 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public void acceptReport(Long fundingId) {
-		System.out.println(fundingId);
+		log.info("fundingId => {}", fundingId);
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
-		System.out.println(funding);
+		log.info("funding => {}", funding);
 		Team team = teamRepository.findById(funding.getTeam().getId()).orElseThrow();
-		System.out.println(team);
+		log.info("team => {}", team);
 		team.addTotalFundingAmount(funding.getCurrentFundingAmount());
 		funding.setPostType(PostType.REPORT_ACCEPT);
 		badgeService.teamFundingBadges(funding.getTeam());

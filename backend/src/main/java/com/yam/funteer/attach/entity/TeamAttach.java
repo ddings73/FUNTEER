@@ -52,4 +52,13 @@ public class TeamAttach {
 	public void updateAttach(Attach attach) {
 		this.attach.update(attach.getName(), attach.getPath());
 	}
+
+	public void reject(String comment) {
+		this.confirm = false;
+		this.rejectComment = comment;
+	}
+
+	public void submit() {
+		this.confirm = true;
+	}
 }
