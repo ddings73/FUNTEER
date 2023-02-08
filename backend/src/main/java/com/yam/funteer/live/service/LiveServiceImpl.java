@@ -1,6 +1,12 @@
 package com.yam.funteer.live.service;
 
+import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.FileUtil;
+import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.attach.entity.TeamAttach;
+import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.attach.repository.TeamAttachRepository;
+import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
@@ -13,6 +19,7 @@ import com.yam.funteer.live.repository.LiveRepository;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 
+import com.yam.funteer.user.repository.TeamRepository;
 import com.yam.funteer.user.repository.UserRepository;
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
@@ -51,9 +58,14 @@ public class LiveServiceImpl implements LiveService{
     private final Map<String, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
     private final Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
 
+    private final AwsS3Uploader awsS3Uploader;
+
     private final UserRepository userRepository;
     private final LiveRepository liveRepository;
     private final FundingRepository fundingRepository;
+    private final TeamRepository teamRepository;
+    private final AttachRepository attachRepository;
+    private final TeamAttachRepository teamAttachRepository;
 
     @PostConstruct
     public void init(){
@@ -90,10 +102,6 @@ public class LiveServiceImpl implements LiveService{
         throw new AccessDeniedException("유저정보가 이상하거나 권한이 잘못 설정되었습니다.");
     }
 
-    private boolean canPublish(User user) {
-        return user != null && user.getUserType().doPublish();
-    }
-
     @Override
     public void leaveSession(SessionLeaveRequest request) {
         String sessionName = request.getSessionName();
@@ -108,6 +116,9 @@ public class LiveServiceImpl implements LiveService{
                 log.info("{} 권한을 가진 사용자가 세션 {} 를 떠났습니다.", role, sessionName);
 
                 if(role.equals(OpenViduRole.PUBLISHER)){ // publisher ( 방송주인 체크 )
+                    Long teamId = SecurityUtil.getCurrentUserId();
+                    Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
+
                     Session session = mapSessions.get(sessionName);
                     Live live = liveRepository.findBySessionId(session.getSessionId()).orElseThrow(IllegalArgumentException::new);
                     live.end();
@@ -116,19 +127,28 @@ public class LiveServiceImpl implements LiveService{
 
                     mapSessions.remove(sessionName);
                     mapSessionNamesTokens.remove(sessionName);
-                    
+
                     // 녹화 종료
                     String sessionId = session.getSessionId();
                     if(sessionRecordings.containsKey(sessionId)) {
                         sessionRecordings.remove(sessionId);
+
                         Recording recording = getSessionRecording(sessionId);
+
                         String fileUrl = recording.getUrl();
                         log.info(fileUrl);
 
                         File file = FileUtil.downloadFromUrl(fileUrl);
-                        MultipartFile multipartFile = FileUtil.fileToMultipart(file);
+                        String path = awsS3Uploader.upload(file, "live");
 
-                        System.out.println();
+                        Attach attach = Attach.of(file.getName(), path, FileType.LIVE);
+                        attachRepository.save(attach);
+
+                        TeamAttach teamAttach = TeamAttach.of(team, attach);
+                        teamAttachRepository.save(teamAttach);
+
+                        removeRecordingInServer(recording);
+
                     }
                 }
 
@@ -139,6 +159,14 @@ public class LiveServiceImpl implements LiveService{
         }
 
         log.error("sessionName이 이상함 => {}", sessionName);
+    }
+
+    private void removeRecordingInServer(Recording recording) {
+        try{
+            this.openVidu.deleteRecording(recording.getId());
+        }catch (OpenViduJavaClientException | OpenViduHttpException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     private Recording getSessionRecording(String sessionId) {
@@ -158,8 +186,7 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
-    private CreateConnectionResponse createNewSession(String sessionName, OpenViduRole role
-        ,  Funding funding) {
+    private CreateConnectionResponse createNewSession(String sessionName, OpenViduRole role,  Funding funding) {
         try {
             Session session = this.openVidu.createSession();
 
@@ -200,6 +227,7 @@ public class LiveServiceImpl implements LiveService{
                 String sessionId = session.getSessionId();
                 RecordingProperties recordingProperties = new RecordingProperties.Builder()
                         .outputMode(Recording.OutputMode.COMPOSED).hasAudio(true).hasVideo(true).name(sessionName).frameRate(30).build();
+
                 Recording recording = this.openVidu.startRecording(sessionId, recordingProperties);
                 log.info("{}에 대한 녹화 시작, outputMode = {}, hasAudio = {}, hasVideo = {}"
                         , sessionName, recording.getOutputMode(), recording.hasAudio(), recording.hasVideo());
@@ -217,5 +245,9 @@ public class LiveServiceImpl implements LiveService{
             }
         }
         throw new RuntimeException();
+    }
+
+    private boolean canPublish(User user) {
+        return user != null && user.getUserType().doPublish();
     }
 }
