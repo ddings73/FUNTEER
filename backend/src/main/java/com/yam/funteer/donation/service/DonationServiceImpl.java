@@ -60,15 +60,15 @@ public class DonationServiceImpl implements DonationService{
 
 	public List<DonationListRes> donationGetList(int page,int size) {
 		PageRequest pageRequest=PageRequest.of(page,size);
-		List<Donation>donations=donationRepository.findAllByPostGroupOrderByIdDesc(PostGroup.DONATION,pageRequest);
+		List<Donation>donations=donationRepository.findAllByOrderByDonationId(pageRequest);
 		List<DonationListRes>list;
 		list=donations.stream().map(donation->new DonationListRes(donation)).collect(Collectors.toList());
 
 		return list;
 	}
 
-	public DonationBaseRes donationGetDetail(Long postId) {
-		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
+	public DonationBaseRes donationGetDetail(Long donationId) {
+		Donation donation=donationRepository.findByDonationId(donationId).orElseThrow(()->new DonationNotFoundException());
 		PostAttach postAttach=postAttachRepository.findFirstByPost(donation);
 
 		return new DonationBaseRes(donation,postAttach.getAttach().getPath());
@@ -76,12 +76,12 @@ public class DonationServiceImpl implements DonationService{
 
 	@Override
 	public DonationBaseRes donationGetCurrent() {
-		Donation donation=donationRepository.findFirstByPostGroupOrderByIdDesc(PostGroup.DONATION);
-		return donationGetDetail(donation.getId());
+		Donation donation=donationRepository.findFirstByOrderByDonationIdDesc().orElseThrow(DonationNotFoundException::new);
+		return donationGetDetail(donation.getDonationId());
 	}
 
 	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq) {
-		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
+		Donation donation=donationRepository.findByDonationId(postId).orElseThrow(DonationNotFoundException::new);
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Long paymentAmount=Long.parseLong(donationJoinReq.getPaymentAmount());
 		if(user.getMoney()<paymentAmount||user.getMoney()==0){
@@ -130,8 +130,8 @@ public class DonationServiceImpl implements DonationService{
 	}
 
 	@Override
-	public void donationStatusModify(Long id, PostType postType) {
-		Donation donationOrigin=donationRepository.findById(id).orElseThrow(()->new DonationNotFoundException());
+	public void donationStatusModify(Long donationId, PostType postType) {
+		Donation donationOrigin=donationRepository.findByDonationId(donationId).orElseThrow(()->new DonationNotFoundException());
 		if(postType.equals(PostType.DONATION_ACTIVE)){
 			Donation donation=Donation.builder()
 				.startDate(donationOrigin.getStartDate())
@@ -140,7 +140,8 @@ public class DonationServiceImpl implements DonationService{
 				.currentAmount(donationOrigin.getCurrentAmount())
 				.content(donationOrigin.getContent())
 				.endDate(LocalDate.now())
-				.id(id).postGroup(PostGroup.DONATION).postType(PostType.DONATION_CLOSE).build();
+				.donationId(donationId)
+				.id(donationOrigin.getId()).postGroup(PostGroup.DONATION).postType(PostType.DONATION_CLOSE).build();
 			donationRepository.save(donation);
 		}
 
@@ -155,12 +156,14 @@ public class DonationServiceImpl implements DonationService{
 	// }
 
 
-	public DonationBaseRes donationModify(Long postId, DonationModifyReq donationModifyReq){
-		Donation donationOrigin=donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
+	public DonationBaseRes donationModify(Long donationId, DonationModifyReq donationModifyReq){
+		Donation donationOrigin=donationRepository.findByDonationId(donationId).orElseThrow(() -> new DonationNotFoundException());
 
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
-			Donation donation=donationRepository.save(donationModifyReq.toEntity(postId,donationOrigin.getCurrentAmount(),donationOrigin.getStartDate()));
+			Donation donation=donationRepository.save(
+				donationModifyReq.toEntity(donationOrigin.getId(),donationId,donationOrigin.getCurrentAmount(),donationOrigin.getStartDate())
+			);
 
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donationOrigin);
 			for(PostAttach postAttach:postAttachList){
@@ -188,7 +191,7 @@ public class DonationServiceImpl implements DonationService{
 				Set<User> userList;
 				userList=paymentList.stream().map(Payment::getUser).collect(Collectors.toSet());
 				List<String> userEmailList=userList.stream().map(User::getEmail).collect(Collectors.toList());
-				alarmService.sendList(userEmailList,donation.getTitle()+" 종료되었습니다. 참여감사띠~!~!","/donation/"+postId);
+				alarmService.sendList(userEmailList,donation.getTitle()+" 종료되었습니다. 참여감사띠~!~!","/donation/"+donationId);
 			}
 			return new DonationBaseRes(donation,fileUrl);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");

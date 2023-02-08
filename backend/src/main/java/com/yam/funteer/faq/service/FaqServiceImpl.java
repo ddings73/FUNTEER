@@ -16,7 +16,9 @@ import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.faq.dto.request.FaqRegisterReq;
 import com.yam.funteer.faq.dto.response.FaqBaseRes;
 import com.yam.funteer.faq.dto.response.FaqListRes;
+import com.yam.funteer.faq.entity.Faq;
 import com.yam.funteer.faq.exception.FaqNotFoundException;
+import com.yam.funteer.faq.repository.FaqRepository;
 import com.yam.funteer.post.entity.Post;
 import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.User;
@@ -30,20 +32,21 @@ public class FaqServiceImpl implements  FaqService{
 
 	private final UserRepository userRepository;
 	private final PostRepository postRepository;
+	private final FaqRepository faqRepository;
 
 	@Override
 	public List<FaqListRes> faqGetList(int page,int size) {
 		PageRequest pageRequest=PageRequest.of(page,size);
-		List<Post>faqList=postRepository.findAllByPostTypeOrderByIdDesc(PostType.FAQ,pageRequest);
+		List<Faq>faqList=faqRepository.findAllByOrderByFaqId(pageRequest);
 		List<FaqListRes>faqListRes;
 		faqListRes=faqList.stream().map(faq->new FaqListRes(faq)).collect(Collectors.toList());
 		return faqListRes;
 	}
 
 	@Override
-	public FaqBaseRes faqGetDetail(Long postId) {
-		Post post=postRepository.findById(postId).orElseThrow(()->new FaqNotFoundException());
-		return new FaqBaseRes(post);
+	public FaqBaseRes faqGetDetail(Long faqId) {
+		Faq faq=faqRepository.findByFaqId(faqId).orElseThrow(()->new FaqNotFoundException());
+		return new FaqBaseRes(faq);
 	}
 
 	@Override
@@ -51,29 +54,29 @@ public class FaqServiceImpl implements  FaqService{
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 
 		if(user.getUserType().equals(UserType.ADMIN)){
-			Post post=postRepository.save(faqRegisterReq.toEntity());
-			return new FaqBaseRes(post);
+			Faq faq =faqRepository.save(faqRegisterReq.toEntity());
+			return new FaqBaseRes(faq);
 		}
 		else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 
 	@Override
-	public FaqBaseRes faqModify(Long postId,FaqRegisterReq faqRegisterReq) {
+	public FaqBaseRes faqModify(Long faqId,FaqRegisterReq faqRegisterReq) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Post postOrigin=postRepository.findById(postId).orElseThrow(()->new FaqNotFoundException());
+		Faq faqOrigin=faqRepository.findByFaqId(faqId).orElseThrow(()->new FaqNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)){
-			Post post=postRepository.save(faqRegisterReq.toEntity(postOrigin.getId()));
-			return new FaqBaseRes(post);
+			Faq faq=faqRepository.save(faqRegisterReq.toEntity(faqOrigin.getId(),faqOrigin.getFaqId()));
+			return new FaqBaseRes(faq);
 		}
 		else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 
 	@Override
-	public void faqDelete(Long postId) {
+	public void faqDelete(Long faqId) {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Post post=postRepository.findById(postId).orElseThrow(()->new FaqNotFoundException());
+		Faq faq=faqRepository.findByFaqId(faqId).orElseThrow(()->new FaqNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
-			postRepository.deleteById(postId);
+			faqRepository.deleteById(faq.getId());
 		}else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 }
