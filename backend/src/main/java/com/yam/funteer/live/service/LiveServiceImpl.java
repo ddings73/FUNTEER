@@ -124,7 +124,7 @@ public class LiveServiceImpl implements LiveService{
 
                     mapSessions.remove(sessionName);
                     mapSessionNamesTokens.remove(sessionName);
-                    log.info("map에서 sessionName 제거");
+                    log.info("map에서 {} 제거", sessionName);
 
                     // 녹화 종료
                     String sessionId = session.getSessionId();
@@ -154,11 +154,11 @@ public class LiveServiceImpl implements LiveService{
 
                 return;
             }
-            log.error("토큰값이 이상함 => {}", token);
+            log.error("토큰값이 mapSessionNamesToken에 존재하지 않음 => {}", token);
             return;
         }
 
-        log.error("sessionName이 이상함 => {}", sessionName);
+        log.error("sessionName에 해당하는 Session이 없음 => {}", sessionName);
     }
 
     private void removeRecordingInServer(Recording recording) {
