@@ -11,7 +11,6 @@ import lombok.Setter;
 @RequiredArgsConstructor
 @AllArgsConstructor
 public class TeamFileConfirmRequest {
-	private Long fileId;
-	private Optional<String> rejectComment;
+	private String rejectComment;
 
 }

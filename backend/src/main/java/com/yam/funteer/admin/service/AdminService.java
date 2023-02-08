@@ -19,9 +19,7 @@ public interface AdminService {
 
 	void resignTeam(Long teamId);
 
-	void confirmVmsFile(Long teamId, TeamFileConfirmRequest request);
-
-	void confirmPerformFile(Long teamId, TeamFileConfirmRequest request);
+	void rejectTeam(Long teamId, TeamFileConfirmRequest request);
 
 	void acceptFunding(Long fundingId);
 

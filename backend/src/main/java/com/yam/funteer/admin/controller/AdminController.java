@@ -3,6 +3,7 @@ package com.yam.funteer.admin.controller;
 import java.util.List;
 
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,14 +41,14 @@ public class AdminController {
 
 	@ApiOperation(value = "개인 회원 목록 조회", notes = "개인 회원 목록을 조회한다.")
 	@GetMapping("/members")
-	public ResponseEntity<List<MemberListResponse>> findAllMembers(@PageableDefault(size = 8)Pageable pageable) {
+	public ResponseEntity<List<MemberListResponse>> findAllMembers(@PageableDefault(size = 8, direction = Sort.Direction.DESC)Pageable pageable) {
 		List<MemberListResponse> memberList = adminService.findMembersWithPageable(pageable);
 		return ResponseEntity.ok(memberList);
 	}
 
 	@ApiOperation(value = "단체 회원 목록 조회", notes = "단체 회원 목록을 조회한다.")
 	@GetMapping("/team")
-	public ResponseEntity<List<TeamListResponse>> findAllTeam(@PageableDefault(size = 8) Pageable pageable) {
+	public ResponseEntity<List<TeamListResponse>> findAllTeam(@PageableDefault(size = 8, direction = Sort.Direction.DESC) Pageable pageable) {
 		List<TeamListResponse> teamList = adminService.findTeamWithPageable(pageable);
 		return ResponseEntity.ok(teamList);
 	}
@@ -67,16 +68,9 @@ public class AdminController {
 	}
 
 	@ApiOperation(value = "VMS파일 검토여부", notes = "(일단) 거절 시에는 거절메시지가 이메일로 전송.")
-	@PutMapping("/team/{teamId}/vms")
+	@PutMapping("/team/{teamId}/reject")
 	public ResponseEntity  confirmVmsFile(@PathVariable Long teamId, @RequestBody TeamFileConfirmRequest request){
-		adminService.confirmVmsFile(teamId, request);
-		return ResponseEntity.ok("처리가 완료되었습니다.");
-	}
-
-	@ApiOperation(value = "실적파일 검토여부", notes = "(일단) 거절 시에는 거절메시지가 이메일로 전송.")
-	@PutMapping("/team/{teamId}/perform")
-	public ResponseEntity  confirmPerformFile(@PathVariable Long teamId, @RequestBody TeamFileConfirmRequest request){
-		adminService.confirmPerformFile(teamId, request);
+		adminService.rejectTeam(teamId, request);
 		return ResponseEntity.ok("처리가 완료되었습니다.");
 	}
 

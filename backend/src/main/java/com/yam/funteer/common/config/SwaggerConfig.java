@@ -1,10 +1,15 @@
 package com.yam.funteer.common.config;
 
+import com.fasterxml.classmate.TypeResolver;
+import com.yam.funteer.common.MyPageable;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Pageable;
 import springfox.documentation.builders.ApiInfoBuilder;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.schema.AlternateTypeRule;
+import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
 import springfox.documentation.service.AuthorizationScope;
@@ -20,9 +25,12 @@ import java.util.List;
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+	private final TypeResolver typeResolver = new TypeResolver();
 	@Bean
 	public Docket postsApi() {
 		return new Docket(DocumentationType.SWAGGER_2)
+			.alternateTypeRules(AlternateTypeRules.newRule(typeResolver.resolve(Pageable.class),
+					typeResolver.resolve(MyPageable.class)))
 			.groupName("yam")
 			.apiInfo(apiInfo())
 			.select()

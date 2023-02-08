@@ -90,27 +90,10 @@ public class AdminServiceImpl implements AdminService{
 
 	// 미완성
 	@Override
-	public void confirmVmsFile(Long teamId, TeamFileConfirmRequest request) {
+	public void rejectTeam(Long teamId, TeamFileConfirmRequest request) {
 		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
-		TeamAttach teamAttach = teamAttachRepository.findByTeamAndAttachFileType(team, FileType.VMS);
-		request.getRejectComment().ifPresentOrElse(comment -> {
-			teamAttach.reject(comment);
-		}, ()-> {
-			teamAttach.submit();
-		});
 	}
 
-	// 미완성
-	@Override
-	public void confirmPerformFile(Long teamId, TeamFileConfirmRequest request) {
-		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
-		TeamAttach teamAttach = teamAttachRepository.findByTeamAndAttachFileType(team, FileType.PERFORM);
-		request.getRejectComment().ifPresentOrElse(comment -> {
-			teamAttach.reject(comment);
-		}, ()-> {
-			teamAttach.submit();
-		});
-	}
 
 	@Override
 	public void acceptFunding(Long fundingId) {
