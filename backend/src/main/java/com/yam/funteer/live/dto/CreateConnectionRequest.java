@@ -11,15 +11,13 @@ public class CreateConnectionRequest {
     private String sessionName;
     private Long fundingId;
 
-    private boolean hasAudio;
-    private boolean hasVideo;
 
     public RecordingProperties toRecordingProperties() {
         return new RecordingProperties.Builder()
             .name(sessionName)
-            .outputMode(Recording.OutputMode.INDIVIDUAL)
-            .hasAudio(hasAudio)
-            .hasVideo(hasVideo)
+            .outputMode(Recording.OutputMode.COMPOSED)
+            .hasAudio(true)
+            .hasVideo(true)
             .build();
     }
 }
