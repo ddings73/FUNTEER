@@ -101,8 +101,13 @@ export const requestDonationDetail = async (donationIdx?: number) => {
  * @method Put (admin/donation)
  */
 
-export const requestDonationStatus = async (donationStatusModi:DonationStatusModi) => {
-  const res = await http.put(`admin/donation${donationStatusModi}`,JSON);
-  console.log(res);
+export const requestDonationStatus = async (id: number, state: string) => {
+  const data = {
+    donationId: id,
+    postType: state
+  }
+
+  const res = await http.put(`admin/donation`, data);
+
   return res;
 };

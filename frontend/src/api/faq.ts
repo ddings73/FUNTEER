@@ -34,7 +34,7 @@ export const requestModifyFaq = async (faqIdx:number, faqData: FaqInterface) => 
     formData.append(`${key}`, value);
   });
   
-  const res = await http.put(`admin/faq/${faqIdx}`, formData);
+  const res = await http.put(`faq/${faqIdx}`, formData);
   return res;
 };
 
@@ -46,17 +46,8 @@ export const requestModifyFaq = async (faqIdx:number, faqData: FaqInterface) => 
  * @method GET
  */
 
-export const requestFaqList = async () => {
-  const res = await http.get('faq');
-  console.log(res);
-
-  return res;
-};
-
-
-
-export const requestAdminFaqList = async (size: number) => {
-  const res = await http.get(`admin/faq?size=${size}`);
+export const requestFaqList = async (size: number) => {
+  const res = await http.get(`faq?size=${size}`);
   console.log(res);
 
   return res;

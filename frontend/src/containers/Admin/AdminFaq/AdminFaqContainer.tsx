@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { useNavigate } from 'react-router-dom';
-import { requestAdminFaqList, requestNextAdminFaqList } from '../../../api/faq';
-import { DonationElementType } from '../../../types/donation';
+import { requestFaqList } from '../../../api/faq';
 import { FaqElementType } from '../../../types/faq';
+
 import styles from './AdminFaqContainer.module.scss'; // <- css 코드 여기서 작성
-import AdminFaqContainerItem from './AdminFaqContainerItem';
+
 
 function AdminFaqContainer() {
   const size = 10;
   const [faqList, setFaqList] = useState<FaqElementType[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [nextLoading, setNextLoading] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<number>(-1);
-  const [isLastPage, setIsLastPAge] = useState<boolean>(false);
-  const [ref, inView] = useInView();
   const navigate=useNavigate();
 
   const onClickFaqItemHandler = () => {
@@ -25,42 +20,21 @@ function AdminFaqContainer() {
     console.log("작성페이지로");
     navigate('create');
   }
-
-  const initFaqList = async () => {
+  const requestGetFaqList=async () => {
     try {
-      setIsLoading(true);
-      const { data } = await requestAdminFaqList(10);
-      setFaqList([...data.faqListResponse.content]);
-      setCurrentPage(data.faqListResponse.number);
-      setIsLastPAge(data.faqListResponse.last);
-      setIsLoading(false);
+      const response = await requestFaqList(size);
+      console.log(response)
+      setFaqList(response.data)
     } catch (error) {
-      console.log(error);
+      console.error(error)
     }
-  };
+  }
 
-  const nextFaqList = async () => {
-    try {
-      setNextLoading(true);
-      const { data } = await requestNextAdminFaqList(currentPage, size);
-      setFaqList([...faqList, ...data.faqListResponses.content]);
-      setCurrentPage(data.faqListResponses.number);
-      setIsLastPAge(data.faqListResponses.last);
-      setNextLoading(false);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   useEffect(() => {
-    initFaqList();
+    requestGetFaqList();
   }, []);
 
-  useEffect(() => {
-    if (inView && !isLastPage) {
-      nextFaqList();
-    }
-  }, [inView]);
 
   return (
     <div className={styles.container}>
