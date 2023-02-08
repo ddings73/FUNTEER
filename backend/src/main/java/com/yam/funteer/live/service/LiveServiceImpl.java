@@ -84,7 +84,7 @@ public class LiveServiceImpl implements LiveService{
         String sessionName = request.getSessionName();
         if(mapSessions.containsKey(sessionName)){
             log.info("이미 생성된 세션 참여 => {}", sessionName);
-            return joinExistingSession(sessionName, OpenViduRole.SUBSCRIBER);
+            return joinExistingSession(request, OpenViduRole.SUBSCRIBER);
         }else if(canPublish(user)){ // 방을 생성할 수 있다면
             log.info("새로운 세션 생성 => {}", sessionName);
 
@@ -214,19 +214,20 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
-    private CreateConnectionResponse joinExistingSession(String sessionName, OpenViduRole role) {
+    private CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, OpenViduRole role) {
+
+        String sessionName = request.getSessionName();
+
         try {
             Session session = mapSessions.get(sessionName);
 
             ConnectionProperties connectionProperties = new ConnectionProperties.Builder().role(role).build();
             String token = session.createConnection(connectionProperties).getToken();
             mapSessionNamesTokens.get(sessionName).put(token, role);
-
             if (!session.isBeingRecorded()) {
                 log.info("녹화 시작 ===========> ");
                 String sessionId = session.getSessionId();
-                RecordingProperties recordingProperties = new RecordingProperties.Builder()
-                        .outputMode(Recording.OutputMode.COMPOSED).hasAudio(true).hasVideo(true).name(sessionName).frameRate(30).build();
+                RecordingProperties recordingProperties = request.toRecordingProperties();
 
                 Recording recording = this.openVidu.startRecording(sessionId, recordingProperties);
                 log.info("{}에 대한 녹화 시작, outputMode = {}, hasAudio = {}, hasVideo = {}"
@@ -242,6 +243,7 @@ public class LiveServiceImpl implements LiveService{
             if (e.getStatus() == 404) {
                 mapSessions.remove(sessionName);
                 mapSessionNamesTokens.remove(sessionName);
+                return initializeSession(request);
             }
         }
         throw new RuntimeException();
