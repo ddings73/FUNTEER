@@ -56,6 +56,8 @@ import {
   TeamEdit,
   TeamDonation,
   Kakao,
+  CreateLive,
+  LiveRoom,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -159,6 +161,14 @@ const router = createBrowserRouter([
       {
         path: 'teamdonation/:teamId',
         element: <TeamDonation />,
+      },
+      {
+        path: 'createLive',
+        element: <CreateLive />,
+      },
+      {
+        path: 'liveRoom/:username',
+        element: <LiveRoom />,
       },
     ],
   },
