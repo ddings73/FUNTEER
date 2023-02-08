@@ -2,7 +2,9 @@ package com.yam.funteer.notice.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.PageRequest;
@@ -53,11 +55,11 @@ public class NoticeServiceImpl implements NoticeService{
 	public NoticeBaseRes noticeGetDetail(Long postId) {
 		Post post=postRepository.findById(postId).orElseThrow(()->new NoticeNotFoundException());
 		List<PostAttach>postAttachList=postAttachRepository.findAllByPost(post);
-		List<String>files=new ArrayList<>();
+		Map<String,String>paths=new HashMap<>();
 		for(PostAttach postAttach:postAttachList){
-			files.add(postAttach.getAttach().getPath());
+			paths.put(postAttach.getAttach().getName(),postAttach.getAttach().getPath());
 		}
-		return new NoticeBaseRes(post,files);
+		return new NoticeBaseRes(post,paths);
 	}
 
 	@Override
@@ -65,7 +67,7 @@ public class NoticeServiceImpl implements NoticeService{
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		List<MultipartFile>files=noticeRegistReq.getFiles();
 		if(user.getUserType().equals(UserType.ADMIN)){
-			List<String>paths=new ArrayList<>();
+			Map<String,String> paths=new HashMap<>();
 			Post post=postRepository.save(noticeRegistReq.toEntity());
 
 			if(!files.isEmpty()) {
@@ -74,14 +76,13 @@ public class NoticeServiceImpl implements NoticeService{
 						break;
 					String fileUrl = awsS3Uploader.upload(file, "notice");
 					Attach attach = noticeRegistReq.toAttachEntity(fileUrl, file.getOriginalFilename());
+					paths.put(file.getOriginalFilename(),fileUrl);
 					PostAttach postAttach = PostAttach.builder()
 						.attach(attach)
 						.post(post)
 						.build();
 					attachRepository.save(attach);
 					postAttachRepository.save(postAttach);
-					paths.add(fileUrl);
-
 				}
 			}
 			return new NoticeBaseRes(post,paths);
@@ -102,7 +103,7 @@ public class NoticeServiceImpl implements NoticeService{
 
 			Post post=postRepository.save(noticeRegistReq.toEntity(postId));
 			List<MultipartFile>files=noticeRegistReq.getFiles();
-			List<String>attachList=new ArrayList<>();
+			Map<String,String> paths=new HashMap<>();
 
 			if(!files.isEmpty()) {
 				for (MultipartFile file : files) {
@@ -114,13 +115,13 @@ public class NoticeServiceImpl implements NoticeService{
 						.attach(attach)
 						.post(post)
 						.build();
-					attachList.add(fileUrl);
+					paths.put(file.getOriginalFilename(),fileUrl);
 					attachRepository.save(attach);
 					postAttachRepository.save(postAttach);
 
 				}
 			}
-			return new NoticeBaseRes(post,attachList);
+			return new NoticeBaseRes(post,paths);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
