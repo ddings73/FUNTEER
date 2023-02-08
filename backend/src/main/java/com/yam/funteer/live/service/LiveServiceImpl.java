@@ -121,7 +121,6 @@ public class LiveServiceImpl implements LiveService{
                     live.end();
                     log.info("라이브 종료 => {}", live.getEndTime());
 
-                    // closeThisSession(session);
 
                     mapSessions.remove(sessionName);
                     mapSessionNamesTokens.remove(sessionName);
@@ -178,15 +177,6 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
-    private void closeThisSession(Session session) {
-        try {
-            session.close();
-        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
-            log.error(e.getMessage());
-            throw new RuntimeException(e);
-        }
-    }
-
     private CreateConnectionResponse createNewSession(String sessionName, OpenViduRole role,  Funding funding) {
         try {
             Session session = this.openVidu.createSession();
@@ -226,10 +216,12 @@ public class LiveServiceImpl implements LiveService{
             String token = session.createConnection(connectionProperties).getToken();
             mapSessionNamesTokens.get(sessionName).put(token, role);
             if (!session.isBeingRecorded()) {
-                log.info("녹화 시작 ===========> ");
                 String sessionId = session.getSessionId();
                 RecordingProperties recordingProperties = request.toRecordingProperties();
 
+
+                log.info("녹화 시작 ===========> {}", sessionId);
+                
                 Recording recording = this.openVidu.startRecording(sessionId, recordingProperties);
                 log.info("{}에 대한 녹화 시작, outputMode = {}, hasAudio = {}, hasVideo = {}"
                         , sessionName, recording.getOutputMode(), recording.hasAudio(), recording.hasVideo());
