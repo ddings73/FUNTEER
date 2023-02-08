@@ -73,7 +73,7 @@ public class User {
 	public void changePassword(String password){
 		this.password = password;
 	}
-	public void signOut(UserType userType){
+	protected void signOut(UserType userType){
 		this.userType = userType;
 	}
 	public void validate(){
