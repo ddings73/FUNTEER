@@ -44,10 +44,12 @@ function LoginContainer() {
       const response = await requestSignIn(userInfo);
       if (response.status === 200) {
         const { data } = response;
+        console.log(data);
+
         localStorage.setItem('accessToken', data.token.accessToken);
         localStorage.setItem('refreshToken', data.token.refreshToken);
 
-        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId }));
+        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId, username: data.username }));
         navigate('/', { replace: true });
       }
     } catch (error) {
