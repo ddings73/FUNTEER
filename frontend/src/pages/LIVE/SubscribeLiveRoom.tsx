@@ -1,5 +1,5 @@
 import React from 'react';
-import SubscribeLiveRoomContainer from '../../containers/LIVE/SubscribeLiveRoomContainer';
+import SubscribeLiveRoomContainer from '../../containers/Live/SubscribeLiveRoomContainer';
 
 function SubscribeLiveRoom() {
   return <SubscribeLiveRoomContainer />;

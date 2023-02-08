@@ -61,6 +61,7 @@ import {
   CreateLive,
   PublisherLiveRoom,
   SubscribeLiveRoom,
+  ModifyFunding,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -208,6 +209,10 @@ const router = createBrowserRouter([
       {
         path: '/funding/detail/:fundIdx',
         element: <FundingDetail />,
+      },
+      {
+        path:'/funding/modify/:fundIdx',
+        element:<ModifyFunding/>
       },
       {
         path: '/cc',
