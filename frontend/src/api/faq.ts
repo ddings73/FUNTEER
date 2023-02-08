@@ -9,16 +9,12 @@ import { http } from './axios';
  */
 
 export const requestCreateFaq = async (faqData: FaqInterface) => {
-  const formData = new FormData();
-  const entry = Object.entries(faqData);
+  const data={
+    title:faqData.title,
+    content:faqData.content
+  }
 
-  entry.forEach((data) => {
-    const key = data[0];
-    const value = data[1];
-    formData.append(`${key}`, value);
-  });
-  
-  const res = await http.post('faq', JSON);
+  const res = await http.post('faq', data);
   return res;
 };
 

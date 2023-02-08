@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import AdminDonationContainerItem, { DonationState } from './AdminDonationContainerItem';
@@ -10,6 +10,7 @@ import styles from './AdminDonationListContainer.module.scss';
 
 function AdminDonationContainer() {
   const size = 10;
+  const {pathname}=useLocation();
   const [donationList, setDonationList] = useState<DonationListElementType[]>([]);
   const [ref, inView] = useInView();
   const [donationStatusModi, setDonationStatusModi] = useState<DonationStatusModi>(
@@ -35,8 +36,11 @@ function AdminDonationContainer() {
     } 
     window.location.reload();
   };
-  const onClickDonationItemHandler = () => {
+  const onClickDonationItemHandler = (id:number) => {
     console.log('도네이션 관리 상세 페이지 이동');
+    // donation/{pathvaliable}
+    
+    navigate(`../../donation/${id}`)
   };
 
   const onClickDonationRegister=()=>{
@@ -79,7 +83,7 @@ function AdminDonationContainer() {
             <li>
               <p>{data.id}</p>
             </li>
-            <button type="button" className={styles['title-col-btn']} onClick={onClickDonationItemHandler}>
+            <button type="button" className={styles['title-col-btn']} onClick={(e)=>onClickDonationItemHandler(data.id)}>
               <li>
                 <p>{data.title}</p>
               </li>
