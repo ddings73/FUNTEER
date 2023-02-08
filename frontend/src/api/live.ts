@@ -1,6 +1,6 @@
 import { http } from './axios';
 
-export const requestCreateSession = async (sessionName: string, fundingId: number) => {
+export const requestCreateSession = async (sessionName: string, fundingId?: number) => {
   const data = {
     sessionName,
     fundingId,
