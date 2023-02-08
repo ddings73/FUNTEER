@@ -1,24 +1,15 @@
 package com.yam.funteer.attach;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.file.Files;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.disk.DiskFileItem;
-import org.apache.commons.io.IOUtils;
 import org.apache.tika.Tika;
-
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.multipart.commons.CommonsMultipartFile;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -96,22 +87,5 @@ public class FileUtil {
 		}
 
 		return file;
-	}
-
-	public static MultipartFile fileToMultipart(File file) {
-		FileItem fileItem = null;
-		try {
-			fileItem = new DiskFileItem("originFile", Files.probeContentType(file.toPath()), false,
-				file.getName(), (int)file.length(), file.getParentFile());
-
-			InputStream input = new FileInputStream(file);
-			OutputStream os = fileItem.getOutputStream();
-			IOUtils.copy(input, os);
-		}catch(IOException e){
-			e.printStackTrace();
-		}
-
-		MultipartFile multipartFile = new CommonsMultipartFile(fileItem);
-		return multipartFile;
 	}
 }
