@@ -14,7 +14,6 @@ public class CreateConnectionRequest {
 
     public RecordingProperties toRecordingProperties() {
         return new RecordingProperties.Builder()
-            .name(sessionName)
             .outputMode(Recording.OutputMode.COMPOSED)
             .hasAudio(true)
             .hasVideo(true)
