@@ -51,6 +51,8 @@ export { default as TeamProfile } from './TeamPage/TeamProfile';
 export { default as TeamEdit } from './TeamPage/TeamEdit';
 export { default as TeamDonation } from './TeamPage/TeamDonation';
 
+
+// 라이브
 export { default as CreateLive } from './Live/CreateLive';
 export { default as PublisherLiveRoom } from './Live/PublisherLiveRoom';
 export { default as SubscribeLiveRoom } from './Live/SubscribeLiveRoom';
