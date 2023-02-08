@@ -53,3 +53,22 @@ export interface changeUserInfoInterface {
   password: string;
   newPassword: string;
 }
+
+export interface AdminMemberInterface {
+  userId: number;
+  email: string;
+  money: number;
+  name: string;
+  nickname: string;
+  phone: string;
+  profileImgUrl: string;
+}
+
+export interface AdminTeamInterface {
+  email: string;
+  name: string;
+  userId: number;
+  phone: string;
+  performFileUrl: string;
+  vmsFileUrl: string;
+}

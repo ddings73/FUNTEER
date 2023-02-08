@@ -54,11 +54,13 @@ import {
   AdminNotice,
   AdminFaq,
   AdminFaqCreate,
-  AdminLive,
   TeamEdit,
   TeamDonation,
   Kakao,
   CreateLive,
+  LiveRoom,
+  AdminMemberSearch,
+  AdminTeamSearch,
   PublisherLiveRoom,
   SubscribeLiveRoom,
   ModifyFunding,
@@ -243,7 +245,7 @@ const router = createBrowserRouter([
         element: <AdminTeam />,
       },
       {
-        path: 'team/deny/:dn', // dn: vms 위촉 번호
+        path: 'team/deny/:dn', // dn: 가입 거부된 팀 번호
         element: <AdminTeamDeny />,
       },
       {
@@ -275,8 +277,12 @@ const router = createBrowserRouter([
         element: <AdminFaqCreate />,
       },
       {
-        path: 'live',
-        element: <AdminLive />,
+        path: 'member/search',
+        element: <AdminMemberSearch />,
+      },
+      {
+        path: 'team/search',
+        element: <AdminTeamSearch />,
       },
     ],
   },

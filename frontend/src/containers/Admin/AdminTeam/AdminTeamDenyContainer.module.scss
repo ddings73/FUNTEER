@@ -6,7 +6,7 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  font-family: NanumSquareRound;
+  font-family: NanumSquare !important;
 
   .contents {
     display: flex;
@@ -18,30 +18,21 @@
     .title {
       font-size: 2rem;
       font-weight: bold;
-      margin: 5rem 0;
+      margin: 3rem 0;
     }
 
     .label-div {
       display: flex;
       align-items: center;
       width: 710px;
-      margin: 0.5rem 0;
+      margin: 1rem 0;
       font-size: 1.25rem;
 
       & img {
-        width: 8px;
+        font-size: 7px;
         margin-left: 0.5rem;
         padding: 0 0 0.3rem 0;
       }
-    }
-
-    .email-title {
-      width: 700px;
-      height: 35px;
-      margin-bottom: 1rem;
-      padding: 0 1rem;
-      border-radius: 5px;
-      font-family: NanumSquareRound;
     }
 
     .email-content {

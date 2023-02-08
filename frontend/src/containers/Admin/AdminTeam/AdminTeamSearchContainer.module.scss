@@ -21,6 +21,16 @@
       margin: 3rem 0;
     }
 
+    .keyword {
+      font-size: 1.25rem;
+      margin-bottom: 3rem;
+
+      & span {
+        font-weight: bold;
+        color: $primary;
+      }
+    }
+
     .search-div {
       width: 100%;
       display: flex;

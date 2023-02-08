@@ -24,10 +24,6 @@ const callback: (response: CallBackParams) => void = async (response) => {
         console.log('결제 요청 정보', paymentResponse);
         /** 결제 request 성공시 알림 */
         customAlert(s2000, '결제 성공');
-        // setTimeout(() => {
-        //   window.location.reload();
-        // }, 2000);
-        /** 결제 request 실패 */
       } catch (error) {
         /** 결제 모달 닫기 */
         console.log('결제 요청 실패', error);
