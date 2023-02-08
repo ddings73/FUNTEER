@@ -2,10 +2,12 @@ package com.yam.funteer.admin.controller;
 
 import java.util.List;
 
+import io.swagger.annotations.ApiImplicitParam;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,16 +43,18 @@ public class AdminController {
 
 	@ApiOperation(value = "개인 회원 목록 조회", notes = "개인 회원 목록을 조회한다.")
 	@GetMapping("/members")
-	public ResponseEntity<List<MemberListResponse>> findAllMembers(@PageableDefault(size = 8, direction = Sort.Direction.DESC)Pageable pageable) {
-		List<MemberListResponse> memberList = adminService.findMembersWithPageable(pageable);
-		return ResponseEntity.ok(memberList);
+	public ResponseEntity<MemberListResponse> findAllMembers(@RequestParam(required = false, defaultValue = "") String keyword,
+															 @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
+		MemberListResponse response = adminService.findMembersWithPageable(keyword, pageable);
+		return ResponseEntity.ok(response);
 	}
 
 	@ApiOperation(value = "단체 회원 목록 조회", notes = "단체 회원 목록을 조회한다.")
 	@GetMapping("/team")
-	public ResponseEntity<List<TeamListResponse>> findAllTeam(@PageableDefault(size = 8, direction = Sort.Direction.DESC) Pageable pageable) {
-		List<TeamListResponse> teamList = adminService.findTeamWithPageable(pageable);
-		return ResponseEntity.ok(teamList);
+	public ResponseEntity<TeamListResponse> findAllTeam(@RequestParam(required = false, defaultValue = "") String keyword,
+														@PageableDefault(size = 8, sort = "id",  direction = Sort.Direction.DESC) Pageable pageable) {
+		TeamListResponse response = adminService.findTeamWithPageable(keyword, pageable);
+		return ResponseEntity.ok(response);
 	}
 
 	@ApiOperation(value = "개인 회원 탈퇴 처리", notes = "개인 회원을 탈퇴 처리한다.")

@@ -11,9 +11,9 @@ import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 
 public interface AdminService {
 
-	List<MemberListResponse> findMembersWithPageable(Pageable pageable);
+	MemberListResponse findMembersWithPageable(String keyword, Pageable pageable);
 
-	List<TeamListResponse> findTeamWithPageable(Pageable pageable);
+	TeamListResponse findTeamWithPageable(String keyword, Pageable pageable);
 
 	void resignMember(Long memberId);
 
