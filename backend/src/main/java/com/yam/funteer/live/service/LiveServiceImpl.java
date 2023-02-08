@@ -1,5 +1,7 @@
 package com.yam.funteer.live.service;
 
+import com.yam.funteer.attach.FileUtil;
+import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
@@ -15,13 +17,24 @@ import com.yam.funteer.user.repository.UserRepository;
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+
+import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -50,11 +63,11 @@ public class LiveServiceImpl implements LiveService{
     @Override
     public CreateConnectionResponse initializeSession(CreateConnectionRequest request) {
         User user = null;
-        // if(SecurityUtil.isLogin()) {
-            Long userId = 81L;// SecurityUtil.getCurrentUserId();
+        if(SecurityUtil.isLogin()) {
+            Long userId = SecurityUtil.getCurrentUserId();
             user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
-        // }
+        }
 
         String sessionName = request.getSessionName();
         if(mapSessions.containsKey(sessionName)){
@@ -109,7 +122,13 @@ public class LiveServiceImpl implements LiveService{
                     if(sessionRecordings.containsKey(sessionId)) {
                         sessionRecordings.remove(sessionId);
                         Recording recording = getSessionRecording(sessionId);
-                        log.info(recording.getUrl());
+                        String fileUrl = recording.getUrl();
+                        log.info(fileUrl);
+
+                        File file = FileUtil.downloadFromUrl(fileUrl);
+                        MultipartFile multipartFile = FileUtil.fileToMultipart(file);
+
+                        System.out.println();
                     }
                 }
 
@@ -145,7 +164,7 @@ public class LiveServiceImpl implements LiveService{
             Session session = this.openVidu.createSession();
 
             ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
-                    .role(role).build();
+                    .role(role).build(); // PUBLISHER or MODERATOR
 
             String token = session.createConnection(connectionProperties).getToken();
 
@@ -180,7 +199,7 @@ public class LiveServiceImpl implements LiveService{
                 log.info("녹화 시작 ===========> ");
                 String sessionId = session.getSessionId();
                 RecordingProperties recordingProperties = new RecordingProperties.Builder()
-                        .outputMode(Recording.OutputMode.INDIVIDUAL).hasAudio(true).hasVideo(true).name(sessionName).build();
+                        .outputMode(Recording.OutputMode.COMPOSED).hasAudio(true).hasVideo(true).name(sessionName).frameRate(30).build();
                 Recording recording = this.openVidu.startRecording(sessionId, recordingProperties);
                 log.info("{}에 대한 녹화 시작, outputMode = {}, hasAudio = {}, hasVideo = {}"
                         , sessionName, recording.getOutputMode(), recording.hasAudio(), recording.hasVideo());
