@@ -13,6 +13,6 @@ import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.faq.entity.Faq;
 
 public interface FaqRepository extends JpaRepository<Faq,Long> {
-	List<Faq>findAllByOrderByFaqId(Pageable pageable);
+	List<Faq>findAllByOrderByFaqIdDesc(Pageable pageable);
 	Optional<Faq> findByFaqId(Long faqId);
 }

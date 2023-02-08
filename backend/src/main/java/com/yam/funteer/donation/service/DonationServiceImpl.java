@@ -60,7 +60,7 @@ public class DonationServiceImpl implements DonationService{
 
 	public List<DonationListRes> donationGetList(int page,int size) {
 		PageRequest pageRequest=PageRequest.of(page,size);
-		List<Donation>donations=donationRepository.findAllByOrderByDonationId(pageRequest);
+		List<Donation>donations=donationRepository.findAllByOrderByDonationIdDesc(pageRequest);
 		List<DonationListRes>list;
 		list=donations.stream().map(donation->new DonationListRes(donation)).collect(Collectors.toList());
 
