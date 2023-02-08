@@ -13,7 +13,7 @@ function CreateLiveContainer() {
     try {
       const response = await requestCreateSession(username, 308);
       localStorage.setItem('liveToken', response.data.token);
-      navigate(`../liveRoom/${username}`);
+      navigate(`../publisherLiveRoom/${username}`);
     } catch (error) {
       console.log(error);
     }

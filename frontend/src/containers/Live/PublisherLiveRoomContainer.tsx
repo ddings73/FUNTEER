@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import VideoRoomComponent from '../../components/Live/VideoRoomComponent';
 
-function LiveRoomContainer() {
+function PublisherLiveRoomContainer() {
   const { username } = useParams();
   const [token, setToken] = useState<string | null>('');
 
@@ -19,4 +19,4 @@ function LiveRoomContainer() {
   return <> {username && token && <VideoRoomComponent sessionName={username} token={token} />}</>;
 }
 
-export default LiveRoomContainer;
+export default PublisherLiveRoomContainer;
