@@ -116,21 +116,23 @@ public class LiveServiceImpl implements LiveService{
                 log.info("{} 권한을 가진 사용자가 세션 {} 를 떠났습니다.", role, sessionName);
 
                 if(role.equals(OpenViduRole.PUBLISHER)){ // publisher ( 방송주인 체크 )
-                    Long teamId = SecurityUtil.getCurrentUserId();
-                    Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
-
                     Session session = mapSessions.get(sessionName);
                     Live live = liveRepository.findBySessionId(session.getSessionId()).orElseThrow(IllegalArgumentException::new);
                     live.end();
+                    log.info("라이브 종료 => {}", live.getEndTime());
 
-                    closeThisSession(session);
+                    // closeThisSession(session);
 
                     mapSessions.remove(sessionName);
                     mapSessionNamesTokens.remove(sessionName);
+                    log.info("map에서 sessionName 제거");
 
                     // 녹화 종료
                     String sessionId = session.getSessionId();
                     if(sessionRecordings.containsKey(sessionId)) {
+                        Long teamId = SecurityUtil.getCurrentUserId();
+                        Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
+
                         sessionRecordings.remove(sessionId);
 
                         Recording recording = getSessionRecording(sessionId);
@@ -148,7 +150,6 @@ public class LiveServiceImpl implements LiveService{
                         teamAttachRepository.save(teamAttach);
 
                         removeRecordingInServer(recording);
-
                     }
                 }
 
