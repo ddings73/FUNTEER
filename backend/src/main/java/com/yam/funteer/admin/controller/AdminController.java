@@ -46,8 +46,9 @@ public class AdminController {
 
 	@ApiOperation(value = "단체 회원 목록 조회", notes = "단체 회원 목록을 조회한다.")
 	@GetMapping("/team")
-	public ResponseEntity<List<TeamListResponse>> findAllTeam() {
-		return null;
+	public ResponseEntity<List<TeamListResponse>> findAllTeam(@PageableDefault(size = 8) Pageable pageable) {
+		List<TeamListResponse> teamList = adminService.findTeamWithPageable(pageable);
+		return ResponseEntity.ok(teamList);
 	}
 
 	@ApiOperation(value = "개인 회원 탈퇴 처리", notes = "개인 회원을 탈퇴 처리한다.")

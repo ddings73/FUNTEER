@@ -10,6 +10,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.admin.dto.MemberListResponse;
+import com.yam.funteer.admin.dto.TeamListResponse;
+import com.yam.funteer.attach.FileType;
+import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.attach.entity.TeamAttach;
+import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
@@ -34,6 +39,7 @@ import lombok.extern.slf4j.Slf4j;
 public class AdminServiceImpl implements AdminService{
 	private final MemberRepository memberRepository;
 	private final TeamRepository teamRepository;
+	private final TeamAttachRepository teamAttachRepository;
 	private final FundingRepository fundingRepository;
 	private final EmailService emailService;
 	private final ReportRepository reportRepository;
@@ -44,8 +50,28 @@ public class AdminServiceImpl implements AdminService{
 	public List<MemberListResponse> findMembersWithPageable(Pageable pageable) {
 		Page<Member> memberPage = memberRepository.findAll(pageable);
 		List<MemberListResponse> memberList = memberPage.stream().map(MemberListResponse::of).collect(Collectors.toList());
-
 		return memberList;
+	}
+
+	@Override
+	public List<TeamListResponse> findTeamWithPageable(Pageable pageable) {
+		Page<Team> teamPage = teamRepository.findAll(pageable);
+
+		List<TeamListResponse> teamList = teamPage.stream().map(team -> {
+			List<TeamAttach> teamAttachList = teamAttachRepository.findAllByTeam(team);
+			String vmsFilePath = null, perFormFilePath = null;
+			for(TeamAttach teamAttach : teamAttachList){
+				Attach attach = teamAttach.getAttach();
+				switch(attach.getFileType()){
+					case VMS: vmsFilePath = attach.getPath(); break;
+					case PERFORM: perFormFilePath = attach.getPath(); break;
+					default: break;
+				}
+			};
+			return TeamListResponse.of(team, vmsFilePath, perFormFilePath);
+		}).collect(Collectors.toList());
+
+		return teamList;
 	}
 
 	@Override
