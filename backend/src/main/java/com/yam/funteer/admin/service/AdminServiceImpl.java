@@ -142,7 +142,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public String rejectReport(Long fundingId, RejectReasonRequest data) throws Exception {
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
-		Report report = reportRepository.findByFundingId(fundingId);
+		Report report = reportRepository.findByFundingFundingId(fundingId);
 		funding.setPostType(PostType.REPORT_REJECT);
 		report.setReportRejectComment(data.getRejectReason());
 		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.REPORT);

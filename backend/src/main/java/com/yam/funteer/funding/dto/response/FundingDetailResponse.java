@@ -60,7 +60,7 @@ public class FundingDetailResponse {
 
 		FundingDetailResponse response = FundingDetailResponse.builder()
 			.team(team)
-			.fundingId(funding.getId())
+			.fundingId(funding.getFundingId())
 			.category(funding.getCategory().getName())
 			.title(funding.getTitle())
 			.content(funding.getContent())

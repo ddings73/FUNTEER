@@ -53,7 +53,7 @@ public class FundingListResponse {
 		}
 
 		FundingListResponse response = FundingListResponse.builder()
-			.id(funding.getId())
+			.id(funding.getFundingId())
 			.title(funding.getTitle())
 			.startDate(funding.getStartDate())
 			.endDate(funding.getEndDate())
