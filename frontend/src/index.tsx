@@ -49,9 +49,11 @@ import {
   CustomerCenter,
   NoticeDetail,
   AdminDonation,
+  AdminDonationCreate,
   TeamProfile,
   AdminNotice,
   AdminFaq,
+  AdminFaqCreate,
   AdminLive,
   TeamEdit,
   TeamDonation,
@@ -243,6 +245,10 @@ const router = createBrowserRouter([
         element: <AdminDonation />,
       },
       {
+        path: 'donation/create',
+        element: <AdminDonationCreate />,
+      },
+      {
         path: 'notice',
         element: <AdminNotice />,
       },
@@ -253,6 +259,10 @@ const router = createBrowserRouter([
       {
         path: 'faq',
         element: <AdminFaq />,
+      },
+      {
+        path: 'faq/create',
+        element: <AdminFaqCreate />,
       },
       {
         path: 'live',

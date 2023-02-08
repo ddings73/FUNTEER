@@ -41,6 +41,6 @@ public class Team extends User{
 
     @Override
     public boolean equals(Object obj) {
-        return getId() == ((Team)obj).getId();
+        return getId() == ((User)obj).getId();
     }
 }
