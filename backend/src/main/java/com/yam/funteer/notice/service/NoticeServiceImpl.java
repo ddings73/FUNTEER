@@ -59,7 +59,8 @@ public class NoticeServiceImpl implements NoticeService{
 		for(PostAttach postAttach:postAttachList){
 			paths.put(postAttach.getAttach().getName(),postAttach.getAttach().getPath());
 		}
-		return new NoticeBaseRes(post,paths);
+		List<Map.Entry<String,String>> pathList=paths.entrySet().stream().collect(Collectors.toList());
+		return new NoticeBaseRes(post,pathList);
 	}
 
 	@Override
@@ -85,7 +86,8 @@ public class NoticeServiceImpl implements NoticeService{
 					postAttachRepository.save(postAttach);
 				}
 			}
-			return new NoticeBaseRes(post,paths);
+			List<Map.Entry<String,String>> pathList=paths.entrySet().stream().collect(Collectors.toList());
+			return new NoticeBaseRes(post,pathList);
 		}else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
 
@@ -121,7 +123,8 @@ public class NoticeServiceImpl implements NoticeService{
 
 				}
 			}
-			return new NoticeBaseRes(post,paths);
+			List<Map.Entry<String,String>> pathList=paths.entrySet().stream().collect(Collectors.toList());
+			return new NoticeBaseRes(post,pathList);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
