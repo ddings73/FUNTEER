@@ -24,6 +24,7 @@ export { default as AdminDonationCreate } from './Admin/AdminDonationCreate';
 export { default as AdminDonation } from './Admin/AdminDonation';
 export { default as AdminNotice } from './Admin/AdminNotice';
 export { default as AdminFaq } from './Admin/AdminFaq';
+export { default as AdminFaqCreate } from './Admin/AdminFaqCreate';
 export { default as AdminLive } from './Admin/AdminLive';
 export { default as AdminNoticeCreate } from './Admin/AdminNoticeCreate';
 

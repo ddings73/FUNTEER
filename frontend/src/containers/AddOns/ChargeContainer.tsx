@@ -1,11 +1,59 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button, MenuItem, Select } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
-import { useAppDispatch } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import styles from './ChargeContainer.module.scss';
-import { closeModal, openModal } from '../../store/slices/payModalSlice';
+import { openModal } from '../../store/slices/payModalSlice';
+import { requestUserProfile } from '../../api/user';
+import { requestVerifyPayment, requestPayment } from '../../api/payment';
+import { CallBackParams, PayParams } from '../../types/payment';
+import { customAlert, customTextAlert, s2000, w2000 } from '../../utils/customAlert';
 
-// 더미 테이터 타입
+/** 결제 콜백 함수 */
+const callback: (response: CallBackParams) => void = async (response) => {
+  console.log('결제 정보', response);
+
+  if (response.success) {
+    /** 결제 검증 요청 */
+    try {
+      const verifyResponse = await requestVerifyPayment(response.imp_uid);
+      console.log('결제 검증 정보', verifyResponse);
+      /** 검증 성공시 결제 request */
+      try {
+        const paymentResponse = await requestPayment(response.paid_amount, response.imp_uid);
+        console.log('결제 요청 정보', paymentResponse);
+        /** 결제 request 성공시 알림 */
+        customAlert(s2000, '결제 성공');
+        // setTimeout(() => {
+        //   window.location.reload();
+        // }, 2000);
+        /** 결제 request 실패 */
+      } catch (error) {
+        /** 결제 모달 닫기 */
+        console.log('결제 요청 실패', error);
+        customTextAlert(w2000, '결제 실패', '알 수 없는 에러입니다. 고객센터에 문의해주세요.');
+      }
+      /** 결제 검증 실패 */
+    } catch (error) {
+      /** 결제 모달 닫기 */
+      console.error('결제 검증 에러', error);
+      customTextAlert(w2000, '결제 실패', '알 수 없는 에러입니다. 고객센터에 문의해주세요.');
+    }
+    /** 결제 실패 */
+  } else {
+    /** 결제 실패 알림 */
+    customTextAlert(w2000, '결제 실패', `${response.error_msg}`);
+  }
+};
+
+/** 결제 요청 함수 */
+export const payment = (data: PayParams) => {
+  const { IMP } = window;
+  IMP?.init('imp45886434');
+
+  IMP.request_pay(data, callback);
+};
+
 type NoticeType = {
   idx: number;
   text: string;
@@ -17,18 +65,30 @@ type ChargeHistoryType = {
   date: string;
 };
 
-const dummyNotice: NoticeType[] = [
+const chargeNotice: NoticeType[] = [
   {
     idx: 1,
-    text: '밝은 자신과 방지하는 칼이다. 있는 꽃이 용감하고 사라지지 얼마나 아름답고 그리하였는가? 위하여서, 있는 간에 방황하여도, 천고에 봄바람이다. 놀이 힘차게 대중을 보는 인간의 갑 무한한 사막이다.',
+    text: '결제는 KG 이니시스 서비스 내에서 진행됩니다.',
   },
   {
     idx: 2,
-    text: '밝은 자신과 방지하는 칼이다. 있는 꽃이 용감하고 사라지지 얼마나 아름답고 그리하였는가? 위하여서, 있는 간에 방황하여도, 천고에 봄바람이다. 놀이 힘차게 대중을 보는 인간의 갑 무한한 사막이다.',
+    text: '결제 수단은 카드(카드, 네이버 페이, 카카오 페이, PAYCO 등), 휴대폰 입니다.',
   },
   {
     idx: 3,
-    text: '밝은 자신과 방지하는 칼이다. 있는 꽃이 용감하고 사라지지 얼마나 아름답고 그리하였는가? 위하여서, 있는 간에 방황하여도, 천고에 봄바람이다. 놀이 힘차게 대중을 보는 인간의 갑 무한한 사막이다.',
+    text: '휴대폰 결제는 통신사 휴대폰 결제 동의 및 결제 비밀번호 설정 후 이용 가능합니다.',
+  },
+  {
+    idx: 4,
+    text: '충전된 마일리지는 펀딩, 라이브 방송 후원, 기부 참여에 사용할 수 있습니다.',
+  },
+  {
+    idx: 5,
+    text: '환불은 결제일 기준 7일 이내에 잔액이 결제 금액보다 많은 경우 가능합니다.',
+  },
+  {
+    idx: 6,
+    text: '펀딩, 라이브 방송 후원, 기부 참여에 사용된 마일리지는 다시 환불받을 수 없습니다.',
   },
 ];
 
@@ -52,25 +112,83 @@ const dummyChargeHistory: ChargeHistoryType[] = [
 
 function ChargeContainer() {
   const dispatch = useAppDispatch();
-
+  /** 유저 ID */
+  const userId = useAppSelector((state) => state.userSlice.userId);
+  /** 잔액 */
+  const [money, setMoney] = React.useState(0);
+  /** 정렬 기준 */
   const [sort, setSort] = React.useState('date');
+  /** 스크롤 */
+  const [scrollY, setScrollY] = useState(0);
+  /** 배너 ref */
+  const bannerRef = useRef<HTMLDivElement>(null);
+  /** 타이틀 ref */
+  const titleRef = useRef<HTMLParagraphElement>(null);
 
-  const changeSortHandler = (event: SelectChangeEvent) => {
-    setSort(event.target.value);
+  useEffect(() => {
+    requestMoneyInfo();
+  }, []);
+
+  /** 잔액 조회 */
+  const requestMoneyInfo = async () => {
+    try {
+      if (userId) {
+        const response = await requestUserProfile(userId);
+        console.log('유저 프로필 정보', response);
+        setMoney(response.data.money);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
+  /** 충전 결제 모달 open */
   const onClickChargeHandler = () => {
     dispatch(openModal({ isOpen: true }));
   };
 
+  /** 정렬 기준 선택 */
+  const changeSortHandler = (event: SelectChangeEvent) => {
+    setSort(event.target.value);
+  };
+
+  /** 스크롤 */
+  const handleScroll = () => {
+    setScrollY(window.scrollY);
+  };
+
+  /** 스크롤 useEffect */
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  /** 배너 높이 조정 */
+  useEffect(() => {
+    if (bannerRef.current) {
+      bannerRef.current.style.height = `calc(200px - ${scrollY}px * 3)`;
+    }
+    if (titleRef.current) {
+      titleRef.current.style.opacity = `calc((200 - ${scrollY} * 3) / 200)`;
+    }
+  }, [scrollY]);
+
   return (
     <div className={styles.container}>
+      <div ref={bannerRef} className={styles.banner}>
+        <p ref={titleRef} className={styles.title}>
+          FUNTEER 마일리지 충전
+        </p>
+      </div>
       <div className={styles.contents}>
-        <p className={styles.title}>펀티어 충전</p>
         <div className={styles['charge-box']}>
           <p>잔액</p>
           <div>
-            <span>12,400원</span>
+            <span>
+              <span style={{ color: 'rgba(236, 153, 75, 1)', fontSize: '1.75rem' }}>{money.toLocaleString('ko-KR')}</span> 원
+            </span>
             <Button variant="contained" onClick={onClickChargeHandler}>
               충전
             </Button>
@@ -79,7 +197,7 @@ function ChargeContainer() {
         <div className={styles['notice-box']}>
           <p>고지사항 및 안내문</p>
           <ul>
-            {dummyNotice.map((notice) => (
+            {chargeNotice.map((notice) => (
               <li key={notice.idx}>
                 {notice.idx}. {notice.text}
               </li>

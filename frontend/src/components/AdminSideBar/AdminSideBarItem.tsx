@@ -13,11 +13,6 @@ type adminSideBarDataType = {
 
 export const AdminSideBarItem: adminSideBarDataType[] = [
   {
-    title: '관리자 홈',
-    path: 'main',
-    icon: <AiIcons.AiFillHome color="white" />,
-  },
-  {
     title: '개인 회원관리',
     path: 'member',
     icon: <BsIcons.BsPersonFill color="white" />,

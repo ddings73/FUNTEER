@@ -17,7 +17,23 @@ export const s1500 = {
   timerProgressBar: true,
 };
 
+export const s2000 = {
+  icon: 'success',
+  iconColor: 'rgba(236, 153, 75, 1)',
+  showConfirmButton: false,
+  timer: 2000,
+  timerProgressBar: true,
+};
+
 export const w1500 = {
+  icon: 'warning',
+  iconColor: 'rgba(211, 79, 4, 1)',
+  showConfirmButton: false,
+  timer: 1500,
+  timerProgressBar: true,
+};
+
+export const w2000 = {
   icon: 'warning',
   iconColor: 'rgba(211, 79, 4, 1)',
   showConfirmButton: false,

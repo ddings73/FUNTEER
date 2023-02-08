@@ -11,12 +11,16 @@ import { teamProfileType } from '../../../types/user';
 import { requestFollow } from '../../../api/user';
 import styles from './TeamProfileContainer.module.scss';
 import defaultImage from '../../../assets/images/default-profile-img.svg';
+import { useAppSelector } from '../../../store/hooks';
 
 function TeamProfileContainer() {
   const navigate = useNavigate();
+  /** 현재 프로필 페이지 정보의 팀 ID */
   const { teamId } = useParams();
-  const [userId, setUserId] = useState<string | undefined>('');
-  const [userType, setUserType] = useState<string>('');
+  /** 유저 ID */
+  const userId = useAppSelector((state) => state.userSlice.userId);
+  /** 유저 타입 */
+  const userType = useAppSelector((state) => state.userSlice.userType);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [followerCnt, setFollowerCnt] = useState<number>(0);
   const [teamProfileInfo, setTeamProfileInfo] = useState<teamProfileType>({
@@ -43,13 +47,7 @@ function TeamProfileContainer() {
     }
   };
 
-  /** 로그인한 유저의 id, type 세팅 */
   useEffect(() => {
-    if (!userId || !userType) {
-      const userData = sessionStorage.getItem('user');
-      setUserId(userData ? JSON.parse(userData).userId.toString() : null);
-      setUserType(userData ? JSON.parse(userData).userType : null);
-    }
     requestTeamInfo();
   }, []);
 

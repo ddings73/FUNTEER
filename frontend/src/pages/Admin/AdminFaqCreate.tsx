@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router';
-import AdminFaqContainer from '../../containers/Admin/AdminFaq/AdminFaqContainer';
+import { useNavigate } from 'react-router-dom';
+import AdminFaqCreateContainer from '../../containers/Admin/AdminFaq/AdminFaqCreateContainer';
 import { useAppSelector } from '../../store/hooks';
 
-function AdminFaq() {
+function AdminFaqCreate() {
   const userType = useAppSelector((state) => state.userSlice.userType);
   console.log(userType);
   const navigate = useNavigate();
@@ -12,7 +12,6 @@ function AdminFaq() {
       navigate('/login');
     }
   }, []);
-  return <AdminFaqContainer />;
+  return <AdminFaqCreateContainer />;
 }
-
-export default AdminFaq;
+export default AdminFaqCreate;

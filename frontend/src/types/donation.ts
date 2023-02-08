@@ -3,19 +3,34 @@ import { string } from 'yargs';
 export type DonationElementType = {
   id: number;
   title: string;
-  amount: number;
-  currentDonationAmount: number;
+  content:string;
+  targetAmount: number;
+  currentAmount: number;
   startDate: string;
   endDate: string;
   postType: string;
-  postDate: string;
   file:string;
 };
+
+export type DonationListElementType = {
+  id: number;
+  title: string;
+  targetMoney: number;
+  startDate: string;
+  endDate: string;
+  postType: string;
+  file:string;
+};
+
+export interface DonationStatusModi {
+  donationId:number|0;
+  postType:string;
+}
 
 export interface DonationInterface {
   title: string;
   content: string | undefined;
   amount:string;
-  file:Blob;
+  file:Blob|null;
 }
 
