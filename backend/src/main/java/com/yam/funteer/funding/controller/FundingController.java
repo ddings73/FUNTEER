@@ -102,9 +102,8 @@ public class FundingController {
 	}
 
 	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다.")
-	@PutMapping("/{fundingId}")
-	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, MultipartFile thumbnail,
-		FundingRequest data) throws Exception {
+	@PutMapping(value = "/{fundingId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, @RequestPart MultipartFile thumbnail, @RequestPart FundingRequest data) throws Exception {
 		return ResponseEntity.ok(fundingService.updateFunding(fundingId, thumbnail, data));
 	}
 
