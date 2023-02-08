@@ -1,13 +1,22 @@
-import { CallBackParams } from '../types/payment';
 import { http } from './axios';
 
-export const paymentSuccessRequest = async (paymentSuccessInfo: CallBackParams) => {
-  if (paymentSuccessInfo.paid_amount) {
-    const data: CallBackParams = { ...paymentSuccessInfo, amount: paymentSuccessInfo.paid_amount };
-    console.log('결제 성공 요청 데이터', data);
+// eslint-disable-next-line
+export const requestVerifyPayment = async (imp_uid: string) => {
+  // eslint-disable-next-line
+  const response = await http.post(`verifyIamport/${imp_uid}`);
 
-    const response = await http.post('member/charge', data);
-    return response;
-  }
-  return 'no amount';
+  return response;
+};
+
+// eslint-disable-next-line
+export const requestPayment = async (amount: number | undefined, imp_uid: string) => {
+  const data = {
+    amount,
+    // eslint-disable-next-line
+    impUid: imp_uid,
+  };
+
+  const response = await http.post('member/charge', data);
+
+  return response;
 };

@@ -56,8 +56,12 @@ import {
   AdminFaqCreate,
   AdminLive,
   TeamEdit,
+  TeamDonation,
   Kakao,
-
+  CreateLive,
+  PublisherLiveRoom,
+  SubscribeLiveRoom,
+  ModifyFunding,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -158,6 +162,22 @@ const router = createBrowserRouter([
         path: 'teamedit/:teamId',
         element: <TeamEdit />,
       },
+      {
+        path: 'teamdonation/:teamId',
+        element: <TeamDonation />,
+      },
+      {
+        path: 'createLive',
+        element: <CreateLive />,
+      },
+      {
+        path: 'publisherLiveRoom/:username',
+        element: <PublisherLiveRoom />,
+      },
+      {
+        path: 'subscribeLiveRoom/:sessionName',
+        element: <SubscribeLiveRoom />,
+      },
     ],
   },
   /** Footer 있는 페이지 */
@@ -191,6 +211,10 @@ const router = createBrowserRouter([
         element: <FundingDetail />,
       },
       {
+        path:'/funding/modify/:fundIdx',
+        element:<ModifyFunding/>
+      },
+      {
         path: '/cc',
         element: <CustomerCenter />,
       },
@@ -207,7 +231,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: 'main',
+        index: true,
         element: <AdminMain />,
       },
       {
@@ -239,8 +263,8 @@ const router = createBrowserRouter([
         element: <AdminNotice />,
       },
       {
-        path:"notice/noticecreate",
-        element:<AdminNoticeCreate />
+        path: 'notice/noticecreate',
+        element: <AdminNoticeCreate />,
       },
       {
         path: 'faq',

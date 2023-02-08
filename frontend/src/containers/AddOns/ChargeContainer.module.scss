@@ -4,26 +4,54 @@
 .container {
   width: 100%;
   min-height: 100vh;
+  height: 100%;
+  padding-top: 76px;
+  font-family: NanumSquare !important;
 
-  .contents {
-    padding: 100px 20px 0 20px;
-    margin: 0 auto;
+  .banner {
     width: 100%;
-    max-width: 1160px;
+    height: 200px;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 169, 103, 0.7);
+    background: radial-gradient(circle, rgba(255, 169, 103, 0.7) 16%, rgba(255, 185, 131, 0.7) 56%, rgba(230, 117, 10, 0.7) 100%);
+    transition: height 0.6s ease-in-out, background-color 0.6s ease-in-out;
+    z-index: 100;
+
+    @include mobile {
+      display: none;
+    }
+
+    &:hover {
+      opacity: 0.9;
+    }
 
     & .title {
-      margin-top: 4rem;
-      text-align: center;
-      font-size: 2.5rem;
+      font-size: 3rem;
       font-weight: bold;
+      color: white;
+      text-shadow: 0px 0px 10px rgba(156, 73, 0, 0.3);
+      transition: opacity 0.6s ease-in-out;
 
       @include mobile {
         font-size: 1.75rem;
       }
     }
+  }
+
+  .contents {
+    margin: 450px auto;
+    width: 95%;
+    max-width: 1100px;
+
+    @include mobile {
+      margin: 0 auto;
+    }
 
     & .charge-box {
-      margin-top: 6rem;
+      margin-top: 5rem;
       width: 100%;
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
       padding-bottom: 30px;
@@ -46,7 +74,6 @@
         & span {
           font-size: 1.25rem;
           font-weight: bold;
-          font-family: NanumSquareRound;
         }
 
         & button {
@@ -76,7 +103,6 @@
         margin-bottom: 33px;
         line-height: 2rem;
         color: rgba(0, 0, 0, 0.7);
-        font-family: NanumSquareRound;
 
         @include mobile {
           width: 95%;
@@ -105,12 +131,11 @@
       & table {
         margin-top: 30px;
         width: 100%;
-        font-family: NanumSquareRound;
 
         & thead tr {
           height: 50px;
           background: linear-gradient(269.64deg, #ffe1be 9.38%, #ffccaf 95.73%);
-          box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+          border-bottom: 1px solid #ffccaf;
         }
 
         & thead tr :first-child {
@@ -134,6 +159,11 @@
 
         & tbody tr {
           height: 50px;
+          border-bottom: 1px solid #ffeee4;
+
+          &:hover {
+            background-color: #fff9f5;
+          }
 
           & td {
             padding: 0 15px;

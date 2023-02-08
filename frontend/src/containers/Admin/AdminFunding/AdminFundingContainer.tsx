@@ -1,17 +1,47 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { Button } from '@mui/material';
 import styles from './AdminFundingContainer.module.scss';
-import AdminFundingContainerItem, { FundingState } from './AdminFundingContainerItem';
+import { requestFundingList } from '../../../api/funding';
+import { FundingState, adminFundingListContainerItemType } from './AdminFundingContainerItem';
+
 
 function AdminFundingContainer() {
+  const navigate = useNavigate();
+  const [fundingList, setFundingList] = useState<adminFundingListContainerItemType[]>([]);
   const [fundingSearch, setFundingSearch] = useState<string>('');
-  const [fundingStateFilter, setFundingStateFilter] = useState<string>(FundingState.All);
+  const [fundingStateFilter, setFundingStateFilter] = useState<string>('전체');
   const [approveState, setApproveState] = useState<string>('처리');
 
+  const FundingStateMap = new Map<string, string>([
+    ['All', '전체'],
+    ['FUNDING_WAIT', "승인 대기"],
+    ['FUNDING_ACCEPT', "승인"],
+    ['FUNDING_REJECT', '거절'],
+    ['FUNDING_INPROGRESS', '진행중'],
+    ['FUNDING_FAIL', '펀딩 실패'],
+    ['FUNDING_EXTEND', '연장'],
+    ['FUNDING_COMPLETE', '펀딩 완료'],
+    ['REPORT_WAIT', '보고서 대기'],
+    ['REPORT_ACCEPT', '보고서 승인'],
+    ['REPORT_REJECT', '보고서 거부']
+  ])
+
+  const stateValue = () => {
+    console.log(FundingState)
+  }
+
+  useEffect(() => {
+    stateValue();
+  }, [])
+
+
+
   const onFundingSearchInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('asdasdasdas')
     setFundingSearch(e.target.value);
   };
 
@@ -19,28 +49,44 @@ function AdminFundingContainer() {
     setFundingStateFilter(e.target.value);
   };
 
-  const filtedFundings = AdminFundingContainerItem.filter((funding) => {
+  const requestFunding = async () => {
+    try {
+      const { data } = await requestFundingList(10);
+      setFundingList([...data.fundingListResponses.content])
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect(() => {
+    requestFunding();
+  }, [])
+
+  const filtedFundings = fundingList.filter((funding) => {
     let filter;
     if (fundingStateFilter === '전체') {
-      filter = funding.id.toString().includes(fundingSearch) || funding.title.includes(fundingSearch) || funding.teamName.includes(fundingSearch);
+      // filter = funding.id.toString().includes(fundingSearch) || funding.title.includes(fundingSearch) || funding.teamName.includes(fundingSearch);
+      filter = funding.id.toString().includes(fundingSearch) || funding.title.includes(fundingSearch);
+
     } else {
       filter =
         (funding.id.toString().includes(fundingSearch) || funding.title.includes(fundingSearch) || funding.teamName.includes(fundingSearch)) &&
-        funding.fundingState === fundingStateFilter;
+        FundingStateMap.get(funding.postType) === fundingStateFilter;
     }
     return filter;
   });
 
   const fundingStateSet = Object.values(FundingState);
 
-  const onClickFundingItemHandler = () => {
+  const onClickFundingItemHandler = (data: adminFundingListContainerItemType, e: React.MouseEvent<HTMLButtonElement>) => {
+    navigate(`../../funding/detail/${data.id}`, { state : { data}})
     console.log('펀딩 관리 상세 페이지 이동');
   };
 
   const onStateChangeHandler = (state: string, e: SelectChangeEvent) => {
-    if (state === FundingState.NotFundApproved) {
+    if (state === FundingState.FUNDING_WAIT) {
       console.log('펀딩 승인 상태 변경 요청');
-    } else if (state === FundingState.NotActApproved) {
+    } else if (state === FundingState.FUNDING_COMPLETE) {
       console.log('활동 종료 상태 변경 요청');
     }
     window.location.reload();
@@ -75,7 +121,7 @@ function AdminFundingContainer() {
             <li>
               <p>{data.id}</p>
             </li>
-            <button type="button" className={styles['title-col-btn']} onClick={onClickFundingItemHandler}>
+            <button type="button" className={styles['title-col-btn']} onClick={(e) => {onClickFundingItemHandler(data, e)}}>
               <li>
                 <p>{data.title}</p>
               </li>
@@ -90,15 +136,15 @@ function AdminFundingContainer() {
               <p>{data.endDate}</p>
             </li>
             <li>
-              <p>{data.fundingState}</p>
+              <p>{FundingStateMap.get(data.postType)}</p>
             </li>
             <li>
               <Select
-                value={data.fundingState}
-                onChange={(e) => onStateChangeHandler(data.fundingState, e)}
-                className={data.fundingState.includes('대기') ? styles['show-approve'] : styles['hide-approve']}
+                value={FundingStateMap.get(data.postType)}
+                onChange={(e) => onStateChangeHandler(data.postType, e)}
+                className={data.postType.includes('WAIT') ? styles['show-approve'] : styles['hide-approve']}
               >
-                <MenuItem value={data.fundingState}>{data.fundingState}</MenuItem>
+                <MenuItem value={data.postType}>{FundingStateMap.get(data.postType)}</MenuItem>
                 <MenuItem value="approve">승인</MenuItem>
                 <MenuItem value="deny">거부</MenuItem>
               </Select>

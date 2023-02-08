@@ -43,16 +43,17 @@ function MemberSignUpContainer() {
   const [passwordVisibility, setPasswordVisibility] = useState<boolean>(false);
   /** 비밀번호 확인 가시 여부 */
   const [passwordCheckVisibility, setPasswordCheckVisibility] = useState<boolean>(false);
-  /** 전화번호 하이픈 자동 완성 */
+  /** 하이픈 전화번호 */
   const [inputValue, setInputValue] = useState<string>('');
 
+  /** 하이픈 자동 완성 */
   useEffect(() => {
     console.log('바뀜');
     if (inputValue.length === 10) {
-      setInputValue(inputValue.replace(/(\d{3})(\d{3})(\d{4})/, '$1-$2-$3'));
+      setInputValue(inputValue.replace(/(\d{3})(\d{4})(\d{3})/, '$1-$2-$3'));
     }
-    if (inputValue.length === 13) {
-      setInputValue(inputValue.replace(/-/g, '').replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'));
+    if (inputValue.length === 11) {
+      setInputValue(inputValue.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'));
     }
   }, [inputValue]);
 
@@ -258,7 +259,14 @@ function MemberSignUpContainer() {
               {checkEmailAuth && <p className={styles['authed-email']}>{memberSignUpInfo.email}</p>}
               {!checkEmailAuth && (
                 <div className={styles['not-shadow']}>
-                  <TextField name="email" margin="dense" placeholder="이메일을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+                  <TextField
+                    name="email"
+                    margin="dense"
+                    placeholder="이메일을 입력해주세요."
+                    variant="outlined"
+                    onChange={onChangeHandler}
+                    sx={{ background: 'white' }}
+                  />
                   <Button className={styles['auth-button']} variant="contained" onClick={handleClickAuthEmail}>
                     {buttonText}
                   </Button>
@@ -288,6 +296,7 @@ function MemberSignUpContainer() {
                   placeholder="비밀번호를 입력해주세요."
                   variant="outlined"
                   onChange={onChangeHandler}
+                  sx={{ background: 'white' }}
                 />{' '}
                 {passwordVisibility && (
                   <Visibility

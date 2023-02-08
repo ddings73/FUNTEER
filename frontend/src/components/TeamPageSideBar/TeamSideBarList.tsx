@@ -3,7 +3,6 @@ import { NavLink } from 'react-router-dom';
 import Paper from '@mui/material/Paper';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import Typography from '@mui/material/Typography';
-import * as AiIcons from 'react-icons/ai';
 import styles from './TeamSideBarList.module.scss';
 import SideBarData from './TeamSideBarItem';
 
