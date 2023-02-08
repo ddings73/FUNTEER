@@ -13,9 +13,9 @@ public class NoticeBaseRes {
 	private Long id;
 	private String title;
 	private String content;
-	private Map<String,String> files;
+	private List<Map.Entry<String,String>> files;
 
-	public NoticeBaseRes(Post entity,Map<String,String>files){
+	public NoticeBaseRes(Post entity,List<Map.Entry<String,String>>files){
 		this.id=entity.getId();
 		this.title=entity.getTitle();
 		this.content=entity.getContent();
