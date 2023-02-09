@@ -27,8 +27,7 @@ export { default as AdminNotice } from './Admin/AdminNotice';
 export { default as AdminFaq } from './Admin/AdminFaq';
 export { default as AdminFaqCreate } from './Admin/AdminFaqCreate';
 export { default as AdminNoticeCreate } from './Admin/AdminNoticeCreate';
-export { default as AdminMemberSearch } from './Admin/AdminMemberSearch';
-export { default as AdminTeamSearch } from './Admin/AdminTeamSearch';
+export { default as AdminFundingReject } from './Admin/AdminFundingReject';
 
 export { default as MyPage } from './MyPage/MyPage';
 export { default as EditProfile } from './MyPage/EditProfile';
@@ -41,7 +40,7 @@ export { default as MyFunteerDonate } from './MyPage/MyFunteerDonate';
 
 export { default as FundingList } from './Funding/FundingList';
 export { default as CreateFunding } from './Funding/CreateFunding';
-export { default as ModifyFunding} from './Funding/ModifyFunding'
+export { default as ModifyFunding } from './Funding/ModifyFunding';
 
 export { default as CustomerCenter } from './CustomerCenter/CustomerCenter';
 export { default as FAQDetail } from './CustomerCenter/FAQDetail';
@@ -53,7 +52,6 @@ export { default as NoticeDetail } from './CustomerCenter/NoticeDetail';
 export { default as TeamProfile } from './TeamPage/TeamProfile';
 export { default as TeamEdit } from './TeamPage/TeamEdit';
 export { default as TeamDonation } from './TeamPage/TeamDonation';
-
 
 export { default as CreateLive } from './Live/CreateLive';
 export { default as PublisherLiveRoom } from './Live/PublisherLiveRoom';
