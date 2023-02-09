@@ -23,7 +23,7 @@ function KakaoContainer() {
       console.log(response);
       localStorage.setItem('accessToken', response.data.token.accessToken);
       localStorage.setItem('refreshToken', response.data.token.refreshToken);
-      dispatch(setUserLoginState({ isLogin: true, userType: response.data.userType, userId: response.data.userId, username: response.data.username }));
+      dispatch(setUserLoginState({ isLogin: true, userType: response.data.userType, userId: response.data.userId, username: response.data.username ,profileImgUrl:response.data.profileImgUrl}));
       navigate('/', { replace: true });
     } catch (Error) {
       console.log(Error);

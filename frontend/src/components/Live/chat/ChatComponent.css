@@ -39,9 +39,9 @@
 }
 
 .message-wrap {
-  padding: 0 15px;
   height: calc(100% - 80px);
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .message {
@@ -98,7 +98,7 @@ span.triangle {
 } */
 
 .message.left .msg-detail {
-  padding-left: 65px;
+  padding-left: 25px;
 }
 
 .message.left .user-img {
@@ -107,7 +107,7 @@ span.triangle {
 }
 
 .message.left .msg-detail .msg-content {
-  background-color: #f0f0f0;
+  background-color: rgba(246, 246, 246, 1);
   float: left;
 }
 .message.left .msg-detail .msg-content span.triangle {

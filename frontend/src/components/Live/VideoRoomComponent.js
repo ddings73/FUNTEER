@@ -15,6 +15,7 @@ import OpenViduLayout from './layout/openvidu-layout';
 import UserModel from './models/user-model';
 import ToolbarComponent from './toolbar/ToolbarComponent';
 import ChatComponent from './chat/ChatComponent';
+import defaultProfile from '../../assets/images/default-profile-img.svg'
 
 const localUser = new UserModel();
 
@@ -28,6 +29,8 @@ class VideoRoomComponent extends Component {
     this.layout = new OpenViduLayout();
     const sessionName = this.props.sessionName ? this.props.sessionName : 'A';
     const userName = this.props.user ? this.props.user : Math.floor(Math.random() * 100);
+    const userProfileImg = this.props.userProfileImg ? this.props.userProfileImg :defaultProfile
+    
     this.remotes = [];
     this.localUserAccessAllowed = false;
     this.state = {
@@ -54,7 +57,7 @@ class VideoRoomComponent extends Component {
       minRatio: 9 / 16, // The widest ratio that will be used (default 16x9)
       fixedRatio: false, // If this is true then the aspect ratio of the video is maintained and minRatio and maxRatio are ignored (default false)
       bigClass: 'OV_big', // The class to add to elements that should be sized bigger
-      bigPercentage: 0.75, // The maximum percentage of space the big ones should take up
+      bigPercentage: 0., // The maximum percentage of space the big ones should take up
       bigFixedRatio: false, // fixedRatio for the big ones
       bigMaxRatio: 3 / 2, // The narrowest ratio to use for the big elements (default 2x3)
       bigMinRatio: 9 / 21, // The widest ratio to use for the big elements (default 16x9)
@@ -396,13 +399,13 @@ class VideoRoomComponent extends Component {
 
         <div id="layout" className="bounds">
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
-            <div className="OT_root  OT_publisher custom-class" id="localUser">
+            <div className="OT_root OV_big OT_publisher custom-class" id="localUser">
               <StreamComponent user={localUser} />
             </div>
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OT_publisher custom-class chat-box">
-              <ChatComponent user={localUser} />
+              <ChatComponent user={localUser} userProfileImg={userProfileImg} />
             </div>
           )}
         </div>
