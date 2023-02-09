@@ -16,7 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.donation.dto.request.DonationModifyReq;
+import com.yam.funteer.donation.dto.request.DonationStatusModify;
 import com.yam.funteer.donation.exception.DonationNotFoundException;
 import com.yam.funteer.donation.dto.request.DonationJoinReq;
 import com.yam.funteer.donation.dto.request.DonationRegisterReq;
@@ -44,7 +46,7 @@ public class DonationController {
 	}
 
 	@ApiOperation(value = "도네이션 리스트")
-	@GetMapping("/donation/list")
+	@GetMapping(value={"/donation/list","/admin/donation"})
 	public ResponseEntity<?> donationGetList( @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
 		return ResponseEntity.ok(donationService.donationGetList(page,size));
 	}
@@ -65,6 +67,13 @@ public class DonationController {
 		return ResponseEntity.ok(BaseResponseBody.of("Success"));
 	}
 
+	@ApiOperation(value="도네이션 상태만 변경")
+	@PutMapping("/admin/donation")
+	public ResponseEntity<?>donationStatusModify(@RequestBody DonationStatusModify donation){
+		donationService.donationStatusModify(donation.getDonationId(),donation.getPostType());
+		return ResponseEntity.ok(BaseResponseBody.of(donation.getDonationId()+" 번 도네이션 종료"));
+	}
+
 	@ApiOperation(value = "도네이션 등록", notes = "<strong>userId,타이틀,내용,금액 필수<strong>.")
 	@PostMapping("/admin/donation")
 	public ResponseEntity<?> donationRegister( DonationRegisterReq donationRegisterReq) {
@@ -76,7 +85,6 @@ public class DonationController {
 	public ResponseEntity<?> donationModify(@PathVariable Long postId, DonationModifyReq donationModifyrReq) throws
 		DonationNotFoundException{
 		return ResponseEntity.ok(donationService.donationModify(postId,donationModifyrReq));
-
 	}
 
 }

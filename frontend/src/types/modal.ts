@@ -7,9 +7,9 @@ export type ConfirmModalType = {
 
 export type FileModalType = {
   isOpen: boolean;
-  vmsNum: string;
-  vmsFile: string;
-  performFile: string;
+  userId: string;
+  vmsFileUrl: string;
+  performFileUrl: string;
   deniedNum: string;
 };
 

@@ -84,8 +84,8 @@ export const requestCategoryFundingList = async (categoryId: number) => {
   return response;
 };
 
-/*
- * 펀딩 상세 호출
+/**
+ * @name 펀딩좋아요
  * @method PUT
  */
 export const requestWish = async (fundingId?: string) => {
@@ -109,7 +109,7 @@ export const postFundingComment = async (commentData: string, fundingId?: string
  * @method GET
  */
 export const requestCommentList = async (fundingId?: string, sort?: string) => {
-  const res = await http.get(`funding/${fundingId}/?sort=${sort}`); // funding/1/size/2
+  const res = await http.get(`funding/${fundingId}/?sort=${sort}`);
   console.log('댓글호출', res);
 
   return res;
@@ -123,3 +123,4 @@ export const requestNextCommentList = async (currentPage: number, fundingId?: st
   const response = await http.get(`funding/${fundingId}/?page=${currentPage + 1}&?sort=${sort}`);
   return response;
 };
+

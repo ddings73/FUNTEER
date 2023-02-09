@@ -1,47 +1,50 @@
-import React, { ChangeEvent, useState } from 'react';
+import React, { ChangeEvent, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Dayjs } from 'dayjs';
+import '@toast-ui/editor/dist/toastui-editor.css';
+import { Editor as ToastEditor } from '@toast-ui/react-editor';
 import { Button } from '@mui/material';
 import { blob } from 'stream/consumers';
 import requiredIcon from '../../../assets/images/funding/required.svg';
-import { useAppDispatch } from '../../../store/hooks';
 import { requestCreateDonation } from '../../../api/donation';
-import { closeModal, openModal } from '../../../store/slices/modalSlice';
 import styles from './AdminDonationContainer.module.scss'; // <- css 코드 여기서 작성
 import { stringToSeparator } from '../../../types/convert';
+import { DonationInterface } from '../../../types/donation';
 
 
 function AdminDonationCreateContainer() {
   /** 여기서 함수, 변수 선언하거나 axios 요청 */
   const navigate=useNavigate();
-  const dispatch=useAppDispatch();
-  const [donationData,setDonationData]=useState({
-    file:new Blob(),
+  const [filePreview, setFilePreview] = useState<string>();
+  const editorRef = useRef<ToastEditor>(null);
+  const [donationData,setDonationData]=useState<DonationInterface>({
+    file: null,
     title:'',
     content:'',
     amount:'',
   })
-  const [postType,setPostType]=useState('DONATION_ACTIVE');
-  const [endDate,setEndDate]=useState<Dayjs|null>(null);
-  const [startDate,setStartDate]=useState<Dayjs|null>(null);
 
+  const editorChangeHandler=(e:any)=>{
+    const text=editorRef.current?.getInstance().getHTML();
+    if(text)
+    setDonationData({...donationData, content:text});
+  }
 
-  const handleModal = () => {
-    navigate(-1);
-  };
-
-  /** 취소 */
-  const onClickBackHandler = () => {
-    dispatch(closeModal());
-    navigate(-1);
-  };
+  const onFileHandler=(e:React.ChangeEvent<HTMLInputElement>)=>{
+    if(!e.target.files){
+      return;
+    }
+    console.log(e.target.files[0])
+    const fileUpload=e.target.files[0];
+    setDonationData({...donationData, file: fileUpload})
+  }
 
   /** onChangeTextHandler */
   const onChangeTextHandler=(e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     // 금액 입력중 숫자외의 문자가 들어오면 제거
     const regex = /[^0-9]/g;
-    const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
+    const separatorValue = value.replaceAll(regex, '');
     
     switch (name) {
       case 'title':
@@ -50,15 +53,11 @@ function AdminDonationCreateContainer() {
         }
 
         break;
-      case 'content':
-        if (value.length < 40) {
-          setDonationData({ ...donationData, content: value });
-        }
-        break;
+
       case 'amount':
         setDonationData({...donationData,amount:separatorValue});
         break;
-
+      
       default:
         break;
     }
@@ -69,15 +68,12 @@ function AdminDonationCreateContainer() {
   const onCreateDonation=async()=>{
     try{
       const response=await requestCreateDonation(donationData);
-      if(response.status===200){
-        dispatch(openModal({isOpen:true,title:'도네이션 생성 성공',content : '도네이션 생성에 성공했습니다.',handleModal}));
-      }
       console.log(response);
+      navigate(-1)
     }catch(error){
       console.log(error);
     }
   }
-
 
   /** 아래는 TSX 문법, HTML 코드 작성 */
   return (
@@ -89,9 +85,17 @@ function AdminDonationCreateContainer() {
         </div>
         <input name="title" type="text" className={styles['email-title']} placeholder="제목을 입력해주세요." onChange={onChangeTextHandler} />
         <div className={styles['label-div']}>
-          <p>내용</p> <img src={requiredIcon} alt="required icon" />
+        <ToastEditor
+            ref={editorRef}
+            placeholder="진행하시는 펀딩에 대해 자세히 설명해주세요."
+            height="500px"
+            useCommandShortcut
+            initialEditType="wysiwyg"
+            onChange={editorChangeHandler}
+            language="ko-KR"
+            hideModeSwitch // 하단의 타입 선택 탭 숨기기
+          />
         </div>
-        <textarea name="content" className={styles['email-content']}  placeholder="내용을 입력해주세요."  onChange={(e)=>onChangeTextHandler}/>
         <div className={styles['label-div']}>
           <p>목표 금액</p> <img src={requiredIcon} alt="required icon" />
         </div>
@@ -99,9 +103,9 @@ function AdminDonationCreateContainer() {
         <div className={styles['label-div']}>
           <p>첨부파일</p><img src={requiredIcon} alt="required icon" />
         </div>
-        <input type="file" style={{margin:'0.5rem 0 1rem 0', width: '710px'}}/>
+        <input type="file" style={{margin:'0.5rem 0 1rem 0', width: '710px'}} accept="image/*" onChange={onFileHandler} className={styles['thumbnail-upload-input']} required />
         <div className={styles['btn-div']}>
-          <Button variant="contained" className={styles.submit} onClick={onClickBackHandler}>
+          <Button variant="contained" className={styles.submit}>
             취소
           </Button>
           <Button variant="contained" className={styles.submit} onClick={onCreateDonation}>

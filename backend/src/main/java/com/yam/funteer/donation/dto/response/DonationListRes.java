@@ -17,7 +17,7 @@ public class DonationListRes {
 	private Long targetMoney;
 
 	public DonationListRes(Donation donation){
-		this.id=donation.getId();
+		this.id=donation.getDonationId();
 		this.title=donation.getTitle();
 		this.postType=donation.getPostType();
 		this.startDate=donation.getStartDate();

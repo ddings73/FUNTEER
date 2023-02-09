@@ -16,7 +16,7 @@ export default function PermanentDrawerLeft() {
   const navigate = useNavigate();
 
   const onClickAdminLogo = () => {
-    navigate('/admin/main');
+    navigate('/admin');
   };
 
   return (

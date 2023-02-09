@@ -54,13 +54,13 @@ public class QnaServiceImpl implements QnaService {
 		List<QnaListRes>list;
 		PageRequest pageRequest=PageRequest.of(page,size);
 		if(user.getUserType().equals(UserType.ADMIN)){
-			List<Qna>qnaList=qnaRepository.findAllByOrderByIdDesc(pageRequest);
+			List<Qna>qnaList=qnaRepository.findAllByOrderByQnaIdDesc(pageRequest);
 			list=qnaList.stream().map(qna->new QnaListRes(qna)).collect(Collectors.toList());
 
 			return list;
 		}
 
-		List<Qna>qnaList=qnaRepository.findAllByUserOrderByIdDesc(user,pageRequest);
+		List<Qna>qnaList=qnaRepository.findAllByUserOrderByQnaIdDesc(user,pageRequest);
 		list=qnaList.stream().map(qna->new QnaListRes(qna)).collect(Collectors.toList());
 
 		return list;
@@ -95,7 +95,7 @@ public class QnaServiceImpl implements QnaService {
 
 	@Override
 	public QnaBaseRes qnaGetDetail(Long qnaId) {
-		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
+		Qna qna = qnaRepository.findByQnaId(qnaId).orElseThrow(() -> new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if (qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN)) {
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
@@ -112,11 +112,11 @@ public class QnaServiceImpl implements QnaService {
 
 	@Override
 	public QnaBaseRes qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq){
-		Qna qna = qnaRepository.findById(qnaId).orElseThrow(() -> new QnaNotFoundException());
+		Qna qna = qnaRepository.findByQnaId(qnaId).orElseThrow(() -> new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		List<String>attachList=new ArrayList<>();
 		if(user.getId()==qna.getUser().getId()) {
-			qnaRepository.save(qnaRegisterReq.toEntity(user,qnaId));
+			qnaRepository.save(qnaRegisterReq.toEntity(user,qna.getId(),qnaId));
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
 			for(PostAttach postAttach:postAttachList){
 				awsS3Uploader.delete("qna/",postAttach.getAttach().getPath());
@@ -146,8 +146,8 @@ public class QnaServiceImpl implements QnaService {
 	}
 
 	@Override
-	public void qnaDelete(Long postId){
-		Qna qna = qnaRepository.findById(postId).orElseThrow(() -> new QnaNotFoundException());
+	public void qnaDelete(Long qnaId){
+		Qna qna = qnaRepository.findByQnaId(qnaId).orElseThrow(() -> new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(qna.getUser().getId()==user.getId()) {
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);

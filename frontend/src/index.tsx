@@ -49,13 +49,22 @@ import {
   CustomerCenter,
   NoticeDetail,
   AdminDonation,
+  AdminDonationCreate,
+  AdminDonationDetail,
   TeamProfile,
   AdminNotice,
   AdminFaq,
-  AdminLive,
+  AdminFaqCreate,
   TeamEdit,
   TeamDonation,
   Kakao,
+  CreateLive,
+  AdminMemberSearch,
+  AdminTeamSearch,
+  PublisherLiveRoom,
+  SubscribeLiveRoom,
+  ModifyFunding,
+  FAQDetail
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -160,6 +169,18 @@ const router = createBrowserRouter([
         path: 'teamdonation/:teamId',
         element: <TeamDonation />,
       },
+      {
+        path: 'createLive',
+        element: <CreateLive />,
+      },
+      {
+        path: 'publisherLiveRoom/:username',
+        element: <PublisherLiveRoom />,
+      },
+      {
+        path: 'subscribeLiveRoom/:sessionName',
+        element: <SubscribeLiveRoom />,
+      },
     ],
   },
   /** Footer 있는 페이지 */
@@ -193,6 +214,10 @@ const router = createBrowserRouter([
         element: <FundingDetail />,
       },
       {
+        path:'/funding/modify/:fundIdx',
+        element:<ModifyFunding/>
+      },
+      {
         path: '/cc',
         element: <CustomerCenter />,
       },
@@ -200,6 +225,10 @@ const router = createBrowserRouter([
         path: '/cc/:nn', // nn: 공지사항 번호
         element: <NoticeDetail />,
       },
+      {
+        path: '/cc/faq/:fn',
+        element: <FAQDetail />,
+      }
     ],
   },
   /** 관리자 페이지 */
@@ -209,7 +238,7 @@ const router = createBrowserRouter([
     errorElement: <ErrorPage />,
     children: [
       {
-        path: 'main',
+        index: true,
         element: <AdminMain />,
       },
       {
@@ -221,7 +250,7 @@ const router = createBrowserRouter([
         element: <AdminTeam />,
       },
       {
-        path: 'team/deny/:dn', // dn: vms 위촉 번호
+        path: 'team/deny/:dn', // dn: 가입 거부된 팀 번호
         element: <AdminTeamDeny />,
       },
       {
@@ -231,6 +260,14 @@ const router = createBrowserRouter([
       {
         path: 'donation',
         element: <AdminDonation />,
+      },
+      {
+        path: 'donation/create',
+        element: <AdminDonationCreate />,
+      },
+      {
+        path: 'donation/:dn',
+        element: <AdminDonationDetail />,
       },
       {
         path: 'notice',
@@ -245,8 +282,16 @@ const router = createBrowserRouter([
         element: <AdminFaq />,
       },
       {
-        path: 'live',
-        element: <AdminLive />,
+        path: 'faq/create',
+        element: <AdminFaqCreate />,
+      },
+      {
+        path: 'member/search',
+        element: <AdminMemberSearch />,
+      },
+      {
+        path: 'team/search',
+        element: <AdminTeamSearch />,
       },
     ],
   },

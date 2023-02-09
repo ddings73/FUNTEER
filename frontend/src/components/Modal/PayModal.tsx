@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, DialogActions } from '@mui/material';
+import { Button, DialogActions, TextField } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -13,9 +13,9 @@ import Box from '@mui/material/Box';
 import { useAppDispatch } from '../../store/hooks';
 import { payModalType } from '../../types/modal';
 import { closeModal } from '../../store/slices/payModalSlice';
-import { payment } from '../../payment';
 import { PayParams } from '../../types/payment';
 import { requestUserInfo } from '../../api/user';
+import { payment } from '../../containers/AddOns/ChargeContainer';
 
 function PayModal({ isOpen }: payModalType) {
   const dispatch = useAppDispatch();
@@ -31,6 +31,9 @@ function PayModal({ isOpen }: payModalType) {
     buyer_tel: '',
     buyer_email: '',
   });
+
+  /** 직접 입력란 여부 */
+  const [onDirect, setOnDirect] = useState<boolean>(false);
 
   /** 유저 정보 조회 */
   const requestUser = async () => {
@@ -52,7 +55,16 @@ function PayModal({ isOpen }: payModalType) {
 
   /** 결제 액수 변경 */
   const changeAmountHandler = (e: SelectChangeEvent<any>) => {
-    setPayInfo({ ...payInfo, amount: e.target.value });
+    if (e.target.value === 'direct') {
+      setOnDirect(true);
+    } else {
+      setPayInfo({ ...payInfo, amount: e.target.value });
+    }
+  };
+
+  /** 결제 액수 직접 입력란 변경 */
+  const changeDirectAmountHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setPayInfo({ ...payInfo, amount: parseInt(e.target.value, 10) });
   };
 
   /** 유저 정보를 결제 정보에 담음 */
@@ -68,6 +80,7 @@ function PayModal({ isOpen }: payModalType) {
   /** 결제 버튼 */
   const onClickPayBtn = () => {
     payment(payInfo);
+    dispatch(closeModal());
   };
 
   return (
@@ -87,32 +100,38 @@ function PayModal({ isOpen }: payModalType) {
               selectionFollowsFocus
             >
               <Tab value="card" label="카드" sx={{ fontFamily: 'NanumSquare' }} />
-              <Tab value="vbank" label="가상계좌" sx={{ fontFamily: 'NanumSquare' }} />
+              <Tab value="phone" label="휴대폰" sx={{ fontFamily: 'NanumSquare' }} />
             </Tabs>
           </Box>
-          <Select onChange={changeAmountHandler} sx={{ fontFamily: 'NanumSquare' }}>
-            <MenuItem value="10" sx={{ fontFamily: 'NanumSquare' }}>
-              10 원
-            </MenuItem>
-            <MenuItem value="5000" sx={{ fontFamily: 'NanumSquare' }}>
-              5,000 원
-            </MenuItem>
-            <MenuItem value="10000" sx={{ fontFamily: 'NanumSquare' }}>
-              10,000 원
-            </MenuItem>
-            <MenuItem value="20000" sx={{ fontFamily: 'NanumSquare' }}>
-              20,000 원
-            </MenuItem>
-            <MenuItem value="30000" sx={{ fontFamily: 'NanumSquare' }}>
-              30,000 원
-            </MenuItem>
-            <MenuItem value="50000" sx={{ fontFamily: 'NanumSquare' }}>
-              50,000 원
-            </MenuItem>
-            <MenuItem value="100000" sx={{ fontFamily: 'NanumSquare' }}>
-              100,000 원
-            </MenuItem>
-          </Select>
+          {!onDirect && (
+            <Select onChange={changeAmountHandler} sx={{ fontFamily: 'NanumSquare' }}>
+              <MenuItem value="10" sx={{ fontFamily: 'NanumSquare' }}>
+                10 원
+              </MenuItem>
+              <MenuItem value="5000" sx={{ fontFamily: 'NanumSquare' }}>
+                5,000 원
+              </MenuItem>
+              <MenuItem value="10000" sx={{ fontFamily: 'NanumSquare' }}>
+                10,000 원
+              </MenuItem>
+              <MenuItem value="20000" sx={{ fontFamily: 'NanumSquare' }}>
+                20,000 원
+              </MenuItem>
+              <MenuItem value="30000" sx={{ fontFamily: 'NanumSquare' }}>
+                30,000 원
+              </MenuItem>
+              <MenuItem value="50000" sx={{ fontFamily: 'NanumSquare' }}>
+                50,000 원
+              </MenuItem>
+              <MenuItem value="100000" sx={{ fontFamily: 'NanumSquare' }}>
+                100,000 원
+              </MenuItem>
+              <MenuItem value="direct" sx={{ fontFamily: 'NanumSquare' }}>
+                직접 입력
+              </MenuItem>
+            </Select>
+          )}
+          {onDirect && <TextField color="warning" variant="outlined" label="직접 입력" sx={{ marginTop: '1rem' }} onChange={changeDirectAmountHandler} />}
         </FormControl>
       </DialogContent>
       <DialogActions>
@@ -120,7 +139,7 @@ function PayModal({ isOpen }: payModalType) {
           결제
         </Button>
         <Button color="warning" variant="contained" sx={{ margin: '0rem 2rem 1rem auto', fontFamily: 'NanumSquare' }} onClick={onClickCloseBtn}>
-          취소
+          닫기
         </Button>
       </DialogActions>
     </Dialog>

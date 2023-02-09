@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Editor as ToastEditor } from '@toast-ui/react-editor';
 import { useNavigate } from "react-router-dom";
 import Button from '@mui/material/Button';
@@ -7,7 +7,6 @@ import styles from './AdminNoticeCreateContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
 import { requestCreateNotice } from "../../../api/admin";
 import { NoticeInterface } from "../../../types/notice";
-
 
 function AdminNoticeCreateContainer() {
   const navigate = useNavigate();
@@ -42,14 +41,21 @@ function AdminNoticeCreateContainer() {
     };
 
     const onChangeFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+      let temp:File[] =[];
       if (e.target.files) {
-        files.push(e.target.files[0])
-        console.log(files)
+        const list = e.target.files
+        Object.entries(list).forEach((el)=>{
+          temp = [...temp, el[1]]
+        })
+        const prev = noticeData.files
+        setNoticeData({ ...noticeData, files:[...prev, ...temp]});                
+        console.log("temp",temp)
       }
     }
 
     const createNotice = async()=>{
       try{
+      
         const response =await requestCreateNotice(noticeData);
         navigate(-1)
         console.log(response);
@@ -60,6 +66,9 @@ function AdminNoticeCreateContainer() {
       }
     }
 
+    useEffect(()=>{
+      console.log(noticeData)
+    },[noticeData])
 
     return (
         <div className={styles.container}>
@@ -93,8 +102,10 @@ function AdminNoticeCreateContainer() {
           <div className={styles['label-div']} style={{marginTop:'1.5rem'}}>
           <p>파일첨부</p> <img style={{marginRight:'1rem'}} src={requiredIcon} alt="required icon" />
           <input type="file" multiple onChange={onChangeFiles}/>
-
           </div>
+          { noticeData.files.map((file) => (
+            <p>{file.name}</p>
+          ))}
         <div className={styles['btn-div']}>
           <Button variant="contained" className={styles.submit} onClick={createNotice}>
             등록
