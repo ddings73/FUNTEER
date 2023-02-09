@@ -13,6 +13,7 @@ import com.yam.funteer.donation.entity.Donation;
 
 public interface DonationRepository extends JpaRepository<Donation,Long> {
 	List<Donation>findAllByOrderByDonationIdDesc(Pageable pageable);
+	List <Donation> findAllByPostTypeOrderByDonationIdDesc(PostType postType,Pageable pageable);
 	Optional<Donation> findFirstByOrderByDonationIdDesc();
 	Optional<Donation> findByDonationId(Long donationId);
 }
