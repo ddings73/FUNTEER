@@ -68,7 +68,18 @@
     }
     & .mainContent {
       width: 100%;
-      height: 250vh;
+      height: auto;
+      & .mainContentInner {
+        margin-top: 100px;
+        line-height: 500%;
+        h1 {
+          font-size: 50px;
+          font-weight: 600;
+        }
+        p {
+          font-size: 18px;
+        }
+      }
     }
     & .mainFooter {
       width: 100%;
@@ -81,7 +92,7 @@
     & .mainFooterAttatch {
       width: 100%;
       height: 250px;
-      margin-top: 30px;
+      margin-top: 50px;
       text-align: left;
       margin-left: 60px;
       & .attachTitle {
@@ -96,23 +107,22 @@
         }
       }
     }
-    & .mainFooterdiv {
-      width: 100%;
-      height: 5px;
-    }
+
     & .mainFooterLikeWrapper {
       width: 100%;
       height: auto;
       display: flex;
       justify-content: center;
+
       & .mainFooterLike {
+        margin-right: 10px;
         width: 50px;
         height: 50px;
-        padding: 1%;
+        padding: 5%;
         border-radius: 50%;
         color: rgb(255, 0, 0);
         border: 3px solid #ec994b;
-        background: transprgb(255, 189, 104) t;
+        background: transprgb(255, 189, 104);
       }
       & .Likebox {
         margin-left: 2%;
@@ -156,7 +166,6 @@
 
 .teamInfoCard {
   height: 150px;
-  padding: 5%;
 }
 
 .mainFooterLikeTestSub {
@@ -164,4 +173,14 @@
   font-size: 20px;
   font-family: 'nanumsquare';
   font-weight: 600;
+}
+
+.mainFooterLikeButton {
+  height: 85px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  & :active {
+    scale: 0.9;
+  }
 }

@@ -10,18 +10,25 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TeamAccountResponse {
-    private Long id;
     private String email;
     private String name;
     private String phone;
     private String vmsFileUrl;
     private String performFileUrl;
+
     private String profileImgUrl;
+
+    public static TeamAccountResponse of(Team team){
+        return TeamAccountResponse.builder()
+                .email(team.getEmail())
+                .name(team.getName())
+                .phone(team.getPhone())
+                .build();
+    }
 
     public static TeamAccountResponse from(Team team) {
 
         TeamAccountResponse response = TeamAccountResponse.builder()
-            .id(team.getId())
             .email(team.getEmail())
             .name(team.getName())
             .phone(team.getPhone())

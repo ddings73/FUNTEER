@@ -65,12 +65,8 @@ public class LoginServiceImpl implements LoginService{
 
     @Override
     public void processLogOut() {
-        if(SecurityUtil.isLogin()) {
-            Long userId = SecurityUtil.getCurrentUserId();
-            tokenRepository.deleteById(userId);
-        }
-
-        throw new AccessDeniedException("이미 로그아웃한 회원입니다.");
+        Long userId = SecurityUtil.getCurrentUserId();
+        tokenRepository.deleteById(userId);
     }
 
     @Override

@@ -21,7 +21,7 @@ public class DonationBaseRes {
 	private LocalDate endDate;
 
 	public DonationBaseRes(Donation entity,String file){
-		this.id=entity.getDonationId();
+		this.id=entity.getId();
 		this.title=entity.getTitle();
 		this.content=entity.getContent();
 		this.file=file;

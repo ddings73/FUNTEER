@@ -19,7 +19,7 @@ public class ReplyBaseRes {
 
 	public ReplyBaseRes(Reply entity) {
 		this.id = entity.getId();
-		this.qnaId=entity.getQna().getQnaId();
+		this.qnaId=entity.getQna().getId();
 		this.content=entity.getContent();
 		this.regDate=entity.getRegDate();
 	}

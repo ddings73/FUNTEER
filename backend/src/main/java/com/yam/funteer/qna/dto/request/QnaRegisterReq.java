@@ -49,10 +49,9 @@ public class QnaRegisterReq {
 			.postType(PostType.QNA).build();
 	}
 
-	public Qna toEntity(User user,Long qnaId,Long postId){
+	public Qna toEntity(User user,Long postId){
 		return Qna.builder()
 			.id(postId)
-			.qnaId(qnaId)
 			.title(title)
 			.content(content)
 			.user(user)

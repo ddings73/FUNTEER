@@ -88,10 +88,9 @@ public class TeamController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @PutMapping("/profile")
-    public ResponseEntity modifyProfile(@Validated @ModelAttribute UpdateTeamProfileRequest request, BindingResult bindingResult){
+    public void modifyProfile(@Validated @ModelAttribute UpdateTeamProfileRequest request, BindingResult bindingResult){
         validateBinding(bindingResult);
         teamService.updateProfile(request);
-        return ResponseEntity.ok("프로필 수정 완료");
     }
 
     @ApiOperation(value = "단체회원 개인정보 조회", notes = "ID를 이용하여 개인정보 조회할 수 있다")
@@ -114,9 +113,8 @@ public class TeamController {
         @ApiResponse(code = 500, message = "서버 에러")
     })
     @PutMapping("/account")
-    public ResponseEntity modifyAccount(@Validated @ModelAttribute UpdateTeamAccountRequest request, BindingResult bindingResult){
+    public void modifyAccount(@Validated @ModelAttribute UpdateTeamAccountRequest request, BindingResult bindingResult){
         teamService.updateAccount(request);
-        return ResponseEntity.ok("회원정보 수정 완료");
     }
 
     public void validateBinding(BindingResult bindingResult){

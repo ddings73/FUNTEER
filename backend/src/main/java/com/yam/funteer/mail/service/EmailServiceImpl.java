@@ -1,8 +1,6 @@
 package com.yam.funteer.mail.service;
 
-import com.yam.funteer.mail.CodeInfo;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -10,37 +8,20 @@ import org.springframework.stereotype.Service;
 import javax.mail.Message;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Map;
 import java.util.Random;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.yam.funteer.common.code.PostGroup;
 
-@Service @Slf4j
+@Service
 @RequiredArgsConstructor
 public class EmailServiceImpl implements EmailService{
 
-    private final Map<String, CodeInfo> mapCodes = new ConcurrentHashMap<>();
     private final JavaMailSender emailSender;
     public static final String ePw = createKey();
 
-    @Override
-    public void sendSimpleMessage(String to) throws Exception {
-        MimeMessage message = createMessage(to);
-        try{//예외처리
-            emailSender.send(message);
-        }catch(MailException es){
-            es.printStackTrace();
-            throw new IllegalArgumentException();
-        }
-    }
-
     private MimeMessage createMessage(String to)throws Exception{
-        log.info("보내는 대상 : {}", to);
-        log.info("인증 번호 : {}", ePw);
-        mapCodes.put(to, new CodeInfo(ePw, LocalDateTime.now()));
+        System.out.println("보내는 대상 : "+ to);
+        System.out.println("인증 번호 : "+ ePw);
         MimeMessage message = emailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
@@ -65,6 +46,7 @@ public class EmailServiceImpl implements EmailService{
 
         return message;
     }
+
     public static String createKey() {
         StringBuffer key = new StringBuffer();
         Random rnd = new Random();
@@ -88,6 +70,17 @@ public class EmailServiceImpl implements EmailService{
             }
         }
         return key.toString();
+    }
+    @Override
+    public String sendSimpleMessage(String to) throws Exception {
+        MimeMessage message = createMessage(to);
+        try{//예외처리
+            emailSender.send(message);
+        }catch(MailException es){
+            es.printStackTrace();
+            throw new IllegalArgumentException();
+        }
+        return ePw;
     }
 
     private MimeMessage createFundingMessage(String to, String rejectReason, PostGroup postGroup) throws Exception{
@@ -128,18 +121,5 @@ public class EmailServiceImpl implements EmailService{
             throw new IllegalArgumentException();
         }
         return rejectReason;
-    }
-
-    @Override
-    public boolean confirmCode(String email, String code) {
-        if(mapCodes.containsKey(email)){
-            CodeInfo codeInfo = mapCodes.get(email);
-            mapCodes.remove(email);
-            if (codeInfo.expired() || !codeInfo.validateCode(code)){
-                return false;
-            }
-            return true;
-        }
-        return false;
     }
 }

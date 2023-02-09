@@ -22,8 +22,6 @@ public class FundingListResponse {
 
 	private String title;
 
-	private String teamName;
-
 	private LocalDate startDate;
 
 	private LocalDate endDate;
@@ -55,13 +53,12 @@ public class FundingListResponse {
 		}
 
 		FundingListResponse response = FundingListResponse.builder()
-			.id(funding.getFundingId())
+			.id(funding.getId())
 			.title(funding.getTitle())
 			.startDate(funding.getStartDate())
 			.endDate(funding.getEndDate())
 			.postDate(funding.getRegDate())
 			.thumbnail(funding.getThumbnail())
-			.teamName(funding.getTeam().getName())
 			.fundingDescription(funding.getFundingDescription())
 			.currentFundingAmount(funding.getCurrentFundingAmount())
 			.targetAmount(targetAmount)

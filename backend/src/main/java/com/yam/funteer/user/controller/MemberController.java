@@ -1,6 +1,5 @@
 package com.yam.funteer.user.controller;
 
-import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
@@ -80,10 +79,9 @@ public class MemberController {
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/profile")
-	public ResponseEntity modifyProfile(@Validated @ModelAttribute UpdateMemberProfileRequest request, BindingResult bindingResult){
+	public void modifyProfile(@Validated @ModelAttribute UpdateMemberProfileRequest request, BindingResult bindingResult){
 		validateBinding(bindingResult);
 		memberService.updateProfile(request);
-		return ResponseEntity.ok("프로필 수정 완료");
 	}
 
 	@ApiOperation(value = "회원정보 조회", notes = "회원의 개인정보( 이메일, 이름, 전화번호 )를 조회합니다.")
@@ -108,10 +106,9 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/account")
-	public ResponseEntity modifyAccount(@Validated @RequestBody UpdateMemberAccountRequest request, BindingResult bindingResult) {
+	public void modifyAccount(@Validated @RequestBody UpdateMemberAccountRequest request, BindingResult bindingResult) {
 		validateBinding(bindingResult);
 		memberService.updateAccount(request);
-		return ResponseEntity.ok("회원정보 수정 완료");
 	}
 
 	@ApiOperation(value = "마일리지 조회", notes = "주어진 회원의 마알리지 정보를 조회할 수 있다")
@@ -122,9 +119,9 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/mileage")
-	public ResponseEntity<MileageDetailResponse> getMileageDetails(PostGroup postGroup,
+	public ResponseEntity<MileageDetailResponse> getMileageDetails(@Validated @RequestBody MileageDetailRequest request, BindingResult bindingResult,
 								   @PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
-		MileageDetailResponse mileageDetailResponse = memberService.getMileageDetails(postGroup, pageable);
+		MileageDetailResponse mileageDetailResponse = memberService.getMileageDetails(request, pageable);
 		return ResponseEntity.ok(mileageDetailResponse);
 	}
 

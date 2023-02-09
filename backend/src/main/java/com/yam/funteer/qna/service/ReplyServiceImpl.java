@@ -34,7 +34,7 @@ public class ReplyServiceImpl implements ReplyService{
 
 	@Override
 	public ReplyBaseRes replyGetDetail(Long qnaId) {
-		Qna qna=qnaRepository.findByQnaId(qnaId).orElseThrow(()->new QnaNotFoundException());
+		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Reply reply=replyRepository.findByQna(qna).orElseThrow(()->new ReplyNotFoundException());
 		if(qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN)){
@@ -44,7 +44,7 @@ public class ReplyServiceImpl implements ReplyService{
 
 	@Override
 	public ReplyBaseRes replyRegister(Long qnaId, QnaReplyReq qnaReplyReq)  {
-		Qna qna=qnaRepository.findByQnaId(qnaId).orElseThrow(()->new QnaNotFoundException());
+		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(replyRepository.findByQna(qna).isPresent())throw new ReplyDuplicatedException();
 		if(user.getUserType().equals(UserType.ADMIN)) {
@@ -56,7 +56,7 @@ public class ReplyServiceImpl implements ReplyService{
 
 	@Override
 	public ReplyBaseRes replyModify(Long qnaId,QnaReplyReq qnaReplyReq) {
-		Qna qna=qnaRepository.findByQnaId(qnaId).orElseThrow(()->new QnaNotFoundException());
+		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Reply reply=replyRepository.findByQna(qna).orElseThrow(()->new ReplyNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)){
@@ -68,7 +68,7 @@ public class ReplyServiceImpl implements ReplyService{
 
 	@Override
 	public void replyDelete(Long qnaId) {
-		Qna qna=qnaRepository.findByQnaId(qnaId).orElseThrow(()->new QnaNotFoundException());
+		Qna qna=qnaRepository.findById(qnaId).orElseThrow(()->new QnaNotFoundException());
 		Reply reply=replyRepository.findByQna(qna).orElseThrow(()->new ReplyNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 

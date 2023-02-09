@@ -40,10 +40,9 @@ public class DonationModifyReq {
 	@NotBlank
 	private PostType postType;
 
-	public Donation toEntity(Long postId,Long donationId,Long currentAmount, LocalDate regDate){
+	public Donation toEntity(Long postId,Long currentAmount, LocalDate regDate){
 		return Donation.builder()
 			.id(postId)
-			.donationId(donationId)
 			.startDate(regDate)
 			.postGroup(PostGroup.DONATION)
 			.postType(postType)

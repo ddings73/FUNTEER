@@ -97,13 +97,17 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 상세 조회", notes = "펀딩 게시글 상세를 조회한다.")
 	@GetMapping("/{fundingId}")
-	public ResponseEntity<FundingDetailResponse> readFundingDetail(@PathVariable Long fundingId) {
-		return ResponseEntity.ok(fundingService.findFundingById(fundingId));
+	public ResponseEntity<FundingDetailResponse> readFundingDetail(@PathVariable Long fundingId,
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "6") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size);
+		return ResponseEntity.ok(fundingService.findFundingById(fundingId, pageRequest));
 	}
 
 	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다.")
-	@PutMapping(value = "/{fundingId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, @RequestPart MultipartFile thumbnail, @RequestPart FundingRequest data) throws Exception {
+	@PutMapping("/{fundingId}")
+	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, MultipartFile thumbnail,
+		FundingRequest data) throws Exception {
 		return ResponseEntity.ok(fundingService.updateFunding(fundingId, thumbnail, data));
 	}
 
