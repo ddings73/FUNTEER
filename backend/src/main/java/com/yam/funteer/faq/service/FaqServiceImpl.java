@@ -32,11 +32,11 @@ public class FaqServiceImpl implements  FaqService{
 	private final PostRepository postRepository;
 
 	@Override
-	public List<FaqListRes> faqGetList(int page,int size) {
+	public List<FaqBaseRes> faqGetList(int page,int size) {
 		PageRequest pageRequest=PageRequest.of(page,size);
-		List<Post>faqList=postRepository.findAllByPostTypeOrderByIdDesc(PostType.FAQ,pageRequest);
-		List<FaqListRes>faqListRes;
-		faqListRes=faqList.stream().map(faq->new FaqListRes(faq)).collect(Collectors.toList());
+		List<Faq>faqList=faqRepository.findAllByOrderByFaqIdDesc(pageRequest);
+		List<FaqBaseRes>faqListRes;
+		faqListRes=faqList.stream().map(faq->new FaqBaseRes(faq)).collect(Collectors.toList());
 		return faqListRes;
 	}
 

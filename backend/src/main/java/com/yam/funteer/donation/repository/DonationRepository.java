@@ -10,6 +10,8 @@ import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.donation.entity.Donation;
 
 public interface DonationRepository extends JpaRepository<Donation,Long> {
-	List<Donation>findAllByPostTypeOrderByIdDesc(PostType postType, Pageable pageable);
-	Donation findFirstByPostGroupOrderByIdDesc(PostGroup postGroup);
+	List<Donation>findAllByOrderByDonationIdDesc(Pageable pageable);
+	List <Donation> findAllByPostTypeOrderByDonationIdDesc(PostType postType,Pageable pageable);
+	Optional<Donation> findFirstByOrderByDonationIdDesc();
+	Optional<Donation> findByDonationId(Long donationId);
 }
