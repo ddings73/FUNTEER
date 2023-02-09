@@ -4,13 +4,14 @@
 .listContainer {
   display: block;
   & .TypoWrapper {
+    text-align: end;
     & .subTitle {
       font-family: 'NanumSquare_ac';
       font-style: normal;
       font-weight: 400;
       font-size: 20px;
       line-height: 158.34%;
-      background: linear-gradient(253.58deg, #ffc000 1.55%, #ff8a00 95.8%);
+      background: linear-gradient(253.58deg, #ffa600 1.55%, #ff5e00 95.8%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -19,7 +20,7 @@
       font-family: 'NanumSquare';
       font-weight: 800;
       font-size: 100px;
-      background: linear-gradient(253.58deg, #ffc000 1.55%, #ff7300 95.8%);
+      background: linear-gradient(253.58deg, #ff7b00 1.55%, #ffd900 95.8%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -28,7 +29,12 @@
   }
   & .contentWrapper {
     margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
     & .filterDrop {
+      right: 10px;
+      position: absolute;
       margin-left: 30px;
       margin-bottom: 30px;
       display: flex;
@@ -41,9 +47,10 @@
       color: #ff5e00;
     }
     & .menuHeads {
+      margin-top: 80px;
       display: flex;
       justify-content: space-between;
-      margin: 0 30px;
+
       margin-bottom: 40px;
       & .curStatus {
         & span {
@@ -52,11 +59,6 @@
       }
       & .linkTo {
         cursor: pointer;
-        text-decoration: none;
-        &:hover {
-          color: $primary;
-          font-weight: 500;
-        }
       }
     }
     & .carouselWrapper {

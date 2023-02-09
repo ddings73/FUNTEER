@@ -205,13 +205,9 @@ public class FundingServiceImpl implements FundingService{
 
 		addTargetMoney(data, savedPost);
 
-
-			if (data.getHashtags() == null) {
-
-				}
-			List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
-			List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
-			addPostHashtags(funding, hashtags);
+		List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
+		List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
+		addPostHashtags(funding, hashtags);
 
 
 
@@ -375,6 +371,8 @@ public class FundingServiceImpl implements FundingService{
 		}
 
 		setTargetMoneyListByLevel(targetMoneyList, funding,  data.getTargetMoneyLevelOne());
+		setTargetMoneyListByLevel(targetMoneyList, funding,  data.getTargetMoneyLevelTwo());
+		setTargetMoneyListByLevel(targetMoneyList, funding,  data.getTargetMoneyLevelThree());
 		funding.setTargetMoneyList(targetMoneyList);
 	}
 

@@ -4,6 +4,13 @@ export type FaqElementType = {
     localDate:string
   };
 
+  export type FaqDetailElementType = {
+    id: number;
+    title: string;
+    content:string;
+  };
+
+
 export interface FaqInterface {
     title: string;
     content: string | undefined;
