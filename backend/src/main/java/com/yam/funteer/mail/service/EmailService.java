@@ -3,9 +3,10 @@ package com.yam.funteer.mail.service;
 import com.yam.funteer.common.code.PostGroup;
 
 public interface EmailService {
-    void sendSimpleMessage(String to) throws Exception;
+    void sendEmailCodeMessage(String to) throws Exception;
 
-    String sendRejectMessage(String to, String rejectReason, PostGroup postGroup) throws Exception;
+    String sendPostRejectMessage(String to, String rejectReason, PostGroup postGroup) throws Exception;
+    void sendTeamRejectMessage(String to, String rejectReason);
 
     boolean confirmCode(String email, String code);
 }

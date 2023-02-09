@@ -7,6 +7,9 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import javax.persistence.*;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 
 @Entity
@@ -19,8 +22,8 @@ public class Team extends User{
     @ManyToOne
     @JoinColumn(name = "team_banner")
     private Attach banner;
-
     private Long totalFundingAmount;
+    private LocalDateTime lastActivity;
 
     public Optional<Attach> getBanner(){
         return Optional.ofNullable(banner);
@@ -47,6 +50,24 @@ public class Team extends User{
     }
 
     public void accept() {
+        updateLastActivity();
+        super.teamAccept();
+    }
 
+    public void updateLastActivity(){
+        this.lastActivity = LocalDateTime.now();
+    }
+
+    public boolean expiredCheck() {
+        long between = ChronoUnit.YEARS.between(this.lastActivity, LocalDateTime.now());
+        if(between >= 1){
+            super.expire();
+            return true;
+        }
+        return false;
+    }
+
+    public void expire(){
+        super.expire();
     }
 }

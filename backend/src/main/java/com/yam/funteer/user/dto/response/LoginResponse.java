@@ -11,7 +11,7 @@ import lombok.*;
 @Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponse {
+public class LoginResponse extends BaseResponseBody{
 
     private Long userId;
     private String username;
