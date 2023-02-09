@@ -17,7 +17,7 @@ export default class ChatComponent extends Component {
       message: '',
     };
     this.chatScroll = React.createRef();
-
+    const {userProfileImg} = this.props
     this.handleChange = this.handleChange.bind(this);
     this.handlePressKey = this.handlePressKey.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -81,13 +81,14 @@ export default class ChatComponent extends Component {
           </div>
           <div className="message-wrap" ref={this.chatScroll}>
             {this.state.messageList.map((data, i) => (
-              <div key={i} id="remoteUsers" className={`message${data.connectionId !== this.props.user.getConnectionId() ? ' left' : ' right'}`}>
+              <div key={i} id="remoteUsers" className={`message${data.connectionId !== this.props.user.getConnectionId() ? ' left' : ' left'}`}>
                 <div className="msg-detail">
+                  <img src={userProfileImg} alt="ss"/>
                   <div className="msg-info">
                     <p> {data.nickname}</p>
                   </div>
                   <div className="msg-content">
-                    <span className="triangle" />
+     
                     <p className="text">{data.message}</p>
                   </div>
                 </div>

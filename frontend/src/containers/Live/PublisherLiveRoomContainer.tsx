@@ -7,6 +7,7 @@ function PublisherLiveRoomContainer() {
   const { username } = useParams();
   const [token, setToken] = useState<string | null>('');
   const userName = useAppSelector((state) => state.userSlice.username);
+  const userProfileImg = useAppSelector(state=>state.userSlice.profileImgUrl)
 
   useEffect(() => {
     if (localStorage.getItem('liveToken')) {
@@ -18,7 +19,8 @@ function PublisherLiveRoomContainer() {
     console.log('token', token);
   }, [token]);
 
-  return <> {username && token && <VideoRoomComponent sessionName={username} user={userName} token={token} />}</>;
+  // return (<h1>킄킄</h1>)
+  return <> {username && token && <VideoRoomComponent userProfileImg={userProfileImg} sessionName={username} user={userName} token={token} />}</>;
 }
 
 export default PublisherLiveRoomContainer;

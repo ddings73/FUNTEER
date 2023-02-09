@@ -7,6 +7,7 @@ export interface UserStateInterface {
   userType: string;
   userId: string;
   username: string;
+  profileImgUrl:string
 }
 
 const initialState: UserStateInterface = {
@@ -14,6 +15,7 @@ const initialState: UserStateInterface = {
   userType: '',
   userId: '',
   username: '',
+  profileImgUrl:''
 };
 
 export const userSlice = createSlice({
@@ -25,6 +27,7 @@ export const userSlice = createSlice({
       state.userType = action.payload.userType;
       state.userId = action.payload.userId;
       state.username = action.payload.username;
+      state.profileImgUrl=action.payload.profileImgUrl
     },
     setUserType: (state, action: PayloadAction<string>) => {
       state.userType = action.payload;
