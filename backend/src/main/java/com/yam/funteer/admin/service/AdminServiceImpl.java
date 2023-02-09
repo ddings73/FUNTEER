@@ -97,11 +97,10 @@ public class AdminServiceImpl implements AdminService{
 		team.accept();
 	}
 
-	// 미완성
 	@Override
 	public void rejectTeam(Long teamId, TeamConfirmRequest request) {
 		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
-
+		emailService.sendTeamRejectMessage(team.getEmail(), request.getRejectComment());
 	}
 
 
@@ -116,7 +115,7 @@ public class AdminServiceImpl implements AdminService{
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
 		funding.setPostType(PostType.FUNDING_REJECT);
 		funding.setRejectComment(data.getRejectReason());
-		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.FUNDING);
+		emailService.sendPostRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.FUNDING);
 		return data.getRejectReason();
 	}
 
@@ -138,7 +137,7 @@ public class AdminServiceImpl implements AdminService{
 		Report report = reportRepository.findByFundingFundingId(fundingId);
 		funding.setPostType(PostType.REPORT_REJECT);
 		report.setReportRejectComment(data.getRejectReason());
-		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.REPORT);
+		emailService.sendPostRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.REPORT);
 		return data.getRejectReason();
 	}
 
