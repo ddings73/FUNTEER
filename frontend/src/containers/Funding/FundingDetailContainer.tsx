@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import axios from 'axios';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { CircularProgress } from '@mui/material';
 import FundSummary from '../../components/Cards/FundSummary';
@@ -12,7 +12,6 @@ import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
 import CommentCard from '../../components/Cards/CommentCard';
 import CommentSkeleton from '../../components/Skeleton/CommentSkeleton';
-import './FundingDetailContainer.scss';
 
 export interface ResponseInterface {
   id: number;
@@ -52,6 +51,7 @@ type targetType = {
 };
 
 export function FundingDetailContainer() {
+  const navigate = useNavigate();
   const [commentList, setCommentList] = useState([
     {
       memberNickName: '',
@@ -174,7 +174,13 @@ export function FundingDetailContainer() {
             <button className={styles.bannerGrpBtn} type="button">
               보고서 제출
             </button>
-            <button className={styles.bannerGrpBtn} type="button">
+            <button
+              className={styles.bannerGrpBtn}
+              type="button"
+              onClick={() => {
+                navigate('../../createLive', { replace: true });
+              }}
+            >
               라이브 시작
             </button>
             <button className={styles.bannerBtn} type="button">
@@ -214,18 +220,6 @@ export function FundingDetailContainer() {
         <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.mainCommentSubmit}>
           <CommentCardSubmit />
-        </div>
-        <div className={styles.toggles}>
-          <p>정렬 기준</p>
-          <div className="toggle-button-cover">
-            <div className="button-cover">
-              <div className="button r" id="button-3">
-                <input type="checkbox" className="checkbox" checked={isChecked} onChange={(e) => checkHandler(e)} />
-                <div className="knobs" />
-                <div className="layer" />
-              </div>
-            </div>
-          </div>
         </div>
         <div className={styles.mainComments}>
           {isLoading ? (

@@ -7,7 +7,6 @@ import Toolbar from '@mui/material/Toolbar';
 import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
@@ -20,7 +19,6 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 /*기타 Imports */
 import { Link, Outlet, NavLink, useNavigate, Navigate } from 'react-router-dom';
 import styles from './Navbar.module.scss';
-import NavDataSettings from './NavbarSettingsData';
 /* 이미지 import */
 import logoImg from '../assets/images/FunteerLogo.png';
 /*로그인 Import */

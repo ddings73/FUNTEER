@@ -21,14 +21,14 @@ export function MainPageContainer() {
 
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
-    // console.log(scrollPosition);
+    console.log(scrollPosition);
     return () => {
       window.removeEventListener('scroll', updateScroll);
     };
   });
 
   return (
-    <div className={scrollPosition < 700 ? styles.container : styles.container_scrolled}>
+    <div className={scrollPosition < 800 ? styles.container : styles.container_scrolled}>
       <div style={{ width: '100%', padding: '0 100px' }} className={styles.bannerContainer}>
         {/* <div className={styles.bannerContainer}> */}
         <div className={styles.typoBox}>
