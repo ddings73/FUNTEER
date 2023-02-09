@@ -151,9 +151,9 @@ function AdminMemberContainer() {
             <AiOutlineSearch onClick={handleClickSearch} />
             <AiOutlineReload onClick={handleClickInit} />
           </div>
-          <Select value={memberStateFilter} onChange={handleChangeFilter} sx={{ height: '40px' }}>
+          <Select value={memberStateFilter} onChange={handleChangeFilter} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
             {memberStateSet.map((state) => (
-              <MenuItem key={state} value={state}>
+              <MenuItem key={state} value={state} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
                 {state}
               </MenuItem>
             ))}
