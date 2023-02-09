@@ -22,13 +22,13 @@ import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
 public interface FundingService {
 	Page<FundingListResponse> findFundingByCategory(Long categoryId, Pageable pageable);
 
-	FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws
+	FundingDetailResponse createFunding( FundingRequest data) throws
 		IOException,
 		NotAuthenticatedTeamException;
 
 	FundingDetailResponse findFundingById(Long id, Pageable pageable);
 
-	FundingDetailResponse updateFunding(Long fundingId, MultipartFile thumbnail, FundingRequest data) throws Exception;
+	FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception;
 
 	void deleteFunding(Long fundingId) throws FundingNotFoundException;
 

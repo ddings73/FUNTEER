@@ -30,6 +30,8 @@ public class FundingRequest {
 	@NotNull
 	private String endDate;
 
+	private String thumbnail;
+
 	@NotNull
 	private String fundingDescription;
 
