@@ -6,61 +6,143 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  font-family: NanumSquareRound;
+  font-family: NanumSquare;
 
   .contents {
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 1440px;
+    max-width: 1160px;
 
     .title {
-      font-size: 2rem;
+      font-size: 2.25rem;
       font-weight: bold;
-      margin: 5rem 0;
+      margin: 3rem 0;
     }
 
-    .label-div {
+    .filter {
+      width: 100%;
       display: flex;
-      align-items: center;
-      width: 710px;
-      margin: 0.5rem 0;
-      font-size: 1.25rem;
+      justify-content: flex-end;
 
-      & img {
-        width: 8px;
-        margin-left: 0.5rem;
-        padding: 0 0 0.3rem 0;
+      .create {
+        margin: 0 0.5rem 1rem auto;
+        padding: 0.3rem;
+        border: none;
+        border-radius: 3px;
+        background-color: $primary;
+        color: white;
+        font-family: NanumSquare;
+
+        &:hover {
+          cursor: pointer;
+          background-color: $error;
+        }
       }
     }
 
-    .email-title {
-      width: 700px;
-      height: 35px;
+    .search-div {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
       margin-bottom: 1rem;
-      padding: 0 1rem;
-      border-radius: 5px;
       font-family: NanumSquareRound;
+
+      & input {
+        width: 15rem;
+      }
     }
 
-    .email-content {
-      width: 700px;
-      height: 400px;
-      margin-bottom: 1rem;
-      padding: 1rem;
-      border-radius: 5px;
-      font-family: NanumSquareRound;
-    }
-
-    .btn-div {
+    .title-line {
+      width: 100%;
+      height: 3rem;
       display: flex;
       justify-content: space-around;
+      align-items: center;
+      background-color: $primary;
+      font-weight: bold;
+      font-size: 0.9rem;
+      color: white;
+      box-shadow: 0px 1px 2px rgba(1, 1, 1, 0.3);
+      border-radius: 3px;
+      margin-bottom: 0.1rem;
 
-      .submit {
-        background-color: $primary;
-        margin: 0 0.5rem;
-        font-family: NanumSquareRound;
+      .title-col {
+        width: 290px;
+        display: flex;
+        justify-content: center;
+      }
+
+      & li {
+        width: 120px;
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    .list-line {
+      width: 100%;
+      height: 2rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: rgb(252, 252, 252);
+      font-size: 0.9rem;
+      border: none;
+      border-bottom: 1px solid rgba(1, 1, 1, 0.05);
+      margin: 0.1rem 0;
+      padding: 0.5rem 0;
+
+      .title-col-btn {
+        display: flex;
+        justify-content: center;
+        width: 290px;
+        font-size: 0.9rem;
+        padding: 0;
+        border: none;
+        background-color: inherit;
+
+        & li {
+          width: 100%;
+
+          & p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: NanumSquare;
+          }
+        }
+
+        &:hover {
+          cursor: pointer;
+          font-weight: bold;
+          color: $primary;
+        }
+      }
+
+      & li {
+        width: 120px;
+        display: flex;
+        justify-content: center;
+
+        & p {
+          max-width: 280px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .show-approve {
+          height: 1.5rem;
+          font-size: 0.9rem;
+          font-family: NanumSquare;
+        }
+
+        .hide-approve {
+          display: none;
+        }
       }
     }
   }
