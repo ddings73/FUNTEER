@@ -107,13 +107,13 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public void acceptFunding(Long fundingId) {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		funding.setPostType(PostType.FUNDING_ACCEPT);
 	}
 
 	@Override
 	public String rejectFunding(Long fundingId, RejectReasonRequest data) throws Exception {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		funding.setPostType(PostType.FUNDING_REJECT);
 		funding.setRejectComment(data.getRejectReason());
 		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.FUNDING);
@@ -123,7 +123,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public void acceptReport(Long fundingId) {
 		log.info("fundingId => {}", fundingId);
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		log.info("funding => {}", funding);
 		Team team = teamRepository.findById(funding.getTeam().getId()).orElseThrow();
 		log.info("team => {}", team);
@@ -134,7 +134,7 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public String rejectReport(Long fundingId, RejectReasonRequest data) throws Exception {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		Report report = reportRepository.findByFundingFundingId(fundingId);
 		funding.setPostType(PostType.REPORT_REJECT);
 		report.setReportRejectComment(data.getRejectReason());
