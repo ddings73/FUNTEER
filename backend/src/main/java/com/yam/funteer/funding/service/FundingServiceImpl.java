@@ -324,7 +324,7 @@ public class FundingServiceImpl implements FundingService{
 		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(() -> new FundingNotFoundException());
 
 		LocalDate endDate = LocalDate.parse(data.getEndDate(),
-			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
 		if (funding.getPostType() == PostType.FUNDING_REJECT) {
 
@@ -348,7 +348,7 @@ public class FundingServiceImpl implements FundingService{
 			addPostHashtags(funding, hashtags);
 
 			LocalDate startDate = LocalDate.parse(data.getStartDate(),
-			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
 			funding.setStartDate(startDate);
 			funding.setEndDate(endDate);
