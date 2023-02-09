@@ -7,21 +7,23 @@
 import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import React, { Component } from 'react';
-import ChatComponent from './chat/ChatComponent';
+import { browserHistory } from 'react-router-dom';
 import StreamComponent from './stream/StreamComponent';
 import './VideoRoomComponent.css';
 
 import OpenViduLayout from './layout/openvidu-layout';
 import UserModel from './models/user-model';
 import ToolbarComponent from './toolbar/ToolbarComponent';
+import ChatComponent from './chat/ChatComponent';
 
 const localUser = new UserModel();
+
 console.log('localUser', localUser);
 const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'https://i8e204.p.ssafy.io/'; // 'http://localhost:8080/';
-
 class VideoRoomComponent extends Component {
   constructor(props) {
     super(props);
+    this.history = this.props;
     this.hasBeenUpdated = false;
     this.layout = new OpenViduLayout();
     const sessionName = this.props.sessionName ? this.props.sessionName : 'A';
@@ -143,7 +145,7 @@ class VideoRoomComponent extends Component {
       videoSource: undefined,
     });
     const devices = await this.OV.getDevices();
-    console.log('devicesssssssssssssssssssss',devices)
+    console.log('devicesssssssssssssssssssss', devices);
     const videoDevices = devices.filter((device) => device.kind === 'videoinput');
 
     const publisher = this.OV.initPublisher(undefined, {
@@ -160,6 +162,7 @@ class VideoRoomComponent extends Component {
     console.log(publisher.openvidu.role);
 
     this.updateSubscribers();
+    console.log('subscriberssssssssssssssssssssss', this.state.subscribers);
     if (publisher.openvidu.role === 'PUBLISHER') {
       publisher.on('accessAllowed', () => {
         this.state.session.publish(publisher).then(() => {
@@ -171,7 +174,7 @@ class VideoRoomComponent extends Component {
       });
       localUser.setStreamManager(publisher);
     } else {
-      console.log("subscriberssssssssssssssssssssss",this.state.subscribers)
+      console.log('subscriberssssssssssssssssssssss', this.state.subscribers);
       localUser.setStreamManager(this.state.subscribers[0].getStreamManager());
     }
 
@@ -190,7 +193,7 @@ class VideoRoomComponent extends Component {
 
   updateSubscribers() {
     const subscribers = this.remotes;
-    console.log('remooooooooooo',this.remotes)
+    console.log('remooooooooooo', this.remotes);
     this.setState(
       {
         subscribers,
@@ -217,6 +220,7 @@ class VideoRoomComponent extends Component {
       mySession.disconnect();
       console.dir(mySession);
       this.leaveThisSession(this.state.mySessionId, mySession.token);
+      console.log('세션 종료 성공띠!!!');
     }
 
     // Empty all properties...
@@ -266,7 +270,7 @@ class VideoRoomComponent extends Component {
     this.state.session.on('streamCreated', (event) => {
       const subscriber = this.state.session.subscribe(event.stream, undefined);
 
-      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!',subscriber)
+      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!', subscriber);
 
       const newUser = new UserModel();
       newUser.setStreamManager(subscriber);
@@ -275,19 +279,16 @@ class VideoRoomComponent extends Component {
 
       const nickname = event.stream.connection.data.split('%')[0];
       newUser.setNickname(JSON.parse(nickname).clientData);
-      
-      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!  newUSER!!!!!!!!!!!!!!!',newUser)
-      this.remotes.push(newUser);
-      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!  newUSER!!!!!!!!!!!!!!! remote!!!!!!!!!',this.remotes)
 
+      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!  newUSER!!!!!!!!!!!!!!!', newUser);
+      this.remotes.push(newUser);
+      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!  newUSER!!!!!!!!!!!!!!! remote!!!!!!!!!', this.remotes);
 
       this.updateSubscribers();
       if (this.localUserAccessAllowed) {
-        console.log("뜨루루루루")
-   
-      }
-      else{
-        console.log("왜 뽈스노")
+        console.log('뜨루루루루');
+      } else {
+        console.log('왜 뽈스노');
       }
     });
   }
@@ -383,7 +384,7 @@ class VideoRoomComponent extends Component {
     const { localUser } = this.state;
 
     return (
-      <div className="container" id="container">
+      <>
         <ToolbarComponent
           sessionId={mySessionId}
           user={localUser}
@@ -395,17 +396,17 @@ class VideoRoomComponent extends Component {
 
         <div id="layout" className="bounds">
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
-            <div className="OT_root OV_big OT_publisher custom-class" id="localUser">
+            <div className="OT_root  OT_publisher custom-class" id="localUser">
               <StreamComponent user={localUser} />
             </div>
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
-            <div className="OT_root OT_publisher custom-class">
+            <div className="OT_root OT_publisher custom-class chat-box">
               <ChatComponent user={localUser} />
             </div>
           )}
         </div>
-      </div>
+      </>
     );
   }
 

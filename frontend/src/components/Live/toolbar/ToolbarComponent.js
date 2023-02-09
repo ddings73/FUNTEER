@@ -13,6 +13,7 @@ import SwitchVideoIcon from '@material-ui/icons/SwitchVideo';
 import PowerSettingsNew from '@material-ui/icons/PowerSettingsNew';
 
 import IconButton from '@material-ui/core/IconButton';
+import { Link } from 'react-router-dom';
 import Logo from '../../../assets/images/FunteerLogo.png';
 
 export default class ToolbarComponent extends Component {
@@ -44,11 +45,9 @@ export default class ToolbarComponent extends Component {
     const mySessionId = this.props.sessionId;
     const localUser = this.props.user;
     return (
-      <AppBar className="toolbar" id="header">
-        <Toolbar className="toolbar">
-          <div id="navSessionInfo">
-            <img id="header_img" alt="OpenVidu Logo" src={Logo} />
-
+      <header className="header">
+        <div className="toolbar">
+          <div className="navSessionInfo">
             {this.props.sessionId && (
               <div id="titleContent">
                 <span id="session-title">{mySessionId}</span>
@@ -75,12 +74,14 @@ export default class ToolbarComponent extends Component {
               </IconButton>
             )}
 
-            <IconButton color="secondary" className="navButton" onClick={this.leaveSession} id="navLeaveButton">
-              <PowerSettingsNew />
-            </IconButton>
+            <Link to="/">
+              <IconButton color="secondary" className="navButton" onClick={this.leaveSession} id="navLeaveButton">
+                <PowerSettingsNew />
+              </IconButton>
+            </Link>
           </div>
-        </Toolbar>
-      </AppBar>
+        </div>
+      </header>
     );
   }
 }

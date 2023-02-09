@@ -77,12 +77,11 @@ export default class ChatComponent extends Component {
       <div id="chatContainer">
         <div id="chatComponent">
           <div id="chatToolbar">
-            <span>{this.props.user.getStreamManager().stream.session.sessionId} - CHAT</span>
+            <span>{this.props.user.getStreamManager().stream.session.sessionId}의 채팅방</span>
           </div>
           <div className="message-wrap" ref={this.chatScroll}>
             {this.state.messageList.map((data, i) => (
               <div key={i} id="remoteUsers" className={`message${data.connectionId !== this.props.user.getConnectionId() ? ' left' : ' right'}`}>
-                <canvas id={`userImg-${i}`} width="60" height="60" className="user-img" />
                 <div className="msg-detail">
                   <div className="msg-info">
                     <p> {data.nickname}</p>
@@ -97,10 +96,10 @@ export default class ChatComponent extends Component {
           </div>
 
           <div id="messageInput">
-            <input placeholder="Send a messge" id="chatInput" value={this.state.message} onChange={this.handleChange} onKeyPress={this.handlePressKey} />
-            <Tooltip title="Send message">
-              <Fab size="small" id="sendButton" onClick={this.sendMessage}>
-                <Send />
+            <input placeholder="채팅 메세지를 입력해주세요." id="chatInput" value={this.state.message} onChange={this.handleChange} onKeyPress={this.handlePressKey} />
+            <Tooltip title="채팅 메세지를 입력해주세요.">
+              <Fab size="middle" id="sendButton" onClick={this.sendMessage}>
+                <Send color="secondary" />
               </Fab>
             </Tooltip>
           </div>
