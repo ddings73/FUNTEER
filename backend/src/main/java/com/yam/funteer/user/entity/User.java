@@ -24,6 +24,7 @@ import com.sun.istack.NotNull;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.code.UserType;
 
+import io.openvidu.java.client.OpenViduRole;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -63,7 +64,7 @@ public class User {
 	public Optional<Attach> getProfileImg(){
 		return Optional.ofNullable(this.profileImg);
 	}
-	protected void updateProfile(Attach profileImg){
+	public void updateProfile(Attach profileImg){
 		this.profileImg = profileImg;
 	}
 	public void charge(Long amount) {
@@ -72,7 +73,7 @@ public class User {
 	public void changePassword(String password){
 		this.password = password;
 	}
-	public void signOut(UserType userType){
+	protected void signOut(UserType userType){
 		this.userType = userType;
 	}
 	public void validate(){
@@ -88,6 +89,9 @@ public class User {
 			throw new IllegalArgumentException();
 	}
 
+	public OpenViduRole openViduRole(){
+		return this.userType.getOpenviduRole();
+	}
 	public void setMoney(long amount) {
 		this.money = amount;
 	}

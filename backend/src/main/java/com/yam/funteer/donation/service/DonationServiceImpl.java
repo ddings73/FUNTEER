@@ -1,5 +1,6 @@
 package com.yam.funteer.donation.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -85,12 +86,12 @@ public class DonationServiceImpl implements DonationService{
 
 	@Override
 	public DonationBaseRes donationGetCurrent() {
-		Donation donation=donationRepository.findFirstByPostGroupOrderByIdDesc(PostGroup.DONATION);
-		return donationGetDetail(donation.getId());
+		Donation donation=donationRepository.findFirstByOrderByDonationIdDesc().orElseThrow(DonationNotFoundException::new);
+		return donationGetDetail(donation.getDonationId());
 	}
 
 	public Payment donationJoin(Long postId, DonationJoinReq donationJoinReq) {
-		Donation donation=donationRepository.findById(postId).orElseThrow(()->new DonationNotFoundException());
+		Donation donation=donationRepository.findByDonationId(postId).orElseThrow(DonationNotFoundException::new);
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Long paymentAmount=Long.parseLong(donationJoinReq.getPaymentAmount());
 		if(user.getMoney()<paymentAmount||user.getMoney()==0){
@@ -138,22 +139,41 @@ public class DonationServiceImpl implements DonationService{
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
 	}
 
+	@Override
+	public void donationStatusModify(Long donationId, PostType postType) {
+		Donation donationOrigin=donationRepository.findByDonationId(donationId).orElseThrow(()->new DonationNotFoundException());
+		if(postType.equals(PostType.DONATION_ACTIVE)){
+			Donation donation=Donation.builder()
+				.startDate(donationOrigin.getStartDate())
+				.title(donationOrigin.getTitle())
+				.amount(donationOrigin.getAmount())
+				.currentAmount(donationOrigin.getCurrentAmount())
+				.content(donationOrigin.getContent())
+				.endDate(LocalDate.now())
+				.donationId(donationId)
+				.id(donationOrigin.getId()).postGroup(PostGroup.DONATION).postType(PostType.DONATION_CLOSE).build();
+			donationRepository.save(donation);
+		}
 
-	public void donationDelete(Long postId) throws DonationNotFoundException{
-		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
-		Donation donation = donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
-		if(user.getUserType().equals(UserType.ADMIN)) {
-			donationRepository.delete(donation);
-		}else throw new IllegalArgumentException();
 	}
 
+	// public DonationBaseRes donationDelete(Long postId) throws DonationNotFoundException{
+	// 	User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
+	// 	Donation donation = donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
+	// 	if(user.getUserType().equals(UserType.ADMIN)) {
+	// 		donationRepository.delete(donation);
+	// 	}else throw new IllegalArgumentException();
+	// }
 
-	public DonationBaseRes donationModify(Long postId, DonationModifyReq donationModifyReq){
-		Donation donationOrigin=donationRepository.findById(postId).orElseThrow(() -> new DonationNotFoundException());
+
+	public DonationBaseRes donationModify(Long donationId, DonationModifyReq donationModifyReq){
+		Donation donationOrigin=donationRepository.findByDonationId(donationId).orElseThrow(() -> new DonationNotFoundException());
 
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		if(user.getUserType().equals(UserType.ADMIN)) {
-			Donation donation=donationRepository.save(donationModifyReq.toEntity(postId,donationOrigin.getCurrentAmount(),donationOrigin.getStartDate()));
+			Donation donation=donationRepository.save(
+				donationModifyReq.toEntity(donationOrigin.getId(),donationId,donationOrigin.getCurrentAmount(),donationOrigin.getStartDate())
+			);
 
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(donationOrigin);
 			for(PostAttach postAttach:postAttachList){
@@ -181,7 +201,7 @@ public class DonationServiceImpl implements DonationService{
 				Set<User> userList;
 				userList=paymentList.stream().map(Payment::getUser).collect(Collectors.toSet());
 				List<String> userEmailList=userList.stream().map(User::getEmail).collect(Collectors.toList());
-				alarmService.sendList(userEmailList,donation.getTitle()+" 종료되었습니다. 참여감사띠~!~!","/donation/"+postId);
+				alarmService.sendList(userEmailList,donation.getTitle()+" 종료되었습니다. 참여감사띠~!~!","/donation/"+donationId);
 			}
 			return new DonationBaseRes(donation,fileUrl);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");

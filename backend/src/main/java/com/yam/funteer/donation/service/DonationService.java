@@ -1,6 +1,8 @@
 package com.yam.funteer.donation.service;
 
 import java.util.List;
+
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.donation.dto.request.DonationJoinReq;
 import com.yam.funteer.donation.dto.request.DonationRegisterReq;
 
@@ -19,5 +21,6 @@ public interface DonationService {
 	DonationBaseRes donationGetCurrent();
 	DonationBaseRes donationRegister(DonationRegisterReq donationRegisterReq);
 	// void donationDelete(Long postId,Long userId) throws DonationNotFoundException;
+	void donationStatusModify(Long id, PostType postType);
 	DonationBaseRes donationModify(Long postId, DonationModifyReq donationModifyReq);
 }

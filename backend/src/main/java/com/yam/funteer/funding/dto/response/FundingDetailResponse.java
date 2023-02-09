@@ -39,8 +39,8 @@ public class FundingDetailResponse {
 
 	private String category;
 
-	private LocalDate start;
-	private LocalDate end;
+	private LocalDate startDate;
+	private LocalDate endDate;
 
 	private LocalDateTime postDate;
 
@@ -65,12 +65,12 @@ public class FundingDetailResponse {
 
 		FundingDetailResponse response = FundingDetailResponse.builder()
 			.team(team)
-			.fundingId(funding.getId())
+			.fundingId(funding.getFundingId())
 			.category(funding.getCategory().getName())
 			.title(funding.getTitle())
 			.content(funding.getContent())
-			.start(funding.getStartDate())
-			.end(funding.getEndDate())
+			.startDate(funding.getStartDate())
+			.endDate(funding.getEndDate())
 			.postDate(funding.getRegDate())
 			.thumbnail(funding.getThumbnail())
 			.currentFundingAmount(str)

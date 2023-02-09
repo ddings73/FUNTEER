@@ -21,22 +21,19 @@ public class UserController {
 
     private final UserService userService;
 
-    /**
-     * TODO 전화번호 인증 필요
-     */
-    @ApiOperation(value = "이메일 찾기", notes = "전화번호 인증을 통해서 회원 이메일을 돌려받을 수 있다")
-    @ApiResponses({
-            @ApiResponse(code = 200, message = "성공"),
-            @ApiResponse(code = 400, message = "잘못된 요청정보"),
-            @ApiResponse(code = 401, message = "사용자 인증실패"),
-            @ApiResponse(code = 500, message = "서버 에러")
-    })
-    @PutMapping("/forget/email") // 대기
-    public ResponseEntity<Map<String, String>> forgetEmail(){
-        HashMap<String, String> map = new HashMap<>();
-        map.put("email", "kim@ssafy.com");
-        return ResponseEntity.ok(map);
-    }
+    // @ApiOperation(value = "이메일 찾기", notes = "전화번호 인증을 통해서 회원 이메일을 돌려받을 수 있다")
+    // @ApiResponses({
+    //         @ApiResponse(code = 200, message = "성공"),
+    //         @ApiResponse(code = 400, message = "잘못된 요청정보"),
+    //         @ApiResponse(code = 401, message = "사용자 인증실패"),
+    //         @ApiResponse(code = 500, message = "서버 에러")
+    // })
+    // @PutMapping("/forget/email") // 대기
+    // public ResponseEntity<Map<String, String>> forgetEmail(){
+    //     HashMap<String, String> map = new HashMap<>();
+    //     map.put("email", "kim@ssafy.com");
+    //     return ResponseEntity.ok(map);
+    // }
 
 
     /**
