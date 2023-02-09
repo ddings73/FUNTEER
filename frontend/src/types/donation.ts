@@ -4,18 +4,20 @@ export type DonationElementType = {
   id: number;
   title: string;
   content:string;
-  targetAmount: number;
-  currentAmount: number;
+  targetAmount: string;
+  currentAmount: string;
   startDate: string;
   endDate: string;
   postType: string;
   file:string;
 };
 
+
+
 export type DonationListElementType = {
   id: number;
   title: string;
-  targetMoney: number;
+  targetAmount: string;
   startDate: string;
   endDate: string;
   postType: string;

@@ -84,7 +84,6 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        member.validate();
 
         long followCnt = followRepository.countAllByMember(member);
         long wishCnt = wishRepository.countAllByMember(member);
@@ -98,19 +97,26 @@ public class MemberServiceImpl implements MemberService {
         Long userId = SecurityUtil.getCurrentUserId();
         Member member = validateSameUser(userId, request.getUserId());
 
-        request.validateProfile();
         MultipartFile profileImg = request.getProfileImg();
 
-        if(!profileImg.isEmpty()) {
+        if(profileImg != null) {
+            request.validateProfile();
+            String fileName = profileImg.getOriginalFilename();
+
             String filePath = awsS3Uploader.upload(profileImg, "user");
             Attach profile = member.getProfileImg().orElseGet(() -> request.getProfile(filePath));
 
             if (profile.getId() == null) {
                 attachRepository.save(profile);
+                member.updateProfile(profile);
             } else {
-                profile.update(profileImg.getOriginalFilename(), filePath);
+                profile.update(fileName, filePath);
             }
         }
+
+        log.info("{}", member);
+        log.info("{}", request);
+        member.updateDisplay(request.isDisplay());
     }
 
     @Override
@@ -119,7 +125,6 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(userid)
             .orElseThrow(UserNotFoundException::new);
 
-        member.validate();
         return MemberAccountResponse.of(member);
     }
 
@@ -173,11 +178,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MileageDetailResponse getMileageDetails(MileageDetailRequest request, Pageable pageable) {
+    public MileageDetailResponse getMileageDetails(PostGroup postGroup, Pageable pageable) {
         Long userId = SecurityUtil.getCurrentUserId();
-        Member member = validateSameUser(userId, request.getUserId());
+        Member member = memberRepository.findById(userId)
+            .orElseThrow(UserNotFoundException::new);
 
-        PostGroup postGroup = request.getPostGroup();
         List<Payment> paymentList = paymentRepository.findAllByUserAndPostPostGroup(member, postGroup);
         return MileageDetailResponse.of(paymentList);
     }

@@ -45,6 +45,10 @@ function AdminFaqCreateContainer() {
       
   }
 
+  const onClickNoticeHandler = (id: number) => {
+    navigate(`../../cc/${id}`);
+  };
+
 
   /** 등록 버튼 */
   const onCreateDonation=async()=>{

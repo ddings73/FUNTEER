@@ -8,27 +8,22 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { Button, FormControl, Icon, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Button, FormControl, Icon, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
-import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import RoomIcon from '@mui/icons-material/Room';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
-import { fontWeight } from '@mui/system';
-import { log } from 'console';
-import { async } from 'q';
 import styles from './ModifyFundingContainer.module.scss';
-import { requestCreateFunding, requestUploadImage,requestFundingDetail } from '../../api/funding';
-import { FundingInterface, amountLevelType, descriptionType } from '../../types/funding';
-import defaultThumbnail from '../../assets/images/default-profile-img.svg';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
-import { closeModal, openModal } from '../../store/slices/modalSlice';
+import { requestModifyFunding, requestUploadImage,requestFundingDetail } from '../../api/funding';
+import { FundingInterface } from '../../types/funding';
+import { useAppDispatch } from '../../store/hooks';
+import {  openModal } from '../../store/slices/modalSlice';
 import requiredIcon from '../../assets/images/funding/required.svg';
 import uploadIcon from '../../assets/images/funding/upload.svg';
 import { diffDayStartToEnd } from '../../utils/day';
-import { stringToSeparator, stringToNumber } from '../../types/convert';
+import { stringToSeparator } from '../../types/convert';
 import TabPanel from '../../components/Funding/TabPanel';
 import TabContent from '../../components/Funding/TabContent';
 
@@ -170,15 +165,15 @@ function ModifyFundingContainer() {
   };
 
   const handleModal = () => {
-    navigate(-1);
+    navigate("/");
   };
 
-  const onCreateFunding = async () => {
+  const onModifyFunding = async () => {
     console.log(fundingData);
     try {
-      const response = await requestCreateFunding(fundingData);
+      const response = await requestModifyFunding(fundIdx as string,fundingData);
       if (response.status === 200) {
-        dispatch(openModal({ isOpen: true, title: '펀딩 생성 성공', content: '펀딩 생성에 성공했습니다.', handleModal }));
+        dispatch(openModal({ isOpen: true, title: '펀딩 수정 성공', content: '펀딩 수정에 성공했습니다.', handleModal }));
       }
       console.log(response);
     } catch (error) {
@@ -251,8 +246,22 @@ function ModifyFundingContainer() {
 
   const getFundingDetail = async()=>{
     try{
-        const response = await requestFundingDetail(fundIdx)
+        const { data } = await requestFundingDetail(fundIdx)
         // setFundingData(response.data)
+        setFundingData({...fundingData, 
+        title: data.title,
+        fundingDescription: data.fundingDescription,
+        content: data.content,
+        startDate: data.startDate,
+        endDate: data.endDate,
+        categoryId: data.categoryId,
+        targetMoneyLevelOne: data.targetMoneyListLevelOne,
+        targetMoneyLevelTwo: data.targetMoneyListLevelTwo,
+        targetMoneyLevelThree: data.targetMoneyListLevelThree,
+      })
+      setStartDate(data.startDate)
+      setEndDate(data.endDate)
+      setThumbnailPreview(data.thumbnail)
     }
     catch(error){
         console.log(error)
@@ -260,28 +269,13 @@ function ModifyFundingContainer() {
   }
 
   useEffect(() => {
-    // const htmlString = `  
-    // <h1>프로젝트 소개</h1>
-    // <p>프로젝트를 간단히 소개한다면?</p> 
-    // <p>이 프로젝트를 하면 어떤 효과를 발생시키나요?</p> 
-    // <p>이 프로젝트를 시작하게 된 배경이 무엇인가요 ?</p>
-
-    // <h1>프로젝트 예산</h1>
-    // <p>펀딩으로 모금된 금액을 어디에 사용 예정인지 구체적으로 지출 항목으로 적어 주세요.</p>
-    // <ul>
-    // <li>구체적인 항목으로 적어주세요.</li>
-    // </ul>
-    // <h1>프로젝트 일정</h1>
-    // <p>아래의 양식을 참고하여 작성해보세요.</>
-    // <ul>
-    // <li>0월 0일: 봉사활동 계획</li>
-    // <li>0월 0일: 봉사활동 실행</li>
-    // </ul>
-
-    // `;
-    // editorRef.current?.getInstance().setHTML(htmlString);
     getFundingDetail()
   }, []);
+
+  useEffect(()=>{
+    editorRef.current?.getInstance().setHTML(fundingData.content as string);
+
+  },[fundingData.content])
 
   return (
     <div className={styles.container}>
@@ -292,7 +286,7 @@ function ModifyFundingContainer() {
           </p>
           <p className={styles.subTitle}>후원자들이 프로젝트의 내용을 쉽게 파악할 수 있는 이미지를 올려주세요.</p>
           <div className={styles['thumbnail-upload-box']}>
-            <img src={String(fundingData.thumbnail) as string} alt="thumbnail" className={styles['thumbnail-image']} />
+            <img src={ thunmbnailPreview } alt="thumbnail" className={styles['thumbnail-image']} />
 
             <div className={styles['upload-button-box']} onClick={onClickUpload} aria-hidden="true">
               <p className={styles['upload-icon-box']}>
@@ -318,8 +312,8 @@ function ModifyFundingContainer() {
           <div className={styles['category-box']}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">카테고리 설정</InputLabel>
-              <Select labelId="demo-simple-select-label" id="demo-simple-select" label="카테고리 설정" onChange={onChangeCategory}>
-                <MenuItem defaultValue={fundingData.categoryId}>카테고리를 선택해주세요.</MenuItem>
+              <Select value={fundingData.categoryId as unknown as string} labelId="demo-simple-select-label" id="demo-simple-select" label="카테고리 설정" onChange={onChangeCategory}>
+                <MenuItem >카테고리를 선택해주세요.</MenuItem>
                 <MenuItem value={1}>아동</MenuItem>
                 <MenuItem value={2}>노인</MenuItem>
                 <MenuItem value={3}>동물</MenuItem>
@@ -386,8 +380,9 @@ function ModifyFundingContainer() {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 disablePast
-                label="펀딩 종료 일자를 선택해주세요."
+                label="펀딩 시작 일자를 선택해주세요."
                 inputFormat="YYYY-MM-DD"
+
                 value={startDate}
                 onChange={(newValue) => {
                   setStartDate(newValue);
@@ -502,8 +497,8 @@ function ModifyFundingContainer() {
               </Button>
             </div>
           </div>
-          <Button variant="contained" type="button" className={styles['submit-button']} color="warning" onClick={onCreateFunding}>
-            펀딩 생성하기
+          <Button variant="contained" type="button" className={styles['submit-button']} color="warning" onClick={onModifyFunding}>
+            펀딩 수정하기
           </Button>
         </div>
       </div>

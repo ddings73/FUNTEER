@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import AdminDonationContainerItem, { DonationState } from './AdminDonationContainerItem';
-import { requestAdminDonationList, requestDonationStatus, requestNextAdminDonationList } from '../../../api/donation';
+import { requestAdminDonationList, requestDonationList, requestDonationStatus, requestNextAdminDonationList } from '../../../api/donation';
 import { DonationListElementType, DonationStatusModi } from '../../../types/donation';
 import styles from './AdminDonationListContainer.module.scss';
 
 function AdminDonationContainer() {
   const size = 10;
+  const {pathname}=useLocation();
   const [donationList, setDonationList] = useState<DonationListElementType[]>([]);
   const [ref, inView] = useInView();
   const [donationStatusModi, setDonationStatusModi] = useState<DonationStatusModi>(
@@ -35,8 +36,10 @@ function AdminDonationContainer() {
     } 
     window.location.reload();
   };
-  const onClickDonationItemHandler = () => {
+  const onClickDonationItemHandler = (id:number) => {
     console.log('도네이션 관리 상세 페이지 이동');
+    // {pathvaliable}
+    navigate(`${id}`)
   };
 
   const onClickDonationRegister=()=>{
@@ -45,7 +48,7 @@ function AdminDonationContainer() {
     navigate('create');
   }
 
-  const requestDonationList = async () => {
+  const requestGetDonationList = async () => {
     try {
       const response = await requestAdminDonationList(size);
       console.log(response)
@@ -56,7 +59,7 @@ function AdminDonationContainer() {
   }
 
   useEffect(()=>{
-    requestDonationList();
+    requestGetDonationList();
   },[])
 
   return (
@@ -79,13 +82,13 @@ function AdminDonationContainer() {
             <li>
               <p>{data.id}</p>
             </li>
-            <button type="button" className={styles['title-col-btn']} onClick={onClickDonationItemHandler}>
+            <button type="button" className={styles['title-col-btn']} onClick={(e)=>onClickDonationItemHandler(data.id)}>
               <li>
                 <p>{data.title}</p>
               </li>
             </button>
             <li>
-              <p>{data.targetMoney}</p>
+              <p>{data.targetAmount}</p>
             </li>
             <li>
               <p>{data.startDate}</p>
@@ -102,6 +105,7 @@ function AdminDonationContainer() {
                 <MenuItem value='DONATION_ACTIVE'>진행중</MenuItem>
                 <MenuItem value='DONATION_CLOSE'>종료</MenuItem>
               </Select>
+              <p className={data.postType.includes('ACTIVE') ? styles['hide-approve'] : styles.quit}>종료</p>
             </li>
           </div>
         ))}

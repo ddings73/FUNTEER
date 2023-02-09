@@ -1,6 +1,6 @@
 .cardContainer {
   width: 95%;
-  height: 150px;
+  height: 120px;
   background-color: rgb(255, 255, 255);
   margin-bottom: 2%;
   border-radius: 10px;
@@ -11,7 +11,8 @@
     padding: 3%;
     padding-top: 40px;
     & .commentImg {
-      width: 6%;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       margin-right: 3%;
     }
@@ -23,6 +24,12 @@
       text-align: left;
       margin-bottom: 10px;
       font-weight: 600;
+      span {
+        margin-left: 10px;
+        font-size: 0.8em;
+        color: rgb(112, 112, 112);
+        font-weight: 600;
+      }
     }
   }
 }

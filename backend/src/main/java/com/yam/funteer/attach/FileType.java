@@ -10,6 +10,7 @@ public enum FileType {
 	PERFORM("실적파일"),
 	REPORT("보고서파일"),
 	RECEIPT("영수증파일"),
+	LIVE("라이브 녹화본"),
 	OTHER("기타파일");
 
 	private final String description;

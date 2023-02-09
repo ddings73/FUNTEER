@@ -1,12 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Parallax, ParallaxLayer } from '@react-spring/parallax';
 import { useAppSelector } from '../../store/hooks';
 import styles from './MainPageContainer.module.scss';
 import InfoCard from '../../components/Main/InfoCard';
 import FunList from '../../components/Main/funList';
+import LiveList from '../../components/Main/liveList';
 import ast from '../../assets/images/mainPage/ast.png';
 import planet from '../../assets/images/mainPage/planet_funteer.png';
+import wave from '../../assets/images/mainPage/wave.svg';
+import wave2 from '../../assets/images/mainPage/wave2.svg';
 
 export function MainPageContainer() {
   console.log(useAppSelector((state) => state.userSlice.userType));
@@ -18,6 +21,7 @@ export function MainPageContainer() {
 
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
+    // console.log(scrollPosition);
     return () => {
       window.removeEventListener('scroll', updateScroll);
     };
@@ -73,8 +77,13 @@ export function MainPageContainer() {
       <div className={styles.fundLists}>
         <FunList />
       </div>
-      <div className={styles.volunLists}>1234</div>
-      <div className={styles.donate}>1234</div>
+      <div className={styles.volunLists}>
+        <LiveList />
+      </div>
+      <div className={styles.donate}>
+        <img src={wave} alt="wave" className={styles.waveBack} />
+        <img src={wave2} alt="wave2" className={styles.waveBack2} />
+      </div>
     </div>
   );
 }
