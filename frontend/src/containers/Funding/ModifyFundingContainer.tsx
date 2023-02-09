@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { South } from '@mui/icons-material';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Editor as ToastEditor } from '@toast-ui/react-editor';
 import dayjs, { Dayjs } from 'dayjs';
@@ -252,13 +251,8 @@ function ModifyFundingContainer() {
 
   const getFundingDetail = async()=>{
     try{
-        const {data} = await requestFundingDetail(fundIdx)
-        setFundingData({...fundingData,title:data.title})
-        setFundingData({...fundingData, content:data.content})
-        setFundingData({...fundingData, startDate:data.startDate})
-        console.log(fundingData)
-
-        
+        const response = await requestFundingDetail(fundIdx)
+        // setFundingData(response.data)
     }
     catch(error){
         console.log(error)
