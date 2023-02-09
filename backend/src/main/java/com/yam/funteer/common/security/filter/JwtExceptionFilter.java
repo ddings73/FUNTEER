@@ -1,4 +1,4 @@
-package com.yam.funteer.common.security.handler;
+package com.yam.funteer.common.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.JwtException;
@@ -37,6 +37,6 @@ public class JwtExceptionFilter extends OncePerRequestFilter {
 
         final ObjectMapper mapper = new ObjectMapper();
         mapper.writeValue(response.getOutputStream(), body);
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }
