@@ -58,7 +58,6 @@ import {
   TeamDonation,
   Kakao,
   CreateLive,
-  LiveRoom,
   AdminMemberSearch,
   AdminTeamSearch,
   PublisherLiveRoom,
@@ -168,6 +167,11 @@ const router = createBrowserRouter([
         path: 'teamdonation/:teamId',
         element: <TeamDonation />,
       },
+    ],
+  },
+  {
+    path: '/',
+    children: [
       {
         path: 'createLive',
         element: <CreateLive />,
@@ -213,8 +217,8 @@ const router = createBrowserRouter([
         element: <FundingDetail />,
       },
       {
-        path:'/funding/modify/:fundIdx',
-        element:<ModifyFunding/>
+        path: '/funding/modify/:fundIdx',
+        element: <ModifyFunding />,
       },
       {
         path: '/cc',
