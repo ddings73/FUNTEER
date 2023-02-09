@@ -4,7 +4,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import AdminDonationContainerItem, { DonationState } from './AdminDonationContainerItem';
-import { requestAdminDonationList, requestDonationStatus, requestNextAdminDonationList } from '../../../api/donation';
+import { requestAdminDonationList, requestDonationList, requestDonationStatus, requestNextAdminDonationList } from '../../../api/donation';
 import { DonationListElementType, DonationStatusModi } from '../../../types/donation';
 import styles from './AdminDonationListContainer.module.scss';
 
@@ -49,9 +49,9 @@ function AdminDonationContainer() {
     navigate('create');
   }
 
-  const requestDonationList = async () => {
+  const requestGetDonationList = async () => {
     try {
-      const response = await requestAdminDonationList(size);
+      const response = await requestDonationList(size);
       console.log(response)
       setDonationList(response.data)
     } catch (error) {
@@ -60,7 +60,7 @@ function AdminDonationContainer() {
   }
 
   useEffect(()=>{
-    requestDonationList();
+    requestGetDonationList();
   },[])
 
   return (

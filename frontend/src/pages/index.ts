@@ -42,6 +42,7 @@ export { default as CreateFunding } from './Funding/CreateFunding';
 export { default as ModifyFunding} from './Funding/ModifyFunding'
 
 export { default as CustomerCenter } from './CustomerCenter/CustomerCenter';
+export { default as FAQDetail } from './CustomerCenter/FAQDetail';
 
 export { default as Donation } from './Donation/Donation';
 

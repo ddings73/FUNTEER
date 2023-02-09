@@ -66,8 +66,8 @@ export const requestNextAdminFaqList = async (currentPage: number, size: number)
  * @method GET
  */
 
-export const requestFaqDetail = async (faqIdx?: number) => {
-  const res = await http.get(`faq/${faqIdx}`);
+export const requestFaqDetail = async (postId?: number) => {
+  const res = await http.get(`faq/${postId}`);
   console.log(res);
   return res;
 };

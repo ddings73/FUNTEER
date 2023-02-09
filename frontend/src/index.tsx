@@ -62,6 +62,7 @@ import {
   PublisherLiveRoom,
   SubscribeLiveRoom,
   ModifyFunding,
+  FAQDetail
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -222,6 +223,10 @@ const router = createBrowserRouter([
         path: '/cc/:nn', // nn: 공지사항 번호
         element: <NoticeDetail />,
       },
+      {
+        path: '/cc/faq/:fn',
+        element: <FAQDetail />,
+      }
     ],
   },
   /** 관리자 페이지 */
