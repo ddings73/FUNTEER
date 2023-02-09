@@ -18,18 +18,10 @@ public class TeamAccountResponse {
     private String performFileUrl;
     private String profileImgUrl;
 
-    public static TeamAccountResponse of(Team team){
-        return TeamAccountResponse.builder()
-            .id(team.getId())
-            .email(team.getEmail())
-            .name(team.getName())
-            .phone(team.getPhone())
-            .build();
-    }
-
     public static TeamAccountResponse from(Team team) {
 
         TeamAccountResponse response = TeamAccountResponse.builder()
+            .id(team.getId())
             .email(team.getEmail())
             .name(team.getName())
             .phone(team.getPhone())
