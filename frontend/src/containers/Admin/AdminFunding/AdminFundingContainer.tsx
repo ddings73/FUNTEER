@@ -200,9 +200,14 @@ function AdminFundingContainer() {
             <AiOutlineSearch onClick={handleClickSearch} />
             <AiOutlineReload onClick={handleClickInit} />
           </div>
-          <Select value={fundingStateFilter} style={{ fontFamily: 'NanumSquare' }} onChange={handleChangeFilter} sx={{ height: '40px' }}>
+          <Select
+            value={fundingStateFilter}
+            style={{ fontFamily: 'NanumSquare' }}
+            onChange={handleChangeFilter}
+            sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}
+          >
             {fundingStateSet.map((state) => (
-              <MenuItem key={state} value={state}>
+              <MenuItem key={state} value={state} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
                 {state}
               </MenuItem>
             ))}
@@ -248,13 +253,19 @@ function AdminFundingContainer() {
             <li>
               <Select
                 value={data.postType}
-                style={{ fontFamily: 'NanumSquare' }}
+                sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}
                 onChange={(e) => handleStateChange(data.id, data.postType, e)}
                 className={data.postType.includes('WAIT') ? styles['show-approve'] : styles['hide-approve']}
               >
-                <MenuItem value={data.postType}>{FundingStateMap.get(data.postType)}</MenuItem>
-                <MenuItem value="accept">승인</MenuItem>
-                <MenuItem value="reject">거부</MenuItem>
+                <MenuItem value={data.postType} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
+                  {FundingStateMap.get(data.postType)}
+                </MenuItem>
+                <MenuItem value="accept" sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
+                  승인
+                </MenuItem>
+                <MenuItem value="reject" sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
+                  거부
+                </MenuItem>
               </Select>
             </li>
           </div>
