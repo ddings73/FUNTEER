@@ -302,11 +302,11 @@ public class FundingServiceImpl implements FundingService{
 		fundingDetailResponse.setWishCount(wishCount);
 
 		// 목표금액
-		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
+		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_ONE));
-		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
+		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_TWO));
-		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
+		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_THREE));
 
 		Page<CommentResponse> collect = commentRepository.findAllByFundingId(id, pageable).map(m -> CommentResponse.from(m));
@@ -422,14 +422,14 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingReportResponse findFundingReportById(Long fundingId) {
-		Report byFundingId = reportRepository.findByFundingId(fundingId);
+		Report byFundingId = reportRepository.findByFundingFundingId(fundingId);
 		FundingReportResponse fundingReport = FundingReportResponse.from(byFundingId);
 		return fundingReport;
 	}
 
 	@Override
 	public FundingReportResponse updateFundingReport(Long fundingId, FundingReportRequest data) {
-		Report report = reportRepository.findByFundingId(fundingId);
+		Report report = reportRepository.findByFundingFundingId(fundingId);
 		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
 
 		awsS3Uploader.delete("reports/" + fundingId + "/", report.getReceipts().getPath());
