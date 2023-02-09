@@ -20,7 +20,7 @@ export interface FundingStatisticType {
 }
 
 export interface FundingInterface {
-  thumbnail: Blob;
+  thumbnail: string;
   title: string;
   fundingDescription: string;
   categoryId: number;

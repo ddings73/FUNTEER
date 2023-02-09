@@ -111,6 +111,15 @@ export const requestWish = async (fundingId?: string) => {
 };
 
 /**
+ * 펀딩 썸테일 등록
+ */
+export const requestRegisterThumbnail = async(file:Blob)=>{
+  const formData = new FormData()
+  formData.append("file",file)
+  const response  = await http.post("funding/upload/thumbnail",formData)
+  return response
+}
+/**
  * @name 펀딩응원댓글
  * @method POST
  * @param {commentType} commentData
