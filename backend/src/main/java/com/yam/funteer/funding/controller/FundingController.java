@@ -98,10 +98,8 @@ public class FundingController {
 	@ApiOperation(value = "펀딩 상세 조회", notes = "펀딩 게시글 상세를 조회한다.")
 	@GetMapping("/{fundingId}")
 	public ResponseEntity<FundingDetailResponse> readFundingDetail(@PathVariable Long fundingId,
-		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "6") int size) {
-		PageRequest pageRequest = PageRequest.of(page, size);
-		return ResponseEntity.ok(fundingService.findFundingById(fundingId, pageRequest));
+		@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC)Pageable pageable){
+		return ResponseEntity.ok(fundingService.findFundingById(fundingId, pageable));
 	}
 
 	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다.")
