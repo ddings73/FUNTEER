@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.yam.funteer.faq.entity.Faq;
 import com.yam.funteer.post.entity.Post;
 
 import lombok.Getter;
@@ -16,9 +15,9 @@ public class FaqBaseRes {
 	private String content;
 	private LocalDate localDate;
 
-	public FaqBaseRes(Faq entity){
+	public FaqBaseRes(Post entity){
 		this.title=entity.getTitle();
-		this.id=entity.getFaqId();
+		this.id=entity.getId();
 		this.content=entity.getContent();
 		this.localDate=entity.getRegDate().toLocalDate();
 	}

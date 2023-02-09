@@ -1,6 +1,5 @@
 package com.yam.funteer.user.service;
 
-import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
@@ -23,7 +22,7 @@ public interface MemberService {
     void followTeam(Long teamId);
     void wishFunding(Long fundingId);
 
-    MileageDetailResponse getMileageDetails(PostGroup postGroup, Pageable pageable);
+    MileageDetailResponse getMileageDetails(MileageDetailRequest request, Pageable pageable);
     void chargeMileage(ChargeRequest chargeRequest);
 
 }

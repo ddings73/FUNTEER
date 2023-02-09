@@ -40,8 +40,4 @@ public enum UserType implements TypeModel, GrantedAuthority {
         public static final String USER = "ROLE_USER";
         public static final String ADMIN = "ROLE_ADMIN";
     }
-
-    public boolean doPublish(){
-        return !this.openviduRole.equals(OpenViduRole.SUBSCRIBER);
-    }
 }

@@ -12,12 +12,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class StartRecordingRequest {
 	private String sessionId;
+	private String outputMode;
 	private boolean hasAudio;
 	private boolean hasVideo;
 
 	public RecordingProperties toRecordingProperties() {
 		return new RecordingProperties.Builder()
-			.outputMode(Recording.OutputMode.INDIVIDUAL)
+			.outputMode(Recording.OutputMode.valueOf(outputMode))
 			.hasAudio(hasAudio)
 			.hasVideo(hasVideo)
 			.build();

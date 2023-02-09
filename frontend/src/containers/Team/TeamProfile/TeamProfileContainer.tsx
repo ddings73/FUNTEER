@@ -11,12 +11,16 @@ import { teamProfileType } from '../../../types/user';
 import { requestFollow } from '../../../api/user';
 import styles from './TeamProfileContainer.module.scss';
 import defaultImage from '../../../assets/images/default-profile-img.svg';
+import { useAppSelector } from '../../../store/hooks';
 
 function TeamProfileContainer() {
   const navigate = useNavigate();
+  /** 현재 프로필 페이지 정보의 팀 ID */
   const { teamId } = useParams();
-  const [userId, setUserId] = useState<string | undefined>('');
-  const [userType, setUserType] = useState<string>('');
+  /** 유저 ID */
+  const userId = useAppSelector((state) => state.userSlice.userId);
+  /** 유저 타입 */
+  const userType = useAppSelector((state) => state.userSlice.userType);
   const [isFollowing, setIsFollowing] = useState<boolean>(false);
   const [followerCnt, setFollowerCnt] = useState<number>(0);
   const [teamProfileInfo, setTeamProfileInfo] = useState<teamProfileType>({
@@ -43,13 +47,7 @@ function TeamProfileContainer() {
     }
   };
 
-  /** 로그인한 유저의 id, type 세팅 */
   useEffect(() => {
-    if (!userId || !userType) {
-      const userData = sessionStorage.getItem('user');
-      setUserId(userData ? JSON.parse(userData).userId.toString() : null);
-      setUserType(userData ? JSON.parse(userData).userType : null);
-    }
     requestTeamInfo();
   }, []);
 
@@ -112,17 +110,23 @@ function TeamProfileContainer() {
                     {userId === teamId && (
                       <>
                         <BsPiggyBankFill color="rgba(236, 153, 75, 1)" />
-                        <p className={styles.money}>저금통: {teamProfileInfo.money.toLocaleString('ko-KR')} 원</p>
+                        <p className={styles.money}>
+                          저금통: <span>{teamProfileInfo.money.toLocaleString('ko-KR')}</span> 원
+                        </p>
                       </>
                     )}
                   </div>
                   <div className={styles['profile-card-info-item']}>
                     <FaMoneyBillWaveAlt color="rgba(236, 153, 75, 1)" />
-                    <p>누적 액수: {teamProfileInfo.totalFundingAmount.toLocaleString('ko-KR')} 원</p>
+                    <p>
+                      누적 액수: <span>{teamProfileInfo.totalFundingAmount.toLocaleString('ko-KR')}</span> 원
+                    </p>
                   </div>
                   <div className={styles['profile-card-info-item']}>
                     <BsFillHeartFill color="rgba(236, 153, 75, 1)" />
-                    <p>팔로워: {followerCnt.toLocaleString('ko-KR')} 명</p>
+                    <p>
+                      팔로워: <span>{followerCnt.toLocaleString('ko-KR')}</span> 명
+                    </p>
                   </div>
                 </div>
                 <div className={styles['profile-card-info-right']}>
@@ -140,13 +144,8 @@ function TeamProfileContainer() {
           </div>
           {/* 단체 소개 */}
           <div className={styles['description-div']}>
-            {/* <p>{teamProfileInfo.description}</p> */}
-            <p>
-              갑 얼음에 아니더면, 노래하며 그들에게 속잎나고, 뜨거운지라, 것이다. 꽃이 공자는 황금시대를 옷을 아름다우냐? 위하여, 무엇이 행복스럽고 있다. 이것을
-              유소년에게서 예가 피어나기 아니다. 되려니와, 찾아다녀도, 위하여 피가 듣기만 때까지 하여도 원질이 보배를 있으랴? 찾아 무엇을 예가 뭇 이상의 전인 가슴에 피고,
-              청춘을 사막이다. 하여도 그러므로 청춘에서만 만물은 살 길지 철환하였는가? 그들에게 있는 그들을 아니한 밥을 이 철환하였는가? 이상은 이상을 날카로우나 청춘을
-              쓸쓸하랴? 날카로우나 있으며, 풍부하게 남는 가치를 것이다.
-            </p>
+            <p>단체 설명</p>
+            <pre>{teamProfileInfo.description}</pre>
           </div>
           {/* 진행한 펀딩 프로젝트 */}
           <div className={styles['funding-div']}>

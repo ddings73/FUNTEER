@@ -14,7 +14,6 @@ import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
-import com.yam.funteer.notice.entity.Notice;
 import com.yam.funteer.post.entity.Post;
 
 import lombok.AllArgsConstructor;
@@ -35,8 +34,8 @@ public class NoticeRegistReq {
 
 	private List<MultipartFile>files=new ArrayList<>();
 
-	public Notice toEntity(){
-		return Notice.builder()
+	public Post toEntity(){
+		return Post.builder()
 			.postGroup(PostGroup.ETC)
 			.postType(PostType.NOTICE)
 			.title(title)
@@ -45,10 +44,9 @@ public class NoticeRegistReq {
 			.build();
 	}
 
-	public Notice toEntity(Long postId,Long noticeId){
-		return Notice.builder()
-			.id(postId)
-			.noticeId(noticeId)
+	public Post toEntity(Long id){
+		return Post.builder()
+			.id(id)
 			.postGroup(PostGroup.ETC)
 			.postType(PostType.NOTICE)
 			.title(title)

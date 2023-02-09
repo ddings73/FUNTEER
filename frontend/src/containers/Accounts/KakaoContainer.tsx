@@ -20,16 +20,18 @@ function KakaoContainer() {
           'Content-Type': 'application/json',
         },
       });
+      console.log(response);
       localStorage.setItem('accessToken', response.data.token.accessToken);
       localStorage.setItem('refreshToken', response.data.token.refreshToken);
-      dispatch(setUserLoginState({ isLogin: true, userType: response.data.userType, userId: response.data.userId }));
-      dispatch(setUserType('USER'));
-      window.location.href = '/';
+      dispatch(setUserLoginState({ isLogin: true, userType: response.data.userType, userId: response.data.userId, username: response.data.username }));
+      navigate('/', { replace: true });
     } catch (Error) {
       console.log(Error);
     }
   };
   useEffect(() => {
+    console.log('ㅎㅇㅎㅇㅎㅇ');
+
     kakaoLogin();
   }, []);
   return <h1>H!</h1>;

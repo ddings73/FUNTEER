@@ -30,7 +30,7 @@
       justify-content: center;
 
       & .fundTitle {
-        font-size: 40px;
+        font-size: 30px;
         font-weight: 600;
         margin-right: 10px;
         margin-bottom: 10px;
@@ -43,8 +43,8 @@
       }
       & .barWrapper {
         display: flex;
-        justify-content: center;
-        text-align: center;
+        justify-content: space-between;
+        text-align: left;
         align-items: center;
         & .object {
           text-align: left;
@@ -54,27 +54,43 @@
           font-weight: 600;
         }
         & .progressBar {
-          width: 60%;
-          background-color: rgb(110, 110, 110);
+          align-items: center;
+          width: 40%;
+          background: rgb(129, 129, 129);
+          background: linear-gradient(90deg, rgba(49, 49, 52, 1) 0%, rgb(82, 82, 82) 0%, rgb(143, 143, 143) 100%);
+          box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
           border-radius: 15px;
           display: flex;
           padding: 3px;
           height: 10px;
           & .status {
-            width: 10%;
-            background-color: rgb(116, 194, 92);
+            background: rgb(49, 49, 52);
+            background: linear-gradient(90deg, rgba(49, 49, 52, 1) 0%, rgba(255, 166, 0, 1) 0%, rgb(255, 136, 0) 100%);
             color: rgb(0, 0, 0);
             padding-top: 12px;
             text-align: right;
             font-size: 20px;
             border-radius: 15px;
             transition: 2s;
+            position: relative;
+            & .statusNum {
+              position: absolute;
+              top: 20px;
+              right: -10px;
+              color: white;
+              border-radius: 100%;
+              padding: 7px;
+              background-color: rgb(211, 127, 0);
+              font-size: 0.7em;
+              border: 2px solid white;
+              box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+            }
           }
         }
       }
     }
     & .fundPeriod {
-      margin-top: 10px;
+      margin-top: 20px;
     }
   }
 }

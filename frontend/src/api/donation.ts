@@ -1,4 +1,4 @@
-import { DonationElementType, DonationInterface } from '../types/donation';
+import { DonationElementType, DonationInterface, DonationStatusModi } from '../types/donation';
 import { http } from './axios';
 
 
@@ -15,7 +15,7 @@ export const requestCreateDonation = async (donationData: DonationInterface) => 
   entry.forEach((data) => {
     const key = data[0];
     const value = data[1];
-    formData.append(`${key}`, `${value}`);
+    formData.append(`${key}`, value);
   });
   
   const res = await http.post('admin/donation', formData);
@@ -31,7 +31,7 @@ export const requestModifyDonation = async (donationIdx:number, donationData: Do
   entry.forEach((data) => {
     const key = data[0];
     const value = data[1];
-    formData.append(`${key}`, `${value}`);
+    formData.append(`${key}`, value);
   });
   
   const res = await http.put(`admin/donation/${donationIdx}`, formData);
@@ -55,13 +55,33 @@ export const requestCurrentDonation=async()=>{
  * @method GET
  */
 
-export const requestDonationList = async () => {
-  const res = await http.get('donation/list');
+export const requestDonationList = async(size: number) => {
+  const res = await http.get(`donation/list?size=${size}`);
   console.log(res);
 
   return res;
 };
 
+
+
+export const requestAdminDonationList = async (size: number) => {
+  const res = await http.get(`admin/donation?size=${size}`);
+  console.log(res);
+
+  return res;
+};
+
+
+/**
+ * @name 다음자체모금리스트호출
+ * @returns
+ */
+export const requestNextAdminDonationList = async (currentPage: number, size: number) => {
+  console.log(currentPage, size);
+
+  const response = await http.get(`donation/?page=${currentPage + 1}&size=${size}`);
+  return response;
+};
 
 /*
  * 도네이션 상세 호출
@@ -71,5 +91,23 @@ export const requestDonationList = async () => {
 export const requestDonationDetail = async (donationIdx?: number) => {
   const res = await http.get(`donation/${donationIdx}`);
   console.log(res);
+  return res;
+};
+
+
+/**
+ * 상태 변경
+ * @RequestBody Long postId, PostType postType
+ * @method Put (admin/donation)
+ */
+
+export const requestDonationStatus = async (id: number, state: string) => {
+  const data = {
+    donationId: id,
+    postType: state
+  }
+
+  const res = await http.put(`admin/donation`, data);
+
   return res;
 };

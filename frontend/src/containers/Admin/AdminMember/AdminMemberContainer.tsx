@@ -1,106 +1,131 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
+import Pagination from '@mui/material/Pagination';
+import { AiOutlineClose, AiOutlineSearch } from 'react-icons/ai';
+import { requestMembers, requestWithdrawMember } from '../../../api/admin';
+import { AdminMemberInterface } from '../../../types/user';
 import styles from './AdminMemberContainer.module.scss';
-import AdminMemberContainerItem, { MemberState } from './AdminMemberContainerItem';
 
 function AdminMemberContainer() {
+  const navigate = useNavigate();
+  /** 현재 페이지 */
+  const [page, setPage] = useState<number>(1);
+  /** 최대 페이지 */
+  const [maxPage, setMaxPage] = useState<number>(0);
+  /** 현재 페이지의 개인 회원들 */
+  const [pageMembers, setPageMembers] = useState<AdminMemberInterface[]>([]);
+  /** 검색창 */
   const [memberSearch, setMemberSearch] = useState<string>('');
-  const [memberStateFilter, setMemberStateFilter] = useState<string>(MemberState.All);
 
-  const onMemberSearchInputChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+  /** 페이지 변경 시 멤버 요청 */
+  useEffect(() => {
+    requestPageMembers();
+  }, [page]);
+
+  /** 페이지 교체 */
+  const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
+    setPage(selectedPage);
+  };
+
+  /** 검색창 입력 */
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setMemberSearch(e.target.value);
   };
 
-  const onMemberStateFilterChangeHandler = (e: SelectChangeEvent) => {
-    setMemberStateFilter(e.target.value);
+  /** 검색 */
+  const handleClickSearch = (e: React.MouseEvent<SVGElement>) => {
+    navigate('./search', {
+      state: {
+        keyword: memberSearch,
+      },
+    });
   };
 
-  const filtedMembers = AdminMemberContainerItem.filter((member) => {
-    let filter;
-    if (memberStateFilter === '전체') {
-      filter = member.name.includes(memberSearch) || member.nickname.includes(memberSearch) || member.phone.includes(memberSearch) || member.email.includes(memberSearch);
-    } else {
-      filter =
-        (member.name.includes(memberSearch) || member.nickname.includes(memberSearch) || member.phone.includes(memberSearch) || member.email.includes(memberSearch)) &&
-        member.memberState === memberStateFilter;
+  /** 엔터 검색 */
+  const handleEnter = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    navigate('./search', {
+      state: {
+        keyword: memberSearch,
+      },
+    });
+  };
+
+  /** 회원 탈퇴 버튼 클릭 */
+  const handleWithdrawBtn = (e: React.MouseEvent<SVGElement>, userId: number) => {
+    withdrawMember(userId);
+  };
+
+  /** 회원 탈퇴 요청 */
+  const withdrawMember = async (userId: number) => {
+    try {
+      const response = await requestWithdrawMember(userId);
+      console.log(response);
+    } catch (error) {
+      console.error(error);
     }
-    return filter;
-  });
-
-  // const onMemberStateChangeHandler = (e: SelectChangeEvent) => {
-  //   console.log('개인 회원 상태 변경 요청');
-  //   window.location.reload();
-  // };
-
-  const onClickWithdrawBtnHandler = (e: React.MouseEvent<HTMLButtonElement>) => {
-    console.log('회원 탈퇴 처리');
   };
 
-  const memberStateSet = Object.values(MemberState);
+  /** 페이지 멤버 요청 */
+  const requestPageMembers = async () => {
+    setPageMembers([]);
+    try {
+      const response = await requestMembers(page - 1, 8);
+      console.log(response);
+      setMaxPage(response.data.totalPages);
+      setPageMembers(response.data.userList);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
         <h1 className={styles.title}>개인 회원관리</h1>
         <div className={styles['search-div']}>
-          <TextField label="회원 검색" variant="outlined" className={styles['search-input']} onChange={onMemberSearchInputChangeHandler} />
-          <Select value={memberStateFilter} onChange={onMemberStateFilterChangeHandler} sx={{ height: '40px' }}>
-            {memberStateSet.map((state) => (
-              <MenuItem key={state} value={state}>
-                {state}
-              </MenuItem>
-            ))}
-          </Select>
+          <TextField color="warning" label="회원 검색" variant="outlined" className={styles['search-input']} onChange={handleSearchChange} onKeyPress={handleEnter} />
+          <AiOutlineSearch onClick={handleClickSearch} />
         </div>
         <ul className={styles['title-line']}>
+          <li>번호</li>
           <li>이름</li>
-          <li className={styles.wide}>닉네임</li>
-          <li>프로필 사진</li>
-          <li className={styles.wide}>전화번호</li>
-          <li className={styles.wide}>이메일</li>
+          <li>닉네임</li>
+          <li style={{ fontSize: '0.9rem' }}>프로필 사진</li>
+          <li>전화번호</li>
+          <li>이메일</li>
           <li>잔액</li>
-          <li>상태</li>
-          <li>탈퇴 처리</li>
+          <li> </li>
         </ul>
-        {filtedMembers.map((data) => (
-          <ul key={data.nickname} className={styles['list-line']}>
+        {pageMembers.map((data) => (
+          <ul key={data.userId} className={styles['list-line']}>
+            <li>{data.userId}</li>
             <li>
               <p>{data.name}</p>
             </li>
-            <li className={styles.wide}>
+            <li>
               <p>{data.nickname}</p>
             </li>
             <li>
               <div className={styles['img-div']}>
-                <img src={data.profileImageUrl} alt="profileImg" />
+                <img src={data.profileImgUrl} alt="profileImg" />
               </div>
             </li>
-            <li className={styles.wide}>
+            <li>
               <p>{data.phone}</p>
             </li>
-            <li className={styles.wide}>
+            <li>
               <p>{data.email}</p>
             </li>
             <li>
-              <p>{data.money}</p>
+              <p>{data.money.toLocaleString('ko-KR')}</p>
             </li>
             <li>
-              <p>{data.memberState}</p>
-              {/* <Select value={data.memberState} onChange={onMemberStateChangeHandler} sx={{ height: '30px' }}>
-                <MenuItem value={MemberState.Normal}>{MemberState.Normal}</MenuItem>
-                <MenuItem value={MemberState.Dormant}>{MemberState.Dormant}</MenuItem>
-                <MenuItem value={MemberState.Withdrawn}>{MemberState.Withdrawn}</MenuItem>
-              </Select> */}
-            </li>
-            <li>
-              <button type="button" className={styles['withdraw-btn']} onClick={onClickWithdrawBtnHandler}>
-                X
-              </button>
+              <AiOutlineClose className={styles['withdraw-btn']} onClick={(e) => handleWithdrawBtn(e, data.userId)} />
             </li>
           </ul>
         ))}
+        <Pagination sx={{ marginTop: '2rem' }} count={maxPage} page={page} onChange={handleChangePage} />
       </div>
     </div>
   );

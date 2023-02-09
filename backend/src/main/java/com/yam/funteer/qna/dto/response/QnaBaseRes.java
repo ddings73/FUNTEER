@@ -17,7 +17,7 @@ public class QnaBaseRes {
 	private List<String>files;
 
 	public QnaBaseRes(Qna entity,List<String>files) {
-		this.id = entity.getQnaId();
+		this.id = entity.getId();
 		this.userId=entity.getUser().getId();
 		this.title=entity.getTitle();
 		this.content=entity.getContent();

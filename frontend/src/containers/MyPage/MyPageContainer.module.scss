@@ -68,6 +68,18 @@
         border-radius: 50%;
         box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
       }
+      & .plus {
+        width: 48px;
+        height: 48px;
+        bottom: 0;
+        right: -5px;
+        position: absolute;
+        color: rgba(236, 153, 75, 1);
+      }
+
+      & input[type='file'] {
+        display: none;
+      }
     }
     & .data {
       display: flex;
@@ -129,14 +141,10 @@
 }
 
 .profileEdit {
+  width: 200px;
   display: flex;
   margin-bottom: 20px;
   margin-left: 85%;
-  opacity: 0.3;
   transition: 0.8s;
   cursor: pointer;
-  &:hover {
-    opacity: 0.7;
-    transform: rotate(-60deg);
-  }
 }

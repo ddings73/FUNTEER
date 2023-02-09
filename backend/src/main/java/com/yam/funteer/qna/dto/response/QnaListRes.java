@@ -10,7 +10,7 @@ public class QnaListRes {
 	private Long id;
 
 	public QnaListRes(Qna qna){
-		this.id=qna.getQnaId();
+		this.id=qna.getId();
 		this.title=qna.getTitle();
 	}
 }

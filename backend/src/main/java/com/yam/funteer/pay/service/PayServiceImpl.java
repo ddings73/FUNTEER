@@ -49,7 +49,7 @@ public class PayServiceImpl implements PayService {
 		LocalDateTime now = LocalDateTime.now();
 		LocalDateTime seven = now.minusDays(7);
 
-		List<Charge> all = chargeRepository.findAllByPossibleRefund(1);
+		List<Charge> all = chargeRepository.findAllByPossibleRefund(true);
 		for (Charge charge : all) {
 			int resultDate = seven.compareTo(charge.getChargeDate());
 			if (resultDate > 0) {

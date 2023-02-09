@@ -26,7 +26,6 @@ function LoginContainer() {
     const { name, value } = e.target;
 
     setUserInfo({ ...userInfo, [name]: value });
-    console.log('Get userinfo', userInfo);
   };
 
   // Enter키를 입력으로 로그인 요청
@@ -49,10 +48,9 @@ function LoginContainer() {
 
         localStorage.setItem('accessToken', data.token.accessToken);
         localStorage.setItem('refreshToken', data.token.refreshToken);
-        sessionStorage.setItem('user', JSON.stringify(data));
 
-        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId }));
-        navigate('/');
+        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId, username: data.username }));
+        navigate('/', { replace: true });
       }
     } catch (error) {
       console.error(error);

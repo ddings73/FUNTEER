@@ -1,16 +1,37 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import React, { useEffect, useState } from 'react';
+import { useInView } from 'react-intersection-observer';
+import { useNavigate } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import styles from './AdminDonationListContainer.module.scss';
 import AdminDonationContainerItem, { DonationState } from './AdminDonationContainerItem';
+import { requestAdminDonationList, requestDonationStatus, requestNextAdminDonationList } from '../../../api/donation';
+import { DonationListElementType, DonationStatusModi } from '../../../types/donation';
+import styles from './AdminDonationListContainer.module.scss';
 
 function AdminDonationContainer() {
+  const size = 10;
+  const [donationList, setDonationList] = useState<DonationListElementType[]>([]);
+  const [ref, inView] = useInView();
+  const [donationStatusModi, setDonationStatusModi] = useState<DonationStatusModi>(
+    {
+      postType:"",
+      donationId:0
+    }
+  );
   const navigate=useNavigate();
 
-  const onStateChangeHandler = (state: string, e: SelectChangeEvent) => {
-    if (state === DonationState.ACTIVE) {
-      console.log('도네이션 종료');
+  const onStateChangeHandler = async (id: number, state: string, e: SelectChangeEvent) => {
+    if (state === 'DONATION_ACTIVE') {
+      
+      // // long id requesetBody =>json 
+      // setDonationStatusModi({...donationStatusModi,postType:state})
+      // setDonationStatusModi({...donationStatusModi,donationId:id})
+      try{
+        const response = await requestDonationStatus(id, state);
+        console.log(response);
+      }catch(error){
+        console.log(error);
+      }
     } 
     window.location.reload();
   };
@@ -24,6 +45,20 @@ function AdminDonationContainer() {
     navigate('create');
   }
 
+  const requestDonationList = async () => {
+    try {
+      const response = await requestAdminDonationList(size);
+      console.log(response)
+      setDonationList(response.data)
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  useEffect(()=>{
+    requestDonationList();
+  },[])
+
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
@@ -34,12 +69,12 @@ function AdminDonationContainer() {
           <li>번호</li>
           <li className={styles['title-col']}>제목</li>
           <li>목표금액</li>
-          <li>현재금액</li>
           <li>시작일</li>
           <li>종료일</li>
           <li>상태</li>
         </ul>
-        {AdminDonationContainerItem.map((data) => (
+        
+        {donationList.map((data) => (
           <div className={styles['list-line']}>
             <li>
               <p>{data.id}</p>
@@ -50,28 +85,22 @@ function AdminDonationContainer() {
               </li>
             </button>
             <li>
-              <p>{data.targetAmount}</p>
+              <p>{data.targetMoney}</p>
             </li>
             <li>
-              <p>{data.currentDonationAmount}</p>
-            </li>
-            <li>
-              <p>{data.postDate}</p>
+              <p>{data.startDate}</p>
             </li>
             <li>
               <p>{data.endDate}</p>
             </li>
             <li>
-              <p>{data.donationState}</p>
-            </li>
-            <li>
             <Select
-                value={data.donationState}
-                onChange={(e) => onStateChangeHandler(data.donationState, e)}
-                className={data.donationState.includes('진행중') ? styles['show-approve'] : styles['hide-approve']}
+                value={data.postType}
+                onChange={(e) => onStateChangeHandler(data.id, data.postType, e)}
+                className={data.postType.includes('ACTIVE') ? styles['show-approve'] : styles['hide-approve']}
               >
-                <MenuItem value={data.donationState}>{data.donationState}</MenuItem>
-                <MenuItem value="CLOSE">종료</MenuItem>
+                <MenuItem value='DONATION_ACTIVE'>진행중</MenuItem>
+                <MenuItem value='DONATION_CLOSE'>종료</MenuItem>
               </Select>
             </li>
           </div>

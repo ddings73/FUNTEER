@@ -34,8 +34,10 @@ public class Member extends User{
 			.build();
 	}
 
-	public void updateDisplay(boolean display){
+	public void update(String nickname, boolean display, Attach profile){
+		this.nickname = nickname;
 		this.display = display;
+		updateProfile(profile);
 	}
 	public void signOut(){
 		super.signOut(UserType.NORMAL_RESIGN);

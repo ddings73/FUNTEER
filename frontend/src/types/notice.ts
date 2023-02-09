@@ -1,5 +1,12 @@
 export interface NoticeInterface {
-    title: String;
-    content: String;
-    file: Blob;
+    files: File[];
+    title: string;
+    content: string | undefined;
+}
+
+export type NoticeElement = {
+    title: string;
+    content: string | undefined;
+    regDate: string;
+    files: String[];
 }

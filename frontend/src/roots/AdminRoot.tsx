@@ -23,9 +23,9 @@ function AdminRoot() {
     <div className={styles['admin-page']}>
       <FileModal
         isOpen={fileModalState.isOpen}
-        vmsNum={fileModalState.vmsNum}
-        vmsFile={fileModalState.vmsFile}
-        performFile={fileModalState.performFile}
+        userId={fileModalState.userId}
+        vmsFileUrl={fileModalState.vmsFileUrl}
+        performFileUrl={fileModalState.performFileUrl}
         deniedNum={fileModalState.deniedNum}
       />
       <AdminSideBar />

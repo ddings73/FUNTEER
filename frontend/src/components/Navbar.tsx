@@ -68,6 +68,7 @@ function ResponsiveAppBar() {
   const logout = async () => {
     try {
       const response = await requestLogout();
+      console.log(response);
       dispatch(resetLoginState());
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
