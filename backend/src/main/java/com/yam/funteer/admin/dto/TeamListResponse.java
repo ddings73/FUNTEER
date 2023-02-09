@@ -43,7 +43,7 @@ public class TeamListResponse {
 
 		public static TeamInfo of(Team team, String vmsFilePath, String perFormFilePath) {
 			return TeamInfo.builder()
-					.userId(team.getId())
+					.id(team.getId())
 					.email(team.getEmail())
 					.name(team.getName())
 					.phone(team.getPhone())
