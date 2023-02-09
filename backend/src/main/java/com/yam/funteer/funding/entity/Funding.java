@@ -5,8 +5,11 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -30,6 +33,11 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Funding extends Post {
+
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(insertable = false,updatable = false,nullable = false,unique = true )
+	private Long fundingId;
+
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category category;

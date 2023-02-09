@@ -1,12 +1,14 @@
 package com.yam.funteer.admin.controller;
 
-import java.util.List;
-
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yam.funteer.admin.dto.MemberListResponse;
+import com.yam.funteer.admin.dto.TeamConfirmRequest;
 import com.yam.funteer.admin.dto.TeamListResponse;
 import com.yam.funteer.admin.service.AdminService;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
-import com.yam.funteer.funding.dto.response.FundingDetailResponse;
-import com.yam.funteer.funding.dto.response.FundingListResponse;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
 
@@ -30,33 +32,55 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 @Api(tags ={"관리자"})
-public class 	AdminController {
+public class AdminController {
 
 	private final AdminService adminService;
 	private final FundingService fundingService;
 
 	@ApiOperation(value = "개인 회원 목록 조회", notes = "개인 회원 목록을 조회한다.")
 	@GetMapping("/members")
-	public ResponseEntity<List<MemberListResponse>> findAllMembers() {
-		return null;
+	public ResponseEntity<MemberListResponse> findAllMembers(@RequestParam(required = false, defaultValue = "") String keyword,
+															 @RequestParam(required = false) UserType userType,
+															 @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
+		MemberListResponse response = adminService.findMembersWithPageable(keyword, userType, pageable);
+		return ResponseEntity.ok(response);
 	}
 
 	@ApiOperation(value = "단체 회원 목록 조회", notes = "단체 회원 목록을 조회한다.")
 	@GetMapping("/team")
-	public ResponseEntity<List<TeamListResponse>> findAllTeam() {
-		return null;
+	public ResponseEntity<TeamListResponse> findAllTeam(@RequestParam(required = false, defaultValue = "") String keyword,
+														@RequestParam(required = false) UserType userType,
+														@PageableDefault(size = 8, sort = "id",  direction = Sort.Direction.DESC) Pageable pageable) {
+		TeamListResponse response = adminService.findTeamWithPageable(keyword, userType, pageable);
+		return ResponseEntity.ok(response);
 	}
 
 	@ApiOperation(value = "개인 회원 탈퇴 처리", notes = "개인 회원을 탈퇴 처리한다.")
-	@DeleteMapping("/member")
-	public ResponseEntity<?> deleteMember(@RequestParam Long memberId) {
-		return null;
+	@DeleteMapping("/member/{memberId}")
+	public ResponseEntity deleteMember(@PathVariable Long memberId) {
+		adminService.resignMember(memberId);
+		return ResponseEntity.ok("개인회원 탈퇴완료");
 	}
 
 	@ApiOperation(value = "단체 회원 탈퇴 처리", notes = "단체 회원을 탈퇴 처리한다.")
-	@DeleteMapping("/team")
-	public ResponseEntity<?> deleteTeam(@RequestParam Long teamId) {
-		return null;
+	@DeleteMapping("/team/{teamId}")
+	public ResponseEntity<?> deleteTeam(@PathVariable Long teamId) {
+		adminService.resignTeam(teamId);
+		return ResponseEntity.ok("단체회원 탈퇴완료");
+	}
+
+	@ApiOperation(value = "단체회원 가입승인")
+	@PostMapping("/team/{teamId}/accept")
+	public ResponseEntity acceptTeam(@PathVariable Long teamId){
+		adminService.acceptTeam(teamId);
+		return ResponseEntity.ok("단체회원 가입승인");
+	}
+
+	@ApiOperation(value = "단체회원 가입거부", notes = "거절 시에는 거절메시지가 이메일로 전송.")
+	@PutMapping("/team/{teamId}/reject")
+	public ResponseEntity  rejectTeam(@PathVariable Long teamId, @RequestBody TeamConfirmRequest request){
+		adminService.rejectTeam(teamId, request);
+		return ResponseEntity.ok("처리가 완료되었습니다.");
 	}
 
 	@ApiOperation(value = "펀딩 삭제", notes = "펀딩을 삭제한다.")

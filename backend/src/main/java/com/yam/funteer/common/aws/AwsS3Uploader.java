@@ -40,7 +40,7 @@ public class AwsS3Uploader {
 		}
 	}
 
-	private String upload(File uploadFile, String dirName) {
+	public String upload(File uploadFile, String dirName) {
 		String fileName = dirName + "/" + UUID.randomUUID() + uploadFile.getName();
 		String uploadImageUrl = putS3(uploadFile, fileName);    // s3로 업로드
 		removeNewFile(uploadFile);

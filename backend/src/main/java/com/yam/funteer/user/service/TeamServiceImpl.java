@@ -131,20 +131,34 @@ public class TeamServiceImpl implements TeamService{
 		MultipartFile bannerFile = request.getBanner();
 		MultipartFile profileImgFile = request.getProfileImg();
 
-		request.validateBannerAndProfile();
 
-		String profilePath = awsS3Uploader.upload(profileImgFile, "user");
-		String bannerPath = awsS3Uploader.upload(bannerFile, "user");
+		if(profileImgFile != null) {
+			request.validateProfile();
+			String profilePath = awsS3Uploader.upload(profileImgFile, "user");
+			Attach profile = team.getProfileImg().orElseGet(() -> request.getProfile(profilePath));
 
-		Attach profile = team.getProfileImg().orElseGet(() -> request.getProfile(profilePath));
-		Attach banner = team.getBanner().orElseGet(() -> request.getBanner(bannerPath));
+			if(profile.getId() == null){
+				attachRepository.save(profile);
+				team.updateProfile(profile);
+			}else{
+				profile.update(profileImgFile.getOriginalFilename(), profilePath);
+			}
+		}
 
-		updateBannerOrProfile(profileImgFile.getOriginalFilename(), profilePath, profile);
-		updateBannerOrProfile(bannerFile.getOriginalFilename(), bannerPath, banner);
-		// 파일 관리 끝
+		if(bannerFile != null) {
+			request.validateBanner();
+			String bannerPath = awsS3Uploader.upload(bannerFile, "user");
+			Attach banner = team.getBanner().orElseGet(() -> request.getBanner(bannerPath));
+			if(banner.getId() == null){
+				attachRepository.save(banner);
+				team.updateBanner(banner);
+			}else{
+				banner.update(bannerFile.getOriginalFilename(), bannerPath);
+			}
+		}
 
 		String description = request.getDescription();
-		team.update(profile, banner, description);
+		team.updateDescription(description);
 	}
 
 	@Override
@@ -152,10 +166,8 @@ public class TeamServiceImpl implements TeamService{
 		Team team = teamRepository.findById(SecurityUtil.getCurrentUserId())
 			.orElseThrow(UserNotFoundException::new);
 
-		team.validate();
-
 		List<TeamAttach> teamAttaches = teamAttachRepository.findAllByTeam(team);
-		TeamAccountResponse response = TeamAccountResponse.of(team);
+		TeamAccountResponse response = TeamAccountResponse.from(team);
 
 		teamAttaches.forEach(teamAttach -> {
 			Attach attach = teamAttach.getAttach();
@@ -176,7 +188,7 @@ public class TeamServiceImpl implements TeamService{
 		Team team = validateSameUser(userId, request.getUserId());
 
 		String password = request.getPassword().orElseThrow(()-> {
-			throw new IllegalArgumentException("비밀번호가 다릅니다");
+			throw new IllegalArgumentException("비밀번호가 필요합니다");
 		});
 		team.validatePassword(passwordEncoder, password);
 
@@ -205,14 +217,6 @@ public class TeamServiceImpl implements TeamService{
 				awsS3Uploader.delete(teamFilePath, path);
 			}
 		});
-	}
-
-	private void updateBannerOrProfile(String filename, String path, Attach attach){
-		if(attach.getId() == null){
-			attachRepository.save(attach);
-		}else{
-			attach.update(filename, path);
-		}
 	}
 
 	private Team validateSameUser(Long i1, Long i2){

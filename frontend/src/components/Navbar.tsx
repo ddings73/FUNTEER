@@ -67,7 +67,9 @@ function ResponsiveAppBar() {
   // 로그아웃
   const logout = async () => {
     try {
+      console.log('1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111');
       const response = await requestLogout();
+      console.log(response);
       dispatch(resetLoginState());
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
@@ -77,13 +79,18 @@ function ResponsiveAppBar() {
     }
   };
 
+  function logoHandler() {
+    navigateTo('/');
+    window.scrollTo(0, 0);
+  }
+
   const isLogin = useAppSelector((state) => state.userSlice.isLogin);
   let menuDataLength: number = NavbarMenuData.length;
   // console.log('로그인임?', isLogin);
 
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
-  });
+  }, []);
 
   return (
     <div>
@@ -91,10 +98,7 @@ function ResponsiveAppBar() {
         <Container className={styles.appContainer} maxWidth="xl">
           <Toolbar disableGutters>
             {/* Desktop 구조 */}
-            <Link to="/">
-              <img className={styles.logoImg} src={logoImg} alt="logoImg" />
-            </Link>
-
+            <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ cursor: 'pointer' }} />
             <Box
               sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}
               className={styles.pageBox}
@@ -210,7 +214,7 @@ function ResponsiveAppBar() {
                     </Typography>
                   </MenuItem>
                   <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography textAlign="center" sx={{ color: 'red' }} onClick={logout}>
+                    <Typography textAlign="center" sx={{ color: 'red', width: '100%' }} onClick={logout}>
                       로그아웃
                     </Typography>
                   </MenuItem>

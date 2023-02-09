@@ -1,29 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { ResponseInterface } from '../../containers/Funding/FundingDetailContainer';
 import styles from './FundSummary.module.scss';
 import TeamInfo from './TeamInfoCard';
 
-export interface ResponseInterface {
-  id: number;
-  title: string;
-  start: string;
-  end: string;
-  postDate: string;
-  thumbnail: string;
-  category: string;
-  content: string;
-  targetMoneyListLevelThree: targetType;
-  currentFundingAmount: string;
-  wishCount: number;
-  fundingDescription: string;
-}
-type targetType = {
-  amount?: string;
-  targetMoneyType?: string;
-  description?: string;
-};
-
 export function FundSummary(board: ResponseInterface) {
-  const { title, start, end, content, targetMoneyListLevelThree, thumbnail, fundingDescription, currentFundingAmount } = board;
+  const { title, startDate, endDate, content, targetMoneyListLevelThree, thumbnail, fundingDescription, currentFundingAmount, team } = board;
 
   const sub = (fundingDescription: string) => {
     if (fundingDescription.length > 50) {
@@ -55,10 +36,10 @@ export function FundSummary(board: ResponseInterface) {
             </div>
           </div>
           <div className={styles.teamArea}>
-            <TeamInfo />
+            <TeamInfo {...team} />
           </div>
           <p className={styles.fundPeriod}>
-            모금 기간 {start} ~ {end}
+            모금 기간 {startDate} ~ {endDate}
           </p>
         </div>
       </div>

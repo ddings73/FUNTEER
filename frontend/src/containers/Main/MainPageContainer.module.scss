@@ -39,7 +39,7 @@
   background-color: #060416;
   position: relative;
   min-width: 100%;
-  min-height: 500vh;
+  min-height: 800vh;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -52,7 +52,7 @@
   background-color: #0b0627;
   position: relative;
   min-width: 100%;
-  min-height: 500vh;
+  min-height: 800vh;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -148,6 +148,33 @@
   height: auto;
   z-index: 100;
   overflow: visible !important;
+}
+.volunLists {
+  margin-top: 30%;
+  width: 80%;
+  height: auto;
+  z-index: 100;
+  overflow: visible !important;
+}
+.donate {
+  margin-top: 10%;
+  width: 100%;
+  height: auto;
+  z-index: 100;
+}
+.waveBack {
+  width: 100%;
+  height: auto;
+  position: relative;
+  z-index: 110;
+  position: absolute;
+}
+.waveBack2 {
+  position: absolute;
+  margin-top: 15%;
+  height: auto;
+  width: 100%;
+  z-index: 110;
 }
 
 .bannerImg {

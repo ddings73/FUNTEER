@@ -1,25 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { South } from '@mui/icons-material';
+import { Key, South } from '@mui/icons-material';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Viewer } from '@toast-ui/react-editor';
 import { height } from '@mui/system';
 import styles from './NoticeDetailContainer.module.scss';
 import { requestNoticeDetail } from '../../../api/admin';
-import { NoticeContainerItemType } from './NoticeContainer';
 
 export type NoticeDetailType = {
   id: string;
   title: string;
   content: string;
   localDate: string;
-  files: string[];
+  files: Map<string, string>[];
 };
 
 function NoticleDetailContainer() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { noticeId } = useParams();
 
   const data = location.state.data as NoticeDetailType;
 
@@ -35,6 +33,10 @@ function NoticleDetailContainer() {
     try {
       const response = await requestNoticeDetail(data.id);
       setNoticeDetail(response.data)
+      const ffff = response.data.files[0]
+      // console.log(ffff)
+      // console.log(ffff['pngwing.com (3).png'])      
+      // console.log(Object.keys(ffff))
     } catch (error) {
       console.error(error)
     }
@@ -57,12 +59,12 @@ function NoticleDetailContainer() {
           )}
         </div>
         <hr />
-
-        { NoticeDetail.files.map((file) => 
-          <div>
-          <a href={file}>{file}</a>
-          </div>
-        )}
+        <p className={styles['post-date']}>첨부파일</p>
+        { NoticeDetail.files.map((file) => (
+  
+        <a href={Object.values(file)[0]}>{Object.keys(file)[0]}</a>
+        
+        ))}
         <button type="button" className={styles.back} onClick={() => navigate(-1)}>
           {'< 목록으로'}
         </button>

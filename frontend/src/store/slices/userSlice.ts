@@ -6,12 +6,14 @@ export interface UserStateInterface {
   isLogin: boolean;
   userType: string;
   userId: string;
+  username: string;
 }
 
 const initialState: UserStateInterface = {
   isLogin: false,
   userType: '',
   userId: '',
+  username: '',
 };
 
 export const userSlice = createSlice({
@@ -22,6 +24,7 @@ export const userSlice = createSlice({
       state.isLogin = action.payload.isLogin;
       state.userType = action.payload.userType;
       state.userId = action.payload.userId;
+      state.username = action.payload.username;
     },
     setUserType: (state, action: PayloadAction<string>) => {
       state.userType = action.payload;
@@ -30,6 +33,7 @@ export const userSlice = createSlice({
       state.isLogin = false;
       state.userType = '';
       state.userId = '';
+      state.username = '';
     },
   },
 });
