@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ChargeRepository extends JpaRepository<Charge, Long> {
 	Charge findByPayImpUid(String impUid);
 
-	List<Charge> findAllByPossibleRefund(boolean b);
+	List<Charge> findAllByPossibleRefund(int b);
 }

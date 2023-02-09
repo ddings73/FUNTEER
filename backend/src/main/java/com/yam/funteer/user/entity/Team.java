@@ -29,10 +29,12 @@ public class Team extends User{
         super.signOut(UserType.TEAM_RESIGN);
     }
 
-    public void update(Attach profile, Attach banner, String description) {
-        super.updateProfile(profile);
-        this.banner = banner;
+    public void updateDescription(String description) {
         this.description = description;
+    }
+
+    public void updateBanner(Attach banner){
+        this.banner = banner;
     }
 
     public void addTotalFundingAmount(Long amount) {

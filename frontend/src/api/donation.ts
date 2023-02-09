@@ -79,7 +79,7 @@ export const requestAdminDonationList = async (size: number) => {
 export const requestNextAdminDonationList = async (currentPage: number, size: number) => {
   console.log(currentPage, size);
 
-  const response = await http.get(`donation/?page=${currentPage + 1}&size=${size}`);
+  const response = await http.get(`donation/list?page=${currentPage + 1}&size=${size}`);
   return response;
 };
 

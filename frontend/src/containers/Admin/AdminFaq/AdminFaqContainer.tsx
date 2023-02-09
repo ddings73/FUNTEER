@@ -12,8 +12,14 @@ function AdminFaqContainer() {
   const [faqList, setFaqList] = useState<FaqElementType[]>([]);
   const navigate=useNavigate();
 
-  const onClickFaqItemHandler = () => {
+  const onClickFaqItemHandler = (id:number) => {
     console.log('Faq 관리 상세 페이지 이동');
+    navigate(`../../cc/faq/${id}`, {
+      state: {
+        id,
+      }
+    })
+
   };
 
   const onClickFaqRegister=()=>{
@@ -54,7 +60,7 @@ function AdminFaqContainer() {
           <li>
             <p>{data.id}</p>
           </li>
-          <button type="button" className={styles['title-col-btn']} onClick={onClickFaqItemHandler}>
+          <button type="button" className={styles['title-col-btn']} onClick={(e)=>onClickFaqItemHandler(data.id)}>
             <li>
               <p>{data.title}</p>
             </li>

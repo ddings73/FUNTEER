@@ -121,7 +121,7 @@ public class FundingServiceImpl implements FundingService{
 		List<PostHashtag> byHashtag = postHashtagRepository.findByHashtagId(hashtagId);
 		List<Funding> posts = new ArrayList<>();
 		for (PostHashtag postHashtag : byHashtag) {
-			Optional<Funding> funding = fundingRepository.findById(postHashtag.getPost().getId());
+			Optional<Funding> funding = fundingRepository.findByFundingId(postHashtag.getPost().getId());
 			posts.add(funding.get());
 		}
 		List<FundingListResponse> collect = posts.stream().map(m -> FundingListResponse.from(m)).collect(Collectors.toList());
@@ -295,17 +295,17 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingDetailResponse findFundingById(Long id) {
-		Funding funding = fundingRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());
+		Funding funding = fundingRepository.findByFundingId(id).orElseThrow(() -> new IllegalArgumentException());
 		FundingDetailResponse fundingDetailResponse = FundingDetailResponse.from(funding);
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
 		fundingDetailResponse.setWishCount(wishCount);
 
 		// 목표금액
-		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
+		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_ONE));
-		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
+		fundingDetailResponse.setTargetMoneyListLevelTwo(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_TWO));
-		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
+		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_THREE));
 
 		return fundingDetailResponse;
@@ -313,7 +313,7 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingDetailResponse updateFunding(Long fundingId, MultipartFile thumbnail, FundingRequest data) throws Exception {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(() -> new FundingNotFoundException());
 
 		LocalDate endDate = LocalDate.parse(data.getEndDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
@@ -372,7 +372,7 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public void deleteFunding(Long fundingId) throws FundingNotFoundException {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new FundingNotFoundException());
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(() -> new FundingNotFoundException());
 		awsS3Uploader.delete("thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
 		fundingRepository.delete(funding);
 		postRepository.delete(funding);
@@ -415,15 +415,15 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingReportResponse findFundingReportById(Long fundingId) {
-		Report byFundingId = reportRepository.findByFundingId(fundingId);
+		Report byFundingId = reportRepository.findByFundingFundingId(fundingId);
 		FundingReportResponse fundingReport = FundingReportResponse.from(byFundingId);
 		return fundingReport;
 	}
 
 	@Override
 	public FundingReportResponse updateFundingReport(Long fundingId, FundingReportRequest data) {
-		Report report = reportRepository.findByFundingId(fundingId);
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Report report = reportRepository.findByFundingFundingId(fundingId);
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 
 		awsS3Uploader.delete("reports/" + fundingId + "/", report.getReceipts().getPath());
 		attachRepository.delete(report.getReceipts());
@@ -462,7 +462,7 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public void createFundingComment(Long fundingId, FundingCommentRequest data) {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		Long userId = SecurityUtil.getCurrentUserId();
 		Member member = memberRepository.findById(userId).orElseThrow();
 
@@ -479,7 +479,7 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public void takeFunding(Long fundingId, TakeFundingRequest data) {
 
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow(() -> new IllegalArgumentException());
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(() -> new IllegalArgumentException());
 
 		Long memberId = SecurityUtil.getCurrentUserId();
 		Member member = memberRepository.findById(memberId).orElseThrow();
