@@ -37,7 +37,7 @@ public class MemberListResponse {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	private static class MemberInfo {
-		private Long userId;
+		private Long id;
 		private String name;
 		private String nickname;
 		private String profileImgUrl;
@@ -48,7 +48,7 @@ public class MemberListResponse {
 
 		public static MemberInfo of(Member member){
 			MemberInfo memberInfo = MemberInfo.builder()
-					.userId(member.getId())
+					.id(member.getId())
 					.name(member.getName())
 					.nickname(member.getNickname())
 					.phone(member.getPhone())

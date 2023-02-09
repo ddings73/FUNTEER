@@ -40,7 +40,7 @@ public class UserExceptionHandler {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<BaseResponseBody> handleBadCredentialsException(BadCredentialsException ex){
         log.info("BadCredentialsException => {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body(BaseResponseBody.of("아이디 혹은 비밀번호가 다릅니다."));
     }
 

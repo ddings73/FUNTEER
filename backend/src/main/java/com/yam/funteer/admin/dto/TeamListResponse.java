@@ -34,7 +34,7 @@ public class TeamListResponse {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	public static class TeamInfo{
-		private Long userId;
+		private Long id;
 		private String name;
 		private String email;
 		private String phone;
