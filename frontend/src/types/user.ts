@@ -55,20 +55,23 @@ export interface changeUserInfoInterface {
 }
 
 export interface AdminMemberInterface {
-  userId: number;
+  id: number;
   email: string;
   money: number;
   name: string;
   nickname: string;
   phone: string;
   profileImgUrl: string;
+  userType: string;
 }
 
 export interface AdminTeamInterface {
   email: string;
   name: string;
-  userId: number;
+  id: number;
   phone: string;
   performFileUrl: string;
   vmsFileUrl: string;
+  userType: string;
+  lastActivity: string;
 }

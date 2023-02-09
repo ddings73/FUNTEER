@@ -19,7 +19,7 @@ import { styled } from '@mui/material/styles';
 import { fontWeight } from '@mui/system';
 import { log } from 'console';
 import styles from './CreateFundingContainer.module.scss';
-import { requestCreateFunding, requestUploadImage } from '../../api/funding';
+import { requestCreateFunding, requestRegisterThumbnail, requestUploadImage } from '../../api/funding';
 import { FundingInterface, amountLevelType, descriptionType } from '../../types/funding';
 import defaultThumbnail from '../../assets/images/default-profile-img.svg';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
@@ -51,7 +51,7 @@ function CreateFundingContainer() {
   const navigate = useNavigate();
   const editorRef = useRef<ToastEditor>(null);
   const [fundingData, setFundingData] = useState<FundingInterface>({
-    thumbnail: new Blob(),
+    thumbnail: "",
     title: '',
     fundingDescription: '',
     categoryId: 0,
@@ -111,12 +111,27 @@ function CreateFundingContainer() {
     }
   };
 
+  // 썸네일 S3등록
+  const uploadS3Thumbnail = async(file:Blob)=>{
+    try{
+      const {data} = await requestRegisterThumbnail(file)
+      setFundingData({...fundingData,thumbnail:data})
+    }
+    catch(error){
+      console.log(error)
+    }
+
+  }
+
+  // 썸네일 파일 핸들링
   const onFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       return;
     }
     const file = e.target.files[0];
-    setFundingData({ ...fundingData, thumbnail: file });
+
+    uploadS3Thumbnail(file)
+    // setFundingData({ ...fundingData, thumbnail: file });
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {

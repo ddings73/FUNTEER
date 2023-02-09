@@ -1,34 +1,3 @@
-#header {
-  color: #ffffff;
-  background-color: #333333;
-  padding: 0 14px 0 0;
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 999999;
-  min-width: 400px !important;
-}
-
-.toolbar {
-  min-height: 40px !important;
-}
-
-#titleContent {
-  max-width: 100px;
-  background-color: #494949;
-  margin: 5px -18px;
-  padding: 0px 15px;
-  font-size: 16px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.buttonsContent {
-  height: 40px !important;
-  text-align: center;
-  margin: auto;
-  min-width: 400px;
-}
 .navButton {
   height: 40px !important;
   width: 40px !important;
@@ -43,7 +12,7 @@
 }
 
 .bounds {
-  background-color: #494949;
+  background-color: #ffff;
   overflow: hidden;
   position: absolute;
   left: 0;
@@ -53,6 +22,7 @@
   height: inherit;
   min-width: 400px !important;
   width: inherit;
+  margin: 0 50px 50px 50px;
 }
 
 /*!
@@ -78,6 +48,8 @@
   font-size: 100%;
   font-family: Arial, Helvetica, sans-serif;
   vertical-align: baseline;
+}
+.chat-box {
 }
 
 .OT_dialog-centering {
@@ -738,11 +710,7 @@
 .OT_audio-level-meter__value {
   position: absolute;
   border-radius: 50%;
-  background-image: radial-gradient(
-    circle,
-    rgba(151, 206, 0, 1) 0%,
-    rgba(151, 206, 0, 0) 100%
-  );
+  background-image: radial-gradient(circle, rgba(151, 206, 0, 1) 0%, rgba(151, 206, 0, 0) 100%);
 }
 
 .OT_audio-level-meter.OT_mode-off {

@@ -1,0 +1,58 @@
+@import '../../../styles/reset.scss';
+@import '../../../styles/variable.scss';
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  font-family: NanumSquare !important;
+
+  .contents {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1440px;
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 3rem 0;
+    }
+
+    .label-div {
+      display: flex;
+      align-items: center;
+      width: 710px;
+      margin: 1rem 0;
+      font-size: 1.25rem;
+
+      & img {
+        font-size: 7px;
+        margin-left: 0.5rem;
+        padding: 0 0 0.3rem 0;
+      }
+    }
+
+    .email-content {
+      width: 700px;
+      height: 400px;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 5px;
+      font-family: NanumSquareRound;
+    }
+
+    .btn-div {
+      display: flex;
+      justify-content: space-around;
+
+      .submit {
+        background-color: $primary;
+        margin: 0 0.5rem;
+        font-family: NanumSquareRound;
+      }
+    }
+  }
+}

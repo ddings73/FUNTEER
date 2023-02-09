@@ -46,9 +46,15 @@ public class DonationController {
 	}
 
 	@ApiOperation(value = "도네이션 리스트")
-	@GetMapping(value={"/donation/list","/admin/donation"})
-	public ResponseEntity<?> donationGetList( @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+	@GetMapping(value={"/donation/list"})
+	public ResponseEntity<?> donationGetList( @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "8") int size) {
 		return ResponseEntity.ok(donationService.donationGetList(page,size));
+	}
+
+	@ApiOperation(value = "도네이션 관리자 리스트")
+	@GetMapping("/admin/donation")
+	public ResponseEntity<?> donationGetAdminList( @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+		return ResponseEntity.ok(donationService.donationGetAdminList(page,size));
 	}
 
 	@ApiOperation(value = "도네이션 상세")

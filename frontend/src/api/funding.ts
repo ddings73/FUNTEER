@@ -31,6 +31,22 @@ export const requestCreateFunding = async (fundingData: FundingInterface) => {
 };
 
 /**
+ * 펀딩 수정 API
+ * @method PUT
+ * @param {FundingInterface} fundingData
+ */
+
+export const requestModifyFunding = async (fundIdx: string, fundingData: FundingInterface) => {
+  const formData = new FormData();
+
+  formData.append('thumbnail', fundingData.thumbnail);
+  formData.append('data', new Blob([JSON.stringify(fundingData)], { type: 'application/json' }));
+  const res = await http.put(`funding/${fundIdx}`, formData);
+  return res;
+}
+
+
+/**
  * 펀딩 리스트 호출 API
  * @method GET
  */
@@ -95,6 +111,15 @@ export const requestWish = async (fundingId?: string) => {
 };
 
 /**
+ * 펀딩 썸테일 등록
+ */
+export const requestRegisterThumbnail = async(file:Blob)=>{
+  const formData = new FormData()
+  formData.append("file",file)
+  const response  = await http.post("funding/upload/thumbnail",formData)
+  return response
+}
+/**
  * @name 펀딩응원댓글
  * @method POST
  * @param {commentType} commentData
@@ -123,4 +148,3 @@ export const requestNextCommentList = async (currentPage: number, fundingId?: st
   const response = await http.get(`funding/${fundingId}/?page=${currentPage + 1}&?sort=${sort}`);
   return response;
 };
-

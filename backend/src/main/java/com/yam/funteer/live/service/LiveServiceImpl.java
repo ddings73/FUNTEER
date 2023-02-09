@@ -25,23 +25,14 @@ import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -129,6 +120,7 @@ public class LiveServiceImpl implements LiveService{
                     // 녹화 종료
                     String sessionId = session.getSessionId();
                     if(sessionRecordings.containsKey(sessionId)) {
+                        log.info("녹화 저장 시작");
                         Long teamId = SecurityUtil.getCurrentUserId();
                         Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
 

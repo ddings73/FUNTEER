@@ -14,11 +14,12 @@ import org.springframework.security.core.GrantedAuthority;
 @RequiredArgsConstructor
 public enum UserType implements TypeModel, GrantedAuthority {
     NORMAL(ROLES.USER, "일반", OpenViduRole.SUBSCRIBER),
+    NORMAL_RESIGN(ROLES.USER,"일반_탈퇴", OpenViduRole.SUBSCRIBER),
     KAKAO(ROLES.USER,"카카오", OpenViduRole.SUBSCRIBER),
     TEAM_WAIT(ROLES.USER,"단체_대기", OpenViduRole.PUBLISHER),
     TEAM(ROLES.USER,"단체_승인", OpenViduRole.PUBLISHER),
-    NORMAL_RESIGN(ROLES.USER,"일반_탈퇴", OpenViduRole.SUBSCRIBER),
     TEAM_RESIGN(ROLES.USER,"단체_탈퇴", OpenViduRole.PUBLISHER),
+    TEAM_EXPIRED(ROLES.USER, "단체_기간만료", OpenViduRole.PUBLISHER),
     ADMIN(ROLES.ADMIN,"관리자", OpenViduRole.MODERATOR);
 
 

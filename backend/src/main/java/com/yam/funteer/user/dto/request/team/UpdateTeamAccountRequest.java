@@ -31,4 +31,8 @@ public class UpdateTeamAccountRequest extends BaseUserRequest {
 	public Optional<MultipartFile> getPerformFile() {
 		return Optional.ofNullable(performFile);
 	}
+
+	public boolean hasFile() {
+		return vmsFile != null || performFile != null;
+	}
 }
