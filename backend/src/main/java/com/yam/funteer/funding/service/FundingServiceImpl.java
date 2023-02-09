@@ -158,7 +158,7 @@ public class FundingServiceImpl implements FundingService{
 
 
 	@Override
-	public FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws
+	public FundingDetailResponse createFunding(FundingRequest data) throws
 		IOException,
 		NotAuthenticatedTeamException {
 		// 인증 완료된 team 아니면 펀딩 작성 못함
@@ -191,6 +191,7 @@ public class FundingServiceImpl implements FundingService{
 			.regDate(LocalDateTime.now())
 			.hit(0)
 			.currentFundingAmount(0L)
+			.thumbnail(data.getThumbnail())
 			.postGroup(PostGroup.FUNDING)
 			.postType(PostType.FUNDING_WAIT)
 			.fundingDescription(data.getFundingDescription())
@@ -199,9 +200,9 @@ public class FundingServiceImpl implements FundingService{
 		Funding savedPost = fundingRepository.save(funding);
 
 		// s3 변환
-		String thumbnailUrl = awsS3Uploader.upload(thumbnail, "thumbnails/" + savedPost.getId());
-
-		savedPost.setThumbnail(thumbnailUrl);
+		// String thumbnailUrl = awsS3Uploader.upload(thumbnail, "thumbnails/" + savedPost.getId());
+		//
+		// savedPost.setThumbnail(thumbnailUrl);
 
 		addTargetMoney(data, savedPost);
 
@@ -316,7 +317,7 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public FundingDetailResponse updateFunding(Long fundingId, MultipartFile thumbnail, FundingRequest data) throws Exception {
+	public FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception {
 		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(() -> new FundingNotFoundException());
 
 		LocalDate endDate = LocalDate.parse(data.getEndDate(),
@@ -326,8 +327,7 @@ public class FundingServiceImpl implements FundingService{
 
 
 			// 기존 파일 삭제, 새로운 파일 추가
-			awsS3Uploader.delete("thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
-			String thumbnailUrl = awsS3Uploader.upload(thumbnail, "thumbnails/"+fundingId);
+			awsS3Uploader.delete("thumbnails/", funding.getThumbnail());
 
 			Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
 
@@ -351,7 +351,7 @@ public class FundingServiceImpl implements FundingService{
 			funding.setContent(data.getContent());
 			funding.setTitle(data.getTitle());
 			funding.setCategory(category);
-			funding.setThumbnail(thumbnailUrl);
+			funding.setThumbnail(data.getThumbnail());
 			funding.setPostType(PostType.FUNDING_WAIT);
 			funding.setRegDate(LocalDateTime.now());
 
@@ -379,7 +379,7 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public void deleteFunding(Long fundingId) throws FundingNotFoundException {
 		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(() -> new FundingNotFoundException());
-		awsS3Uploader.delete("thumbnails/" + String.valueOf(fundingId) + "/", funding.getThumbnail());
+		awsS3Uploader.delete("thumbnails/" , funding.getThumbnail());
 		fundingRepository.delete(funding);
 		postRepository.delete(funding);
 	}
