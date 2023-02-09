@@ -101,15 +101,29 @@ function FundingListContainer() {
   };
   const onToggleCategory = async (categoryId: number) => {
     try {
-      console.log(categoryId);
+      if (categoryId === selectCategory) {
+        setSelectCategory(-1);
+        setIsLoading(true);
+        const { data } = await requestFundingList(size);
+        setFundingList([...data.fundingListResponses.content]);
+        setSuccessFundingCount(data.successFundingCount);
+        setTotalFundingAmount(data.totalFundingAmount);
+        setTotalFundingCount(data.totalFundingCount);
+        setCurrentPage(data.fundingListResponses.number);
+        setIsLastPAge(data.fundingListResponses.last);
+        setIsLoading(false);
 
-      setSelectCategory(categoryId);
-      setIsLoading(true);
-      const response = await requestCategoryFundingList(categoryId);
-      setFundingList([...response.data.content]);
-      setTotalFundingCount(response.data.numberOfElements);
-      setIsLoading(false);
-      console.log(response);
+      } else {
+        setSelectCategory(categoryId);
+        console.log(categoryId);
+        setIsLoading(true);
+        const response = await requestCategoryFundingList(categoryId);
+        setFundingList([...response.data.content]);
+        setTotalFundingCount(response.data.numberOfElements);
+        setIsLoading(false);
+        console.log(response);
+        
+      } 
     } catch (error) {
       console.log(error);
     }
