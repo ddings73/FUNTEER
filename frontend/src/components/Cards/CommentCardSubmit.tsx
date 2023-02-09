@@ -15,7 +15,7 @@ export function CommentCardSubmit() {
   const fetchData = async () => {
     try {
       const response = await postFundingComment(comment, fundIdx);
-      console.log('res', response);
+      console.log('댓글res', response);
     } catch (error) {
       console.log(error);
     }

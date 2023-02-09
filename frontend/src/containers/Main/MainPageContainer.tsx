@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Parallax, ParallaxLayer } from '@react-spring/parallax';
 import { useAppSelector } from '../../store/hooks';
@@ -21,6 +21,7 @@ export function MainPageContainer() {
 
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
+    // console.log(scrollPosition);
     return () => {
       window.removeEventListener('scroll', updateScroll);
     };

@@ -2,13 +2,13 @@ import React from 'react';
 import HomeIcon from '@mui/icons-material/Home';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
+import { Link } from 'react-router-dom';
 import styles from './TeamInfoCard.module.scss';
 import ProfileSvg from '../../assets/images/default-profile-img.svg';
 import { teamType } from '../../containers/Funding/FundingDetailContainer';
 
 export function TeamInfo(team: teamType) {
-  const { name, profileImgUrl, email, phone } = team;
-
+  const { name, profileImgUrl, email, phone, id } = team;
   const handleCopyClipBoard = async (text: string, div: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -29,13 +29,25 @@ export function TeamInfo(team: teamType) {
         </div>
       </div>
       <div className={styles.buttonGroup}>
-        <button className={styles.contact} type="button" style={{ margin: '0 5px', cursor: 'pointer', border: 'none', background: 'transparent' }} >
-          <HomeIcon className={styles.buttonInfo} />
+        <button className={styles.contact} type="button" style={{ margin: '0 5px', cursor: 'pointer', border: 'none', background: 'transparent' }}>
+          <Link to={`/team/${id}`}>
+            <HomeIcon className={styles.buttonInfo} />
+          </Link>
         </button>
-        <button className={styles.contact} type="button" style={{ margin: '0 5px', cursor: 'pointer', border: 'none', background: 'transparent' }} onClick={( )=>(handleCopyClipBoard(email, '이메일'))}>
+        <button
+          className={styles.contact}
+          type="button"
+          style={{ margin: '0 5px', cursor: 'pointer', border: 'none', background: 'transparent' }}
+          onClick={() => handleCopyClipBoard(email, '이메일')}
+        >
           <EmailIcon className={styles.buttonInfo} />
         </button>
-        <button className={styles.contact} type="button" style={{ margin: '0 5px', cursor: 'pointer', border: 'none', background: 'transparent' }} onClick={( )=>(handleCopyClipBoard(phone, '전화번호'))}>
+        <button
+          className={styles.contact}
+          type="button"
+          style={{ margin: '0 5px', cursor: 'pointer', border: 'none', background: 'transparent' }}
+          onClick={() => handleCopyClipBoard(phone, '전화번호')}
+        >
           <PhoneInTalkIcon className={styles.buttonInfo} />
         </button>
       </div>

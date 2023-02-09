@@ -125,7 +125,7 @@
         background: transprgb(255, 189, 104);
       }
       & .Likebox {
-        margin-left: 2%;
+        margin-left: 1%;
         display: flex;
         flex-direction: column;
         text-align: left;
@@ -181,13 +181,20 @@
   font-family: 'nanumsquare';
   font-weight: 600;
 }
-
+.mainFooterLikeButtonClicked,
 .mainFooterLikeButton {
+  width: 85px;
   height: 85px;
   background: transparent;
   border: none;
+  transition: 0.5s;
   cursor: pointer;
   & :active {
     scale: 0.9;
   }
+}
+
+.mainFooterLikeButtonClicked {
+  filter: grayscale(1);
+  opacity: 0.5;
 }

@@ -4,7 +4,7 @@ import styles from './FundSummary.module.scss';
 import TeamInfo from './TeamInfoCard';
 
 export function FundSummary(board: ResponseInterface) {
-  const { title, start, end, content, targetMoneyListLevelThree, thumbnail, fundingDescription, currentFundingAmount, team } = board;
+  const { title, startDate, endDate, content, targetMoneyListLevelThree, thumbnail, fundingDescription, currentFundingAmount, team } = board;
 
   const sub = (fundingDescription: string) => {
     if (fundingDescription.length > 50) {
@@ -39,7 +39,7 @@ export function FundSummary(board: ResponseInterface) {
             <TeamInfo {...team} />
           </div>
           <p className={styles.fundPeriod}>
-            모금 기간 {start} ~ {end}
+            모금 기간 {startDate} ~ {endDate}
           </p>
         </div>
       </div>

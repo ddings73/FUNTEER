@@ -52,6 +52,11 @@
       }
       & .linkTo {
         cursor: pointer;
+        text-decoration: none;
+        &:hover {
+          color: $primary;
+          font-weight: 500;
+        }
       }
     }
     & .carouselWrapper {

@@ -89,17 +89,37 @@ export const requestCategoryFundingList = async (categoryId: number) => {
  * @method PUT
  */
 export const requestWish = async (fundingId?: string) => {
-  const res = await http.put(`member/like/?fundingId=${fundingId}`);
+  const res = await http.put(`member/like/${fundingId}`);
   console.log(res);
   return res;
 };
 
-/*
- * 펀딩 응원 댓글
+/**
+ * @name 펀딩응원댓글
  * @method POST
  * @param {commentType} commentData
  */
 export const postFundingComment = async (commentData: string, fundingId?: string) => {
   const res = await http.post(`funding/${fundingId}/comment`, { content: commentData });
   return res;
+};
+
+/**
+ * @name 펀딩댓글리스트호출API
+ * @method GET
+ */
+export const requestCommentList = async (fundingId?: string, sort?: string) => {
+  const res = await http.get(`funding/${fundingId}/?sort=${sort}`); // funding/1/size/2
+  console.log('댓글호출', res);
+
+  return res;
+};
+
+/**
+ * @name 다음댓글리스트호출
+ * @returns
+ */
+export const requestNextCommentList = async (currentPage: number, fundingId?: string, sort?: string) => {
+  const response = await http.get(`funding/${fundingId}/?page=${currentPage + 1}&?sort=${sort}`);
+  return response;
 };

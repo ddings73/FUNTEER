@@ -1,21 +1,24 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import axios from 'axios';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { useParams } from 'react-router-dom';
+import { useInView } from 'react-intersection-observer';
+import { CircularProgress } from '@mui/material';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
-import { requestFundingDetail } from '../../api/funding';
+import { requestCommentList, requestFundingDetail, requestNextCommentList } from '../../api/funding';
 import TeamInfo from '../../components/Cards/TeamInfoCard';
 import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
 import CommentCard from '../../components/Cards/CommentCard';
+import CommentSkeleton from '../../components/Skeleton/CommentSkeleton';
 import './FundingDetailContainer.scss';
 
 export interface ResponseInterface {
   id: number;
   title: string;
-  start: string;
-  end: string;
+  startDate: string;
+  endDate: string;
   postDate: string;
   thumbnail: string;
   category: string;
@@ -34,6 +37,7 @@ export type commentType = {
   regDate: string;
 };
 export type teamType = {
+  id: number;
   email: string;
   name: string;
   phone: string;
@@ -61,8 +65,8 @@ export function FundingDetailContainer() {
   const [board, setBoard] = useState<ResponseInterface>({
     id: 0,
     title: '',
-    start: '',
-    end: '',
+    startDate: '',
+    endDate: '',
     postDate: '',
     thumbnail: '',
     category: '',
@@ -73,13 +77,18 @@ export function FundingDetailContainer() {
     wishCount: 0,
     comments: [],
     team: {
+      id: 0,
       email: '',
       name: '',
       phone: '',
       profileImgUrl: '',
     },
   });
+  // 게시물 좋아요
+  const [isLiked, setIsLiked] = useState<boolean>(false);
+
   const handleLikeClick = () => {
+    setIsLiked(!isLiked);
     console.log('눌림');
     console.log(board.comments);
   };
@@ -91,7 +100,6 @@ export function FundingDetailContainer() {
       console.log('res: ', response);
       console.log('data res: ', response.data);
       setBoard(response.data);
-      setCommentList([...board.comments]);
     } catch (error) {
       console.log(error);
     }
@@ -108,7 +116,55 @@ export function FundingDetailContainer() {
     setIsChecked(!isChecked);
   }
 
+  // 무한 스크롤
+  // 항목 리스트 초기화
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [isLastPage, setIsLastPage] = useState<boolean>(false);
+
+  const initCommentList = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await requestCommentList(fundIdx, 'regDate,DESC');
+      setCommentList([...data.comments.content]);
+      setCurrentPage(data.comments.number);
+      setIsLastPage(data.comments.last);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const [nextLoading, setNextLoading] = useState<boolean>(false);
+  // 한번에 불러올 게시글 수
+  const size = 5;
+  const nextCommentList = async () => {
+    try {
+      console.log('here comes');
+      setNextLoading(true);
+      const { data } = await requestNextCommentList(currentPage, fundIdx, 'regDate,DESC');
+      setCommentList([...commentList, ...data.comments.content]);
+      setCurrentPage(data.comments.number);
+      setIsLastPage(data.comments.last);
+      setNextLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const [ref, inView] = useInView();
+
+  useEffect(() => {
+    initCommentList();
+  }, []);
+
+  useEffect(() => {
+    if (inView && !isLastPage) {
+      nextCommentList();
+    }
+  }, [inView]);
+
   console.log('commentList', commentList);
+  console.log(isLastPage);
   return (
     <div className={styles.bodyContainer}>
       <div className={styles.banner}>
@@ -136,9 +192,8 @@ export function FundingDetailContainer() {
           <div dangerouslySetInnerHTML={{ __html: board.content }} className={styles.mainContentInner} />
         </div>
         <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
-        <div className={styles.teamInfoCard}>
-          {/* <TeamInfo {...board.team} /> */}
-          123
+        <div className={styles.teamInfoCard} style={{ width: '90%', marginLeft: '6%' }}>
+          <TeamInfo {...board.team} />
         </div>
         <DetailArcodian />
 
@@ -148,7 +203,7 @@ export function FundingDetailContainer() {
           <p className={styles.attachItem}>증명서.pdf</p>
         </div>
         <div className={styles.mainFooterLikeWrapper}>
-          <button className={styles.mainFooterLikeButton} onClick={handleLikeClick} type="button">
+          <button className={isLiked ? styles.mainFooterLikeButton : styles.mainFooterLikeButtonClicked} onClick={handleLikeClick} type="button">
             <FavoriteIcon className={styles.mainFooterLike} />
           </button>
           <div className={styles.Likebox}>
@@ -173,18 +228,24 @@ export function FundingDetailContainer() {
           </div>
         </div>
         <div className={styles.mainComments}>
-          {commentList.reverse().map((comment) => {
-            return (
-              <CommentCard
-                memberNickName={comment.memberNickName}
-                content={comment.content}
-                memberProfileImg={comment.memberProfileImg}
-                regDate={comment.regDate}
-                key={comment.regDate}
-              />
-            );
-          })}
+          {isLoading ? (
+            <CommentSkeleton />
+          ) : (
+            commentList.map((comment) => {
+              return (
+                <CommentCard
+                  memberNickName={comment.memberNickName}
+                  content={comment.content}
+                  memberProfileImg={comment.memberProfileImg}
+                  regDate={comment.regDate}
+                  key={comment.regDate}
+                />
+              );
+            })
+          )}
+          {nextLoading ? <CircularProgress color="warning" /> : ''}
         </div>
+        {currentPage >= 0 ? <div ref={ref} /> : ''}
       </div>
     </div>
   );
