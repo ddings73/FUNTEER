@@ -7,8 +7,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.post.entity.PostHashtag;
+import com.yam.funteer.post.repository.CommentRepository;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
 
 import lombok.AllArgsConstructor;
@@ -21,6 +24,8 @@ import lombok.Getter;
 @Builder
 @Getter
 public class FundingDetailResponse {
+
+	private final CommentRepository commentRepository;
 
 	private TeamAccountResponse team;
 
@@ -47,7 +52,7 @@ public class FundingDetailResponse {
 
 	private String thumbnail;
 
-	private Optional<List<CommentResponse>> comments;
+	private Optional<Page<CommentResponse>> comments;
 
 	private String currentFundingAmount;
 
@@ -72,12 +77,13 @@ public class FundingDetailResponse {
 			.fundingDescription(funding.getFundingDescription())
 			.build();
 
-		funding.getComments().ifPresent(comments -> {
-			Optional<List<CommentResponse>> collect = Optional.of(comments.stream()
-				.map(comment -> CommentResponse.from(comment))
-				.collect(Collectors.toList()));
-			response.setComments(collect);
-		});
+		// funding.getComments().ifPresent(comments -> {
+		// 	Optional<List<CommentResponse>> collect = Optional.of(comments.stream()
+		// 		.map(comment -> CommentResponse.from(comment))
+		// 		.collect(Collectors.toList()));
+		// 	response.setComments(collect);
+		// });
+
 
 		funding.getPostHashtags().ifPresent(postHashtags -> {
 			Optional<HashtagResponse> hashtagList = Optional.of(HashtagResponse.from(postHashtags));

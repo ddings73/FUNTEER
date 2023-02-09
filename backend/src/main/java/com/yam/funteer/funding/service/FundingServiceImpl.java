@@ -34,6 +34,7 @@ import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
 import com.yam.funteer.funding.dto.request.TargetMoneyDetailRequest;
 import com.yam.funteer.funding.dto.request.TargetMoneyRequest;
+import com.yam.funteer.funding.dto.response.CommentResponse;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
 import com.yam.funteer.funding.dto.response.FundingListPageResponse;
 import com.yam.funteer.funding.dto.response.FundingListResponse;
@@ -294,7 +295,7 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public FundingDetailResponse findFundingById(Long id) {
+	public FundingDetailResponse findFundingById(Long id, Pageable pageable) {
 		Funding funding = fundingRepository.findById(id).orElseThrow(() -> new IllegalArgumentException());
 		FundingDetailResponse fundingDetailResponse = FundingDetailResponse.from(funding);
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
@@ -307,6 +308,12 @@ public class FundingServiceImpl implements FundingService{
 			id, TargetMoneyType.LEVEL_TWO));
 		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_THREE));
+
+		Page<CommentResponse> collect = commentRepository.findAllByFundingId(id, pageable).map(m -> CommentResponse.from(m));
+		System.out.println(collect);
+		fundingDetailResponse.setComments(Optional.of(collect));
+		System.out.println(fundingDetailResponse);
+
 
 		return fundingDetailResponse;
 	}
