@@ -34,6 +34,7 @@ import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
 import com.yam.funteer.funding.dto.request.TargetMoneyDetailRequest;
 import com.yam.funteer.funding.dto.request.TargetMoneyRequest;
+import com.yam.funteer.funding.dto.response.CommentResponse;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
 import com.yam.funteer.funding.dto.response.FundingListPageResponse;
 import com.yam.funteer.funding.dto.response.FundingListResponse;
@@ -294,11 +295,12 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public FundingDetailResponse findFundingById(Long id) {
+	public FundingDetailResponse findFundingById(Long id, Pageable pageable) {
 		Funding funding = fundingRepository.findByFundingId(id).orElseThrow(() -> new IllegalArgumentException());
 		FundingDetailResponse fundingDetailResponse = FundingDetailResponse.from(funding);
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
 		fundingDetailResponse.setWishCount(wishCount);
+		Long tempId = funding.getId();
 
 		// 목표금액
 		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
@@ -308,6 +310,12 @@ public class FundingServiceImpl implements FundingService{
 		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_THREE));
 
+		Page<CommentResponse> collect = commentRepository.findAllByFundingId(tempId, pageable).map(m -> CommentResponse.from(m));
+		System.out.println(collect);
+		fundingDetailResponse.setComments(Optional.of(collect));
+		System.out.println(fundingDetailResponse);
+
+
 		return fundingDetailResponse;
 	}
 
@@ -316,7 +324,7 @@ public class FundingServiceImpl implements FundingService{
 		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(() -> new FundingNotFoundException());
 
 		LocalDate endDate = LocalDate.parse(data.getEndDate(),
-			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
 		if (funding.getPostType() == PostType.FUNDING_REJECT) {
 
@@ -340,7 +348,7 @@ public class FundingServiceImpl implements FundingService{
 			addPostHashtags(funding, hashtags);
 
 			LocalDate startDate = LocalDate.parse(data.getStartDate(),
-			DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+			DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
 			funding.setStartDate(startDate);
 			funding.setEndDate(endDate);
@@ -380,7 +388,7 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingReportResponse createFundingReport(Long fundingId, FundingReportRequest data) {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
 
 		Attach attach = Attach.builder()

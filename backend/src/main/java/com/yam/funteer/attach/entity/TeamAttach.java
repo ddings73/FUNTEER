@@ -37,8 +37,6 @@ public class TeamAttach {
 	@JoinColumn(name = "team_id")
 	private Team team;
 
-	private String rejectComment;
-
 	private boolean confirm;
 
 	public static TeamAttach of(Team team, Attach attach) {
@@ -53,10 +51,6 @@ public class TeamAttach {
 		this.attach.update(attach.getName(), attach.getPath());
 	}
 
-	public void reject(String comment) {
-		this.confirm = false;
-		this.rejectComment = comment;
-	}
 
 	public void submit() {
 		this.confirm = true;

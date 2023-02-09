@@ -31,6 +31,22 @@ export const requestCreateFunding = async (fundingData: FundingInterface) => {
 };
 
 /**
+ * 펀딩 수정 API
+ * @method PUT
+ * @param {FundingInterface} fundingData
+ */
+
+export const requestModifyFunding = async (fundIdx: string, fundingData: FundingInterface) => {
+  const formData = new FormData();
+
+  formData.append('thumbnail', fundingData.thumbnail);
+  formData.append('data', new Blob([JSON.stringify(fundingData)], { type: 'application/json' }));
+  const res = await http.put(`funding/${fundIdx}`, formData);
+  return res;
+}
+
+
+/**
  * 펀딩 리스트 호출 API
  * @method GET
  */

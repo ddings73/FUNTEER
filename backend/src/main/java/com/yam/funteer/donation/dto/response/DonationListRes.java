@@ -9,19 +9,22 @@ import lombok.Getter;
 
 @Getter
 public class DonationListRes {
+
 	private Long id;
 	private String title;
+	private String content;
+	private String targetAmount;
 	private PostType postType;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private Long targetMoney;
 
-	public DonationListRes(Donation donation){
-		this.id=donation.getDonationId();
-		this.title=donation.getTitle();
-		this.postType=donation.getPostType();
-		this.startDate=donation.getStartDate();
-		this.endDate=donation.getEndDate();
-		this.targetMoney=donation.getAmount();
+	public DonationListRes(Donation donation) {
+		this.id = donation.getDonationId();
+		this.title = donation.getTitle();
+		this.content = donation.getContent();
+		this.postType = donation.getPostType();
+		this.startDate = donation.getStartDate();
+		this.endDate = donation.getEndDate();
+		this.targetAmount = donation.getAmount().toString();
 	}
 }

@@ -1,27 +1,26 @@
 package com.yam.funteer.admin.service;
 
-import java.util.List;
-
 import org.springframework.data.domain.Pageable;
 
 import com.yam.funteer.admin.dto.MemberListResponse;
-import com.yam.funteer.admin.dto.TeamFileConfirmRequest;
+import com.yam.funteer.admin.dto.TeamConfirmRequest;
 import com.yam.funteer.admin.dto.TeamListResponse;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 
 public interface AdminService {
 
-	List<MemberListResponse> findMembersWithPageable(Pageable pageable);
+	MemberListResponse findMembersWithPageable(String keyword, UserType userType, Pageable pageable);
 
-	List<TeamListResponse> findTeamWithPageable(Pageable pageable);
+	TeamListResponse findTeamWithPageable(String keyword, UserType userType, Pageable pageable);
 
 	void resignMember(Long memberId);
 
 	void resignTeam(Long teamId);
 
-	void confirmVmsFile(Long teamId, TeamFileConfirmRequest request);
+	void acceptTeam(Long teamId);
 
-	void confirmPerformFile(Long teamId, TeamFileConfirmRequest request);
+	void rejectTeam(Long teamId, TeamConfirmRequest request);
 
 	void acceptFunding(Long fundingId);
 

@@ -10,15 +10,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.admin.dto.MemberListResponse;
-import com.yam.funteer.admin.dto.TeamFileConfirmRequest;
+import com.yam.funteer.admin.dto.TeamConfirmRequest;
 import com.yam.funteer.admin.dto.TeamListResponse;
-import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.entity.TeamAttach;
 import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.entity.Funding;
@@ -48,17 +48,21 @@ public class AdminServiceImpl implements AdminService{
 	private final BadgeService badgeService;
 
 	@Override
-	public List<MemberListResponse> findMembersWithPageable(Pageable pageable) {
-		Page<Member> memberPage = memberRepository.findAll(pageable);
-		List<MemberListResponse> memberList = memberPage.stream().map(MemberListResponse::of).collect(Collectors.toList());
-		return memberList;
+	public MemberListResponse findMembersWithPageable(String keyword, UserType userType, Pageable pageable) {
+		Page<Member> memberPage = userType == null
+			? memberRepository.findAllByNicknameContaining(keyword, pageable)
+			: memberRepository.findAllByNicknameContainingAndUserType(keyword, userType, pageable);
+
+		return MemberListResponse.of(memberPage);
 	}
 
 	@Override
-	public List<TeamListResponse> findTeamWithPageable(Pageable pageable) {
-		Page<Team> teamPage = teamRepository.findAll(pageable);
+	public TeamListResponse findTeamWithPageable(String keyword, UserType userType, Pageable pageable) {
+		Page<Team> teamPage = userType == null
+			? teamRepository.findAllByNameContaining(keyword, pageable)
+			: teamRepository.findAllByNameContainingAndUserType(keyword, userType, pageable);
 
-		List<TeamListResponse> teamList = teamPage.stream().map(team -> {
+		List<TeamListResponse.TeamInfo> list = teamPage.stream().map(team -> {
 			List<TeamAttach> teamAttachList = teamAttachRepository.findAllByTeam(team);
 			String vmsFilePath = null, perFormFilePath = null;
 			for(TeamAttach teamAttach : teamAttachList){
@@ -69,10 +73,10 @@ public class AdminServiceImpl implements AdminService{
 					default: break;
 				}
 			};
-			return TeamListResponse.of(team, vmsFilePath, perFormFilePath);
+			return TeamListResponse.TeamInfo.of(team, vmsFilePath, perFormFilePath);
 		}).collect(Collectors.toList());
 
-		return teamList;
+		return TeamListResponse.of(teamPage, list);
 	}
 
 	@Override
@@ -87,40 +91,29 @@ public class AdminServiceImpl implements AdminService{
 		team.signOut();
 	}
 
-
-	// 미완성
 	@Override
-	public void confirmVmsFile(Long teamId, TeamFileConfirmRequest request) {
+	public void acceptTeam(Long teamId) {
 		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
-		TeamAttach teamAttach = teamAttachRepository.findByTeamAndAttachFileType(team, FileType.VMS);
-		request.getRejectComment().ifPresentOrElse(comment -> {
-			teamAttach.reject(comment);
-		}, ()-> {
-			teamAttach.submit();
-		});
+		team.accept();
 	}
 
 	// 미완성
 	@Override
-	public void confirmPerformFile(Long teamId, TeamFileConfirmRequest request) {
+	public void rejectTeam(Long teamId, TeamConfirmRequest request) {
 		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
-		TeamAttach teamAttach = teamAttachRepository.findByTeamAndAttachFileType(team, FileType.PERFORM);
-		request.getRejectComment().ifPresentOrElse(comment -> {
-			teamAttach.reject(comment);
-		}, ()-> {
-			teamAttach.submit();
-		});
+
 	}
+
 
 	@Override
 	public void acceptFunding(Long fundingId) {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		funding.setPostType(PostType.FUNDING_ACCEPT);
 	}
 
 	@Override
 	public String rejectFunding(Long fundingId, RejectReasonRequest data) throws Exception {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		funding.setPostType(PostType.FUNDING_REJECT);
 		funding.setRejectComment(data.getRejectReason());
 		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.FUNDING);
@@ -130,7 +123,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public void acceptReport(Long fundingId) {
 		log.info("fundingId => {}", fundingId);
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		log.info("funding => {}", funding);
 		Team team = teamRepository.findById(funding.getTeam().getId()).orElseThrow();
 		log.info("team => {}", team);
@@ -141,7 +134,7 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public String rejectReport(Long fundingId, RejectReasonRequest data) throws Exception {
-		Funding funding = fundingRepository.findById(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		Report report = reportRepository.findByFundingFundingId(fundingId);
 		funding.setPostType(PostType.REPORT_REJECT);
 		report.setReportRejectComment(data.getRejectReason());

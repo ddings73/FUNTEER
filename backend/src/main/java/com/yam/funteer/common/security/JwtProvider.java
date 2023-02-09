@@ -50,10 +50,6 @@ public class JwtProvider {
         return createToken(userId, authorities);
     }
 
-    public TokenInfo generateTokenForOAuth(String userId){
-        String authorities = UserType.KAKAO.getAuthority();
-        return createToken(userId, authorities);
-    }
 
     public TokenInfo createToken(String userId, String authorities){
 

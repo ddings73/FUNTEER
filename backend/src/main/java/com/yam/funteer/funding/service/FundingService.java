@@ -26,7 +26,7 @@ public interface FundingService {
 		IOException,
 		NotAuthenticatedTeamException;
 
-	FundingDetailResponse findFundingById(Long id);
+	FundingDetailResponse findFundingById(Long id, Pageable pageable);
 
 	FundingDetailResponse updateFunding(Long fundingId, MultipartFile thumbnail, FundingRequest data) throws Exception;
 
