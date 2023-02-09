@@ -16,7 +16,7 @@ import RoomIcon from '@mui/icons-material/Room';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import styles from './ModifyFundingContainer.module.scss';
-import { requestModifyFunding, requestUploadImage,requestFundingDetail } from '../../api/funding';
+import { requestModifyFunding, requestUploadImage,requestFundingDetail, requestRegisterThumbnail } from '../../api/funding';
 import { FundingInterface } from '../../types/funding';
 import { useAppDispatch } from '../../store/hooks';
 import {  openModal } from '../../store/slices/modalSlice';
@@ -49,7 +49,7 @@ function ModifyFundingContainer() {
   const navigate = useNavigate();
   const editorRef = useRef<ToastEditor>(null);
   const [fundingData, setFundingData] = useState<FundingInterface>({
-    thumbnail: new Blob(),
+    thumbnail: "",
     title: '',
     fundingDescription: '',
     categoryId: 0,
@@ -109,12 +109,24 @@ function ModifyFundingContainer() {
     }
   };
 
+    // 썸네일 S3등록
+    const uploadS3Thumbnail = async(file:Blob)=>{
+      try{
+        const {data} = await requestRegisterThumbnail(file)
+        setFundingData({...fundingData,thumbnail:data})
+      }
+      catch(error){
+        console.log(error)
+      }
+  
+    }
+
   const onFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) {
       return;
     }
     const file = e.target.files[0];
-    setFundingData({ ...fundingData, thumbnail: file });
+    uploadS3Thumbnail(file)
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onloadend = () => {
@@ -249,6 +261,7 @@ function ModifyFundingContainer() {
         const { data } = await requestFundingDetail(fundIdx)
         // setFundingData(response.data)
         setFundingData({...fundingData, 
+          thumbnail:data.thumbnail,
         title: data.title,
         fundingDescription: data.fundingDescription,
         content: data.content,
