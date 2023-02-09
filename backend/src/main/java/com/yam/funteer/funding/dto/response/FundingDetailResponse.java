@@ -38,6 +38,7 @@ public class FundingDetailResponse {
 	private String content;
 
 	private String category;
+	private Long categoryId;
 
 	private LocalDate startDate;
 	private LocalDate endDate;
@@ -67,6 +68,7 @@ public class FundingDetailResponse {
 			.team(team)
 			.fundingId(funding.getFundingId())
 			.category(funding.getCategory().getName())
+			.categoryId(funding.getCategory().getId())
 			.title(funding.getTitle())
 			.content(funding.getContent())
 			.startDate(funding.getStartDate())
