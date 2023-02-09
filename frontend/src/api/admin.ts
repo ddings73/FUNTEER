@@ -7,7 +7,7 @@ export const requestMembers = async (page: number, size: number, keyword?: strin
     page,
     size,
     keyword,
-    sort: 'ASC',
+    sort: 'id,ASC',
   };
 
   const response = http.get('admin/members', { params });
@@ -28,7 +28,7 @@ export const requestTeams = async (page: number, size: number, keyword?: string)
     page,
     size,
     keyword,
-    sort: 'ASC',
+    sort: 'id,ASC',
   };
 
   const response = http.get('admin/team', { params });
@@ -50,6 +50,68 @@ export const requestDenyTeam = async (userId: number, rejectComment: string) => 
   };
 
   const response = http.put(`admin/team/${userId}/reject`, data);
+
+  return response;
+};
+
+/** 단체 회원 가입 승인 */
+export const requestAcceptTeam = async (userId: number) => {
+  const response = http.post(`admin/team/${userId}/accept`);
+
+  return response;
+};
+
+/** 펀딩 리스트 */
+export const requestAdminFundingList = async (page: number, size: number) => {
+  const params = {
+    page,
+    size,
+  };
+
+  const response = http.get('funding', { params });
+
+  return response;
+};
+
+/** 펀딩 검색 리스트 */
+export const requestAdminSearchedFundingList = async (page: number, size: number, keyword: string) => {
+  const params = {
+    keyword,
+    page,
+    size,
+  };
+
+  const response = http.get('funding/search', { params });
+
+  return response;
+};
+
+/** 펀딩 승인 */
+export const requestFundingAccept = async (id: number, isReport: boolean) => {
+  let response;
+
+  if (!isReport) {
+    response = http.put(`admin/funding/${id}/accept`);
+  } else {
+    response = http.put(`admin/funding/${id}/report/accept`);
+  }
+
+  return response;
+};
+
+/** 펀딩 승인 거부 */
+export const requestRejectFunding = async (id: number, isReport: boolean, rejectReason: string) => {
+  const data = {
+    rejectReason,
+  };
+
+  let response;
+
+  if (!isReport) {
+    response = http.put(`admin/funding/${id}/reject`, data);
+  } else {
+    response = http.put(`admin/funding/${id}/report/reject`, data);
+  }
 
   return response;
 };

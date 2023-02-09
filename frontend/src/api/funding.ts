@@ -139,4 +139,3 @@ export const requestNextCommentList = async (currentPage: number, fundingId?: st
   const response = await http.get(`funding/${fundingId}/?page=${currentPage + 1}&?sort=${sort}`);
   return response;
 };
-
