@@ -1,11 +1,7 @@
 package com.yam.funteer.mail.controller;
 
-import java.util.Map;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,7 +25,7 @@ public class MailController {
 	})
 	@GetMapping("/mail/send")
 	public ResponseEntity emailSend(@RequestParam String email) throws Exception {
-		emailService.sendSimpleMessage(email);
+		emailService.sendEmailCodeMessage(email);
 		return ResponseEntity.ok("인증 메일이 전송되었습니다.");
 	}
 

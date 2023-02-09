@@ -5,11 +5,13 @@ import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.user.dto.request.TokenRequest;
 import com.yam.funteer.user.dto.response.TokenInfo;
+import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.Token;
 import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.user.dto.request.LoginRequest;
 import com.yam.funteer.user.dto.response.LoginResponse;
 import com.yam.funteer.user.entity.User;
+import com.yam.funteer.user.repository.TeamRepository;
 import com.yam.funteer.user.repository.TokenRepository;
 import com.yam.funteer.user.repository.UserRepository;
 
@@ -33,6 +35,7 @@ public class LoginServiceImpl implements LoginService{
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final TokenRepository tokenRepository;
     private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
 
     @Override
     public LoginResponse processLogin(LoginRequest loginRequest) {
@@ -45,7 +48,15 @@ public class LoginServiceImpl implements LoginService{
 
         user.validate();
 
-        return LoginResponse.of(user, tokenInfo);
+        LoginResponse response = LoginResponse.of(user, tokenInfo);
+        if(user.getUserType().equals(UserType.TEAM)){
+            Team team = teamRepository.findById(userId).get();
+            if(team.expiredCheck()){
+                response.setMessage("활동기간이 오래되어 갱신이 필요합니다.");
+            }
+        }
+
+        return response;
     }
 
     @Override
@@ -68,6 +79,7 @@ public class LoginServiceImpl implements LoginService{
         if(SecurityUtil.isLogin()) {
             Long userId = SecurityUtil.getCurrentUserId();
             tokenRepository.deleteById(userId);
+            return;
         }
 
         throw new AccessDeniedException("이미 로그아웃한 회원입니다.");

@@ -14,6 +14,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter @Setter
@@ -41,6 +42,7 @@ public class TeamListResponse {
 		private String phone;
 		private String vmsFileUrl;
 		private String performFileUrl;
+		private LocalDate lastActivity;
 		private UserType userType;
 
 		public static TeamInfo of(Team team, String vmsFilePath, String perFormFilePath) {
@@ -51,6 +53,7 @@ public class TeamListResponse {
 					.phone(team.getPhone())
 					.vmsFileUrl(vmsFilePath)
 					.performFileUrl(perFormFilePath)
+					.lastActivity(team.getLastActivity().toLocalDate())
 					.userType(team.getUserType())
 					.build();
 		}

@@ -12,6 +12,7 @@ import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.funding.repository.FundingRepository;
@@ -26,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -192,16 +194,21 @@ public class TeamServiceImpl implements TeamService{
 		});
 		team.validatePassword(passwordEncoder, password);
 
+		if(team.getUserType() == UserType.TEAM && request.hasFile()) {
+			throw new AccessDeniedException("승인 대기, 혹은 만료된 회원만 파일을 수정할 수 있습니다.");
+		}
+
+		List<TeamAttach> teamAttaches = teamAttachRepository.findAllByTeam(team);
+
+		request.getVmsFile().ifPresent(file -> updateTeamFile(file, teamAttaches, FileType.VMS));
+		request.getPerformFile().ifPresent(file -> updateTeamFile(file, teamAttaches, FileType.PERFORM));
+
 		request.getNewPassword().ifPresent(newPw->{
 			String encryptedPw = passwordEncoder.encode(newPw);
 			team.changePassword(encryptedPw);
 		});
 
 
-		List<TeamAttach> teamAttaches = teamAttachRepository.findAllByTeam(team);
-
-		request.getVmsFile().ifPresent(file -> updateTeamFile(file, teamAttaches, FileType.VMS));
-		request.getPerformFile().ifPresent(file -> updateTeamFile(file, teamAttaches, FileType.PERFORM));
 	}
 
 

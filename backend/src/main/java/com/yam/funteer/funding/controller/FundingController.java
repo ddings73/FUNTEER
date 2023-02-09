@@ -85,29 +85,33 @@ public class FundingController {
 		return fileName;
 	}
 
+	@ApiOperation(value = "펀딩 생성 시 썸네일 s3에 파일업로드", notes = "펀딩 생성 시 s3에 썸네일 파일을 업로드 한다.")
+	@PostMapping("/upload/thumbnail")
+	public String uploadThumbnail(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+		String fileName = awsS3Uploader.upload(multipartFile, "thumbnails/");
+		return fileName;
+	}
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
 	@PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-	public  ResponseEntity<?> createFunding(@RequestPart MultipartFile thumbnail, @RequestPart FundingRequest data) throws
+	public  ResponseEntity<?> createFunding(@RequestPart FundingRequest data) throws
 		IOException,
 		NotAuthenticatedTeamException {
-		FundingDetailResponse funding = fundingService.createFunding(thumbnail, data);
+		FundingDetailResponse funding = fundingService.createFunding(data);
 		return ResponseEntity.ok(funding);
 	}
 
 	@ApiOperation(value = "펀딩 상세 조회", notes = "펀딩 게시글 상세를 조회한다.")
 	@GetMapping("/{fundingId}")
 	public ResponseEntity<FundingDetailResponse> readFundingDetail(@PathVariable Long fundingId,
-		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "6") int size) {
-		PageRequest pageRequest = PageRequest.of(page, size);
-		return ResponseEntity.ok(fundingService.findFundingById(fundingId, pageRequest));
+		@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC)Pageable pageable){
+		return ResponseEntity.ok(fundingService.findFundingById(fundingId, pageable));
 	}
 
 	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다.")
 	@PutMapping(value = "/{fundingId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, @RequestPart MultipartFile thumbnail, @RequestPart FundingRequest data) throws Exception {
-		return ResponseEntity.ok(fundingService.updateFunding(fundingId, thumbnail, data));
+	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, @RequestPart FundingRequest data) throws Exception {
+		return ResponseEntity.ok(fundingService.updateFunding(fundingId, data));
 	}
 
 	@ApiOperation(value = "펀딩 게시글 삭제", notes = "펀딩 게시글을 삭제한다.")

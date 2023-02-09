@@ -8,8 +8,11 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
+
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -27,7 +30,7 @@ public class EmailServiceImpl implements EmailService{
     public static final String ePw = createKey();
 
     @Override
-    public void sendSimpleMessage(String to) throws Exception {
+    public void sendEmailCodeMessage(String to) throws Exception {
         MimeMessage message = createMessage(to);
         try{//예외처리
             emailSender.send(message);
@@ -35,6 +38,48 @@ public class EmailServiceImpl implements EmailService{
             es.printStackTrace();
             throw new IllegalArgumentException();
         }
+    }
+
+    @Override
+    public String sendPostRejectMessage(String to, String rejectReason, PostGroup postGroup) throws Exception {
+        MimeMessage message = createFundingMessage(to, rejectReason, postGroup);
+        try{//예외처리
+            emailSender.send(message);
+        }catch(MailException es){
+            es.printStackTrace();
+            throw new IllegalArgumentException();
+        }
+        return rejectReason;
+    }
+
+    @Override
+    public void sendTeamRejectMessage(String to, String rejectReason){
+        try{//예외처리
+            MimeMessage message = createTeamMessage(to, rejectReason);
+            emailSender.send(message);
+        } catch(MailException es){
+            es.printStackTrace();
+            throw new IllegalArgumentException();
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public boolean confirmCode(String email, String code) {
+        if(mapCodes.containsKey(email)){
+            CodeInfo codeInfo = mapCodes.get(email);
+            mapCodes.remove(email);
+            if (codeInfo.expired() || !codeInfo.validateCode(code)){
+                return false;
+            }
+            return true;
+        }
+        return false;
     }
 
     private MimeMessage createMessage(String to)throws Exception{
@@ -65,6 +110,7 @@ public class EmailServiceImpl implements EmailService{
 
         return message;
     }
+
     public static String createKey() {
         StringBuffer key = new StringBuffer();
         Random rnd = new Random();
@@ -118,28 +164,29 @@ public class EmailServiceImpl implements EmailService{
         return message;
     }
 
-    @Override
-    public String sendRejectMessage(String to, String rejectReason, PostGroup postGroup) throws Exception {
-        MimeMessage message = createFundingMessage(to, rejectReason, postGroup);
-        try{//예외처리
-            emailSender.send(message);
-        }catch(MailException es){
-            es.printStackTrace();
-            throw new IllegalArgumentException();
-        }
-        return rejectReason;
-    }
 
-    @Override
-    public boolean confirmCode(String email, String code) {
-        if(mapCodes.containsKey(email)){
-            CodeInfo codeInfo = mapCodes.get(email);
-            mapCodes.remove(email);
-            if (codeInfo.expired() || !codeInfo.validateCode(code)){
-                return false;
-            }
-            return true;
-        }
-        return false;
+    private MimeMessage createTeamMessage(String to, String rejectReason) throws UnsupportedEncodingException, MessagingException {
+        MimeMessage message = emailSender.createMimeMessage();
+
+        message.addRecipients(Message.RecipientType.TO, to);//보내는 대상
+        message.setSubject("FUNTEER : 단체 가입이 거절되었습니다.");//제목
+
+
+        String msgg="";
+        msgg+= "<div style='margin:20px;'>";
+        msgg+= "<h1> 안녕하세요 FUNTEER입니다. </h1>";
+        msgg+= "<br>";
+        msgg+= "<p>다음과 같은 이유로 승인이 거절되었습니다.<p>";
+        msgg+= "<br>";
+        msgg+= "<p>다시 제출해주시길 바랍니다. 감사합니다.<p>";
+        msgg+= "<br>";
+        msgg+= "<div align='center' style='border:1px solid black; font-family:verdana';><br/>";
+        msgg+= "<div style='font-size:130%'>";
+        msgg+= rejectReason+"<div><br/> ";
+        msgg+= "</div>";
+        message.setText(msgg, "utf-8", "html");//내용
+        message.setFrom(new InternetAddress("yamyambuk04@gmail.com","funteer"));//보내는 사람
+
+        return message;
     }
 }

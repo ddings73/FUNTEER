@@ -50,7 +50,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public MemberListResponse findMembersWithPageable(String keyword, UserType userType, Pageable pageable) {
 		Page<Member> memberPage = userType == null
-			? memberRepository.findAllByNicknameContaining(keyword, pageable)
+			? memberRepository.findAllByNicknameContainingAndUserTypeIsNot(keyword, UserType.ADMIN, pageable)
 			: memberRepository.findAllByNicknameContainingAndUserType(keyword, userType, pageable);
 
 		return MemberListResponse.of(memberPage);
@@ -63,6 +63,7 @@ public class AdminServiceImpl implements AdminService{
 			: teamRepository.findAllByNameContainingAndUserType(keyword, userType, pageable);
 
 		List<TeamListResponse.TeamInfo> list = teamPage.stream().map(team -> {
+			team.expiredCheck();
 			List<TeamAttach> teamAttachList = teamAttachRepository.findAllByTeam(team);
 			String vmsFilePath = null, perFormFilePath = null;
 			for(TeamAttach teamAttach : teamAttachList){
@@ -97,11 +98,10 @@ public class AdminServiceImpl implements AdminService{
 		team.accept();
 	}
 
-	// 미완성
 	@Override
 	public void rejectTeam(Long teamId, TeamConfirmRequest request) {
 		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
-
+		emailService.sendTeamRejectMessage(team.getEmail(), request.getRejectComment());
 	}
 
 
@@ -116,7 +116,7 @@ public class AdminServiceImpl implements AdminService{
 		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
 		funding.setPostType(PostType.FUNDING_REJECT);
 		funding.setRejectComment(data.getRejectReason());
-		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.FUNDING);
+		emailService.sendPostRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.FUNDING);
 		return data.getRejectReason();
 	}
 
@@ -127,6 +127,7 @@ public class AdminServiceImpl implements AdminService{
 		log.info("funding => {}", funding);
 		Team team = teamRepository.findById(funding.getTeam().getId()).orElseThrow();
 		log.info("team => {}", team);
+		team.updateLastActivity();
 		team.addTotalFundingAmount(funding.getCurrentFundingAmount());
 		funding.setPostType(PostType.REPORT_ACCEPT);
 		badgeService.teamFundingBadges(funding.getTeam());
@@ -138,7 +139,7 @@ public class AdminServiceImpl implements AdminService{
 		Report report = reportRepository.findByFundingFundingId(fundingId);
 		funding.setPostType(PostType.REPORT_REJECT);
 		report.setReportRejectComment(data.getRejectReason());
-		emailService.sendRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.REPORT);
+		emailService.sendPostRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.REPORT);
 		return data.getRejectReason();
 	}
 
