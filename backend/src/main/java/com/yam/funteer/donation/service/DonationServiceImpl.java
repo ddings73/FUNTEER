@@ -26,6 +26,7 @@ import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.donation.dto.request.DonationModifyReq;
 import com.yam.funteer.donation.dto.request.DonationRegisterReq;
+import com.yam.funteer.donation.dto.response.DonationAdminListRes;
 import com.yam.funteer.donation.dto.response.DonationBaseRes;
 import com.yam.funteer.donation.dto.response.DonationListRes;
 import com.yam.funteer.donation.entity.Donation;
@@ -60,9 +61,18 @@ public class DonationServiceImpl implements DonationService{
 
 	public List<DonationListRes> donationGetList(int page,int size) {
 		PageRequest pageRequest=PageRequest.of(page,size);
-		List<Donation>donations=donationRepository.findAllByOrderByDonationIdDesc(pageRequest);
+		List<Donation>donations=donationRepository.findAllByPostTypeOrderByDonationIdDesc(PostType.DONATION_CLOSE,pageRequest);
 		List<DonationListRes>list;
 		list=donations.stream().map(donation->new DonationListRes(donation)).collect(Collectors.toList());
+
+		return list;
+	}
+
+	public List<DonationAdminListRes> donationGetAdminList(int page,int size) {
+		PageRequest pageRequest=PageRequest.of(page,size);
+		List<Donation>donations=donationRepository.findAllByOrderByDonationIdDesc(pageRequest);
+		List<DonationAdminListRes>list;
+		list=donations.stream().map(donation->new DonationAdminListRes(donation)).collect(Collectors.toList());
 
 		return list;
 	}
