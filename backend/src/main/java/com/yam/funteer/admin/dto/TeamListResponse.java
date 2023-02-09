@@ -2,6 +2,7 @@ package com.yam.funteer.admin.dto;
 
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.entity.TeamAttach;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.Team;
 
 import lombok.AllArgsConstructor;
@@ -40,6 +41,7 @@ public class TeamListResponse {
 		private String phone;
 		private String vmsFileUrl;
 		private String performFileUrl;
+		private UserType userType;
 
 		public static TeamInfo of(Team team, String vmsFilePath, String perFormFilePath) {
 			return TeamInfo.builder()
@@ -49,6 +51,7 @@ public class TeamListResponse {
 					.phone(team.getPhone())
 					.vmsFileUrl(vmsFilePath)
 					.performFileUrl(perFormFilePath)
+					.userType(team.getUserType())
 					.build();
 		}
 	}
