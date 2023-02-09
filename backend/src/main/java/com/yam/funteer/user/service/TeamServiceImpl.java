@@ -167,7 +167,7 @@ public class TeamServiceImpl implements TeamService{
 			.orElseThrow(UserNotFoundException::new);
 
 		List<TeamAttach> teamAttaches = teamAttachRepository.findAllByTeam(team);
-		TeamAccountResponse response = TeamAccountResponse.of(team);
+		TeamAccountResponse response = TeamAccountResponse.from(team);
 
 		teamAttaches.forEach(teamAttach -> {
 			Attach attach = teamAttach.getAttach();
