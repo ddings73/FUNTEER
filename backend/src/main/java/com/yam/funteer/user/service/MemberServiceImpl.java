@@ -2,11 +2,9 @@ package com.yam.funteer.user.service;
 
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
-import com.yam.funteer.badge.repository.BadgeRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.PostGroup;
-import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
@@ -16,6 +14,7 @@ import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
+import com.yam.funteer.user.dto.response.ChargeListResponse;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
 import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
 import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
@@ -201,11 +200,19 @@ public class MemberServiceImpl implements MemberService {
         member.charge(amount);
     }
 
+    @Override
+    public Page<ChargeListResponse> getChargeList(Pageable pageable) {
+        Long memberId = SecurityUtil.getCurrentUserId();
+        Page<ChargeListResponse> chargeList = chargeRepository.findAllByMemberId(memberId, pageable).map(m -> ChargeListResponse.from(m));
+        return chargeList;
+    }
+
     private Member validateSameUser(Long i1, Long i2){
         if(i1 != i2)
             throw new IllegalArgumentException("동일 회원만 접근할 수 있습니다");
 
         return memberRepository.findById(i1).orElseThrow(UserNotFoundException::new);
     }
+
 
 }
