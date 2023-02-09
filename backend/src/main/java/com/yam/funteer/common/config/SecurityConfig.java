@@ -16,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -54,11 +55,13 @@ public class SecurityConfig{
                 .antMatchers("/member/**/**", "/team/**/**").authenticated()
                 .anyRequest().permitAll()
                 .and()
+                .addFilterBefore(jwtExceptionFilter, OAuth2LoginAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
                 .oauth2Login()
                 .successHandler(successHandler) // oAuth 정보를 가져오면 동작할 핸들러
                 .userInfoEndpoint().userService(oAuth2UserService); // 여기서 oAuth 정보를 가져옴
+
+
         return http.build();
     }
 
