@@ -120,6 +120,7 @@ public class LiveServiceImpl implements LiveService{
                     // 녹화 종료
                     String sessionId = session.getSessionId();
                     if(sessionRecordings.containsKey(sessionId)) {
+                        log.info("녹화 저장 시작");
                         Long teamId = SecurityUtil.getCurrentUserId();
                         Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
 
