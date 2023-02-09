@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import styles from './funList.module.scss';
 import CarouselCard from '../../components/Main/CarouselCard';
 
@@ -19,7 +20,9 @@ export function funList() {
           <p className={styles.curStatus}>
             총 <span>250</span>건의 펀딩이 진행 중 입니다.
           </p>
-          <p className={styles.linkTo}>전체보기</p>
+          <Link to="/funding" className={styles.linkTo}>
+            전체보기
+          </Link>
         </div>
         <CarouselCard />
       </div>
