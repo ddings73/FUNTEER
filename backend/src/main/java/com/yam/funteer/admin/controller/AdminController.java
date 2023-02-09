@@ -19,6 +19,7 @@ import com.yam.funteer.admin.dto.MemberListResponse;
 import com.yam.funteer.admin.dto.TeamConfirmRequest;
 import com.yam.funteer.admin.dto.TeamListResponse;
 import com.yam.funteer.admin.service.AdminService;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
@@ -39,16 +40,18 @@ public class AdminController {
 	@ApiOperation(value = "개인 회원 목록 조회", notes = "개인 회원 목록을 조회한다.")
 	@GetMapping("/members")
 	public ResponseEntity<MemberListResponse> findAllMembers(@RequestParam(required = false, defaultValue = "") String keyword,
+															 @RequestParam(required = false) UserType userType,
 															 @PageableDefault(size = 8, sort = "id", direction = Sort.Direction.DESC)Pageable pageable) {
-		MemberListResponse response = adminService.findMembersWithPageable(keyword, pageable);
+		MemberListResponse response = adminService.findMembersWithPageable(keyword, userType, pageable);
 		return ResponseEntity.ok(response);
 	}
 
 	@ApiOperation(value = "단체 회원 목록 조회", notes = "단체 회원 목록을 조회한다.")
 	@GetMapping("/team")
 	public ResponseEntity<TeamListResponse> findAllTeam(@RequestParam(required = false, defaultValue = "") String keyword,
+														@RequestParam(required = false) UserType userType,
 														@PageableDefault(size = 8, sort = "id",  direction = Sort.Direction.DESC) Pageable pageable) {
-		TeamListResponse response = adminService.findTeamWithPageable(keyword, pageable);
+		TeamListResponse response = adminService.findTeamWithPageable(keyword, userType, pageable);
 		return ResponseEntity.ok(response);
 	}
 

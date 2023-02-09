@@ -18,6 +18,7 @@ import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
+import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.entity.Funding;
@@ -47,15 +48,19 @@ public class AdminServiceImpl implements AdminService{
 	private final BadgeService badgeService;
 
 	@Override
-	public MemberListResponse findMembersWithPageable(String keyword, Pageable pageable) {
-		Page<Member> memberPage = memberRepository.findAllByNicknameContaining(keyword, pageable);
+	public MemberListResponse findMembersWithPageable(String keyword, UserType userType, Pageable pageable) {
+		Page<Member> memberPage = userType == null
+			? memberRepository.findAllByNicknameContaining(keyword, pageable)
+			: memberRepository.findAllByNicknameContainingAndUserType(keyword, userType, pageable);
+
 		return MemberListResponse.of(memberPage);
 	}
 
 	@Override
-	public TeamListResponse findTeamWithPageable(String keyword, Pageable pageable) {
-
-		Page<Team> teamPage = teamRepository.findAllByNameContaining(keyword, pageable);
+	public TeamListResponse findTeamWithPageable(String keyword, UserType userType, Pageable pageable) {
+		Page<Team> teamPage = userType == null
+			? teamRepository.findAllByNameContaining(keyword, pageable)
+			: teamRepository.findAllByNameContainingAndUserType(keyword, userType, pageable);
 
 		List<TeamListResponse.TeamInfo> list = teamPage.stream().map(team -> {
 			List<TeamAttach> teamAttachList = teamAttachRepository.findAllByTeam(team);
