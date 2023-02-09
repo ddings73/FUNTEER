@@ -45,4 +45,8 @@ public class Team extends User{
     public boolean equals(Object obj) {
         return getId() == ((User)obj).getId();
     }
+
+    public void accept() {
+
+    }
 }

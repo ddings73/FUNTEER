@@ -10,9 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.admin.dto.MemberListResponse;
-import com.yam.funteer.admin.dto.TeamFileConfirmRequest;
+import com.yam.funteer.admin.dto.TeamConfirmRequest;
 import com.yam.funteer.admin.dto.TeamListResponse;
-import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.entity.TeamAttach;
 import com.yam.funteer.attach.repository.TeamAttachRepository;
@@ -49,7 +48,7 @@ public class AdminServiceImpl implements AdminService{
 
 	@Override
 	public MemberListResponse findMembersWithPageable(String keyword, Pageable pageable) {
-		Page<Member> memberPage = memberRepository.findAllByNameContaining(keyword, pageable);
+		Page<Member> memberPage = memberRepository.findAllByNicknameContaining(keyword, pageable);
 		return MemberListResponse.of(memberPage);
 	}
 
@@ -87,11 +86,17 @@ public class AdminServiceImpl implements AdminService{
 		team.signOut();
 	}
 
+	@Override
+	public void acceptTeam(Long teamId) {
+		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
+		team.accept();
+	}
 
 	// 미완성
 	@Override
-	public void rejectTeam(Long teamId, TeamFileConfirmRequest request) {
+	public void rejectTeam(Long teamId, TeamConfirmRequest request) {
 		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
+
 	}
 
 
