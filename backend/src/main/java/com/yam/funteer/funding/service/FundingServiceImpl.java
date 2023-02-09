@@ -300,6 +300,7 @@ public class FundingServiceImpl implements FundingService{
 		FundingDetailResponse fundingDetailResponse = FundingDetailResponse.from(funding);
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
 		fundingDetailResponse.setWishCount(wishCount);
+		Long tempId = funding.getId();
 
 		// 목표금액
 		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
@@ -309,7 +310,7 @@ public class FundingServiceImpl implements FundingService{
 		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_THREE));
 
-		Page<CommentResponse> collect = commentRepository.findAllByFundingId(id, pageable).map(m -> CommentResponse.from(m));
+		Page<CommentResponse> collect = commentRepository.findAllByFundingId(tempId, pageable).map(m -> CommentResponse.from(m));
 		System.out.println(collect);
 		fundingDetailResponse.setComments(Optional.of(collect));
 		System.out.println(fundingDetailResponse);
