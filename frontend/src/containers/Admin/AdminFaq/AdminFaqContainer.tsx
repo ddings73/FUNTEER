@@ -14,7 +14,11 @@ function AdminFaqContainer() {
 
   const onClickFaqItemHandler = (id:number) => {
     console.log('Faq 관리 상세 페이지 이동');
-    navigate(`../../cc/faq/${id}`)
+    navigate(`../../cc/faq/${id}`, {
+      state: {
+        id,
+      }
+    })
 
   };
 

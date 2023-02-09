@@ -13,7 +13,9 @@ import { FaqDetailElementType, FaqElementType } from '../../../types/faq';
 function FAQDetailContainer() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { id } = useParams();
+  const { faqIdx } = location.state.id;
+
+  console.log(faqIdx)
 
   const [FAQDetail, setFAQDetail] = useState<FaqDetailElementType>({
       id: 0,
@@ -22,16 +24,21 @@ function FAQDetailContainer() {
     });
 
   useEffect(() => {
-    fetchData();
+    if (!FAQDetail.id) {
+      setFAQDetail({...FAQDetail, id: faqIdx})
+    } else {
+      fetchData();
+    }
   }, []);
 
   const fetchData = async () => {
-    if (id) {
+    console.log(FAQDetail)
+    if (FAQDetail.id) {
       try {
-        const response = await requestFaqDetail(parseInt(id, 10));
+        const response = await requestFaqDetail(faqIdx);
         console.log('res: ', response);
         console.log('data res: ', response.data);
-        setFAQDetail(response.data);
+        // setFAQDetail({...response.data});
       } catch (error) {
         console.log(error);
       }

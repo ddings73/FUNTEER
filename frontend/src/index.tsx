@@ -50,6 +50,7 @@ import {
   NoticeDetail,
   AdminDonation,
   AdminDonationCreate,
+  AdminDonationDetail,
   TeamProfile,
   AdminNotice,
   AdminFaq,
@@ -262,6 +263,10 @@ const router = createBrowserRouter([
       {
         path: 'donation/create',
         element: <AdminDonationCreate />,
+      },
+      {
+        path: 'donation/:dn',
+        element: <AdminDonationDetail />,
       },
       {
         path: 'notice',

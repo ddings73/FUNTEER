@@ -38,9 +38,8 @@ function AdminDonationContainer() {
   };
   const onClickDonationItemHandler = (id:number) => {
     console.log('도네이션 관리 상세 페이지 이동');
-    // donation/{pathvaliable}
-    
-    navigate(`../../donation/${id}`)
+    // {pathvaliable}
+    navigate(`${id}`)
   };
 
   const onClickDonationRegister=()=>{
@@ -51,7 +50,7 @@ function AdminDonationContainer() {
 
   const requestGetDonationList = async () => {
     try {
-      const response = await requestDonationList(size);
+      const response = await requestAdminDonationList(size);
       console.log(response)
       setDonationList(response.data)
     } catch (error) {
@@ -89,7 +88,7 @@ function AdminDonationContainer() {
               </li>
             </button>
             <li>
-              <p>{data.targetMoney}</p>
+              <p>{data.targetAmount}</p>
             </li>
             <li>
               <p>{data.startDate}</p>
@@ -106,6 +105,7 @@ function AdminDonationContainer() {
                 <MenuItem value='DONATION_ACTIVE'>진행중</MenuItem>
                 <MenuItem value='DONATION_CLOSE'>종료</MenuItem>
               </Select>
+              <p className={data.postType.includes('ACTIVE') ? styles['hide-approve'] : styles.quit}>종료</p>
             </li>
           </div>
         ))}
