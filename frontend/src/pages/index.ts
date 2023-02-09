@@ -26,8 +26,9 @@ export { default as AdminDonationDetail } from './Admin/AdminDonationDetail';
 export { default as AdminNotice } from './Admin/AdminNotice';
 export { default as AdminFaq } from './Admin/AdminFaq';
 export { default as AdminFaqCreate } from './Admin/AdminFaqCreate';
-export { default as AdminLive } from './Admin/AdminLive';
 export { default as AdminNoticeCreate } from './Admin/AdminNoticeCreate';
+export { default as AdminMemberSearch } from './Admin/AdminMemberSearch';
+export { default as AdminTeamSearch } from './Admin/AdminTeamSearch';
 
 export { default as MyPage } from './MyPage/MyPage';
 export { default as EditProfile } from './MyPage/EditProfile';
