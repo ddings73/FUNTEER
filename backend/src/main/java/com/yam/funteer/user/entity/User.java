@@ -89,11 +89,15 @@ public class User {
 			throw new IllegalArgumentException();
 	}
 
-	public OpenViduRole openViduRole(){
-		return this.userType.getOpenviduRole();
-	}
 	public void setMoney(long amount) {
 		this.money = amount;
 	}
 
+	protected void teamAccept() {
+		this.userType = UserType.TEAM;
+	}
+
+	protected void expire() {
+		this.userType = UserType.TEAM_EXPIRED;
+	}
 }

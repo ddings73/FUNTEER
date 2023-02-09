@@ -50,7 +50,7 @@ public class AdminServiceImpl implements AdminService{
 	@Override
 	public MemberListResponse findMembersWithPageable(String keyword, UserType userType, Pageable pageable) {
 		Page<Member> memberPage = userType == null
-			? memberRepository.findAllByNicknameContaining(keyword, pageable)
+			? memberRepository.findAllByNicknameContainingAndUserTypeIsNot(keyword, UserType.ADMIN, pageable)
 			: memberRepository.findAllByNicknameContainingAndUserType(keyword, userType, pageable);
 
 		return MemberListResponse.of(memberPage);
@@ -63,6 +63,7 @@ public class AdminServiceImpl implements AdminService{
 			: teamRepository.findAllByNameContainingAndUserType(keyword, userType, pageable);
 
 		List<TeamListResponse.TeamInfo> list = teamPage.stream().map(team -> {
+			team.expiredCheck();
 			List<TeamAttach> teamAttachList = teamAttachRepository.findAllByTeam(team);
 			String vmsFilePath = null, perFormFilePath = null;
 			for(TeamAttach teamAttach : teamAttachList){
@@ -126,6 +127,7 @@ public class AdminServiceImpl implements AdminService{
 		log.info("funding => {}", funding);
 		Team team = teamRepository.findById(funding.getTeam().getId()).orElseThrow();
 		log.info("team => {}", team);
+		team.updateLastActivity();
 		team.addTotalFundingAmount(funding.getCurrentFundingAmount());
 		funding.setPostType(PostType.REPORT_ACCEPT);
 		badgeService.teamFundingBadges(funding.getTeam());
