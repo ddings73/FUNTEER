@@ -12,7 +12,7 @@ function AdminRoot() {
 
   useEffect(() => {
     if (userType !== 'ADMIN') {
-      navigate('/login');
+      navigate('/');
     }
   }, []);
 
