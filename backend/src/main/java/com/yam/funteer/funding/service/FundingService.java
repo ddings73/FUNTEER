@@ -17,6 +17,7 @@ import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
+import com.yam.funteer.funding.exception.NotAuthenticatedMemberException;
 import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
 
 public interface FundingService {
@@ -40,7 +41,7 @@ public interface FundingService {
 
 	void createFundingComment(Long fundingId, FundingCommentRequest data);
 
-	void deleteFundingComment(Long commentId) throws CommentNotFoundException;
+	void deleteFundingComment(Long commentId) throws CommentNotFoundException, NotAuthenticatedMemberException;
 
 	FundingListPageResponse findAllFunding(Pageable pageable);
 
