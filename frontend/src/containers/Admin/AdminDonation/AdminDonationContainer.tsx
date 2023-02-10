@@ -140,10 +140,10 @@ function AdminDonationContainer() {
                 onChange={() => onStateChangeHandler(data.id, data.postType)}
                 className={data.postType.includes('ACTIVE') ? styles['show-approve'] : styles['hide-approve']}
               >
-                <MenuItem value="DONATION_ACTIVE" sx={{ fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
+                <MenuItem value="DONATION_ACTIVE" sx={{ fontSize: '0.9rem' }}>
                   진행중
                 </MenuItem>
-                <MenuItem value="DONATION_CLOSE" sx={{ fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
+                <MenuItem value="DONATION_CLOSE" sx={{ fontSize: '0.9rem' }}>
                   종료
                 </MenuItem>
               </Select>

@@ -9,15 +9,12 @@ function AdminRoot() {
   const navigate = useNavigate();
   const fileModalState = useAppSelector((state) => state.fileModalSlice);
   const userType = useAppSelector((state) => state.userSlice.userType);
-  console.log(userType);
 
-  // useEffect(() => {
-  //   if (!userType) {
-  //     navigate('/login');
-  //   } else if (userType !== 'ADMIN') {
-  //     navigate('/');
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (userType !== 'ADMIN') {
+      navigate('/login');
+    }
+  }, []);
 
   return (
     <div className={styles['admin-page']}>
