@@ -29,6 +29,7 @@
   background: white;
   background-size: cover;
   position: absolute;
+  opacity: 0;
   top: 0px;
   left: 0px;
   right: 0px;
@@ -49,7 +50,7 @@
   transition: background-color 1s;
 }
 .container_scrolled {
-  background-color: #0b0627;
+  background-color: #ffffff;
   position: relative;
   min-width: 100%;
   min-height: 800vh;
@@ -189,6 +190,10 @@
       margin-top: 5%;
       margin-left: 20%;
       width: 1000px;
+      rotate: -45deg;
+      -webkit-animation: rotationMoon 360s linear infinite;
+      -moz-animation: rotationMoon 360s linear infinite;
+      -o-animation: rotationMoon 360s linear infinite;
     }
     & .astWrap {
       position: absolute;
@@ -197,22 +202,41 @@
       display: flex;
 
       & .ast {
-        border: 1px solid #ffffff;
         margin-left: 5%;
         margin-top: 20%;
         width: 150px;
+        -webkit-animation: swim1 5s ease-in-out infinite;
+        -moz-animation: swim1 5s ease-in-out infinite;
+        -o-animation: swim1 5s ease-in-out infinite;
       }
 
       & .astCnt {
         width: 150px;
         height: 130px;
+        margin-top: 0;
         transform: scaleX(-1) rotate(35deg);
         transition: 3s ease-in-out;
-        border: 1px solid #ff0000;
-        // -webkit-animation: floatY 5s linear infinite;
-        // -moz-animation: floatY 5s linear infinite;
-        // -o-animation: floatY 5s linear infinite;
+        -webkit-animation: swim2 7s ease-in-out infinite;
+        -moz-animation: swim2 7s ease-in-out infinite;
+        -o-animation: swim2 7s ease-in-out infinite;
       }
     }
+  }
+}
+
+@keyframes swim1 {
+  50% {
+    margin-top: 30%;
+  }
+}
+@keyframes swim2 {
+  50% {
+    margin-top: 10%;
+  }
+}
+
+@keyframes rotationMoon {
+  100% {
+    rotate: 360deg;
   }
 }
