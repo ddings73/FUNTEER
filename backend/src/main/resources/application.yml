@@ -11,8 +11,11 @@ spring:
     open-in-view: false
     show-sql: true
     hibernate:
-      format_sql: true
       ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+
   mvc:
     pathmatch:
       matching-strategy: ant_path_matcher
@@ -27,5 +30,4 @@ logging:
       hibernate:
         type:
           descriptor:
-            sql:
-              BasicBinder: TRACE
+            sql: TRACE

@@ -27,7 +27,7 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 
 	List<Funding> findAllByTeamAndPostType(Team team,PostType postType);
 
-	Page<Funding> findByTeam(Team team, Pageable pageable);
+	Page<Funding> findAllByTeam(Team team, Pageable pageable);
 
 	Optional<Funding> findByFundingId(Long fundingId);
 }

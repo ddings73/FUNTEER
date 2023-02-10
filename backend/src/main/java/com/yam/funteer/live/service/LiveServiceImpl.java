@@ -8,9 +8,11 @@ import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.security.SecurityUtil;
+import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
+import com.yam.funteer.live.UserRole;
 import com.yam.funteer.live.dto.CreateConnectionRequest;
 import com.yam.funteer.live.dto.CreateConnectionResponse;
 import com.yam.funteer.live.dto.SessionLeaveRequest;
@@ -33,6 +35,7 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 import java.io.File;
+import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -46,7 +49,7 @@ public class LiveServiceImpl implements LiveService{
     private String OPENVIDU_SECRET;
     private OpenVidu openVidu;
     private final Map<String, Session> mapSessions = new ConcurrentHashMap<>();
-    private final Map<String, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
+    private final Map<String, Map<String, UserRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
     private final Map<String, Boolean> sessionRecordings = new ConcurrentHashMap<>();
 
     private final AwsS3Uploader awsS3Uploader;
@@ -75,7 +78,8 @@ public class LiveServiceImpl implements LiveService{
         String sessionName = request.getSessionName();
         if(mapSessions.containsKey(sessionName) && mapSessionNamesTokens.containsKey(sessionName)){
             log.info("이미 생성된 세션 참여 => {}", sessionName);
-            return joinExistingSession(request, OpenViduRole.SUBSCRIBER);
+            UserRole userRole = new UserRole(user, OpenViduRole.SUBSCRIBER);
+            return joinExistingSession(request, userRole);
         }else if(canPublish(user)){ // 방을 생성할 수 있다면
             log.info("새로운 세션 생성 => {}", sessionName);
 
@@ -86,8 +90,8 @@ public class LiveServiceImpl implements LiveService{
             Team fundingTeam = funding.getTeam();
             if(!fundingTeam.equals(user)) throw new AccessDeniedException("펀딩을 개최한 단체와 다릅니다.");
 
-            OpenViduRole role = user.getUserType().getOpenviduRole();
-            return createNewSession(sessionName, role, funding);
+            UserRole userRole = new UserRole(user, user.getUserType().getOpenviduRole());
+            return createNewSession(sessionName, funding, userRole);
         }
 
         throw new AccessDeniedException("유저정보가 이상하거나 권한이 잘못 설정되었습니다.");
@@ -99,12 +103,16 @@ public class LiveServiceImpl implements LiveService{
         String token = request.getToken();
 
         if(mapSessions.containsKey(sessionName) && mapSessionNamesTokens.containsKey(sessionName)){ //session 이 존재하면서
-            Map<String, OpenViduRole> tokenRoleMap = mapSessionNamesTokens.get(sessionName);
+            Map<String, UserRole> tokenRoleMap = mapSessionNamesTokens.get(sessionName);
             if(mapSessionNamesTokens.get(sessionName).containsKey(token)){ // 토큰값도 존재하면
-                OpenViduRole role = tokenRoleMap.get(token);
+                UserRole userRole = tokenRoleMap.get(token);
                 tokenRoleMap.remove(token);
 
-                log.info("{} 권한을 가진 사용자가 세션 {} 를 떠났습니다.", role, sessionName);
+                User user = userRole.getUser();
+
+                String userName = user == null ? "익명사용자" : user.getName();
+                OpenViduRole role = userRole.getRole();
+                log.info("{} 권한을 가진 사용자 {} 가 세션 {} 를 떠났습니다.", role, userName, sessionName);
 
                 if(role.equals(OpenViduRole.PUBLISHER)){ // publisher ( 방송주인 체크 )
                     Session session = mapSessions.get(sessionName);
@@ -169,9 +177,11 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
-    private CreateConnectionResponse createNewSession(String sessionName, OpenViduRole role,  Funding funding) {
+    private CreateConnectionResponse createNewSession(String sessionName, Funding funding, UserRole userRole) {
         try {
             Session session = this.openVidu.createSession();
+
+            OpenViduRole role = userRole.getRole();
 
             ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
                     .role(role).build(); // PUBLISHER or MODERATOR
@@ -180,7 +190,7 @@ public class LiveServiceImpl implements LiveService{
 
             mapSessions.put(sessionName, session);
             mapSessionNamesTokens.put(sessionName, new ConcurrentHashMap<>());
-            mapSessionNamesTokens.get(sessionName).put(token, role);
+            mapSessionNamesTokens.get(sessionName).put(token, userRole);
 
             String sessionId = session.getSessionId();
 
@@ -197,20 +207,39 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
-    private CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, OpenViduRole role) {
+    private CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, UserRole userRole) {
 
         String sessionName = request.getSessionName();
+        Session session = mapSessions.get(sessionName);
+        String sessionId = session.getSessionId();
 
         try {
-            Session session = mapSessions.get(sessionName);
+            Session activeSession = this.openVidu.getActiveSession(sessionId);
+            if(activeSession == null){
+                log.info("OpenVidu 서버에 동작중인 세션이 없음");
+                sessionRecordings.remove(sessionId);
+                mapSessions.remove(sessionName);
+                mapSessionNamesTokens.remove(sessionName);
+                return initializeSession(request);
+            }
 
+            Map<String, UserRole> userRoleMap = mapSessionNamesTokens.get(sessionName);
+            Collection<UserRole> values = userRoleMap.values();
+            User provideUser = userRole.getUser();
+            if(provideUser != null){
+                if(values.stream().anyMatch(ur -> ur.getUser().getId() == provideUser.getId())){
+                    throw new DuplicateInfoException("이미 세션에 참가한 회원입니다.");
+                }
+            }
+
+            OpenViduRole role = userRole.getRole();
             ConnectionProperties connectionProperties = new ConnectionProperties.Builder().role(role).build();
-            String token = session.createConnection(connectionProperties).getToken();
-            mapSessionNamesTokens.get(sessionName).put(token, role);
-            if (!session.isBeingRecorded()) {
-                String sessionId = session.getSessionId();
-                RecordingProperties recordingProperties = request.toRecordingProperties();
+            String token = activeSession.createConnection(connectionProperties).getToken();
 
+            userRoleMap.put(token, userRole);
+
+            if (!activeSession.isBeingRecorded()) {
+                RecordingProperties recordingProperties = request.toRecordingProperties();
 
                 log.info("녹화 시작 ===========> {}", sessionId);
                 log.info("recordingProperties name => {}", recordingProperties.name());
@@ -221,17 +250,16 @@ public class LiveServiceImpl implements LiveService{
             }
 
             return new CreateConnectionResponse(token);
-        } catch (OpenViduJavaClientException e) {
+        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             log.error(e.getMessage());
-        } catch (OpenViduHttpException e) {
-            log.error(e.getMessage());
-            if (e.getStatus() == 404) {
-                mapSessions.remove(sessionName);
-                mapSessionNamesTokens.remove(sessionName);
-                return initializeSession(request);
-            }
+
+            log.info("OpenVidu 서버에 동작중인 세션이 없음");
+            sessionRecordings.remove(sessionId);
+            mapSessions.remove(sessionName);
+            mapSessionNamesTokens.remove(sessionName);
+            return initializeSession(request);
         }
-        throw new RuntimeException();
+        // throw new RuntimeException();
     }
 
     private boolean canPublish(User user) {
