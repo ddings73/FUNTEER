@@ -78,7 +78,7 @@ public class LiveServiceImpl implements LiveService{
         String sessionName = request.getSessionName();
         if(mapSessions.containsKey(sessionName) && mapSessionNamesTokens.containsKey(sessionName)){
             log.info("이미 생성된 세션 참여 => {}", sessionName);
-            UserRole userRole = new UserRole(null, OpenViduRole.SUBSCRIBER);
+            UserRole userRole = new UserRole(user, OpenViduRole.SUBSCRIBER);
             return joinExistingSession(request, userRole);
         }else if(canPublish(user)){ // 방을 생성할 수 있다면
             log.info("새로운 세션 생성 => {}", sessionName);
