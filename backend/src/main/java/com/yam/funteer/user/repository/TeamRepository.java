@@ -11,8 +11,6 @@ import java.util.Optional;
 public interface TeamRepository extends JpaRepository<Team, Long> {
     Optional<Team> findByEmail(String email);
 
-    Optional<Team> findById(Optional<Long> id);
-
     Page<Team> findAllByNameContaining(String keyword, Pageable pageable);
 
     Page<Team> findAllByNameContainingAndUserType(String keyword, UserType userType, Pageable pageable);

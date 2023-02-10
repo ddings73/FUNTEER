@@ -203,6 +203,11 @@ public class LiveServiceImpl implements LiveService{
 
         try {
             Session session = mapSessions.get(sessionName);
+            if(session == null){
+                mapSessions.remove(sessionName);
+                mapSessionNamesTokens.remove(sessionName);
+                return initializeSession(request);
+            }
 
             ConnectionProperties connectionProperties = new ConnectionProperties.Builder().role(role).build();
             String token = session.createConnection(connectionProperties).getToken();
