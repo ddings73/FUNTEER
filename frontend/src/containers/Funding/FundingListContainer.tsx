@@ -74,9 +74,31 @@ function FundingListContainer() {
   };
 
   const hanlderFilter = (id:string) => {
-    // setFundingStateFilter(id);
-    // console.log(fundingStateFilter);
     getPostTypeList(id);
+  }
+
+  const getPostTypeList = async (filterdType: string) => {
+    console.log(filterdType)
+    try {
+      setIsLoading(true);
+      const { data } = await requestFundingList(size);
+      const temp = data.fundingListResponses.content;
+      let next
+      if (filterdType === 'FUNDING_IN_PROGRESS') {
+        next = temp.filter((el: { postType: string; }) => el.postType === "FUNDING_IN_PROGRESS")
+        setFundingList([...next])
+      } 
+      else if(filterdType === 'FUNDING_ACCEPT'){
+         next = temp.filter((el: { postType: string; }) => el.postType === "FUNDING_ACCEPT")
+         setFundingList([...next])
+      } 
+      else {
+        setFundingList([...temp])
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   const initFundingList = async () => {
@@ -137,29 +159,6 @@ function FundingListContainer() {
     }
   };
 
-  const getPostTypeList = async (filterdType: string) => {
-    console.log(filterdType)
-    try {
-      setIsLoading(true);
-      const { data } = await requestFundingList(size);
-      console.log('datadadadadadadadada',data)
-      setFundingList([...data.fundingListResponses.content]);
-      let next
-      if (filterdType === 'FUNDING_IN_PROGRESS') {
-        console.log("아아아아아")
-        next = fundingList.filter(el => el.postType === "FUNDING_IN_PROGRESS")
-        setFundingList([...next])
-      } 
-      else if(filterdType === 'FUNDING_ACCEPT'){
-        console.log("이이이이이이익!!")
-         next = fundingList.filter(el => el.postType === "FUNDING_ACCEPT")
-        setFundingList([...next])
-      }
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  }
 
   useEffect(() => {
     initFundingList();
@@ -174,10 +173,6 @@ function FundingListContainer() {
   useEffect(() => {
     console.log(selectCategory);
   }, [selectCategory]);
-
-  // useEffect(() => {
-  //   getPostTypeList(fundingStateFilter);
-  // }, [fundingStateFilter])
 
   return (
     <div className={styles.container}>
