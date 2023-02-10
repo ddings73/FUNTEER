@@ -44,6 +44,9 @@ export { default as ModifyFunding } from './Funding/ModifyFunding';
 
 export { default as CustomerCenter } from './CustomerCenter/CustomerCenter';
 export { default as FAQDetail } from './CustomerCenter/FAQDetail';
+export { default as NoticeList } from './CustomerCenter/NoticeList';
+export { default as QuestionList } from './CustomerCenter/QuestionList';
+export { default as FAQList } from './CustomerCenter/FAQList'
 
 export { default as Donation } from './Donation/Donation';
 

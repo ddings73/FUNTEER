@@ -29,8 +29,8 @@ export const NavbarMenuData: NavbarMenuDataType[] = [
   },
   {
     title: '고객센터',
-    subRoutes: ['고객센터'],
-    subPath: ['cc'],
+    subRoutes: ['고객센터', '공지사항', 'FAQ', '1:1 문의'],
+    subPath: ['cc', 'notice', 'faq', 'qna'],
   },
 ];
 

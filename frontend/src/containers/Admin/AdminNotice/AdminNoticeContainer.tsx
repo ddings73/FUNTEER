@@ -97,7 +97,7 @@ function AdminNoticeContainer() {
   };
 
   const onClickNoticeHandler = (data: AdminNoticeContainerItemType, e: React.MouseEvent<HTMLButtonElement>) => {
-    navigate(`../../cc/${data.id}`, { state: { data } });
+    navigate(`../../notice/${data.id}`, { state: { data } });
   };
 
   return (
