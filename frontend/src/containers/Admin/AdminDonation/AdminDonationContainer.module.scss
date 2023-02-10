@@ -1,12 +1,16 @@
 @import '../../../styles/reset.scss';
 @import '../../../styles/variable.scss';
 
+* {
+  font-family: NanumSquare !important;
+}
+
 .container {
   width: 100%;
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  font-family: NanumSquare;
+  // font-family: NanumSquare !important;
 
   .contents {
     display: flex;
@@ -31,7 +35,7 @@
       border-radius: 5px;
       background-color: $primary;
       color: white;
-      font-family: NanumSquare;
+      // font-family: NanumSquare;
 
       &:hover {
         cursor: pointer;
@@ -45,7 +49,7 @@
       justify-content: space-between;
       align-items: flex-end;
       margin-bottom: 1rem;
-      font-family: NanumSquare;
+      // font-family: NanumSquare;
 
       & input {
         width: 15rem;
@@ -108,7 +112,7 @@
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            font-family: NanumSquare;
+            // font-family: NanumSquare;
           }
         }
 
@@ -134,7 +138,7 @@
         .show-approve {
           height: 1.5rem;
           font-size: 0.9rem;
-          font-family: NanumSquare;
+          // font-family: NanumSquare;
         }
 
         .hide-approve {

@@ -1,12 +1,14 @@
 @import '../../styles/reset.scss';
 @import '../../styles/variable.scss';
+* {
+  font-family: NanumSquare !important;
+}
 
 .container {
   width: 100%;
   min-height: 100vh;
   height: 100%;
   padding-top: 76px;
-  font-family: NanumSquare !important;
 
   .banner {
     width: 100%;
@@ -42,7 +44,7 @@
   }
 
   .contents {
-    margin: 450px auto;
+    margin: 450px auto 200px auto;
     width: 95%;
     max-width: 1100px;
 
@@ -114,9 +116,11 @@
       margin-top: 4rem;
 
       & .charge-title-box {
+        width: 97%;
         display: flex;
-        flex-direction: row;
         justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
 
         & p {
           font-size: 1.75rem;
@@ -128,58 +132,88 @@
         }
       }
 
-      & table {
-        margin-top: 30px;
+      .title-line {
+        width: 95%;
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr;
+        align-items: center;
+        height: 2.8rem;
+        padding: 0 1rem;
+        background: linear-gradient(269.64deg, #ffe1be 9.38%, #ffccaf 95.73%);
+        border-bottom: 1px solid #ffccaf;
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: rgba(0, 0, 0, 0.9);
+
+        @include mobile {
+          font-size: 0.8;
+        }
+      }
+
+      .content-line {
+        width: 95%;
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr;
+        align-items: center;
+        height: 2.5rem;
+        padding: 0 1rem;
+        border-bottom: 1px solid #ffeee4;
+        font-size: 1.125rem;
+        color: rgba(0, 0, 0, 0.9);
+
+        &:hover {
+          background-color: #fcf9f7;
+        }
+
+        @include mobile {
+          font-size: 0.75;
+        }
+      }
+
+      & li {
         width: 100%;
+        display: flex;
+        justify-content: center;
 
-        & thead tr {
-          height: 50px;
-          background: linear-gradient(269.64deg, #ffe1be 9.38%, #ffccaf 95.73%);
-          border-bottom: 1px solid #ffccaf;
+        & p {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
-        & thead tr :first-child {
-          text-align: left;
-        }
-
-        & thead tr :last-child {
-          text-align: right;
-        }
-
-        & thead tr th {
-          padding: 0 15px;
-          line-height: 50px;
-          font-weight: bold;
-          font-size: 1.25rem;
-
-          @include mobile {
-            font-size: 1rem;
-          }
-        }
-
-        & tbody tr {
-          height: 50px;
-          border-bottom: 1px solid #ffeee4;
+        .cancel {
+          text-decoration: none;
+          font-size: 1rem;
+          color: rgb(156, 156, 156);
 
           &:hover {
-            background-color: #fff9f5;
+            cursor: pointer;
+            color: $primary;
           }
 
-          & td {
-            padding: 0 15px;
-            font-size: 1.125rem;
-            line-height: 50px;
-
-            @include mobile {
-              font-size: 0.9rem;
-            }
+          @include mobile {
+            font-size: 0.75;
           }
         }
+      }
 
-        & tbody tr :last-child {
-          text-align: right;
+      .page-bar {
+        margin-top: 2rem;
+
+        & nav {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+
+          & li {
+            width: auto;
+          }
         }
       }
     }
   }
+}
+
+.MuiPaginationItem-outlined {
+  background-color: #ffccaf;
 }

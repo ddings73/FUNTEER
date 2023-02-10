@@ -15,7 +15,7 @@ import { payModalType } from '../../types/modal';
 import { closeModal } from '../../store/slices/payModalSlice';
 import { PayParams } from '../../types/payment';
 import { requestUserInfo } from '../../api/user';
-import { payment } from '../../containers/AddOns/ChargeContainer';
+import { payment } from '../../containers/Charge/ChargeContainer';
 
 function PayModal({ isOpen }: payModalType) {
   const dispatch = useAppDispatch();
