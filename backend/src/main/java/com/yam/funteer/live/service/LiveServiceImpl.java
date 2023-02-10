@@ -201,8 +201,6 @@ public class LiveServiceImpl implements LiveService{
 
         String sessionName = request.getSessionName();
         Session session = mapSessions.get(sessionName);
-
-        Session session = mapSessions.get(sessionName);
         try {
             String sessionId = session.getSessionId();
             Session activeSession = this.openVidu.getActiveSession(sessionId);
