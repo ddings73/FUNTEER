@@ -35,6 +35,6 @@ public class LiveController {
     public ResponseEntity leaveSession(@RequestBody SessionLeaveRequest request){
 
         liveService.leaveSession(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("세션떠나기 성공");
     }
 }
