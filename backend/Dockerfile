@@ -11,3 +11,12 @@ COPY ${JAR_FILE} app.jar
 
 # 빌드된 이미지가 run될 때 실행할 명령어
 ENTRYPOINT ["java","-jar", "app.jar"]
+
+ENV TZ=Asia/Seoul
+
+RUN apk --no-cache add tzdata && \
+    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
+    echo $TZ > /etc/timezone \
+    apk del tzdata
+
+

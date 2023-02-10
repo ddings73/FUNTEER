@@ -48,6 +48,8 @@ function FundingListContainer() {
   const [isLastPage, setIsLastPAge] = useState<boolean>(false);
   const [ref, inView] = useInView();
   const [selectCategory, setSelectCategory] = useState<number>(-1);
+  const [fundingStateFilter, setFundingStateFilter] = useState<string>('All');
+
 
   // 펀딩개수 계싼
   const fundingCount = useMemo(() => {
@@ -70,6 +72,12 @@ function FundingListContainer() {
     const { value } = e.target;
     search(value);
   };
+
+  const hanlderFilter = (id:string) => {
+    // setFundingStateFilter(id);
+    // console.log(fundingStateFilter);
+    getPostTypeList(id);
+  }
 
   const initFundingList = async () => {
     try {
@@ -129,6 +137,30 @@ function FundingListContainer() {
     }
   };
 
+  const getPostTypeList = async (filterdType: string) => {
+    console.log(filterdType)
+    try {
+      setIsLoading(true);
+      const { data } = await requestFundingList(size);
+      console.log('datadadadadadadadada',data)
+      setFundingList([...data.fundingListResponses.content]);
+      let next
+      if (filterdType === 'FUNDING_IN_PROGRESS') {
+        console.log("아아아아아")
+        next = fundingList.filter(el => el.postType === "FUNDING_IN_PROGRESS")
+        setFundingList([...next])
+      } 
+      else if(filterdType === 'FUNDING_ACCEPT'){
+        console.log("이이이이이이익!!")
+         next = fundingList.filter(el => el.postType === "FUNDING_ACCEPT")
+        setFundingList([...next])
+      }
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   useEffect(() => {
     initFundingList();
   }, []);
@@ -142,6 +174,10 @@ function FundingListContainer() {
   useEffect(() => {
     console.log(selectCategory);
   }, [selectCategory]);
+
+  // useEffect(() => {
+  //   getPostTypeList(fundingStateFilter);
+  // }, [fundingStateFilter])
 
   return (
     <div className={styles.container}>
@@ -191,6 +227,11 @@ function FundingListContainer() {
           <div className={styles['funding-filter-box']}>
             <p>
               <span>{fundingCount}</span>건의 프로젝트가 진행중에 있어요.
+            </p>
+            <p>
+              <button type='button' onClick={()=>hanlderFilter('All')}>전체 |</button>
+              <button type='button' onClick={()=>hanlderFilter('FUNDING_IN_PROGRESS')}>진행중 |</button>
+              <button type='button' onClick={()=>hanlderFilter('FUNDING_ACCEPT')}>오픈 예정</button>
             </p>
 
             {isLoading ? (

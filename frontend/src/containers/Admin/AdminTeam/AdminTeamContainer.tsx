@@ -178,9 +178,9 @@ function AdminTeamContainer() {
             <AiOutlineSearch onClick={handleClickSearch} />
             <AiOutlineReload onClick={handleClickInit} />
           </div>
-          <Select value={teamStateFilter} onChange={handleChangeFilter} sx={{ height: '40px' }}>
+          <Select value={teamStateFilter} onChange={handleChangeFilter} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
             {teamStateSet.map((state) => (
-              <MenuItem key={state} value={state}>
+              <MenuItem key={state} value={state} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
                 {state}
               </MenuItem>
             ))}

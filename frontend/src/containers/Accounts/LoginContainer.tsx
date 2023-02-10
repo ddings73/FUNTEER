@@ -49,7 +49,7 @@ function LoginContainer() {
         localStorage.setItem('accessToken', data.token.accessToken);
         localStorage.setItem('refreshToken', data.token.refreshToken);
 
-        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId, username: data.username }));
+        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId, username: data.username,profileImgUrl:data.profileImgUrl }));
         navigate('/', { replace: true });
       }
     } catch (error) {

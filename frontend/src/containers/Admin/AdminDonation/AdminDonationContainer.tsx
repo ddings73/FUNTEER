@@ -23,16 +23,17 @@ function AdminDonationContainer() {
   const [page, setPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState<number>(0);
   const [donationList, setDonationList] = useState<DonationListElementType[]>([]);
-  const [donationFilter, setDonationFilter] = useState<string>(DonationState.All);
 
+  /** 최대 페이지를 못구했으면 먼저 구하고 도네 리스트 요청 */
   useEffect(() => {
     if (!maxPage) {
       getMaxPage();
     } else {
       requestPageDonations();
     }
-  }, [page]);
+  }, [page, maxPage]);
 
+  /** 도네이션 종료 */
   const onStateChangeHandler = async (id: number, state: string) => {
     if (state === 'DONATION_ACTIVE') {
       try {
@@ -45,29 +46,15 @@ function AdminDonationContainer() {
     window.location.reload();
   };
 
+  /** 도네이션 상세 페이지로 */
   const onClickDonationItemHandler = (id: number) => {
     navigate(`${id}`);
   };
 
+  /** 도네이션 작성 페이지로 */
   const onClickDonationRegister = () => {
     navigate('create');
   };
-
-  const handleChangeFilter = (e: SelectChangeEvent<string>) => {
-    setDonationFilter(e.target.value);
-  };
-
-  const filtedDonations = donationList.filter((donation) => {
-    let filter;
-
-    if (donationFilter === '전체') {
-      filter = true;
-    } else {
-      filter = donationStateMap.get(donation.postType) === donationFilter;
-    }
-
-    return filter;
-  });
 
   /** 페이지 교체 */
   const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
@@ -78,7 +65,7 @@ function AdminDonationContainer() {
   const getMaxPage = async () => {
     try {
       const response = await requestAdminDonationList(10000);
-      const pageCalc = response.data.length % 8 ? response.data.length / 8 + 1 : response.data.length / 8;
+      const pageCalc = response.data.length % 8 ? Math.floor(response.data.length / 8) + 1 : response.data.length / 8;
       setMaxPage(pageCalc);
     } catch (error) {
       console.error(error);
@@ -97,25 +84,26 @@ function AdminDonationContainer() {
     }
   };
 
-  const donationStateSet = Object.values(DonationState);
+  /** 상태를 기준으로 정렬 */
+  donationList.sort((a, b) => {
+    if (a < b) {
+      return -1;
+    }
+
+    if (a > b) {
+      return 1;
+    }
+
+    return 0;
+  });
 
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
         <h1 className={styles.title}>도네이션 관리</h1>
-
-        <div className={styles.filter}>
-          <button type="button" onClick={onClickDonationRegister} className={styles.create}>
-            도네이션 작성
-          </button>
-          <Select value={donationFilter} onChange={handleChangeFilter} sx={{ height: '25px', margin: '0 0 0 0.5rem', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
-            {donationStateSet.map((state) => (
-              <MenuItem key={state} value={state} sx={{ height: '25px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
-                {state}
-              </MenuItem>
-            ))}
-          </Select>
-        </div>
+        <button type="button" onClick={onClickDonationRegister} className={styles.create}>
+          도네이션 작성
+        </button>
 
         <ul className={styles['title-line']}>
           <li>번호</li>
@@ -126,7 +114,7 @@ function AdminDonationContainer() {
           <li>상태</li>
         </ul>
 
-        {filtedDonations.map((data) => (
+        {donationList.map((data) => (
           <div className={styles['list-line']}>
             <li>
               <p>{data.id}</p>
@@ -137,7 +125,7 @@ function AdminDonationContainer() {
               </li>
             </button>
             <li>
-              <p>{data.targetAmount}</p>
+              <p>{parseInt(data.targetAmount, 10).toLocaleString()}</p>
             </li>
             <li>
               <p>{data.startDate}</p>
@@ -152,10 +140,10 @@ function AdminDonationContainer() {
                 onChange={() => onStateChangeHandler(data.id, data.postType)}
                 className={data.postType.includes('ACTIVE') ? styles['show-approve'] : styles['hide-approve']}
               >
-                <MenuItem value="DONATION_ACTIVE" sx={{ fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
+                <MenuItem value="DONATION_ACTIVE" sx={{ fontSize: '0.9rem' }}>
                   진행중
                 </MenuItem>
-                <MenuItem value="DONATION_CLOSE" sx={{ fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
+                <MenuItem value="DONATION_CLOSE" sx={{ fontSize: '0.9rem' }}>
                   종료
                 </MenuItem>
               </Select>

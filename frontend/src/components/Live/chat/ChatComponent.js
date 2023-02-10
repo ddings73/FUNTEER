@@ -8,6 +8,8 @@ import Send from '@material-ui/icons/Send';
 
 import './ChatComponent.css';
 import { Tooltip } from '@material-ui/core';
+import { IconButton } from '@mui/material';
+import defaultProfile from '../../../assets/images/default-profile-img.svg';
 
 export default class ChatComponent extends Component {
   constructor(props) {
@@ -17,7 +19,7 @@ export default class ChatComponent extends Component {
       message: '',
     };
     this.chatScroll = React.createRef();
-
+    const { userProfileImg } = this.props;
     this.handleChange = this.handleChange.bind(this);
     this.handlePressKey = this.handlePressKey.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -32,8 +34,8 @@ export default class ChatComponent extends Component {
       setTimeout(() => {
         const userImg = document.getElementById(`userImg-${this.state.messageList.length - 1}`);
         const video = document.getElementById(`video-${data.streamId}`);
-        const avatar = userImg.getContext('2d');
-        avatar.drawImage(video, 200, 120, 285, 285, 0, 0, 60, 60);
+        // const avatar = userImg.getContext('2d');
+        // avatar.drawImage(video, 200, 120, 285, 285, 0, 0, 60, 60);
       }, 50);
       this.setState({ messageList });
       this.scrollToBottom();
@@ -73,23 +75,28 @@ export default class ChatComponent extends Component {
   }
 
   render() {
+    console.log('profileImage', this.props.userProfileImg);
     return (
       <div id="chatContainer">
         <div id="chatComponent">
           <div id="chatToolbar">
-            <span>{this.props.user.getStreamManager().stream.session.sessionId}의 채팅방</span>
+            <span> 채팅방</span>
           </div>
           <div className="message-wrap" ref={this.chatScroll}>
             {this.state.messageList.map((data, i) => (
-              <div key={i} id="remoteUsers" className={`message${data.connectionId !== this.props.user.getConnectionId() ? ' left' : ' right'}`}>
+              <div key={i} id="remoteUsers" className={`message${data.connectionId !== this.props.user.getConnectionId() ? ' left' : ' left'}`}>
                 <div className="msg-detail">
-                  <div className="msg-info">
+                  <img src={this.props.userProfileImg ? this.props.userProfileImg : defaultProfile} className="userProfileImage" alt="userprofile" />
+                  <div className="message-contents-box">
+                    <span className="uername">{data.nickname}</span>
+                    <span className="chat-content">{data.message}</span>
+                  </div>
+                  {/* <div className="msg-info">
                     <p> {data.nickname}</p>
                   </div>
                   <div className="msg-content">
-                    <span className="triangle" />
                     <p className="text">{data.message}</p>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             ))}
@@ -97,11 +104,9 @@ export default class ChatComponent extends Component {
 
           <div id="messageInput">
             <input placeholder="채팅 메세지를 입력해주세요." id="chatInput" value={this.state.message} onChange={this.handleChange} onKeyPress={this.handlePressKey} />
-            <Tooltip title="채팅 메세지를 입력해주세요.">
-              <Fab size="middle" id="sendButton" onClick={this.sendMessage}>
-                <Send color="secondary" />
-              </Fab>
-            </Tooltip>
+            <IconButton size="large" id="sendButton" onClick={this.sendMessage}>
+              <Send color="inherit" />
+            </IconButton>
           </div>
         </div>
       </div>
