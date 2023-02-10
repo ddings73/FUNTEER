@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Link, useNavigate, useParams } from 'react-router-dom';
@@ -8,7 +8,7 @@ import TextField from '@mui/material/TextField';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
-import { requestCommentList, requestFundingDetail, requestNextCommentList } from '../../api/funding';
+import { fundingJoin, requestCommentList, requestFundingDetail, requestNextCommentList } from '../../api/funding';
 import TeamInfo from '../../components/Cards/TeamInfoCard';
 import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
@@ -33,6 +33,7 @@ export interface ResponseInterface {
   fundingDescription: string;
   comments: commentType[];
   team: teamType;
+  fundingId: number;
 }
 export type commentType = {
   memberNickName: string;
@@ -88,6 +89,7 @@ export function FundingDetailContainer() {
       phone: '',
       profileImgUrl: '',
     },
+    fundingId: 0,
   });
   // 게시물 좋아요
   const [isLiked, setIsLiked] = useState<boolean>(false);
@@ -185,6 +187,7 @@ export function FundingDetailContainer() {
   const userId = useAppSelector((state) => state.userSlice.userId);
   // 잔액
   const [money, setMoney] = React.useState(0);
+
   useEffect(() => {
     requestMoneyInfo();
   }, []);
@@ -201,6 +204,23 @@ export function FundingDetailContainer() {
       console.error(error);
     }
   };
+
+  // 펀딩 참여
+  const [paying, setPaying] = useState('');
+  function handleInputMoney(e: any) {
+    setPaying(e.target.value);
+    console.log(e.target.value);
+  }
+  async function fundingHandler() {
+    console.log('여기 펀딩하러옴');
+    console.log('정보: ', board.fundingId, paying);
+    try {
+      // const response = await fundingJoin(board.fundingId, inputMoney.current);
+      alert(`${paying}원으로 펀딩을 완료했습니다!`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className={styles.bodyContainer}>
@@ -312,11 +332,12 @@ export function FundingDetailContainer() {
               // eslint-disable-next-line
               onKeyUp={handleKeyUp}
               color="warning"
+              onChange={() => handleInputMoney}
             />
           </div>
 
           <p>마일리지로</p>
-          <button type="button" className={styles.payBtn}>
+          <button type="button" className={styles.payBtn} onClick={() => fundingHandler()}>
             펀딩 참여하기
           </button>
           <div className={styles.mileText}>
