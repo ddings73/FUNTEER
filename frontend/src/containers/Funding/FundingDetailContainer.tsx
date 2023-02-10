@@ -1,9 +1,11 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
-import { CircularProgress } from '@mui/material';
+import { Box, CircularProgress, Fab } from '@mui/material';
+import TextField from '@mui/material/TextField';
+import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
 import { requestCommentList, requestFundingDetail, requestNextCommentList } from '../../api/funding';
@@ -12,7 +14,9 @@ import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
 import CommentCard from '../../components/Cards/CommentCard';
 import CommentSkeleton from '../../components/Skeleton/CommentSkeleton';
-import './FundingDetailContainer.scss';
+import { teamStateMap } from '../Admin/AdminTeam/AdminTeamContainer';
+import { useAppSelector } from '../../store/hooks';
+import { requestUserProfile } from '../../api/user';
 
 export interface ResponseInterface {
   id: number;
@@ -52,6 +56,7 @@ type targetType = {
 };
 
 export function FundingDetailContainer() {
+  const navigate = useNavigate();
   const [commentList, setCommentList] = useState([
     {
       memberNickName: '',
@@ -89,8 +94,6 @@ export function FundingDetailContainer() {
 
   const handleLikeClick = () => {
     setIsLiked(!isLiked);
-    console.log('눌림');
-    console.log(board.comments);
   };
 
   // 펀딩 상세 게시물 로드
@@ -136,7 +139,6 @@ export function FundingDetailContainer() {
   };
   const [nextLoading, setNextLoading] = useState<boolean>(false);
   // 한번에 불러올 게시글 수
-  const size = 5;
   const nextCommentList = async () => {
     try {
       console.log('here comes');
@@ -153,6 +155,22 @@ export function FundingDetailContainer() {
 
   const [ref, inView] = useInView();
 
+  // Drawer 핸들러
+
+  const [toggled, setToggled] = useState<boolean>(false);
+  function handleDrawer() {
+    setToggled(!toggled);
+  }
+
+  // 엔터키 input 완성
+
+  function handleKeyUp(event: React.KeyboardEvent<HTMLImageElement>) {
+    console.log('누름');
+    if (event.key === 'Enter') {
+      (document.activeElement as HTMLElement).blur();
+    }
+  }
+
   useEffect(() => {
     initCommentList();
   }, []);
@@ -163,8 +181,27 @@ export function FundingDetailContainer() {
     }
   }, [inView]);
 
-  console.log('commentList', commentList);
-  console.log(isLastPage);
+  // 로그인 정보
+  const userId = useAppSelector((state) => state.userSlice.userId);
+  // 잔액
+  const [money, setMoney] = React.useState(0);
+  useEffect(() => {
+    requestMoneyInfo();
+  }, []);
+
+  /** 잔액 조회 */
+  const requestMoneyInfo = async () => {
+    try {
+      if (userId) {
+        const response = await requestUserProfile(userId);
+        console.log('유저 프로필 정보', response);
+        setMoney(response.data.money);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className={styles.bodyContainer}>
       <div className={styles.banner}>
@@ -174,7 +211,13 @@ export function FundingDetailContainer() {
             <button className={styles.bannerGrpBtn} type="button">
               보고서 제출
             </button>
-            <button className={styles.bannerGrpBtn} type="button">
+            <button
+              className={styles.bannerGrpBtn}
+              type="button"
+              onClick={() => {
+                navigate('../../createLive', { replace: true });
+              }}
+            >
               라이브 시작
             </button>
             <button className={styles.bannerBtn} type="button">
@@ -215,18 +258,6 @@ export function FundingDetailContainer() {
         <div className={styles.mainCommentSubmit}>
           <CommentCardSubmit />
         </div>
-        <div className={styles.toggles}>
-          <p>정렬 기준</p>
-          <div className="toggle-button-cover">
-            <div className="button-cover">
-              <div className="button r" id="button-3">
-                <input type="checkbox" className="checkbox" checked={isChecked} onChange={(e) => checkHandler(e)} />
-                <div className="knobs" />
-                <div className="layer" />
-              </div>
-            </div>
-          </div>
-        </div>
         <div className={styles.mainComments}>
           {isLoading ? (
             <CommentSkeleton />
@@ -247,6 +278,55 @@ export function FundingDetailContainer() {
         </div>
         {currentPage >= 0 ? <div ref={ref} /> : ''}
       </div>
+      <Fab
+        aria-label="add"
+        sx={{ color: 'white', backgroundColor: 'orange !important', position: 'fixed', bottom: '3%', right: '3%', width: '60px', height: '60px' }}
+        onClick={() => handleDrawer()}
+        className={styles.fabToggle}
+      >
+        <LocalAtmIcon />
+      </Fab>
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: '10px',
+          left: toggled ? '0px' : '-100%',
+          width: '90%',
+          height: '13%',
+          transition: '1s ease-in-out',
+          margin: '0 20px',
+        }}
+        className={styles.payBox}
+      >
+        <div className={styles.payBar}>
+          <p>
+            <span>{board.team.name}</span>님의 펀딩에 총 <span>123,456</span>명이 참여했어요
+          </p>
+          <div>
+            <TextField
+              label="금액 입력"
+              id="custom-css-outlined-input"
+              type="number"
+              size="small"
+              sx={{ margin: '0 20px', backgroundColor: 'white' }}
+              // eslint-disable-next-line
+              onKeyUp={handleKeyUp}
+              color="warning"
+            />
+          </div>
+
+          <p>마일리지로</p>
+          <button type="button" className={styles.payBtn}>
+            펀딩 참여하기
+          </button>
+          <div className={styles.mileText}>
+            <p>현재 잔액: {money}원</p>
+            <Link to="/charge" className={styles.milLink}>
+              <p className={styles.milea}>마일리지 충전</p>
+            </Link>
+          </div>
+        </div>
+      </Box>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 .cardContainer {
   width: 95%;
-  height: 120px;
+  height: 90px;
   background-color: rgb(255, 255, 255);
   margin-bottom: 2%;
   border-radius: 10px;
@@ -8,8 +8,7 @@
   & .commentMid {
     display: flex;
     align-items: center;
-    padding: 3%;
-    padding-top: 40px;
+    padding: 2% 3%;
     & .commentImg {
       width: 50px;
       height: 50px;

@@ -28,12 +28,7 @@ function SubscribeLiveRoomContainer() {
     createSession();
   }, []);
 
-  return (
-    <div className={styles.container}>
-      <h1>시청자</h1>
-      {check && <VideoRoomComponent sessionName={sessionName} user={userName} token={token} />}
-    </div>
-  );
+  return <div className={styles.container}>{check && <VideoRoomComponent sessionName={sessionName} user={userName} token={token} />}</div>;
 }
 
 export default SubscribeLiveRoomContainer;

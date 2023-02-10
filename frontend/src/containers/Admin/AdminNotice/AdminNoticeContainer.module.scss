@@ -4,32 +4,45 @@
 .container {
   width: 100%;
   min-height: 100vh;
+  height: 100%;
   display: flex;
   justify-content: center;
+  font-family: NanumSquare !important;
 
   .contents {
+    max-width: 1160px;
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 100%;
-    max-width: 1160px;
 
     .title {
       font-size: 2.25rem;
       font-weight: bold;
-      margin: 5rem 0;
+      margin: 3rem 0;
     }
 
-    .search-div {
+    .create-div {
       width: 100%;
       display: flex;
       justify-content: flex-end;
-      align-items: flex-end;
-      margin-bottom: 1rem;
-      font-family: NanumSquareRound;
 
-      & button{
+      .create {
+        height: 35px;
+        margin: 0 0.5rem 1rem auto;
+        display: flex;
+        align-items: center;
+        padding: 1rem;
+        border: none;
+        border-radius: 5px;
         background-color: $primary;
+        color: white;
+        font-family: NanumSquare;
+
+        &:hover {
+          cursor: pointer;
+          background-color: $error;
+        }
       }
     }
 
@@ -41,12 +54,12 @@
       align-items: center;
       background-color: $primary;
       font-weight: bold;
-      font-size: 1rem;
+      font-size: 0.9rem;
       color: white;
       box-shadow: 0px 1px 2px rgba(1, 1, 1, 0.3);
       border-radius: 3px;
       margin-bottom: 0.1rem;
-      font-family: NanumSquareRound;
+      font-family: NanumSquare;
 
       .wide {
         width: 250px;
@@ -66,12 +79,28 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      background-color: rgba(1, 1, 1, 0.01);
-      font-size: 1rem;
+      background-color: rgb(252, 252, 252);
+      font-size: 0.9rem;
       border-bottom: 1px solid rgba(1, 1, 1, 0.05);
       margin: 0.1rem 0;
       padding: 0.5rem 0;
-      font-family: NanumSquareRound;
+      font-family: NanumSquare;
+
+      .title-btn {
+        width: 250px;
+        display: flex;
+        justify-content: center;
+        border: none;
+        background-color: inherit;
+        font-family: NanumSquare;
+        font-size: 0.9rem;
+
+        &:hover {
+          cursor: pointer;
+          font-weight: bold;
+          color: $primary;
+        }
+      }
 
       .wide {
         width: 250px;
@@ -107,151 +136,21 @@
         }
 
         .withdraw-btn {
-          width: 25px;
-          height: 25px;
-          padding: auto auto;
+          width: 20px;
+          height: 20px;
           border: none;
           border-radius: 100%;
-          background-color: $error;
-          color: white;
+          color: $error;
           font-weight: bold;
           box-shadow: none;
 
           &:hover {
             cursor: pointer;
-          }
-
-          &:active {
-            background-color: $primary;
+            color: $primary;
           }
         }
-      }
-    }
-  }
-}
-.container {
-  width: 100%;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
 
-  .contents {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 100%;
-    max-width: 1160px;
-
-    .title {
-      font-size: 2.25rem;
-      font-weight: bold;
-      margin: 5rem 0;
-    }
-
-    .search-div {
-      width: 100%;
-      display: flex;
-      justify-content: flex-end;
-      align-items: flex-end;
-      margin-bottom: 1rem;
-      font-family: NanumSquareRound;
-
-      & button{
-        background-color: $primary;
-      }
-    }
-
-    .title-line {
-      width: 100%;
-      height: 3rem;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background-color: $primary;
-      font-weight: bold;
-      font-size: 1rem;
-      color: white;
-      box-shadow: 0px 1px 2px rgba(1, 1, 1, 0.3);
-      border-radius: 3px;
-      margin-bottom: 0.1rem;
-      font-family: NanumSquareRound;
-
-      .wide {
-        width: 250px;
-        display: flex;
-        justify-content: center;
-      }
-
-      & li {
-        width: 95px;
-        display: flex;
-        justify-content: center;
-      }
-    }
-
-    .list-line {
-      width: 100%;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background-color: rgba(1, 1, 1, 0.00);
-      font-size: 1rem;
-      border-bottom: 1px solid rgba(1, 1, 1, 0.05);
-      margin: 0.1rem 0;
-      padding: 0.5rem 0;
-      font-family: NanumSquareRound;
-
-      .wide {
-        width: 250px;
-        display: flex;
-        justify-content: center;
-      }
-
-      & li {
-        width: 95px;
-        display: flex;
-        justify-content: center;
-
-        & p {
-          max-width: 250px;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          white-space: nowrap;
-        }
-
-        .img-div {
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          width: 40px;
-          height: 40px;
-          overflow: hidden;
-          border-radius: 100%;
-        }
-
-        & img {
-          width: 40px;
-          height: auto;
-        }
-
-        .withdraw-btn {
-          width: 25px;
-          height: 25px;
-          padding: auto auto;
-          border: none;
-          border-radius: 100%;
-          background-color: $error;
-          color: white;
-          font-weight: bold;
-          box-shadow: none;
-
-          &:hover {
-            cursor: pointer;
-          }
-
-          &:active {
-            background-color: $primary;
-          }
+        .del-btn {
         }
       }
     }

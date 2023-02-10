@@ -4,7 +4,6 @@
 .container {
   width: 100%;
   min-height: 100vh;
-  height: 100%;
   display: flex;
   justify-content: center;
   font-family: NanumSquare !important;
@@ -14,7 +13,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 1160px;
+    max-width: 1440px;
 
     .title {
       font-size: 2rem;
@@ -25,8 +24,8 @@
     .label-div {
       display: flex;
       align-items: center;
-      width: 810px;
-      margin: 1rem 0 0.5rem 0;
+      width: 800px;
+      margin: 0.5rem 0;
       font-size: 1.25rem;
 
       & img {
@@ -40,14 +39,14 @@
       width: 780px;
       height: 35px;
       margin-bottom: 1rem;
-      padding: 0 1rem;
+      padding: 0 0.7rem;
       border-radius: 5px;
       font-family: NanumSquare;
     }
 
-    .email-content {
-      width: 700px;
-      height: 400px;
+    .editor {
+      width: 805px;
+      height: 500px;
       margin-bottom: 1rem;
       padding: 1rem;
       border-radius: 5px;
@@ -69,21 +68,14 @@
 
     .btn-div {
       display: flex;
-      margin-top: 1rem;
+      justify-content: space-around;
+      margin: 2rem 0 4rem;
 
       .submit {
         background-color: $primary;
         margin: 0 0.5rem;
         font-family: NanumSquare;
       }
-    }
-
-    .file-list {
-      width: 800px;
-      margin-top: 1rem;
-      color: $primary;
-      font-size: 1rem;
-      font-weight: bold;
     }
   }
 }

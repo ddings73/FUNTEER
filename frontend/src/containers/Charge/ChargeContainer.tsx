@@ -1,13 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button, MenuItem, Select } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import styles from './ChargeContainer.module.scss';
 import { openModal } from '../../store/slices/payModalSlice';
 import { requestUserProfile } from '../../api/user';
-import { requestVerifyPayment, requestPayment } from '../../api/payment';
+import { requestVerifyPayment, requestPayment, requestChargeList } from '../../api/payment';
 import { CallBackParams, PayParams } from '../../types/payment';
 import { customAlert, customTextAlert, s2000, w2000 } from '../../utils/customAlert';
+import { YYYYMMDDHHMMSS } from '../../utils/day';
 
 /** 결제 콜백 함수 */
 const callback: (response: CallBackParams) => void = async (response) => {
@@ -50,18 +53,8 @@ export const payment = (data: PayParams) => {
   IMP.request_pay(data, callback);
 };
 
-type NoticeType = {
-  idx: number;
-  text: string;
-};
-
-type ChargeHistoryType = {
-  idx: number;
-  text: string;
-  date: string;
-};
-
-const chargeNotice: NoticeType[] = [
+/** 결제 고지 및 안내문진다 가위바위보 */
+const chargeNotice = [
   {
     idx: 1,
     text: '결제는 KG 이니시스 서비스 내에서 진행됩니다.',
@@ -88,54 +81,88 @@ const chargeNotice: NoticeType[] = [
   },
 ];
 
-const dummyChargeHistory: ChargeHistoryType[] = [
-  {
-    idx: 0,
-    text: '123,000',
-    date: '2023.01.03',
-  },
-  {
-    idx: 1,
-    text: '234,000',
-    date: '2023.01.12',
-  },
-  {
-    idx: 2,
-    text: '23,000',
-    date: '2023.01.23',
-  },
-];
+/** 결제 내역 타입 */
+type ChargeHistoryType = {
+  impUid: string;
+  amount: number;
+  chargeDate: string;
+  possibleRefund: number;
+};
 
 function ChargeContainer() {
+  // ================================ 변수 및 useState =====================================
   const dispatch = useAppDispatch();
+  const size = 8;
   /** 유저 ID */
   const userId = useAppSelector((state) => state.userSlice.userId);
   /** 잔액 */
   const [money, setMoney] = React.useState(0);
   /** 정렬 기준 */
-  const [sort, setSort] = React.useState('date');
+  const [sort, setSort] = React.useState<string>('chargeDate,DESC');
   /** 스크롤 */
   const [scrollY, setScrollY] = useState(0);
   /** 배너 ref */
   const bannerRef = useRef<HTMLDivElement>(null);
   /** 타이틀 ref */
   const titleRef = useRef<HTMLParagraphElement>(null);
+  /** 페이지 */
+  const [page, setPage] = useState<number>(1);
+  /** 최대 페이지 */
+  const [maxPage, setMaxPage] = useState<number>(1);
+  /** 내역 리스트 */
+  const [chargeList, setChargeList] = useState<ChargeHistoryType[]>([]);
 
+  // =============================== useEffect ====================================
+  /** 스크롤 useEffect */
+  useEffect(() => {
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  /** 잔액 조회 */
   useEffect(() => {
     requestMoneyInfo();
   }, []);
 
+  /** 충전 내역 */
+  useEffect(() => {
+    requestPageCharge();
+  }, [maxPage, page, sort]);
+
+  // ============================== Axios =========================================
   /** 잔액 조회 */
   const requestMoneyInfo = async () => {
     try {
       if (userId) {
         const response = await requestUserProfile(userId);
-        console.log('유저 프로필 정보', response);
+        console.log('잔액 조회용 유저 프로필 정보', response);
         setMoney(response.data.money);
       }
     } catch (error) {
       console.error(error);
     }
+  };
+
+  /** 충전 내역 조회 */
+  const requestPageCharge = async () => {
+    setChargeList([]);
+    try {
+      const response = await requestChargeList(page - 1, size, sort);
+      console.log('충전 내역 요청', response);
+      setMaxPage(response.data.totalPages);
+      setChargeList(response.data.content);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // ======================================= Handler ==========================================
+
+  /** 스크롤 */
+  const handleScroll = () => {
+    setScrollY(window.scrollY);
   };
 
   /** 충전 결제 모달 open */
@@ -148,18 +175,10 @@ function ChargeContainer() {
     setSort(event.target.value);
   };
 
-  /** 스크롤 */
-  const handleScroll = () => {
-    setScrollY(window.scrollY);
+  /** 페이지 교체 */
+  const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
+    setPage(selectedPage);
   };
-
-  /** 스크롤 useEffect */
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-  }, []);
 
   /** 배너 높이 조정 */
   useEffect(() => {
@@ -170,6 +189,8 @@ function ChargeContainer() {
       titleRef.current.style.opacity = `calc((200 - ${scrollY} * 3) / 200)`;
     }
   }, [scrollY]);
+
+  // ==================================================================================================================
 
   return (
     <div className={styles.container}>
@@ -204,26 +225,41 @@ function ChargeContainer() {
           <div className={styles['charge-title-box']}>
             <p>충전 내역 확인</p>
             <Select value={sort} sx={{ height: '2.5rem' }} onChange={changeSortHandler} displayEmpty inputProps={{ 'aria-label': 'Without label' }}>
-              <MenuItem value="date">날짜순</MenuItem>
-              <MenuItem value="amount">금액순</MenuItem>
+              <MenuItem value="chargeDate,DESC">최신순</MenuItem>
+              <MenuItem value="amount,DESC">금액순</MenuItem>
             </Select>
           </div>
-          <table>
-            <thead>
-              <tr>
-                <th>금액</th>
-                <th>날짜</th>
-              </tr>
-            </thead>
-            <tbody>
-              {dummyChargeHistory.map((chargeHistory) => (
-                <tr key={chargeHistory.idx}>
-                  <td>{chargeHistory.text} 원</td>
-                  <td>{chargeHistory.date}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ul className={styles['title-line']}>
+            <li>
+              <p>금액</p>
+            </li>
+            <li>
+              <p>날짜</p>
+            </li>
+            <li> </li>
+          </ul>
+          {chargeList.map((charge) => (
+            <ul className={styles['content-line']}>
+              <li>
+                <p>{charge.amount.toLocaleString('ko-KR')} 원</p>
+              </li>
+              <li>
+                <p>{YYYYMMDDHHMMSS(charge.chargeDate)}</p>
+              </li>
+              <li>
+                {charge.possibleRefund && (
+                  <a href="." className={styles.cancel}>
+                    환불
+                  </a>
+                )}
+              </li>
+            </ul>
+          ))}
+          <div className={styles['page-bar']}>
+            <Stack spacing={2}>
+              <Pagination showFirstButton showLastButton count={maxPage} variant="outlined" page={page} onChange={handleChangePage} />
+            </Stack>
+          </div>
         </div>
       </div>
     </div>

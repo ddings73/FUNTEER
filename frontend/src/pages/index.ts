@@ -10,7 +10,7 @@ export { default as LogOut } from './Accounts/LogOut';
 export { default as Kakao } from './Accounts/Kakao';
 
 export { default as ErrorPage } from './AddOns/ErrorPage';
-export { default as Charge } from './AddOns/Charge';
+export { default as Charge } from './Charge/Charge';
 
 export { default as DevTeamPage } from './Service/DevTeamPage';
 export { default as ServiceDetail } from './Service/ServiceDetail';
@@ -24,8 +24,6 @@ export { default as AdminDonationCreate } from './Admin/AdminDonationCreate';
 export { default as AdminDonation } from './Admin/AdminDonation';
 export { default as AdminDonationDetail } from './Admin/AdminDonationDetail';
 export { default as AdminNotice } from './Admin/AdminNotice';
-export { default as AdminFaq } from './Admin/AdminFaq';
-export { default as AdminFaqCreate } from './Admin/AdminFaqCreate';
 export { default as AdminNoticeCreate } from './Admin/AdminNoticeCreate';
 export { default as AdminFundingReject } from './Admin/AdminFundingReject';
 
