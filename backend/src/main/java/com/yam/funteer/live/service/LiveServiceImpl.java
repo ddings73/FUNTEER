@@ -200,23 +200,25 @@ public class LiveServiceImpl implements LiveService{
     private CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, OpenViduRole role) {
 
         String sessionName = request.getSessionName();
+        Session session = mapSessions.get(sessionName);
 
         Session session = mapSessions.get(sessionName);
         try {
-            Session activeSession = this.openVidu.getActiveSession(session.getSessionId());
+            String sessionId = session.getSessionId();
+            Session activeSession = this.openVidu.getActiveSession(sessionId);
             if(activeSession == null){
                 log.info("OpenVidu 서버에 동작중인 세션이 없음");
-                sessionRecordings.remove(session.getSessionId());
+                sessionRecordings.remove(sessionId);
                 mapSessions.remove(sessionName);
                 mapSessionNamesTokens.remove(sessionName);
                 return initializeSession(request);
             }
 
+
             ConnectionProperties connectionProperties = new ConnectionProperties.Builder().role(role).build();
-            String token = session.createConnection(connectionProperties).getToken();
+            String token = activeSession.createConnection(connectionProperties).getToken();
             mapSessionNamesTokens.get(sessionName).put(token, role);
-            if (!session.isBeingRecorded()) {
-                String sessionId = session.getSessionId();
+            if (!activeSession.isBeingRecorded()) {
                 RecordingProperties recordingProperties = request.toRecordingProperties();
 
 
