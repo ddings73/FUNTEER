@@ -59,11 +59,10 @@ import {
   TeamDonation,
   Kakao,
   CreateLive,
-  AdminMemberSearch,
-  AdminTeamSearch,
   PublisherLiveRoom,
   SubscribeLiveRoom,
   ModifyFunding,
+  AdminFundingReject,
   FAQDetail
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
@@ -169,6 +168,11 @@ const router = createBrowserRouter([
         path: 'teamdonation/:teamId',
         element: <TeamDonation />,
       },
+    ],
+  },
+  {
+    path: '/',
+    children: [
       {
         path: 'createLive',
         element: <CreateLive />,
@@ -214,8 +218,8 @@ const router = createBrowserRouter([
         element: <FundingDetail />,
       },
       {
-        path:'/funding/modify/:fundIdx',
-        element:<ModifyFunding/>
+        path: '/funding/modify/:fundIdx',
+        element: <ModifyFunding />,
       },
       {
         path: '/cc',
@@ -286,12 +290,8 @@ const router = createBrowserRouter([
         element: <AdminFaqCreate />,
       },
       {
-        path: 'member/search',
-        element: <AdminMemberSearch />,
-      },
-      {
-        path: 'team/search',
-        element: <AdminTeamSearch />,
+        path: 'funding/reject/:id',
+        element: <AdminFundingReject />,
       },
     ],
   },
