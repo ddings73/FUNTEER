@@ -74,11 +74,11 @@ export default class ToolbarComponent extends Component {
               </IconButton>
             )}
 
-            <Link to="/">
-              <IconButton color="secondary" className="navButton" onClick={this.leaveSession} id="navLeaveButton">
-                <PowerSettingsNew />
-              </IconButton>
-            </Link>
+            {/* <Link to="/"> */}
+            <IconButton color="secondary" className="navButton" onClick={this.leaveSession} id="navLeaveButton">
+              <PowerSettingsNew />
+            </IconButton>
+            {/* </Link> */}
           </div>
         </div>
       </header>
