@@ -12,12 +12,6 @@ public class CancelRequest {
 
 	private String reason;
 
-	private String refund_holder;
-
-	private String refund_bank;
-
-	private String refund_account;
-
 	public boolean isImpUid(){
 
 		if(imp_uid.isEmpty()){

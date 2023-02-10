@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button, MenuItem, Select } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Pagination from '@mui/material/Pagination';
@@ -92,6 +93,7 @@ type ChargeHistoryType = {
 function ChargeContainer() {
   // ================================ 변수 및 useState =====================================
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const size = 8;
   /** 유저 ID */
   const userId = useAppSelector((state) => state.userSlice.userId);
@@ -115,11 +117,24 @@ function ChargeContainer() {
   // =============================== useEffect ====================================
   /** 스크롤 useEffect */
   useEffect(() => {
+    window.scrollTo(0, 0);
+
     window.addEventListener('scroll', handleScroll);
+
     return () => {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  /** 배너 높이 조정 */
+  useEffect(() => {
+    if (bannerRef.current) {
+      bannerRef.current.style.height = `calc(200px - ${scrollY}px * 3)`;
+    }
+    if (titleRef.current) {
+      titleRef.current.style.opacity = `calc((200 - ${scrollY} * 3) / 200)`;
+    }
+  }, [scrollY]);
 
   /** 잔액 조회 */
   useEffect(() => {
@@ -159,7 +174,6 @@ function ChargeContainer() {
   };
 
   // ======================================= Handler ==========================================
-
   /** 스크롤 */
   const handleScroll = () => {
     setScrollY(window.scrollY);
@@ -180,15 +194,19 @@ function ChargeContainer() {
     setPage(selectedPage);
   };
 
-  /** 배너 높이 조정 */
-  useEffect(() => {
-    if (bannerRef.current) {
-      bannerRef.current.style.height = `calc(200px - ${scrollY}px * 3)`;
-    }
-    if (titleRef.current) {
-      titleRef.current.style.opacity = `calc((200 - ${scrollY} * 3) / 200)`;
-    }
-  }, [scrollY]);
+  /** 환불 버튼 클릭 */
+  const onClickCancelHandler = (e: React.MouseEvent<HTMLAnchorElement>, amount: number, impUid: string) => {
+    e.preventDefault();
+
+    navigate('./cancel', {
+      state: {
+        userId,
+        amount,
+        impUid,
+        money,
+      },
+    });
+  };
 
   // ==================================================================================================================
 
@@ -248,7 +266,13 @@ function ChargeContainer() {
               </li>
               <li>
                 {charge.possibleRefund && (
-                  <a href="." className={styles.cancel}>
+                  <a
+                    href="."
+                    className={styles.cancel}
+                    onClick={(e) => {
+                      onClickCancelHandler(e, charge.amount, charge.impUid);
+                    }}
+                  >
                     환불
                   </a>
                 )}

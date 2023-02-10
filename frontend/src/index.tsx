@@ -62,6 +62,10 @@ import {
   ModifyFunding,
   AdminFundingReject,
   FAQDetail,
+  ChargeCancel,
+  NoticeList,
+  FAQList,
+  QuestionList,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -204,6 +208,10 @@ const router = createBrowserRouter([
         element: <Charge />,
       },
       {
+        path: 'charge/cancel',
+        element: <ChargeCancel />,
+      },
+      {
         path: '/funding',
         element: <FundingList />,
       },
@@ -224,11 +232,23 @@ const router = createBrowserRouter([
         element: <CustomerCenter />,
       },
       {
-        path: '/cc/:nn', // nn: 공지사항 번호
+        path: '/notice',
+        element: <NoticeList />,
+      },
+      {
+        path: '/notice/:nn', // nn: 공지사항 번호
         element: <NoticeDetail />,
       },
       {
-        path: '/cc/faq/:fn',
+        path: '/faq',
+        element: <FAQList />,
+      },
+      {
+        path: '/qna',
+        element: <QuestionList />,
+      },
+      {
+        path: '/faq/:fn',
         element: <FAQDetail />,
       },
     ],
