@@ -14,9 +14,4 @@ ENTRYPOINT ["java","-jar", "app.jar"]
 
 ENV TZ=Asia/Seoul
 
-RUN apk --no-cache add tzdata && \
-    cp /usr/share/zoneinfo/$TZ /etc/localtime && \
-    echo $TZ > /etc/timezone \
-    apk del tzdata
-
 
