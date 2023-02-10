@@ -51,6 +51,7 @@ import com.yam.funteer.funding.entity.TargetMoneyDetail;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.exception.InsufficientBalanceException;
+import com.yam.funteer.funding.exception.NotAuthenticatedMemberException;
 import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
@@ -477,8 +478,14 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public void deleteFundingComment(Long commentId) throws CommentNotFoundException{
+	public void deleteFundingComment(Long commentId) throws CommentNotFoundException, NotAuthenticatedMemberException {
+		Long userId = SecurityUtil.getCurrentUserId();
+		Member member = memberRepository.findById(userId).orElseThrow();
 		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException());
+
+		if (comment.getMember() != member) {
+			throw new NotAuthenticatedMemberException("댓글을 삭제할 권한이 없습니다.");
+		}
 		commentRepository.delete(comment);
 	}
 

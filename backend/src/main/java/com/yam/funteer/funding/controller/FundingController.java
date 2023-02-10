@@ -24,6 +24,7 @@ import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
+import com.yam.funteer.funding.exception.NotAuthenticatedMemberException;
 import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
 import com.yam.funteer.funding.service.FundingService;
 
@@ -156,7 +157,9 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 댓글 삭제", notes = "펀딩 게시글의 댓글을 삭제한다.")
 	@DeleteMapping("/comment/{commentId}")
-	public ResponseEntity<?> deleteFundingComment(@PathVariable Long commentId) throws CommentNotFoundException {
+	public ResponseEntity<?> deleteFundingComment(@PathVariable Long commentId) throws
+		CommentNotFoundException,
+		NotAuthenticatedMemberException {
 		fundingService.deleteFundingComment(commentId);
 		return ResponseEntity.ok("삭제 완료");
 	}
