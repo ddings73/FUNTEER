@@ -105,10 +105,14 @@ public class MemberServiceImpl implements MemberService {
             String filePath = awsS3Uploader.upload(profileImg, "user");
             Attach profile = member.getProfileImg().orElseGet(() -> request.getProfile(filePath));
 
+            log.info("{} 프로필 이미지 변경", profile.getName());
+
             if (profile.getId() == null) {
+                log.info("새로운 프로필사진 저장");
                 attachRepository.save(profile);
                 member.updateProfile(profile);
             } else {
+                log.info("기존 프로필사진 업데이트 {} ==> {}", profile.getName(), fileName);
                 profile.update(fileName, filePath);
             }
         }
