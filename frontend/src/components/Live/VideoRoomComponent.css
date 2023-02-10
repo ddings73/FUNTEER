@@ -3,14 +3,6 @@
   width: 40px !important;
 }
 
-@media (max-width: 768px) {
-  .OV_big {
-    top: 3% !important;
-  }
-  .OV_small {
-    top: 40% !important;
-  }
-}
 #navChatButton {
   position: absolute;
   right: 0;
