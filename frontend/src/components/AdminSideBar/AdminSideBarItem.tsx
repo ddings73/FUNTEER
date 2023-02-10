@@ -37,11 +37,6 @@ export const AdminSideBarItem: adminSideBarDataType[] = [
     path: 'notice',
     icon: <AiIcons.AiFillExclamationCircle color="white" />,
   },
-  {
-    title: 'FAQ 관리',
-    path: 'faq',
-    icon: <AiIcons.AiFillQuestionCircle color="white" />,
-  },
 ];
 
 export default AdminSideBarItem;

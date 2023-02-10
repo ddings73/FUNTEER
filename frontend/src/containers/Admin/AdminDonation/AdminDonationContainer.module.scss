@@ -21,25 +21,21 @@
       margin: 3rem 0;
     }
 
-    .filter {
-      width: 100%;
+    .create {
+      height: 35px;
+      margin: 0 0.5rem 1rem auto;
       display: flex;
-      justify-content: flex-end;
+      align-items: center;
+      padding: 1rem;
+      border: none;
+      border-radius: 5px;
+      background-color: $primary;
+      color: white;
+      font-family: NanumSquare;
 
-      .create {
-        height: 30px;
-        margin: 0 0.5rem 1rem auto;
-        padding: 0.3rem;
-        border: none;
-        border-radius: 3px;
-        background-color: $primary;
-        color: white;
-        font-family: NanumSquare;
-
-        &:hover {
-          cursor: pointer;
-          background-color: $error;
-        }
+      &:hover {
+        cursor: pointer;
+        background-color: $error;
       }
     }
 
@@ -49,7 +45,7 @@
       justify-content: space-between;
       align-items: flex-end;
       margin-bottom: 1rem;
-      font-family: NanumSquareRound;
+      font-family: NanumSquare;
 
       & input {
         width: 15rem;
