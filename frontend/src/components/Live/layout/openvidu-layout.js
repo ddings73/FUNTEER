@@ -276,6 +276,13 @@ class OpenViduLayout {
     let bigOffsetTop = 0;
     let bigOffsetLeft = 0;
 
+    if (WIDTH < HEIGHT) {
+      console.log('0.3');
+      this.opts.bigPercentage = 0.3;
+    } else {
+      console.log('0.7');
+      this.opts.bigPercentage = 0.7;
+    }
     const bigOnes = Array.prototype.filter.call(this.layoutContainer.querySelectorAll(`#${id}>.${this.opts.bigClass}`), this.filterDisplayNone);
     const smallOnes = Array.prototype.filter.call(this.layoutContainer.querySelectorAll(`#${id}>*:not(.${this.opts.bigClass})`), this.filterDisplayNone);
 

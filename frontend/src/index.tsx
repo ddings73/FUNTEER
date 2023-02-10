@@ -63,7 +63,7 @@ import {
   SubscribeLiveRoom,
   ModifyFunding,
   AdminFundingReject,
-  FAQDetail
+  FAQDetail,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -232,7 +232,7 @@ const router = createBrowserRouter([
       {
         path: '/cc/faq/:fn',
         element: <FAQDetail />,
-      }
+      },
     ],
   },
   /** 관리자 페이지 */

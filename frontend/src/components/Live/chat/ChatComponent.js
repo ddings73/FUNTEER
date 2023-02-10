@@ -34,8 +34,8 @@ export default class ChatComponent extends Component {
       setTimeout(() => {
         const userImg = document.getElementById(`userImg-${this.state.messageList.length - 1}`);
         const video = document.getElementById(`video-${data.streamId}`);
-        const avatar = userImg.getContext('2d');
-        avatar.drawImage(video, 200, 120, 285, 285, 0, 0, 60, 60);
+        // const avatar = userImg.getContext('2d');
+        // avatar.drawImage(video, 200, 120, 285, 285, 0, 0, 60, 60);
       }, 50);
       this.setState({ messageList });
       this.scrollToBottom();
@@ -75,12 +75,12 @@ export default class ChatComponent extends Component {
   }
 
   render() {
-    console.log(this.props.userProfileImg);
+    console.log('profileImage', this.props.userProfileImg);
     return (
       <div id="chatContainer">
         <div id="chatComponent">
           <div id="chatToolbar">
-            <span>{this.props.user.getStreamManager().stream.session.sessionId}의 채팅방</span>
+            <span> 채팅방</span>
           </div>
           <div className="message-wrap" ref={this.chatScroll}>
             {this.state.messageList.map((data, i) => (
