@@ -34,6 +34,12 @@ public class Charge {
 	// 환불 가능한지 판단용
 	private int possibleRefund;
 
+	public void setRefundReason(String refundReason) {
+		this.refundReason = refundReason;
+	}
+
+	private String refundReason;
+
 	public void setPossibleRefund() {
 		this.possibleRefund = 0;
 	}
