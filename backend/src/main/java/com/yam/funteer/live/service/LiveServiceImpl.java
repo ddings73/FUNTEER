@@ -211,9 +211,9 @@ public class LiveServiceImpl implements LiveService{
 
         String sessionName = request.getSessionName();
         Session session = mapSessions.get(sessionName);
+        String sessionId = session.getSessionId();
 
         try {
-            String sessionId = session.getSessionId();
             Session activeSession = this.openVidu.getActiveSession(sessionId);
             if(activeSession == null){
                 log.info("OpenVidu 서버에 동작중인 세션이 없음");
@@ -252,8 +252,14 @@ public class LiveServiceImpl implements LiveService{
             return new CreateConnectionResponse(token);
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             log.error(e.getMessage());
+
+            log.info("OpenVidu 서버에 동작중인 세션이 없음");
+            sessionRecordings.remove(sessionId);
+            mapSessions.remove(sessionName);
+            mapSessionNamesTokens.remove(sessionName);
+            return initializeSession(request);
         }
-        throw new RuntimeException();
+        // throw new RuntimeException();
     }
 
     private boolean canPublish(User user) {
