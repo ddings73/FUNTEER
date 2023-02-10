@@ -15,7 +15,7 @@ import OpenViduLayout from './layout/openvidu-layout';
 import UserModel from './models/user-model';
 import ToolbarComponent from './toolbar/ToolbarComponent';
 import ChatComponent from './chat/ChatComponent';
-import defaultProfile from '../../assets/images/default-profile-img.svg'
+import defaultProfile from '../../assets/images/default-profile-img.svg';
 
 const localUser = new UserModel();
 
@@ -29,8 +29,7 @@ class VideoRoomComponent extends Component {
     this.layout = new OpenViduLayout();
     const sessionName = this.props.sessionName ? this.props.sessionName : 'A';
     const userName = this.props.user ? this.props.user : Math.floor(Math.random() * 100);
-    const userProfileImg = this.props.userProfileImg ? this.props.userProfileImg :defaultProfile
-    
+
     this.remotes = [];
     this.localUserAccessAllowed = false;
     this.state = {
@@ -53,16 +52,16 @@ class VideoRoomComponent extends Component {
 
   componentDidMount() {
     const openViduLayoutOptions = {
-      maxRatio: 3 / 2, // The narrowest ratio that will be used (default 2x3)
+      maxRatio: 5 / 2, // The narrowest ratio that will be used (default 2x3)
       minRatio: 9 / 16, // The widest ratio that will be used (default 16x9)
       fixedRatio: false, // If this is true then the aspect ratio of the video is maintained and minRatio and maxRatio are ignored (default false)
       bigClass: 'OV_big', // The class to add to elements that should be sized bigger
-      bigPercentage: 0., // The maximum percentage of space the big ones should take up
+      bigPercentage: 0.7, // The maximum percentage of space the big ones should take up
       bigFixedRatio: false, // fixedRatio for the big ones
-      bigMaxRatio: 3 / 2, // The narrowest ratio to use for the big elements (default 2x3)
+      bigMaxRatio: 5 / 7, // The narrowest ratio to use for the big elements (default 2x3)
       bigMinRatio: 9 / 21, // The widest ratio to use for the big elements (default 16x9)
       bigFirst: true, // Whether to place the big one in the top left (true) or bottom right
-      animate: true, // Whether you want to animate the transitions
+      animate: false, // Whether you want to animate the transitions
     };
 
     this.layout.initLayoutContainer(document.getElementById('layout'), openViduLayoutOptions);
@@ -404,8 +403,8 @@ class VideoRoomComponent extends Component {
             </div>
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
-            <div className="OT_root OT_publisher custom-class chat-box">
-              <ChatComponent user={localUser} userProfileImg={userProfileImg} />
+            <div className="OT_root OV_small OT_publisher custom-class chat-box">
+              <ChatComponent user={localUser} userProfileImg={this.props.userProfileImg} />
             </div>
           )}
         </div>

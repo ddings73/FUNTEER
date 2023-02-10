@@ -3,6 +3,14 @@
   width: 40px !important;
 }
 
+@media (max-width: 768px) {
+  .OV_big {
+    top: 3% !important;
+  }
+  .OV_small {
+    top: 40% !important;
+  }
+}
 #navChatButton {
   position: absolute;
   right: 0;
@@ -13,7 +21,6 @@
 
 .bounds {
   background-color: #ffff;
-  overflow: hidden;
   position: absolute;
   left: 0;
   right: 0;
@@ -22,7 +29,6 @@
   height: inherit;
   min-width: 400px !important;
   width: inherit;
-  margin: 0 50px 50px 50px;
 }
 
 /*!
@@ -48,8 +54,6 @@
   font-size: 100%;
   font-family: Arial, Helvetica, sans-serif;
   vertical-align: baseline;
-}
-.chat-box {
 }
 
 .OT_dialog-centering {
