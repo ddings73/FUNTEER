@@ -20,7 +20,6 @@ import { http } from '../../api/axios';
 const localUser = new UserModel();
 
 console.log('localUser', localUser);
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'https://i8e204.p.ssafy.io/'; // 'http://localhost:8080/';
 class VideoRoomComponent extends Component {
   constructor(props) {
     super(props);
@@ -228,6 +227,7 @@ class VideoRoomComponent extends Component {
       console.dir(mySession);
       this.leaveThisSession(this.state.mySessionId, mySession.token);
       console.log('세션 종료 성공띠!!!');
+      // window.history.
     }
 
     // Empty all properties...
