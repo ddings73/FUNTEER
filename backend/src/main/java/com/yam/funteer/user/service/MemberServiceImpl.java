@@ -170,7 +170,7 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(UserNotFoundException::new);
 
-        Funding funding = fundingRepository.findById(fundingId)
+        Funding funding = fundingRepository.findByFundingId(fundingId)
                 .orElseThrow(IllegalArgumentException::new);
 
         wishRepository.findByMemberAndFunding(member, funding)

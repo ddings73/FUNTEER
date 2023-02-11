@@ -81,7 +81,7 @@ public class LiveServiceImpl implements LiveService{
             log.info("새로운 세션 생성 => {}", sessionName);
 
             Long fundingId = request.getFundingId();
-            Funding funding = fundingRepository.findById(fundingId)
+            Funding funding = fundingRepository.findByFundingId(fundingId)
                 .orElseThrow(IllegalArgumentException::new);
 
             Team fundingTeam = funding.getTeam();
