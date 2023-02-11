@@ -187,7 +187,7 @@ public class MemberController {
 		@ApiResponse(code = 401, message = "사용자 인증실패"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@PutMapping("/like/{funcdingId}")
+	@PutMapping("/like/{fundingId}")
 	public ResponseEntity wishFunding(@PathVariable Long fundingId){
 		memberService.wishFunding(fundingId);
 		return ResponseEntity.ok().build();
