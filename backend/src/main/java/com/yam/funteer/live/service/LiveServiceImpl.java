@@ -65,11 +65,9 @@ public class LiveServiceImpl implements LiveService{
         this.openVidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
     }
 
-    private Long test = 81L;
     @Override
     public CreateConnectionResponse initializeSession(CreateConnectionRequest request) {
-        Long userId = test; //SecurityUtil.getCurrentUserId();
-        test = test == 81L ? 83L : 81L;
+        Long userId = SecurityUtil.getCurrentUserId();
         User user = userRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
@@ -98,7 +96,7 @@ public class LiveServiceImpl implements LiveService{
     public void leaveSession(SessionLeaveRequest request) {
         String sessionName = request.getSessionName();
 
-        Long userId = test;//SecurityUtil.getCurrentUserId();
+        Long userId = SecurityUtil.getCurrentUserId();
 
         if(mapSessions.containsKey(sessionName)){
             String sessionId = mapSessions.get(sessionName).getSessionId();
@@ -130,7 +128,7 @@ public class LiveServiceImpl implements LiveService{
 
     private void recordSaveThisSession(String sessionId){
         log.info("녹화 저장 시작");
-        Long teamId = test; //SecurityUtil.getCurrentUserId();
+        Long teamId = SecurityUtil.getCurrentUserId();
         Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
 
         log.info("sessionId => {}", sessionId);
