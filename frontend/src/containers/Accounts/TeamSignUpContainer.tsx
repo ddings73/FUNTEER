@@ -6,7 +6,7 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { s1000, s1500, w1500, customAlert } from '../../utils/customAlert';
 import { teamSignUpType } from '../../types/user';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
-import { requestEmailDuplConfirm, requestNameDuplConfirm } from '../../api/user';
+import { requestCheckEmailAuthCode, requestEmailDuplConfirm, requestNameDuplConfirm, requestSendEmailAuthCode } from '../../api/user';
 import { requestTeamSignUp } from '../../api/team';
 import styles from './TeamSignUpContainer.module.scss';
 
@@ -31,7 +31,7 @@ function TeamSignUpContainer() {
   /** 이메일 인증 버튼을 이미 눌렀는지 확인 */
   const [emailAuthButtonPushed, setEmailAuthButtonPushed] = useState<boolean>(false);
   /** 이메일 인증 시간 제한 */
-  const initTime = 300;
+  const initTime = 180;
   const [time, setTime] = useState<number>(initTime);
   /** 인증 번호 */
   const [authNumber, setAuthNumber] = useState<string>('');
@@ -45,6 +45,18 @@ function TeamSignUpContainer() {
   const [vmsFile, setVmsFile] = useState<Blob | null>(null);
   /** 실적 파일 */
   const [performFile, setPerformFile] = useState<Blob | null>(null);
+  /** 하이픈 전화번호 */
+  const [inputValue, setInputValue] = useState<string>('');
+
+  /** 하이픈 자동 완성 */
+  useEffect(() => {
+    if (inputValue.length === 10) {
+      setInputValue(inputValue.replace(/(\d{3})(\d{4})(\d{3})/, '$1-$2-$3'));
+    }
+    if (inputValue.length === 11) {
+      setInputValue(inputValue.replace(/(\d{3})(\d{4})(\d{4})/, '$1-$2-$3'));
+    }
+  }, [inputValue]);
 
   /** 회원가입 정보 입력 */
   const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +68,10 @@ function TeamSignUpContainer() {
     /** 이메일을 바꿀 경우 중복 체크 다시 필요 => 인증까지 완료되면 바꿀 수 없음 */
     if (name === 'email') {
       setEmailDuplConfirmed(false);
+    }
+    /** 하이픈 */
+    if (name === 'phone') {
+      setInputValue(e.target.value);
     }
 
     setTeamSignUpInfo({ ...teamSignUpInfo, [name]: value });
@@ -110,7 +126,7 @@ function TeamSignUpContainer() {
   };
 
   /** 이메일 인증하기 버튼 */
-  const handleClickAuthEmail = () => {
+  const handleClickAuthEmail = async () => {
     if (!emailDuplConfirmed) {
       customAlert(w1500, '먼저 이메일 중복 체크를 완료해주세요.');
       return;
@@ -121,6 +137,12 @@ function TeamSignUpContainer() {
     }
 
     setEmailAuthButtonPushed(true);
+    try {
+      const response = await requestSendEmailAuthCode(teamSignUpInfo.email);
+      console.log('이메일 인증 코드 요청', response);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   /** 이메일 인증 타이머 */
@@ -135,7 +157,7 @@ function TeamSignUpContainer() {
       setButtonText(`${minute}분 ${second}초`);
 
       if (time === 0) {
-        customAlert(w1500, '인증번호 입력 시간이 초과되었습니다.');
+        customAlert(w1500, '인증 번호 입력 시간이 초과되었습니다.');
         setButtonText('이메일 인증하기');
         setEmailAuthButtonPushed(false);
         setTime(initTime);
@@ -150,21 +172,18 @@ function TeamSignUpContainer() {
     setAuthNumber(e.target.value);
   };
 
-  /** 이메일 인증 요청 */
+  /** 인증 번호 검증 */
   const checkAuthNumber = async () => {
-    customAlert(s1500, '이메일 인증이 완료되었습니다.');
-    setCheckEmailAuth(true);
-    setEmailAuthButtonPushed(false);
-
-    /** if (백엔드에서 온 이메일 인증번호 === 유저가 입력한 인증번호) {
-     *    alert('이메일 인증이 완료되었습니다.')
-     *    setEmailAuthButtonPushed(false);
-     *    setCheckEmailAuth(true)
-     * } else {
-     *    alert(이메일 인증 번호가 틀렸습니다.)
-     *    setButtonText('이메일 인증하기')
-     *    setEmailAuthButtonPushed(false)
-     * } */
+    try {
+      const response = await requestCheckEmailAuthCode(authNumber, teamSignUpInfo.email);
+      console.log('이메일 인증 요청', response);
+      customAlert(s1500, '이메일 인증이 완료되었습니다.');
+      setCheckEmailAuth(true);
+      setEmailAuthButtonPushed(false);
+    } catch (err) {
+      console.error(err);
+      customAlert(w1500, '인증 번호가 일치하지 않습니다.');
+    }
   };
 
   /** 비밀번호 가시 */
@@ -253,7 +272,7 @@ function TeamSignUpContainer() {
                 </a>
               )}
             </p>
-            <TextField name="name" margin="dense" placeholder="이름을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <TextField name="name" margin="dense" placeholder="이름을 입력해주세요." variant="outlined" size="small" onChange={onChangeHandler} />
             <p>
               이메일
               {!emailDuplConfirmed && (
@@ -265,7 +284,7 @@ function TeamSignUpContainer() {
             {checkEmailAuth && <p className={styles['authed-email']}>{teamSignUpInfo.email}</p>}
             {!checkEmailAuth && (
               <div className={styles['not-shadow']}>
-                <TextField name="email" margin="dense" placeholder="이메일을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+                <TextField name="email" margin="dense" placeholder="이메일을 입력해주세요." variant="outlined" size="small" onChange={onChangeHandler} />
                 <Button className={styles['auth-btn']} variant="contained" onClick={handleClickAuthEmail}>
                   {btnText}
                 </Button>
@@ -276,7 +295,7 @@ function TeamSignUpContainer() {
                 <input
                   type="text"
                   name="authNumber"
-                  placeholder="인증번호를 입력해주세요."
+                  placeholder="인증 번호를 입력해주세요."
                   className={styles['auth-number-input']}
                   onChange={onAuthNumberChangeHandler}
                 />
@@ -293,6 +312,7 @@ function TeamSignUpContainer() {
                 margin="dense"
                 placeholder="비밀번호를 입력해주세요."
                 variant="outlined"
+                size="small"
                 onChange={onChangeHandler}
               />{' '}
               {passwordVisibility && (
@@ -321,6 +341,7 @@ function TeamSignUpContainer() {
                 margin="dense"
                 placeholder="비밀번호를 입력해주세요."
                 variant="outlined"
+                size="small"
                 onChange={onChangeHandler}
               />
               {passwordCheckVisibility && (
@@ -341,7 +362,15 @@ function TeamSignUpContainer() {
               )}
             </div>
             <p>대표자 연락처</p>
-            <TextField name="phone" margin="dense" placeholder="휴대폰 번호를 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+            <TextField
+              name="phone"
+              margin="dense"
+              placeholder="휴대폰 번호를 입력해주세요."
+              variant="outlined"
+              size="small"
+              value={inputValue}
+              onChange={onChangeHandler}
+            />
             <hr />
             <label htmlFor="file">
               <p>VMS 위촉 임명장</p>

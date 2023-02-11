@@ -49,7 +49,7 @@ function LoginContainer() {
         localStorage.setItem('accessToken', data.token.accessToken);
         localStorage.setItem('refreshToken', data.token.refreshToken);
 
-        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId, username: data.username,profileImgUrl:data.profileImgUrl }));
+        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId, username: data.username, profileImgUrl: data.profileImgUrl }));
         navigate('/', { replace: true });
       }
     } catch (error) {
@@ -86,11 +86,20 @@ function LoginContainer() {
             <div className={styles['login-box']}>
               <p className={styles.title}>로그인</p>
 
-              <p>이메일</p>
-              <TextField onChange={onChangeHandler} name="email" margin="normal" placeholder="이메일을 입력해주세요." variant="outlined" onKeyPress={onKeyDownHandler} />
-
-              <p>비밀번호</p>
+              <p className={styles.label}>이메일</p>
               <TextField
+                color="warning"
+                onChange={onChangeHandler}
+                name="email"
+                margin="normal"
+                placeholder="이메일을 입력해주세요."
+                variant="outlined"
+                onKeyPress={onKeyDownHandler}
+              />
+
+              <p className={styles.label}>비밀번호</p>
+              <TextField
+                color="warning"
                 onChange={onChangeHandler}
                 name="password"
                 type="password"
