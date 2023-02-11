@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 // Material UI Imports
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -86,6 +86,9 @@ function ResponsiveAppBar() {
   let menuDataLength: number = NavbarMenuData.length;
   // console.log('로그인임?', isLogin);
 
+  const profileImgUrl = useAppSelector((state) => state.userSlice.profileImgUrl);
+  const userName = useAppSelector((state) => state.userSlice.username);
+
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
   }, []);
@@ -144,15 +147,18 @@ function ResponsiveAppBar() {
                   </button>
                 </NavLink>
               </div>
-              <div style={{ display: isLogin ? 'flex' : 'none' }}>
+              <div style={{ display: isLogin ? 'flex' : 'none', alignItems: 'center' }}>
+                <p style={{ color: 'black' }}>
+                  <span style={{ fontWeight: '800' }}>{userName}</span>님 환영합니다
+                </p>
                 <IconButton aria-label="notifi" className={styles.noti}>
                   <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
                     <NotificationsNoneIcon fontSize="large" />
                   </StyledBadge>
                 </IconButton>
                 <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, border: '3px solid orange' }}>
+                    <Avatar alt="profileImg" src={profileImgUrl} />
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -177,6 +183,7 @@ function ResponsiveAppBar() {
                       onClick={() => {
                         navigateTo('/myPage');
                       }}
+                      sx={{ width: '100%' }}
                     >
                       마이페이지
                     </Typography>
@@ -187,6 +194,7 @@ function ResponsiveAppBar() {
                       onClick={() => {
                         navigateTo('/myFunding');
                       }}
+                      sx={{ width: '100%' }}
                     >
                       나의 펀딩 내역
                     </Typography>
@@ -197,6 +205,7 @@ function ResponsiveAppBar() {
                       onClick={() => {
                         navigateTo('/myDonates');
                       }}
+                      sx={{ width: '100%' }}
                     >
                       도네이션 내역
                     </Typography>
@@ -207,6 +216,7 @@ function ResponsiveAppBar() {
                       onClick={() => {
                         navigateTo('/myBadges');
                       }}
+                      sx={{ width: '100%' }}
                     >
                       1:1 문의 내역
                     </Typography>

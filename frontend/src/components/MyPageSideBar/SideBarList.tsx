@@ -11,7 +11,7 @@ export function SideBarList() {
     <Paper className={styles.paperContainer}>
       <div className={styles.menuList}>
         {SideBarData.map((data) => (
-          <NavLink to={data.path} className={({ isActive }) => (isActive ? styles.NavActive : styles.NavInActive)}>
+          <NavLink to={data.path} className={({ isActive }) => (isActive ? styles.NavActive : styles.NavInActive)} key={data.title}>
             <div className={styles.menuItem}>
               <ListItemIcon className={styles.menuIcon}>{data.icon}</ListItemIcon>
               <Typography variant="inherit">{data.title}</Typography>
