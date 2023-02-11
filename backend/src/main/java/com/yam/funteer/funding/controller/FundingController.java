@@ -143,7 +143,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 참여", notes = "회원이 펀딩에 참여한다.")
 	@PostMapping("/{fundingId}/pay")
-	public ResponseEntity<?> takeFunding(@PathVariable Long fundingId, TakeFundingRequest data) {
+	public ResponseEntity<?> takeFunding(@PathVariable Long fundingId, @RequestBody TakeFundingRequest data) {
 		fundingService.takeFunding(fundingId, data);
 		return ResponseEntity.ok("펀딩 참여 완료");
 	}
