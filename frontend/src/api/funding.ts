@@ -153,7 +153,18 @@ export const requestNextCommentList = async (currentPage: number, fundingId?: st
  * @method POST
  * @param amount:string, fundingId: number
  */
-export const fundingJoin = async (fundingId: number, amount?: string) => {
-  const res = await http.post(`funding/${fundingId}/pay`, { fundingId, amount });
+export const fundingJoin = async (amount?: string, fundingId?: string) => {
+  const res = await http.post(`funding/${fundingId}/pay`, { amount, fundingId });
+  return res;
+};
+
+/**
+ * @name 펀딩보고서조회
+ * @method GET
+ */
+
+export const requestFundingReport = async (fundingId?: string) => {
+  const res = await http.get(`funding/${fundingId}/report`);
+  console.log('report res', res);
   return res;
 };
