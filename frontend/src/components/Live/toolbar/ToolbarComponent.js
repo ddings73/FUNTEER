@@ -47,14 +47,6 @@ export default class ToolbarComponent extends Component {
     return (
       <header className="header">
         <div className="toolbar">
-          <div className="navSessionInfo">
-            {this.props.sessionId && (
-              <div id="titleContent">
-                <span id="session-title">{mySessionId}</span>
-              </div>
-            )}
-          </div>
-
           <div className="buttonsContent">
             {localUser !== undefined && localUser.getStreamManager().openvidu !== undefined && (
               <IconButton color="inherit" className="navButton" id="navMicButton" onClick={this.micStatusChanged}>
@@ -74,11 +66,11 @@ export default class ToolbarComponent extends Component {
               </IconButton>
             )}
 
-            <Link to="/">
-              <IconButton color="secondary" className="navButton" onClick={this.leaveSession} id="navLeaveButton">
-                <PowerSettingsNew />
-              </IconButton>
-            </Link>
+            {/* <Link to="/"> */}
+            <IconButton color="secondary" className="navButton" onClick={this.leaveSession} id="navLeaveButton">
+              <PowerSettingsNew />
+            </IconButton>
+            {/* </Link> */}
           </div>
         </div>
       </header>

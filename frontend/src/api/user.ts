@@ -147,3 +147,51 @@ export const requestModifyUserProfileImage = async (profileImage: Blob, userId: 
   const response = await http.put('member/profile', formDate);
   return response;
 };
+
+
+/**
+ * @name 이메일찾기
+ * @param name 
+ * @param phone 
+ * @returns 
+ */
+export const requestFindEmail = async(name:string,phone:string)=>{
+  const data = {
+    name,
+    phone
+  }
+  const response = http.put("forget/email",data)
+  return response
+}
+
+/**
+ * @name 이메일인증코드보내기
+ * @param email 
+ * @returns 
+ */
+export const requestSendEmailAuthCode = async (email:string)=>{
+  const response = http.get(`mail/send/?email=${email}`)
+  return response;
+}
+
+/**
+ * @name 이메일인증코드확인
+ * @param code 
+ * @param email 
+ * @returns 
+ */
+export const requestCheckEmailAuthCode = async(code:string,email:string)=>{
+ const response  = await http.get(`mail/confirm/?code=${code}&email=${email}`)
+ return response
+}
+
+export const requestResetPassword = async(email:string,name:string,password:string)=>{
+  const data = {
+    email,
+    name,
+    password
+  }
+
+  const response = http.put("forget/pw",data)
+  return response;
+}

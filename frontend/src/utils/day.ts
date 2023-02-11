@@ -32,3 +32,12 @@ export function displayedAt(timeSet: string) {
   const years = days / 365;
   return `${Math.floor(years)}년 전`;
 }
+
+export function YYYYMMDDHHMMSS(timeSet: string) {
+  const d = new Date(timeSet);
+
+  const date = new Date(+d + 9 * 60 * 60 * 1000).toISOString().split('T')[0];
+  const time = d.toTimeString().split(' ')[0];
+
+  return `${date} ${time}`;
+}

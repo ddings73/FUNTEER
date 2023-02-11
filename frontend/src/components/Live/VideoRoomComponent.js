@@ -15,11 +15,11 @@ import OpenViduLayout from './layout/openvidu-layout';
 import UserModel from './models/user-model';
 import ToolbarComponent from './toolbar/ToolbarComponent';
 import ChatComponent from './chat/ChatComponent';
+import { http } from '../../api/axios';
 
 const localUser = new UserModel();
 
 console.log('localUser', localUser);
-const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'https://i8e204.p.ssafy.io/'; // 'http://localhost:8080/';
 class VideoRoomComponent extends Component {
   constructor(props) {
     super(props);
@@ -28,6 +28,7 @@ class VideoRoomComponent extends Component {
     this.layout = new OpenViduLayout();
     const sessionName = this.props.sessionName ? this.props.sessionName : 'A';
     const userName = this.props.user ? this.props.user : Math.floor(Math.random() * 100);
+
     this.remotes = [];
     this.localUserAccessAllowed = false;
     this.state = {
@@ -49,17 +50,30 @@ class VideoRoomComponent extends Component {
   }
 
   componentDidMount() {
+    // const openViduLayoutOptions = {
+    //   maxRatio: 5 / 2, // The narrowest ratio that will be used (default 2x3)
+    //   minRatio: 9 / 16, // The widest ratio that will be used (default 16x9)
+    //   fixedRatio: false, // If this is true then the aspect ratio of the video is maintained and minRatio and maxRatio are ignored (default false)
+    //   bigClass: 'OV_big', // The class to add to elements that should be sized bigger
+    //   bigPercentage: 0.7, // The maximum percentage of space the big ones should take up
+    //   bigFixedRatio: false, // fixedRatio for the big ones
+    //   bigMaxRatio: 5 / 7, // The narrowest ratio to use for the big elements (default 2x3)
+    //   bigMinRatio: 9 / 21, // The widest ratio to use for the big elements (default 16x9)
+    //   bigFirst: true, // Whether to place the big one in the top left (true) or bottom right
+    //   animate: false, // Whether you want to animate the transitions
+    // };
+
     const openViduLayoutOptions = {
-      maxRatio: 3 / 2, // The narrowest ratio that will be used (default 2x3)
+      maxRatio: 3 / 1, // The narrowest ratio that will be used (default 2x3)
       minRatio: 9 / 16, // The widest ratio that will be used (default 16x9)
       fixedRatio: false, // If this is true then the aspect ratio of the video is maintained and minRatio and maxRatio are ignored (default false)
       bigClass: 'OV_big', // The class to add to elements that should be sized bigger
-      bigPercentage: 0.75, // The maximum percentage of space the big ones should take up
+      bigPercentage: 0.7, // The maximum percentage of space the big ones should take up
       bigFixedRatio: false, // fixedRatio for the big ones
-      bigMaxRatio: 3 / 2, // The narrowest ratio to use for the big elements (default 2x3)
-      bigMinRatio: 9 / 21, // The widest ratio to use for the big elements (default 16x9)
+      bigMaxRatio: 3 / 1, // The narrowest ratio to use for the big elements (default 2x3)
+      bigMinRatio: 9 / 16, // The widest ratio to use for the big elements (default 16x9)
       bigFirst: true, // Whether to place the big one in the top left (true) or bottom right
-      animate: true, // Whether you want to animate the transitions
+      animate: false, // Whether you want to animate the transitions
     };
 
     this.layout.initLayoutContainer(document.getElementById('layout'), openViduLayoutOptions);
@@ -82,7 +96,6 @@ class VideoRoomComponent extends Component {
     this.OV = new OpenVidu();
     this.OV.enableProdMode();
 
-    console.log('OPENVIDU', this.OV);
     this.setState(
       {
         session: this.OV.initSession(),
@@ -97,7 +110,6 @@ class VideoRoomComponent extends Component {
 
   async connectToSession() {
     if (this.props.token !== undefined) {
-      console.log('PROPS_TOKEN', this.props.token);
       this.connect(this.props.token);
     } else {
       try {
@@ -119,7 +131,6 @@ class VideoRoomComponent extends Component {
   }
 
   connect(token) {
-    console.log('CONNECT_SESSION', this.state.session);
     this.state.session
       .connect(token, { clientData: this.state.myUserName })
       .then(() => {
@@ -145,7 +156,6 @@ class VideoRoomComponent extends Component {
       videoSource: undefined,
     });
     const devices = await this.OV.getDevices();
-    console.log('devicesssssssssssssssssssss', devices);
     const videoDevices = devices.filter((device) => device.kind === 'videoinput');
 
     const publisher = this.OV.initPublisher(undefined, {
@@ -162,7 +172,6 @@ class VideoRoomComponent extends Component {
     console.log(publisher.openvidu.role);
 
     this.updateSubscribers();
-    console.log('subscriberssssssssssssssssssssss', this.state.subscribers);
     if (publisher.openvidu.role === 'PUBLISHER') {
       publisher.on('accessAllowed', () => {
         this.state.session.publish(publisher).then(() => {
@@ -174,7 +183,6 @@ class VideoRoomComponent extends Component {
       });
       localUser.setStreamManager(publisher);
     } else {
-      console.log('subscriberssssssssssssssssssssss', this.state.subscribers);
       localUser.setStreamManager(this.state.subscribers[0].getStreamManager());
     }
 
@@ -193,7 +201,6 @@ class VideoRoomComponent extends Component {
 
   updateSubscribers() {
     const subscribers = this.remotes;
-    console.log('remooooooooooo', this.remotes);
     this.setState(
       {
         subscribers,
@@ -214,13 +221,13 @@ class VideoRoomComponent extends Component {
 
   leaveSession() {
     const mySession = this.state.session;
-    console.log('LEAVESESSION_MYSESSION', mySession);
 
     if (mySession) {
       mySession.disconnect();
       console.dir(mySession);
       this.leaveThisSession(this.state.mySessionId, mySession.token);
       console.log('세션 종료 성공띠!!!');
+      // window.history.
     }
 
     // Empty all properties...
@@ -270,7 +277,6 @@ class VideoRoomComponent extends Component {
     this.state.session.on('streamCreated', (event) => {
       const subscriber = this.state.session.subscribe(event.stream, undefined);
 
-      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!', subscriber);
 
       const newUser = new UserModel();
       newUser.setStreamManager(subscriber);
@@ -280,9 +286,7 @@ class VideoRoomComponent extends Component {
       const nickname = event.stream.connection.data.split('%')[0];
       newUser.setNickname(JSON.parse(nickname).clientData);
 
-      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!  newUSER!!!!!!!!!!!!!!!', newUser);
       this.remotes.push(newUser);
-      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!  newUSER!!!!!!!!!!!!!!! remote!!!!!!!!!', this.remotes);
 
       this.updateSubscribers();
       if (this.localUserAccessAllowed) {
@@ -396,13 +400,13 @@ class VideoRoomComponent extends Component {
 
         <div id="layout" className="bounds">
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
-            <div className="OT_root  OT_publisher custom-class" id="localUser">
-              <StreamComponent user={localUser} />
+            <div className="OT_root OV_big OT_publisher custom-class" id="localUser">
+              <StreamComponent user={localUser} sessionId={mySessionId}/>
             </div>
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
-            <div className="OT_root OT_publisher custom-class chat-box">
-              <ChatComponent user={localUser} />
+            <div className="OT_root OV_small OT_publisher custom-class chat-box">
+              <ChatComponent user={localUser} userProfileImg={this.props.userProfileImg} />
             </div>
           )}
         </div>
@@ -416,8 +420,8 @@ class VideoRoomComponent extends Component {
 
   async createSession(sessionId) {
     console.log('sessionId', sessionId);
-    const response = await axios.post(
-      `${APPLICATION_SERVER_URL}api/v1/openvidu/sessions`,
+    const response = await http.post(
+      `openvidu/sessions`,
       { sessionName: sessionId, fundingId: 308 },
       {
         headers: { 'Content-Type': 'application/json' },
@@ -427,8 +431,8 @@ class VideoRoomComponent extends Component {
   }
 
   async leaveThisSession(sessionId, token) {
-    const response = await axios.post(
-      `${APPLICATION_SERVER_URL}api/v1/openvidu/sessions/leave`,
+    const response = await http.post(
+      `openvidu/sessions/leave`,
       { sessionName: sessionId, token },
       {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('accessToken')}` },

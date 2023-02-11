@@ -13,16 +13,16 @@ import OvVideoComponent from './OvVideo';
 export default class StreamComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { nickname: this.props.user.getNickname() };
+    this.state = { nickname: this.props.user.getNickname(),sessionId:this.props.sessionId };
   }
 
   render() {
-    console.log('StreamComponent', this.props.user);
+    console.log(this.state)
     return (
       <div className="OT_widget-container">
         <div className="nickname">
           <div>
-            <span id="nickname">{this.props.user.getNickname()}단체의 봉사 라이브</span>
+            <span id="nickname">{this.state.sessionId} 단체의 봉사 라이브</span>
           </div>
         </div>
 

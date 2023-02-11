@@ -3,16 +3,14 @@ import { string } from 'yargs';
 export type DonationElementType = {
   id: number;
   title: string;
-  content:string;
+  content: string;
   targetAmount: string;
   currentAmount: string;
   startDate: string;
   endDate: string;
   postType: string;
-  file:string;
+  file: string;
 };
-
-
 
 export type DonationListElementType = {
   id: number;
@@ -21,18 +19,17 @@ export type DonationListElementType = {
   startDate: string;
   endDate: string;
   postType: string;
-  file:string;
+  file: string;
 };
 
 export interface DonationStatusModi {
-  donationId:number|0;
-  postType:string;
+  donationId: number | 0;
+  postType: string;
 }
 
 export interface DonationInterface {
   title: string;
   content: string | undefined;
-  amount:string;
-  file:Blob|null;
+  amount: string;
+  file: Blob | null;
 }
-

@@ -1,30 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import { Key, South } from '@mui/icons-material';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Viewer } from '@toast-ui/react-editor';
-import { height } from '@mui/system';
-import styles from '../../CustomerCenter/Notice/NoticeDetailContainer.module.scss';
 import { DonationElementType } from '../../../types/donation';
 import { requestDonationDetail } from '../../../api/donation';
+import styles from './AdminDonationDetailContainer.module.scss';
 
 function AdminDonationDetailContainer() {
   const navigate = useNavigate();
   const location = useLocation();
   const { dn } = useParams();
-  console.log(dn)
+  console.log(dn);
 
   const [donationDetail, setDonationDetail] = useState<DonationElementType>({
     id: 0,
     title: '',
-    content:'',
+    content: '',
     targetAmount: '',
     currentAmount: '',
     startDate: '',
     endDate: '',
     postType: '',
-    file:'',
-
+    file: '',
   });
 
   useEffect(() => {
@@ -42,27 +39,27 @@ function AdminDonationDetailContainer() {
     fetchData();
   }, []);
 
-
   return (
     <div className={styles.container}>
-    <div className={styles.contents}>
-      <h1 className={styles.title}>{donationDetail.title}</h1>
-      <p className={styles.fundPeriod}>{donationDetail.startDate} ~ {donationDetail.endDate}</p>
-      <div className={styles.object}>현재금액 : {donationDetail.currentAmount}원 / 목표금액: {donationDetail.targetAmount}원  </div>
-      <hr />
-      <div className={styles.content}>
-        {donationDetail.content && (
-          <Viewer initialValue={ donationDetail.content || ''}
-          />
-        )}
-        <img src={donationDetail.file} alt="donationImage" />
+      <div className={styles.contents}>
+        <h1 className={styles.title}>{donationDetail.title}</h1>
+        <p className={styles.fundPeriod}>
+          {donationDetail.startDate} ~ {donationDetail.endDate}
+        </p>
+        <div className={styles.object}>
+          현재금액 : {donationDetail.currentAmount}원 / 목표금액: {donationDetail.targetAmount}원
+        </div>
+        <hr style={{ width: '100%', opacity: '0.3' }} />
+        <div className={styles.content}>
+          <img src={donationDetail.file} alt="donationImage" />
+          <p>{donationDetail.content && <Viewer initialValue={donationDetail.content || ''} />}</p>
+        </div>
+
+        <button type="button" className={styles.back} onClick={() => navigate(-1)}>
+          {'< 목록으로'}
+        </button>
       </div>
-      
-      <button type="button" className={styles.back} onClick={() => navigate(-1)}>
-        {'< 목록으로'}
-      </button>
     </div>
-  </div>
   );
 }
 

@@ -147,9 +147,13 @@ export const requestNoticeDetail = async (noticeId: string | undefined) => {
  * @method GET
  */
 
-export const requestNoticeList = async () => {
-  const res = await http.get(`notice`);
-  console.log(res);
+export const requestNoticeList = async (page?: number, size?: number) => {
+  const params = {
+    page,
+    size,
+  };
+
+  const res = await http.get(`notice`, { params });
 
   return res;
 };
