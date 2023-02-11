@@ -96,7 +96,6 @@ class VideoRoomComponent extends Component {
     this.OV = new OpenVidu();
     this.OV.enableProdMode();
 
-    console.log('OPENVIDU', this.OV);
     this.setState(
       {
         session: this.OV.initSession(),
@@ -111,7 +110,6 @@ class VideoRoomComponent extends Component {
 
   async connectToSession() {
     if (this.props.token !== undefined) {
-      console.log('PROPS_TOKEN', this.props.token);
       this.connect(this.props.token);
     } else {
       try {
@@ -133,7 +131,6 @@ class VideoRoomComponent extends Component {
   }
 
   connect(token) {
-    console.log('CONNECT_SESSION', this.state.session);
     this.state.session
       .connect(token, { clientData: this.state.myUserName })
       .then(() => {
@@ -159,7 +156,6 @@ class VideoRoomComponent extends Component {
       videoSource: undefined,
     });
     const devices = await this.OV.getDevices();
-    console.log('devicesssssssssssssssssssss', devices);
     const videoDevices = devices.filter((device) => device.kind === 'videoinput');
 
     const publisher = this.OV.initPublisher(undefined, {
@@ -176,7 +172,6 @@ class VideoRoomComponent extends Component {
     console.log(publisher.openvidu.role);
 
     this.updateSubscribers();
-    console.log('subscriberssssssssssssssssssssss', this.state.subscribers);
     if (publisher.openvidu.role === 'PUBLISHER') {
       publisher.on('accessAllowed', () => {
         this.state.session.publish(publisher).then(() => {
@@ -188,7 +183,6 @@ class VideoRoomComponent extends Component {
       });
       localUser.setStreamManager(publisher);
     } else {
-      console.log('subscriberssssssssssssssssssssss', this.state.subscribers);
       localUser.setStreamManager(this.state.subscribers[0].getStreamManager());
     }
 
@@ -207,7 +201,6 @@ class VideoRoomComponent extends Component {
 
   updateSubscribers() {
     const subscribers = this.remotes;
-    console.log('remooooooooooo', this.remotes);
     this.setState(
       {
         subscribers,
@@ -228,7 +221,6 @@ class VideoRoomComponent extends Component {
 
   leaveSession() {
     const mySession = this.state.session;
-    console.log('LEAVESESSION_MYSESSION', mySession);
 
     if (mySession) {
       mySession.disconnect();
@@ -284,7 +276,6 @@ class VideoRoomComponent extends Component {
     this.state.session.on('streamCreated', (event) => {
       const subscriber = this.state.session.subscribe(event.stream, undefined);
 
-      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!', subscriber);
 
       const newUser = new UserModel();
       newUser.setStreamManager(subscriber);
@@ -294,9 +285,7 @@ class VideoRoomComponent extends Component {
       const nickname = event.stream.connection.data.split('%')[0];
       newUser.setNickname(JSON.parse(nickname).clientData);
 
-      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!  newUSER!!!!!!!!!!!!!!!', newUser);
       this.remotes.push(newUser);
-      console.log('subscribeToStreamCreated!!!!!!!!!!!!!!  newUSER!!!!!!!!!!!!!!! remote!!!!!!!!!', this.remotes);
 
       this.updateSubscribers();
       if (this.localUserAccessAllowed) {
@@ -411,7 +400,7 @@ class VideoRoomComponent extends Component {
         <div id="layout" className="bounds">
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_big OT_publisher custom-class" id="localUser">
-              <StreamComponent user={localUser} />
+              <StreamComponent user={localUser} sessionId={mySessionId}/>
             </div>
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
