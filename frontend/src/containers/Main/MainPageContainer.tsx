@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Parallax, ParallaxLayer } from '@react-spring/parallax';
+import { Event, EventListener, EventSourcePolyfill } from 'event-source-polyfill';
 import { useAppSelector } from '../../store/hooks';
 import styles from './MainPageContainer.module.scss';
 import InfoCard from '../../components/Main/InfoCard';
@@ -11,10 +11,18 @@ import planet from '../../assets/images/mainPage/planet_funteer.png';
 export function MainPageContainer() {
   console.log(useAppSelector((state) => state.userSlice.userType));
 
+  const token=localStorage.getItem('accessToken');
+  const [listening,setListening]=useState(false);
+  const [sseData,setSseData]=useState({});
+  const [respon,setRespon]=useState(false);
+  let eventSource: EventSourcePolyfill | undefined;
+  
+
   const [scrollPosition, setScrollPosition] = useState(0);
   const updateScroll = () => {
     setScrollPosition(window.scrollY || document.documentElement.scrollTop);
   };
+  
 
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
@@ -22,6 +30,66 @@ export function MainPageContainer() {
       window.removeEventListener('scroll', updateScroll);
     };
   });
+
+  
+  // sse
+  useEffect(()=>{
+
+    if(!listening&&token&&!eventSource){
+      // sse 연결
+      // https://i8e204.p.ssafy.io/api/v1/subscribe
+      eventSource=new EventSourcePolyfill("http://localhost:8080/api/v1/subscribe",{
+        headers:{
+          "Content-Type":"text/event-stream",
+          "Authorization":`Bearer ${token}`
+        },
+        heartbeatTimeout:86400000,
+        withCredentials:true,
+      });
+
+      console.log(eventSource);
+      // 최초 연결
+      eventSource.onopen=(event)=>{
+        setListening(true)
+      }
+
+        // 서버에서 메시지 날릴 때
+      eventSource.onmessage=(event)=>{
+        
+        setSseData(event.data);
+        setRespon(true);
+        console.log(event.data);
+        console.log("onmessage");
+        if(event.data!==undefined)
+        alert(event.data);
+      }  
+    
+
+      eventSource.addEventListener('sse',((event:CustomEvent)=>{
+        
+        console.log(event);
+        
+      })as EventListener);
+
+      eventSource.onerror=(error)=>{
+        if(eventSource){
+          eventSource.close();
+          setListening(false)
+          console.log(error)
+        }
+      }
+    }
+    else {
+      console.log("logout")
+      eventSource?.close();
+    }
+    return ()=>{
+      if(!token&&eventSource!==undefined){
+        eventSource.close();
+        setListening(false);
+      }
+    }
+},[token])
 
   return (
     <div className={scrollPosition < 700 ? styles.container : styles.container_scrolled}>
