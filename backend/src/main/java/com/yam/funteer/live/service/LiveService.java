@@ -9,8 +9,12 @@ import net.minidev.json.JSONObject;
 
 import io.openvidu.java.client.Recording;
 
+import java.util.List;
+
 public interface LiveService {
 	CreateConnectionResponse initializeSession(CreateConnectionRequest sessionName);
     void leaveSession(SessionLeaveRequest request);
+
+    List<String> getCurrentActiveSessions();
 
 }

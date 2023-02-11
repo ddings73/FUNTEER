@@ -12,7 +12,6 @@ import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
-import com.yam.funteer.live.UserRole;
 import com.yam.funteer.live.dto.CreateConnectionRequest;
 import com.yam.funteer.live.dto.CreateConnectionResponse;
 import com.yam.funteer.live.dto.SessionLeaveRequest;
@@ -35,6 +34,8 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -62,7 +63,6 @@ public class LiveServiceImpl implements LiveService{
     @PostConstruct
     public void init(){
         this.openVidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
-        log.info("#############################");
     }
 
     @Override
@@ -115,17 +115,11 @@ public class LiveServiceImpl implements LiveService{
 
                     // 녹화 종료
                     if(session.isBeingRecorded()) {
-                        recordSaveThisSession(sessionId);
+                        recordSaveThisSession(session.getSessionId());
                     }
                 }
 
-                try{
-                    this.openVidu.fetch();
-                } catch (OpenViduJavaClientException e) {
-                    throw new RuntimeException(e);
-                } catch (OpenViduHttpException e) {
-                    throw new RuntimeException(e);
-                }
+                openviduFetch();
             });
 
         }
@@ -137,6 +131,7 @@ public class LiveServiceImpl implements LiveService{
         Long teamId = SecurityUtil.getCurrentUserId();
         Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
 
+        log.info("sessionId => {}", sessionId);
         Recording recording = getSessionRecording(sessionId);
 
         String fileUrl = recording.getUrl();
@@ -207,7 +202,7 @@ public class LiveServiceImpl implements LiveService{
         String sessionId = mapSessions.get(sessionName).getSessionId();
 
         try {
-            this.openVidu.fetch();
+            openviduFetch();
             Session session = this.openVidu.getActiveSession(sessionId);
             if(session == null){
                 log.info("OpenVidu 서버에 동작중인 세션이 없음");
@@ -244,6 +239,33 @@ public class LiveServiceImpl implements LiveService{
             log.info("OpenVidu 서버에 동작중인 세션이 없음");
             mapSessions.remove(sessionName);
             return initializeSession(request);
+        }
+    }
+
+    @Override
+    public List<String> getCurrentActiveSessions() {
+        openviduFetch();
+        List<Session> activeSessions = this.openVidu.getActiveSessions();
+        List<String> response = new ArrayList();
+
+        mapSessions.forEach((s, session) -> {
+            Optional<Session> findSameSession = activeSessions.stream().filter(activeSession -> activeSession.getSessionId().equals(session.getSessionId())).findFirst();
+            if(!findSameSession.isPresent()){
+                mapSessions.remove(s);
+            }else{
+                response.add(s);
+            }
+        });
+        return response;
+    }
+
+    private void openviduFetch(){
+        try {
+            this.openVidu.fetch();
+        } catch (OpenViduJavaClientException e) {
+            throw new RuntimeException(e);
+        } catch (OpenViduHttpException e) {
+            throw new RuntimeException(e);
         }
     }
 
