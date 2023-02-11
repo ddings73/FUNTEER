@@ -15,6 +15,7 @@ import OpenViduLayout from './layout/openvidu-layout';
 import UserModel from './models/user-model';
 import ToolbarComponent from './toolbar/ToolbarComponent';
 import ChatComponent from './chat/ChatComponent';
+import { http } from '../../api/axios';
 
 const localUser = new UserModel();
 
@@ -419,8 +420,8 @@ class VideoRoomComponent extends Component {
 
   async createSession(sessionId) {
     console.log('sessionId', sessionId);
-    const response = await axios.post(
-      `${APPLICATION_SERVER_URL}api/v1/openvidu/sessions`,
+    const response = await http.post(
+      `openvidu/sessions`,
       { sessionName: sessionId, fundingId: 308 },
       {
         headers: { 'Content-Type': 'application/json' },
@@ -430,8 +431,8 @@ class VideoRoomComponent extends Component {
   }
 
   async leaveThisSession(sessionId, token) {
-    const response = await axios.post(
-      `${APPLICATION_SERVER_URL}api/v1/openvidu/sessions/leave`,
+    const response = await http.post(
+      `openvidu/sessions/leave`,
       { sessionName: sessionId, token },
       {
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${localStorage.getItem('accessToken')}` },
