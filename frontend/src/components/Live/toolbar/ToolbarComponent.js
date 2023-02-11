@@ -47,14 +47,6 @@ export default class ToolbarComponent extends Component {
     return (
       <header className="header">
         <div className="toolbar">
-          <div className="navSessionInfo">
-            {this.props.sessionId && (
-              <div id="titleContent">
-                <span id="session-title">{mySessionId}</span>
-              </div>
-            )}
-          </div>
-
           <div className="buttonsContent">
             {localUser !== undefined && localUser.getStreamManager().openvidu !== undefined && (
               <IconButton color="inherit" className="navButton" id="navMicButton" onClick={this.micStatusChanged}>
