@@ -20,9 +20,11 @@ public class ChargeListResponse {
 	private String impUid;
 	private LocalDateTime chargeDate;
 	private int possibleRefund;
+	private String refundReason;
 
 	public static ChargeListResponse from (Charge charge) {
-		ChargeListResponse chargeListResponse = new ChargeListResponse(charge.getAmount(), charge.getPayImpUid(), charge.getChargeDate(), charge.getPossibleRefund());
+		ChargeListResponse chargeListResponse = new ChargeListResponse(charge.getAmount(), charge.getPayImpUid(), charge.getChargeDate(), charge.getPossibleRefund(),
+			charge.getRefundReason());
 		return chargeListResponse;
 	}
 
