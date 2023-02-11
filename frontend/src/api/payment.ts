@@ -31,7 +31,22 @@ export const requestChargeList = async (page: number, size: number, sort: string
     size,
   };
 
-  const response = http.get('member/chargeList', { params });
+  const response = await http.get('member/chargeList', { params });
+
+  return response;
+};
+
+/** 환불 */
+// eslint-disable-next-line
+export const requestCancelIamport = async (amount: number, imp_uid: string, reason: string) => {
+  const data = {
+    amount,
+    // eslint-disable-next-line
+    imp_uid,
+    reason,
+  };
+
+  const response = await http.post('cancelIamport', data);
 
   return response;
 };

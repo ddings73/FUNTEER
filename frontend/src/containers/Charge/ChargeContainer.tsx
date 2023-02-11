@@ -90,6 +90,18 @@ type ChargeHistoryType = {
   possibleRefund: number;
 };
 
+/** 충전 내역 환불 여부 계산기 */
+const canRefund = (chargeDate: string, money: number, amount: number) => {
+  const now = new Date();
+  console.log('지금', now);
+  const chargeDateObject = new Date(chargeDate);
+  console.log('충전 날짜', chargeDate);
+  const diff = now.getTime() - chargeDateObject.getTime();
+  const sevenDays = 7 * 24 * 60 * 60 * 1000;
+
+  return diff < sevenDays && money >= amount;
+};
+
 function ChargeContainer() {
   // ================================ 변수 및 useState =====================================
   const dispatch = useAppDispatch();
@@ -186,6 +198,7 @@ function ChargeContainer() {
 
   /** 정렬 기준 선택 */
   const changeSortHandler = (event: SelectChangeEvent) => {
+    setPage(1);
     setSort(event.target.value);
   };
 
@@ -195,7 +208,7 @@ function ChargeContainer() {
   };
 
   /** 환불 버튼 클릭 */
-  const onClickCancelHandler = (e: React.MouseEvent<HTMLAnchorElement>, amount: number, impUid: string) => {
+  const onClickCancelHandler = (e: React.MouseEvent<HTMLAnchorElement>, amount: number, impUid: string, chargeDate: string) => {
     e.preventDefault();
 
     navigate('./cancel', {
@@ -204,6 +217,7 @@ function ChargeContainer() {
         amount,
         impUid,
         money,
+        chargeDate,
       },
     });
   };
@@ -257,7 +271,7 @@ function ChargeContainer() {
             <li> </li>
           </ul>
           {chargeList.map((charge) => (
-            <ul className={styles['content-line']}>
+            <ul key={charge.chargeDate} className={styles['content-line']}>
               <li>
                 <p>{charge.amount.toLocaleString('ko-KR')} 원</p>
               </li>
@@ -265,17 +279,20 @@ function ChargeContainer() {
                 <p>{YYYYMMDDHHMMSS(charge.chargeDate)}</p>
               </li>
               <li>
-                {charge.possibleRefund && (
+                {/* 아직 환불하지 않았고, 환불 조건에 부합하는 경우 */}
+                {charge.possibleRefund === 1 && canRefund(charge.chargeDate, money, charge.amount) && (
                   <a
                     href="."
                     className={styles.cancel}
                     onClick={(e) => {
-                      onClickCancelHandler(e, charge.amount, charge.impUid);
+                      onClickCancelHandler(e, charge.amount, charge.impUid, charge.chargeDate);
                     }}
                   >
                     환불
                   </a>
                 )}
+                {/* 이미 환불한 경우 */}
+                {charge.possibleRefund === 0 && <p style={{ fontSize: '0.8rem', color: 'red' }}>취소됨</p>}
               </li>
             </ul>
           ))}
