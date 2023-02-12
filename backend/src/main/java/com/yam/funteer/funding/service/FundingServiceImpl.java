@@ -4,12 +4,16 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
@@ -68,11 +72,12 @@ import com.yam.funteer.post.repository.PostHashtagRepository;
 import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
+import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.entity.Wish;
 import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
+import com.yam.funteer.user.repository.UserRepository;
 import com.yam.funteer.user.repository.WishRepository;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -81,6 +86,8 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
+	private static final String VIEWCOOKIENAME = "alreadyViewCookie";
+	private final UserRepository userRepository;
 	private final AttachRepository attachRepository;
 	private final ReportDetailRepository reportDetailRepository;
 	private final WishRepository wishRepository;
@@ -129,6 +136,50 @@ public class FundingServiceImpl implements FundingService{
 
 	}
 
+	@Override
+	public int updateHit(Long fundingId, HttpServletRequest request, HttpServletResponse response) {
+		Cookie[] cookies = request.getCookies();
+		boolean checkCookie = false;
+		int result = 0;
+		if(cookies != null){
+			for (Cookie cookie : cookies)
+			{
+				// 이미 조회를 한 경우 체크
+				if (cookie.getName().equals(VIEWCOOKIENAME+fundingId)) checkCookie = true;
+
+			}
+			if(!checkCookie){
+				Cookie newCookie = createCookieForForNotOverlap(fundingId);
+				response.addCookie(newCookie);
+				result = fundingRepository.updateHit(fundingId);
+			}
+		} else {
+			Cookie newCookie = createCookieForForNotOverlap(fundingId);
+			response.addCookie(newCookie);
+			result = fundingRepository.updateHit(fundingId);
+		}
+		return result;
+	}
+
+	/*
+	 * 조회수 중복 방지를 위한 쿠키 생성 메소드
+	 * @param cookie
+	 * @return
+	 * */
+	private Cookie createCookieForForNotOverlap(Long postId) {
+		Cookie cookie = new Cookie(VIEWCOOKIENAME+postId, String.valueOf(postId));
+		cookie.setComment("조회수 중복 증가 방지 쿠키");	// 쿠키 용도 설명 기재
+		cookie.setMaxAge(getRemainSecondForTommorow()); 	// 하루를 준다.
+		cookie.setHttpOnly(true);				// 서버에서만 조작 가능
+		return cookie;
+	}
+
+	// 다음 날 정각까지 남은 시간(초)
+	private int getRemainSecondForTommorow() {
+		LocalDateTime now = LocalDateTime.now();
+		LocalDateTime tommorow = LocalDateTime.now().plusDays(1L).truncatedTo(ChronoUnit.DAYS);
+		return (int) now.until(tommorow, ChronoUnit.SECONDS);
+	}
 
 	@Override
 	public Page<FundingListResponse> findFundingByCategory(Long categoryId, Pageable pageable) {
@@ -290,17 +341,20 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public FundingDetailResponse findFundingById(Long id, Pageable pageable) {
+	public FundingDetailResponse findFundingById(Long id, Pageable pageable) throws NotAuthenticatedMemberException {
 		Funding funding = fundingRepository.findByFundingId(id).orElseThrow(() -> new IllegalArgumentException());
 		FundingDetailResponse fundingDetailResponse = FundingDetailResponse.from(funding);
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
 		fundingDetailResponse.setWishCount(wishCount);
 		Long tempId = funding.getId();
 
-		Member member = memberRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow();
-		Optional<Wish> byMemberAndFunding = wishRepository.findByMemberAndFunding(member, funding);
-
-		boolean isWished = byMemberAndFunding.isPresent() ? byMemberAndFunding.get().isChecked() : false;
+		User user = userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow();
+		if (user.getUserType() == UserType.NORMAL || user.getUserType() == UserType.KAKAO ) {
+			Member member = memberRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow();
+			Optional<Wish> byMemberAndFunding = wishRepository.findByMemberAndFunding(member, funding);
+			boolean isWished = byMemberAndFunding.isPresent() ? byMemberAndFunding.get().isChecked() : false;
+			fundingDetailResponse.setIsWished(isWished);
+		}
 
 		// 목표금액
 		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
@@ -312,7 +366,6 @@ public class FundingServiceImpl implements FundingService{
 
 		Page<CommentResponse> collect = commentRepository.findAllByFundingId(tempId, pageable).map(m -> CommentResponse.from(m));
 		fundingDetailResponse.setComments(Optional.of(collect));
-		fundingDetailResponse.setIsWished(isWished);
 
 
 		return fundingDetailResponse;
