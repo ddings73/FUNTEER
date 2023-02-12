@@ -20,8 +20,19 @@ function NoticeList() {
       <div className={styles['tab-contents']}>
         <Box sx={{ width: '100%' }}>
           <AppBar position="static" sx={{ backgroundColor: 'white', boxShadow: 'none' }}>
-            <Tabs variant="fullWidth" sx={{ color: 'black' }}>
-              <Tab label="공지사항" sx={{ fontWeight: 'bold' }} className={styles.indicator} />
+            <Tabs
+              value={0}
+              variant="fullWidth"
+              textColor="inherit"
+              TabIndicatorProps={{
+                style: {
+                  color: 'rgba(236, 153, 75, 1)',
+                  backgroundColor: 'rgba(236, 153, 75, 1)',
+                },
+              }}
+              sx={{ color: 'black' }}
+            >
+              <Tab label="공지사항" sx={{ fontWeight: 'bold' }} />
               <Tab label="FAQ" onClick={goOnFAQ} sx={{ fontWeight: 'bold' }} />
               <Tab label="1:1 문의" onClick={goOnQna} sx={{ fontWeight: 'bold' }} />
             </Tabs>

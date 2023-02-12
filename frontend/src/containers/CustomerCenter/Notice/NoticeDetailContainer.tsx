@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { AiOutlineFileText } from 'react-icons/ai';
+import { BsFillImageFill } from 'react-icons/bs';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { Viewer } from '@toast-ui/react-editor';
 import { requestNoticeDetail } from '../../../api/admin';
 import styles from './NoticeDetailContainer.module.scss';
 import { useAppSelector } from '../../../store/hooks';
+
+const imgExpansion = ['.jpg', '.jpeg', '.png', '.gif', '.bmp', '.webp', '.svg', '.jfif', '.tif', '.tiff'];
 
 export type NoticeDetailType = {
   id: string;
@@ -30,6 +34,16 @@ function NoticleDetailContainer() {
   useEffect(() => {
     requestNotice();
   }, []);
+
+  const isImage = (fileUrl: string) => {
+    // eslint-disable-next-line
+    for (let i = 0; i < imgExpansion.length; i++) {
+      if (fileUrl.endsWith(imgExpansion[i])) {
+        return true;
+      }
+    }
+    return false;
+  };
 
   const onClickEditBtn = () => {
     navigate('edit', {
@@ -60,6 +74,8 @@ function NoticleDetailContainer() {
         <p className={styles['post-date']}>첨부파일</p>
         {NoticeDetail.files.map((file) => (
           <a href={Object.values(file)[0]} className={styles.file}>
+            {isImage(Object.values(file)[0]) && <BsFillImageFill style={{ marginRight: '0.5rem' }} />}
+            {!isImage(Object.values(file)[0]) && <AiOutlineFileText style={{ marginRight: '0.4rem' }} />}
             {Object.keys(file)[0]}
           </a>
         ))}

@@ -78,10 +78,10 @@
     .file-list {
       width: 815px;
       color: $primary;
-      font-size: 1rem;
-      font-weight: bold;
+      font-size: 0.9rem;
 
       & p {
+        height: 1.5rem;
         display: flex;
         align-items: center;
         margin-bottom: 0.5rem;
@@ -91,13 +91,13 @@
           border: none;
           border-radius: 100%;
           box-shadow: none;
-          color: grey;
+          color: $error;
           font-size: 17px;
           font-weight: bold;
 
           &:hover {
             cursor: pointer;
-            color: $error;
+            color: $primary;
           }
         }
       }
