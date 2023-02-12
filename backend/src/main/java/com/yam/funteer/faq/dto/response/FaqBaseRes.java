@@ -15,11 +15,13 @@ public class FaqBaseRes {
 	private Long id;
 	private String content;
 	private LocalDate localDate;
+	private Long groupOrPerson;
 
 	public FaqBaseRes(Faq entity){
 		this.title=entity.getTitle();
 		this.id=entity.getFaqId();
 		this.content=entity.getContent();
 		this.localDate=entity.getRegDate().toLocalDate();
+		this.groupOrPerson=entity.getGroupOrPerson();
 	}
 }

@@ -3,6 +3,7 @@ package com.yam.funteer.faq.dto.request;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
@@ -26,12 +27,15 @@ public class FaqRegisterReq {
 	private String title;
 	@NotBlank
 	private String content;
+	@NotNull
+	private Long groupOrPerson;
 
 	public Faq toEntity(){
 		return Faq.builder()
 			.content(content)
 			.regDate(LocalDateTime.now())
 			.title(title)
+			.groupOrPerson(groupOrPerson)
 			.postGroup(PostGroup.ETC)
 			.postType(PostType.FAQ).build();
 	}
@@ -43,6 +47,7 @@ public class FaqRegisterReq {
 			.content(content)
 			.regDate(LocalDateTime.now())
 			.title(title)
+			.groupOrPerson(groupOrPerson)
 			.postGroup(PostGroup.ETC)
 			.postType(PostType.FAQ).build();
 	}

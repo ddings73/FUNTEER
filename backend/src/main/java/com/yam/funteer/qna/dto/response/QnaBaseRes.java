@@ -15,6 +15,7 @@ public class QnaBaseRes {
 	private String content;
 	private LocalDateTime regDate;
 	private List<String>files;
+	private boolean respond;
 
 	public QnaBaseRes(Qna entity,List<String>files) {
 		this.id = entity.getQnaId();
@@ -23,5 +24,6 @@ public class QnaBaseRes {
 		this.content=entity.getContent();
 		this.regDate=entity.getRegDate();
 		this.files=files;
+		this.respond=entity.isRespond();
 	}
 }
