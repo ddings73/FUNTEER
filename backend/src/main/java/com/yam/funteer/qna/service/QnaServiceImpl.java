@@ -114,6 +114,9 @@ public class QnaServiceImpl implements QnaService {
 	public QnaBaseRes qnaModify(Long qnaId, QnaRegisterReq qnaRegisterReq){
 		Qna qna = qnaRepository.findByQnaId(qnaId).orElseThrow(() -> new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
+		if(replyRepository.findByQna(qna).isPresent()){
+			throw new IllegalArgumentException("이미 답변이 완료된 글입니다");
+		}
 		List<String>attachList=new ArrayList<>();
 		if(user.getId()==qna.getUser().getId()) {
 			qnaRepository.save(qnaRegisterReq.toEntity(user,qna.getId(),qnaId));

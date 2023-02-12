@@ -49,6 +49,7 @@ public class ReplyServiceImpl implements ReplyService{
 		if(replyRepository.findByQna(qna).isPresent())throw new ReplyDuplicatedException();
 		if(user.getUserType().equals(UserType.ADMIN)) {
 			Reply reply=replyRepository.save(qnaReplyReq.toEntity(qna));
+			qna.setRespond();
 			alarmService.send(qna.getUser().getEmail(),qna.getTitle()+" 에 대한 답변이 등록되었습니다.","/qna/"+qnaId+"/reply");
 			return new ReplyBaseRes(reply);
 		}else throw new  IllegalArgumentException("접근 권한이 없습니다.");
