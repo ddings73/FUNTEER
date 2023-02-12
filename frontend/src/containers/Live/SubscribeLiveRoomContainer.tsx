@@ -57,6 +57,7 @@ function SubscribeLiveRoomContainer() {
 
   useEffect(() => {
     getUserMoney()
+    createSession()
   }, []);
   // return(
   //   <div>11</div>
