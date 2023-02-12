@@ -42,6 +42,7 @@ export default class ToolbarComponent extends Component {
   }
 
   render() {
+    console.log(this.props.userCount)
     const mySessionId = this.props.sessionId;
     const localUser = this.props.user;
     return (

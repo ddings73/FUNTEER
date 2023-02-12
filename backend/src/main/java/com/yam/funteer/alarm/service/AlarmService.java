@@ -45,12 +45,15 @@ public class AlarmService {
 		else {
 			emitter = alarmRepository.save(emitterId, new SseEmitter(DEFAULT_TIMEOUT)); //id가 key, SseEmitter가 value
 		}
-
+		log.info("1");
 		emitter.onCompletion(() -> alarmRepository.deleteById(emitterId)); //네트워크 오류
+		log.info("2");
 		emitter.onTimeout(() -> {
+			log.info("3");
 			alarmRepository.deleteById(emitterId);
 			emitter.complete();
 		}); //시간 초과
+		log.info("4");
 		emitter.onError((e) -> alarmRepository.deleteById(emitterId)); //오류
 
 		// 503 에러를 방지하기 위한 더미 이벤트 전송

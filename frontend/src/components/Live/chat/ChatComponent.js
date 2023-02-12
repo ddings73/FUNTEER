@@ -75,7 +75,7 @@ export default class ChatComponent extends Component {
   }
 
   render() {
-    console.log('profileImage', this.props.userProfileImg);
+    console.log(this.props.userCount)
     return (
       <div id="chatContainer">
         <div id="chatComponent">
