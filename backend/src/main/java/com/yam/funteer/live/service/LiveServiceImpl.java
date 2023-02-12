@@ -212,7 +212,8 @@ public class LiveServiceImpl implements LiveService{
 
     private Recording getSessionRecording(String sessionId) {
         try {
-            return this.openVidu.getRecording(sessionId);
+            Recording recording = this.openVidu.getRecording(sessionId);
+            return this.openVidu.stopRecording(recording.getId());
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             throw new RuntimeException(e);
         }
