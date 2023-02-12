@@ -55,14 +55,15 @@ public class AlarmService {
 		}); //시간 초과
 		log.info("4");
 		emitter.onError((e) -> alarmRepository.deleteById(emitterId)); //오류
-
+		log.info("5");
 		// 503 에러를 방지하기 위한 더미 이벤트 전송
 		String eventId = makeTimeIncludeId(email);
 		sendNotification(emitter, eventId, emitterId, "EventStream Created. [userId=" + email + "]");
-
+		log.info("6");
 		if (hasLostData(lastEventId)) {
 			sendLostData(lastEventId, email, emitterId, emitter);
 		}
+		log.info("7");
 
 		return emitter;
 	}
