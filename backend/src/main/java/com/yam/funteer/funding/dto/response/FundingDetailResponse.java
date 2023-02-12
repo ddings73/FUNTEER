@@ -51,6 +51,8 @@ public class FundingDetailResponse {
 
 	private Optional<HashtagResponse> postHashtagList;
 
+	private Boolean isWished;
+
 	private String thumbnail;
 
 	private Optional<Page<CommentResponse>> comments;
