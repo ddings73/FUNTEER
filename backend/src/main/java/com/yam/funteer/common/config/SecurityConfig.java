@@ -48,6 +48,7 @@ public class SecurityConfig{
                 .and()
                 .authorizeRequests()
                 .antMatchers("/admin/**/**").hasRole("ADMIN")
+                .antMatchers("/subscribe").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/member", "/team").permitAll() // 회원가입
                 .mvcMatchers(HttpMethod.GET, "/member/**/profile", "/team/**/profile").permitAll() // 프로필 조회
                 .antMatchers("/member/**/**", "/team/**/**").authenticated()
