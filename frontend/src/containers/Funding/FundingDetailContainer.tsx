@@ -19,6 +19,8 @@ import CommentCard from '../../components/Cards/CommentCard';
 import CommentSkeleton from '../../components/Skeleton/CommentSkeleton';
 import { useAppSelector } from '../../store/hooks';
 import { requestUserProfile } from '../../api/user';
+import { requestTeamAccountInfo } from '../../api/team';
+import { requestCreateSession } from '../../api/live';
 
 export interface ResponseInterface {
   title: string;
@@ -82,7 +84,7 @@ export function FundingDetailContainer() {
       regDate: '',
     },
   ]);
-  const [users, setUsers] = useState(null);
+  const userType = useAppSelector((state) => state.userSlice.userType);
   const { fundIdx } = useParams();
   const [board, setBoard] = useState<ResponseInterface>({
     title: '',
@@ -176,7 +178,6 @@ export function FundingDetailContainer() {
   // 한번에 불러올 게시글 수
   const nextCommentList = async () => {
     try {
-      console.log('here comes');
       setNextLoading(true);
       const { data } = await requestNextCommentList(currentPage, fundIdx, 'regDate,DESC');
       setCommentList([...commentList, ...data.comments.content]);
@@ -200,7 +201,6 @@ export function FundingDetailContainer() {
   // 엔터키 input 완성
 
   function handleKeyUp(event: React.KeyboardEvent<HTMLImageElement>) {
-    console.log('누름');
     if (event.key === 'Enter') {
       (document.activeElement as HTMLElement).blur();
     }
@@ -244,8 +244,7 @@ export function FundingDetailContainer() {
   async function fundingHandler() {
     console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불');
     try {
-      const response = await fundingJoin(paying, fundIdx);
-      console.log('Fund paying Response: ', response);
+      await fundingJoin(paying, fundIdx);
       alert(`${paying}원으로 펀딩을 완료했습니다!`);
     } catch (error) {
       console.log(error);
@@ -307,29 +306,66 @@ export function FundingDetailContainer() {
       `}
     </p>
   );
+  // 단체 정보 GET
+  const isLogin = useAppSelector((state) => state.userSlice.isLogin);
+  const [teamInfo, setTeamInfo] = useState<TeamInfoType>({
+    email: '',
+    id: 0,
+    name: '',
+  });
+  type TeamInfoType = {
+    email: string;
+    id: number;
+    name: string;
+  };
+  async function getTeamInfo() {
+    const res = await requestTeamAccountInfo();
+    setTeamInfo(res.data);
+    console.log('팀정보', res);
+  }
+  useEffect(() => {
+    if (isLogin && userType === 'TEAM') {
+      getTeamInfo();
+    }
+  }, [userType]);
+
+  // 라이브 방송
+  const [CheckRoom, setCheckRoom] = useState<boolean>(false);
+
+  const createSession = async () => {
+    try {
+      const response = await requestCreateSession(teamInfo.name, 1);
+      localStorage.setItem('liveToken', response.data.token);
+      navigate(`../publisherLiveRoom/${teamInfo.name}`);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <div className={styles.bodyContainer}>
       <div className={styles.banner}>
         <div className={styles.bannerContent}>
           <h1 className={styles.bannerTitle}>{board.title}</h1>
-          <div className={styles.bannerButtonGroup}>
-            <button className={styles.bannerGrpBtn} type="button">
-              보고서 제출
-            </button>
-            <button
-              className={styles.bannerGrpBtn}
-              type="button"
-              onClick={() => {
-                navigate('../../createLive', { replace: true });
-              }}
-            >
-              라이브 시작
-            </button>
-            <button className={styles.bannerGrpBtn} type="button">
-              펀딩 수정하기
-            </button>
-          </div>
+          {userType === 'TEAM' && teamInfo.id === board.team.id && (
+            <div className={styles.bannerButtonGroup}>
+              <button className={styles.bannerGrpBtn} type="button">
+                보고서 제출
+              </button>
+              <button
+                className={styles.bannerGrpBtn}
+                type="button"
+                onClick={() => {
+                  createSession();
+                }}
+              >
+                라이브 시작
+              </button>
+              <button className={styles.bannerGrpBtn} type="button">
+                펀딩 수정하기
+              </button>
+            </div>
+          )}
         </div>
       </div>
       <div className={styles.mainContainer}>
@@ -372,7 +408,9 @@ export function FundingDetailContainer() {
                 </div>
                 <div className={styles.progressBar}>
                   <div className={styles.status} style={{ width: `30%` }}>
-                    <p className={styles.statusNum}>40%</p>
+                    <Tooltip title={`현재 모금 금액: ${board.currentFundingAmount}원`} placement="bottom">
+                      <p className={styles.statusNum}>40%</p>
+                    </Tooltip>
                   </div>
                 </div>
               </div>

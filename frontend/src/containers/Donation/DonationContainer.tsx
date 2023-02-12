@@ -82,7 +82,7 @@ function DonationContainer() {
             </div>
             <div className={styles.right}>
               <p className={styles.title}>{donBoard.title}</p>
-              <p className={styles.text}>{donBoard.content}</p>
+              <div className={styles.text} dangerouslySetInnerHTML={{ __html: donBoard.content }} />
               <Button className={styles.donButton} onClick={onClickDonation} type="button">
                 기부 참여
               </Button>
