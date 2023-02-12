@@ -11,6 +11,7 @@ function SubscribeLiveRoomContainer() {
   const [token, setToken] = useState<string>('');
   const userName = useAppSelector((state) => state.userSlice.username);
   const userProfileImg = useAppSelector(state=>state.userSlice.profileImgUrl)
+  console.log('sususususususus',userProfileImg)
 
   const createSession = async () => {
     try {

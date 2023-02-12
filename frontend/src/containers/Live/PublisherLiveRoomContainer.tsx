@@ -8,7 +8,6 @@ function PublisherLiveRoomContainer() {
   const [token, setToken] = useState<string | null>('');
   const userName = useAppSelector((state) => state.userSlice.username);
   const userProfileImg = useAppSelector(state=>state.userSlice.profileImgUrl)
-  console.log(userProfileImg)
 
   useEffect(() => {
     if (localStorage.getItem('liveToken')) {

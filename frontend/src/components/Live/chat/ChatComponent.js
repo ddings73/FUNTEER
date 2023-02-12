@@ -19,7 +19,6 @@ export default class ChatComponent extends Component {
       message: '',
     };
     this.chatScroll = React.createRef();
-    const { userProfileImg } = this.props;
     this.handleChange = this.handleChange.bind(this);
     this.handlePressKey = this.handlePressKey.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
@@ -29,7 +28,7 @@ export default class ChatComponent extends Component {
     this.props.user.getStreamManager().stream.session.on('signal:chat', (event) => {
       const data = JSON.parse(event.data);
       const { messageList } = this.state;
-      messageList.push({ connectionId: event.from.connectionId, nickname: data.nickname, message: data.message });
+      messageList.push({ connectionId: event.from.connectionId, nickname: data.nickname, message: data.message ,userProfileImg:data.userProfileImg});
       const { document } = window;
       setTimeout(() => {
         const userImg = document.getElementById(`userImg-${this.state.messageList.length - 1}`);
@@ -56,7 +55,8 @@ export default class ChatComponent extends Component {
     if (this.props.user && this.state.message) {
       const message = this.state.message.replace(/ +(?= )/g, '');
       if (message !== '' && message !== ' ') {
-        const data = { message, nickname: this.props.user.getNickname(), streamId: this.props.user.getStreamManager().stream.streamId };
+        const data = { message, nickname: this.props.user.getNickname(), streamId: this.props.user.getStreamManager().stream.streamId,userProfileImg:this.props.user.getUserProfileImg() };
+        console.log(data)
         this.props.user.getStreamManager().stream.session.signal({
           data: JSON.stringify(data),
           type: 'chat',
@@ -75,7 +75,8 @@ export default class ChatComponent extends Component {
   }
 
   render() {
-    console.log(this.props.userCount)
+    console.log(this.props.user)
+    // console.log(this.state.messageList)
     return (
       <div id="chatContainer">
         <div id="chatComponent">
@@ -86,7 +87,7 @@ export default class ChatComponent extends Component {
             {this.state.messageList.map((data, i) => (
               <div key={i} id="remoteUsers" className={`message${data.connectionId !== this.props.user.getConnectionId() ? ' left' : ' left'}`}>
                 <div className="msg-detail">
-                  <img src={this.props.userProfileImg ? this.props.userProfileImg : defaultProfile} className="userProfileImage" alt="userprofile" />
+                  <img src={data.userProfileImg ? data.userProfileImg : defaultProfile} className="userProfileImage" alt="userprofile" />
                   <div className="message-contents-box">
                     <span className="uername">{data.nickname}</span>
                     <span className="chat-content">{data.message}</span>
