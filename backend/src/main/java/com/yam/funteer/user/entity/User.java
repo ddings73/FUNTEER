@@ -99,4 +99,8 @@ public class User {
 	protected void expire() {
 		this.userType = UserType.TEAM_EXPIRED;
 	}
+
+	public void checkMoney(Long amount) {
+		if(this.money < amount) throw new IllegalArgumentException("잔고가 부족합니다.");
+	}
 }
