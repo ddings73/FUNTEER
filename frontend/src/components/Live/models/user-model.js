@@ -12,6 +12,7 @@ class UserModel {
 
   streamManager;
 
+
   type; // 'remote' | 'local'
 
   constructor() {
@@ -22,6 +23,15 @@ class UserModel {
     this.nickname = '';
     this.streamManager = null;
     this.type = 'local';
+    this.userProfileImg=""
+  }
+
+  getUserProfileImg(){
+    return this.userProfileImg
+  }
+
+  setUserProfileImg(userProfileImg){
+    this.userProfileImg = userProfileImg
   }
 
   isAudioActive() {
@@ -79,6 +89,8 @@ class UserModel {
   setNickname(nickname) {
     this.nickname = nickname;
   }
+
+
 
   setType(type) {
     if ((type === 'local') | (type === 'remote')) {

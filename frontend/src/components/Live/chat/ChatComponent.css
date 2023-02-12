@@ -6,6 +6,11 @@
 }
 
 #chatToolbar {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
   height: 40px;
   line-height: 40px;
   box-sizing: border-box;
@@ -15,6 +20,79 @@
   border-top-left-radius: 6px;
   border-top-right-radius: 6px;
   color: #000000;
+}
+
+.donation-box{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  width: 100%;
+  height: 0;
+  background-color: rgba(236, 153, 75, 1);
+  top: 50px;
+  left: 0;
+  z-index:999999 ;
+  display: none;
+}
+.toggle{
+  display: flex;
+  height: 300px;
+}
+
+.donation-contents{
+  max-width: 250px;
+  width: 100%;
+  margin: 0 auto;
+}
+
+.donation-box .title{
+  margin: 15px 0;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.current-money-box{
+margin-top: 20px;
+margin-bottom: 15px;
+}
+
+.current-money-box > p:first-child{
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.current-money-box > p:last-child{
+  background-color: #ffffff;
+  text-align: center;
+  padding: 5px;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.donation-money-box{
+  margin: 15px 0;
+}
+.donation-money-box > p:first-child{
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.donation-money-box .donation-money-input{
+  height: 35px;
+  text-align: center;
+  font-size: 22px;
+  width: 100%;
+}
+.donation-button{
+  color: #ffff !important;
+  width: 100%;
+  font-size: 15px !important;
+  font-weight: bold !important;
+  background-color: rgba(211, 79, 4, 1) !important;
+  height: 35px;
 }
 
 #closeButton {
@@ -39,7 +117,8 @@
 }
 
 .message-wrap {
-  height: calc(100% - 80px);
+  height: calc(100% - 110px);
+  margin-bottom: 25px;
   overflow-x: hidden;
   overflow-y: scroll;
 }
@@ -158,7 +237,7 @@
   background-color: #ffffff;
   text-align: center;
   padding: 10px 0px;
-  height: 30px;
+  /* height: 30px; */
   border-top: 1px solid rgba(236, 153, 75, 1);
   border-bottom-left-radius: 6px;
   border-bottom-right-radius: 6px;

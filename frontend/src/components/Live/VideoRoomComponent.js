@@ -29,6 +29,7 @@ class VideoRoomComponent extends Component {
     const sessionName = this.props.sessionName ? this.props.sessionName : 'A';
     const userName = this.props.user ? this.props.user : Math.floor(Math.random() * 100);
 
+
     this.remotes = [];
     this.localUserAccessAllowed = false;
     this.state = {
@@ -107,7 +108,6 @@ class VideoRoomComponent extends Component {
         this.subscribeToStreamCreated();
         this.subscribeToConnectionCreated()
         this.subscribeToSessionDisconnected()
-        console.dir(this.state.session)
         await this.connectToSession();        
       },
     );
@@ -127,6 +127,8 @@ class VideoRoomComponent extends Component {
   subscribeToConnectionCreated(){
     this.state.session.on("connectionCreated", async(event)=>{
       console.log("event!!!!!!!!!!!!!!!!!!!!",event)
+      console.log(this.props.userProfileImg)
+      localUser.setUserProfileImg(this.props.userProfileImg)
       // eslint-disable-next-line react/no-access-state-in-setstate
      await this.setState({userCount:this.state.session.remoteConnections.size})
     //  console.log(this.state.userCount)
@@ -214,6 +216,7 @@ class VideoRoomComponent extends Component {
 
     localUser.setNickname(this.state.myUserName);
     localUser.setConnectionId(this.state.session.connection.connectionId);
+    localUser.setUserProfileImg(this.props.userProfileImg)
 
     this.subscribeToUserChanged();
     this.subscribeToStreamDestroyed();
@@ -413,9 +416,11 @@ class VideoRoomComponent extends Component {
 
 
   render() {
-    console.log('state', this.state);
+    console.log(this.props.userProfileImg)
+    // console.log('state', this.state);
     const { mySessionId } = this.state;
     const { localUser } = this.state;
+    // console.log(localUser)
     // const {remoteConnections} = this.state.session
     // console.log(remoteConnections)
 
@@ -439,7 +444,7 @@ class VideoRoomComponent extends Component {
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_small OT_publisher custom-class chat-box">
-              <ChatComponent user={localUser} userProfileImg={this.props.userProfileImg} userCount={this.state.userCount} />
+              <ChatComponent user={localUser} userCount={this.state.userCount} userCurrentMoney={this.props.userCurrentMoney} liveDonation={this.props.liveDonation} />
             </div>
           )}
         </div>
