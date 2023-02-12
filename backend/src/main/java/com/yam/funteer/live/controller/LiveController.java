@@ -50,6 +50,6 @@ public class LiveController {
     @PostMapping("/sessions/gift")
     public ResponseEntity giftForFundingTeam(@RequestBody GiftRequest request){
         liveService.giftToFundingTeam(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("후원이 완료되었습니다.");
     }
 }
