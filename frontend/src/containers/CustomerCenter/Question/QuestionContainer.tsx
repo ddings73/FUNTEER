@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -12,9 +12,20 @@ import QuestionContainerItem from './QuestionContainerItem';
 import styles from './QuestionContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
 import { customAlert, w1500 } from '../../../utils/customAlert';
+import { useAppSelector } from '../../../store/hooks';
 
 export default function QuestionContainer() {
   const navigate = useNavigate();
+  /** 유저 ID */
+  const userId = useAppSelector((state) => state.userSlice.userId);
+  /** 유저 Type */
+  const userType = useAppSelector((state) => state.userSlice.userType);
+
+  useEffect(() => {
+    if (!userId) {
+      navigate('/login');
+    }
+  }, []);
 
   const [createMode, setCreateMode] = useState<boolean>(false);
   const [questionCreateInfo, setQuestionCreateInfo] = useState({

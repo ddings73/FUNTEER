@@ -11,26 +11,25 @@ export type NoticeContainerItemType = {
 
 function NoticeContainer() {
   const navigate = useNavigate();
+  const [noticeList, setNoticeList] = useState<NoticeContainerItemType[]>([]);
 
-  const onClickNoticeHandler = (data: NoticeContainerItemType, e: React.MouseEvent<HTMLButtonElement>) => {
+  useEffect(() => {
+    requestNotice();
+  }, []);
+
+  const onClickNoticeHandler = (data: NoticeContainerItemType) => {
     navigate(`./${data.id}`, { state: { data } });
   };
-
-  const [noticeList, setNoticeList] = useState<NoticeContainerItemType[]>([]);
 
   const requestNotice = async () => {
     try {
       const response = await requestNoticeList();
-      console.log(response)
-      setNoticeList(response.data)
+      console.log(response);
+      setNoticeList(response.data);
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
-  }
-
-  useEffect(() => {
-    requestNotice();
-  }, [])
+  };
 
   return (
     <div className={styles.container}>
@@ -44,8 +43,8 @@ function NoticeContainer() {
           type="button"
           key={data.id}
           className={styles['list-line']}
-          onClick={(e) => {
-            onClickNoticeHandler(data, e);
+          onClick={() => {
+            onClickNoticeHandler(data);
           }}
         >
           <li className={styles['mobile-none']}>

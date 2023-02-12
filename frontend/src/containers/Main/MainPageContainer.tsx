@@ -20,12 +20,11 @@ export function MainPageContainer() {
     setScrollPosition(window.scrollY || document.documentElement.scrollTop);
   };
 
-  const token=localStorage.getItem('accessToken');
-  const [listening,setListening]=useState(false);
-  const [sseData,setSseData]=useState({});
-  const [respon,setRespon]=useState(false);
+  const token = localStorage.getItem('accessToken');
+  const [listening, setListening] = useState(false);
+  const [sseData, setSseData] = useState({});
+  const [respon, setRespon] = useState(false);
   let eventSource: EventSourcePolyfill | undefined;
-  
 
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
@@ -35,65 +34,58 @@ export function MainPageContainer() {
     };
   });
 
-   // sse
-   useEffect(()=>{
-
-    if(!listening&&token&&!eventSource){
+  // sse
+  useEffect(() => {
+    if (!listening && token && !eventSource) {
       // sse 연결
       // http://localhost:8080/api/v1/subscribe
       // https://i8e204.p.ssafy.io/api/v1/subscribe
-      eventSource=new EventSourcePolyfill("https://i8e204.p.ssafy.io/api/v1/subscribe",{
-        headers:{
-          "Content-Type":"text/event-stream",
-          "Authorization":`Bearer ${token}`
+      eventSource = new EventSourcePolyfill('https://i8e204.p.ssafy.io/api/v1/subscribe', {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          Authorization: `Bearer ${token}`,
         },
-        heartbeatTimeout:86400000,
-        withCredentials:true,
+        heartbeatTimeout: 86400000,
+        withCredentials: true,
       });
 
       console.log(eventSource);
       // 최초 연결
-      eventSource.onopen=(event)=>{
-        setListening(true)
-      }
+      eventSource.onopen = (event) => {
+        setListening(true);
+      };
 
-        // 서버에서 메시지 날릴 때
-      eventSource.onmessage=(event)=>{
-        
+      // 서버에서 메시지 날릴 때
+      eventSource.onmessage = (event) => {
         setSseData(event.data);
         setRespon(true);
         console.log(event.data);
-        console.log("onmessage");
-        if(event.data!==undefined)
-        alert(event.data);
-      }  
-    
+        console.log('onmessage');
+        if (event.data !== undefined) alert(event.data);
+      };
 
-      eventSource.addEventListener('sse',((event:CustomEvent)=>{
-        
+      eventSource.addEventListener('sse', ((event: CustomEvent) => {
         console.log(event);
-        
-      })as EventListener);
+      }) as EventListener);
 
-      eventSource.onerror=(error)=>{
-        if(eventSource){
+      eventSource.onerror = (error) => {
+        if (eventSource) {
           eventSource.close();
-          setListening(false)
-          console.log(error)
+          setListening(false);
+          console.log(error);
         }
-      }
-    }
-    else {
-      console.log("logout")
+      };
+    } else {
+      console.log('logout');
       eventSource?.close();
     }
-    return ()=>{
-      if(!token&&eventSource!==undefined){
+    return () => {
+      if (!token && eventSource !== undefined) {
         eventSource.close();
         setListening(false);
       }
-    }
-},[token])
+    };
+  }, [token]);
 
   return (
     <div className={scrollPosition < 800 ? styles.container : styles.container_scrolled}>
@@ -107,26 +99,6 @@ export function MainPageContainer() {
           <button className={styles.serviceBtn} type="button">
             서비스 상세보기
           </button>
-          <p>
-            <Link to="/funding/create" style={{ fontSize: '3rem', color: 'white' }}>
-              펀딩 페이지
-            </Link>
-          </p>
-          <p>
-            <Link to="/charge" style={{ fontSize: '3rem', color: 'white' }}>
-              충전 페이지
-            </Link>
-          </p>
-          <p>
-            <Link to="/admin" style={{ fontSize: '3rem', color: 'white' }}>
-              관리자 페이지
-            </Link>
-          </p>
-          <p>
-            <Link to="/team/88" style={{ fontSize: '3rem', color: 'white' }}>
-              단체 프로필
-            </Link>
-          </p>
         </div>
         <div className={styles.bannerImg} style={{ opacity: scrollPosition < 700 ? '1' : '0' }}>
           <div className={styles.planets}>

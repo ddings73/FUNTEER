@@ -13,5 +13,10 @@
     flex-direction: column;
     width: 100%;
     max-width: 1160px;
+
+    .indicator {
+      border-bottom: 2px solid $primary;
+      transition: border-bottom 0.5s ease-in-out !important;
+    }
   }
 }

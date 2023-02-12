@@ -157,3 +157,26 @@ export const requestNoticeList = async (page?: number, size?: number) => {
 
   return res;
 };
+
+/** 공지사항 수정 */
+export const requestEditNotice = async (postId: number, title: string, content: string, files?: File[], newFiles?: File[]) => {
+  const formData = new FormData();
+
+  formData.append('title', title);
+  formData.append('content', content);
+  if (files) {
+    files.forEach((file) => {
+      const prevFile = new File([JSON.stringify({ [Object.keys(file)[0]]: Object.values(file)[0] })], Object.keys(file)[0], { type: 'application/json' });
+      formData.append('files', prevFile);
+    });
+  }
+  if (newFiles) {
+    newFiles.forEach((file) => {
+      formData.append('files', file);
+    });
+  }
+
+  const response = await http.put(`notice/${postId}`, formData);
+
+  return response;
+};

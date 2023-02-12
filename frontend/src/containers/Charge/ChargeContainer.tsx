@@ -109,6 +109,8 @@ function ChargeContainer() {
   const size = 8;
   /** 유저 ID */
   const userId = useAppSelector((state) => state.userSlice.userId);
+  /** 유저 Type */
+  const userType = useAppSelector((state) => state.userSlice.userType);
   /** 잔액 */
   const [money, setMoney] = React.useState(0);
   /** 정렬 기준 */
@@ -127,6 +129,13 @@ function ChargeContainer() {
   const [chargeList, setChargeList] = useState<ChargeHistoryType[]>([]);
 
   // =============================== useEffect ====================================
+  /** 개인 회원만 충전 가능 */
+  useEffect(() => {
+    if (!(userType === 'NORMAL' || userType === 'KAKAO')) {
+      navigate('/');
+    }
+  }, []);
+
   /** 스크롤 useEffect */
   useEffect(() => {
     window.scrollTo(0, 0);
