@@ -14,13 +14,9 @@ import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
@@ -514,7 +510,7 @@ public class FundingServiceImpl implements FundingService{
 
 			paymentRepository.save(payment);
 
-			member.setMoney(member.getMoney() - amount);
+			member.updateMoney(-amount);
 			funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + amount);
 
 			badgeService.postBadges(member, PostGroup.FUNDING);

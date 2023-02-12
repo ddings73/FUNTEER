@@ -1,9 +1,6 @@
 package com.yam.funteer.live.controller;
 
-import com.yam.funteer.live.dto.CreateConnectionRequest;
-import com.yam.funteer.live.dto.CreateConnectionResponse;
-import com.yam.funteer.live.dto.SessionLeaveRequest;
-import com.yam.funteer.live.dto.StartRecordingRequest;
+import com.yam.funteer.live.dto.*;
 import com.yam.funteer.live.service.LiveService;
 
 import io.openvidu.java.client.Recording;
@@ -47,5 +44,12 @@ public class LiveController {
     public ResponseEntity<List<String>> getCurrentActiveSessions(){
         List<String> activeSessions = liveService.getCurrentActiveSessions();
         return ResponseEntity.ok(activeSessions);
+    }
+
+    @ApiOperation(value = "라이브 후원기능")
+    @PostMapping("/sessions/gift")
+    public ResponseEntity giftForFundingTeam(@RequestBody GiftRequest request){
+        liveService.giftToFundingTeam(request);
+        return ResponseEntity.ok("후원이 완료되었습니다.");
     }
 }

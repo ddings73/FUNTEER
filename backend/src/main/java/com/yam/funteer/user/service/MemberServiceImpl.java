@@ -149,9 +149,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void followTeam(Long teamId) {
-        Long memberid = SecurityUtil.getCurrentUserId();
+        Long memberId = SecurityUtil.getCurrentUserId();
 
-        Member member = memberRepository.findById(memberid)
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(UserNotFoundException::new);
 
         Team team = teamRepository.findById(teamId)
