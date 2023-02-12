@@ -84,3 +84,16 @@ export const requestChangePerform = async (teamId: string, password: string, per
 
   return res;
 };
+
+/** 단체 도네이션 내역 */
+export const requestTeamDonationList = async (page?: number, size?: number, sort?: string) => {
+  const params = {
+    page,
+    size,
+    sort,
+  };
+
+  const res = await http.get('team/account/gift', { params });
+
+  return res;
+};

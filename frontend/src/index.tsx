@@ -67,6 +67,7 @@ import {
   QuestionList,
   NoticeEdit,
   LiveList,
+  FAQCreate,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -172,9 +173,9 @@ const router = createBrowserRouter([
         element: <TeamDonation />,
       },
       {
-        path:"live",
-        element:<LiveList/>
-      }
+        path: 'live',
+        element: <LiveList />,
+      },
     ],
   },
   {
@@ -256,6 +257,10 @@ const router = createBrowserRouter([
         path: '/faq/:fn',
         element: <FAQDetail />,
       },
+      {
+        path: '/faq/create',
+        element: <FAQCreate />,
+      },
     ],
   },
   /** 관리자 페이지 */
@@ -320,7 +325,7 @@ root.render(
     <PersistGate loading={null} persistor={persistor}>
       <RouterProvider router={router} />
     </PersistGate>
-  </Provider>
+  </Provider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

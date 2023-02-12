@@ -8,11 +8,13 @@ import { http } from './axios';
  */
 export const requestCreateFaq = async (faqData: FaqInterface) => {
   const data = {
+    groupOrPerson: faqData.groupOrPerson,
     title: faqData.title,
     content: faqData.content,
   };
 
   const res = await http.post('faq', data);
+
   return res;
 };
 
@@ -35,9 +37,12 @@ export const requestModifyFaq = async (faqIdx: number, faqData: FaqInterface) =>
  * faq 리스트 호출 API
  * @method GET
  */
-export const requestFaqList = async (size: number) => {
-  const res = await http.get(`faq?size=${size}`);
-  console.log(res);
+export const requestFaqList = async (size?: number) => {
+  const params = {
+    size,
+  };
+
+  const res = await http.get('faq', { params });
 
   return res;
 };
