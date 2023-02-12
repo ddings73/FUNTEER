@@ -6,6 +6,8 @@ import com.yam.funteer.live.service.LiveService;
 import io.openvidu.java.client.Recording;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
@@ -25,6 +27,11 @@ public class LiveController {
     private final LiveService liveService;
 
     @ApiOperation(value = "라이브 방 생성 or 참여", notes = "단체가 접근하였을 때, 라이브가 생성되지 않았으면 생성함\n 이미 생성된 방에 요청을 보내면 모두 SUBSCRIBER 권한을 가짐")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "정상적으로 처리됨"),
+            @ApiResponse(code = 404, message = "라이브 참가 시, 세션(라이브 방송)이 개설되어있지 않음"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
     @PostMapping("/sessions")
     public ResponseEntity<CreateConnectionResponse> initializeSession(@RequestBody CreateConnectionRequest request){
         CreateConnectionResponse response = liveService.initializeSession(request);
@@ -32,6 +39,11 @@ public class LiveController {
     }
 
     @ApiOperation(value = "라이브 방 떠나기", notes = "단체가 방을 떠나면 자동으로 녹화가 저장됨")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "정상적으로 처리됨"),
+            @ApiResponse(code = 404, message = "세션(라이브 방송)이 개설되어있지 않음"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
     @PostMapping("/sessions/leave")
     public ResponseEntity leaveSession(@RequestBody SessionLeaveRequest request){
 
@@ -47,6 +59,11 @@ public class LiveController {
     }
 
     @ApiOperation(value = "라이브 후원기능")
+    @ApiResponses({
+            @ApiResponse(code = 200, message = "정상적으로 처리됨"),
+            @ApiResponse(code = 404, message = "라이브 참가 시, 세션(라이브 방송)이 개설되어있지 않음"),
+            @ApiResponse(code = 500, message = "서버 에러")
+    })
     @PostMapping("/sessions/gift")
     public ResponseEntity giftForFundingTeam(@RequestBody GiftRequest request){
         liveService.giftToFundingTeam(request);

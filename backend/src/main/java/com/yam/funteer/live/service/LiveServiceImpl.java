@@ -9,6 +9,7 @@ import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
+import com.yam.funteer.exception.SessionNotFoundException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
@@ -276,10 +277,10 @@ public class LiveServiceImpl implements LiveService{
 
             Session activeSession = this.openVidu.getActiveSession(session.getSessionId());
             if(activeSession == null){
-                throw new IllegalArgumentException("존재하지 않는 세션입니다.");
+                throw new SessionNotFoundException();
             }
 
-            Live live = liveRepository.findBySessionId(activeSession.getSessionId()).orElseThrow(() -> new IllegalArgumentException("개설되지 않은 세션입니다."));
+            Live live = liveRepository.findBySessionId(activeSession.getSessionId()).orElseThrow(SessionNotFoundException::new);
 
             Long userId = SecurityUtil.getCurrentUserId();
             Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
@@ -294,7 +295,7 @@ public class LiveServiceImpl implements LiveService{
             return;
         }
 
-        throw new IllegalArgumentException("존재하지 않는 세션이름입니다");
+        throw new SessionNotFoundException();
     }
 
     private void openviduFetch(){
