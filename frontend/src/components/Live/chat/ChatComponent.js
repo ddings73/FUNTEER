@@ -8,28 +8,38 @@ import Send from '@material-ui/icons/Send';
 
 import './ChatComponent.css';
 import { Tooltip } from '@material-ui/core';
-import { IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
+import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
+import cn from 'classnames'
 import defaultProfile from '../../../assets/images/default-profile-img.svg';
 
+
 export default class ChatComponent extends Component {
+
   constructor(props) {
     super(props);
     this.state = {
       messageList: [],
       message: '',
+      // eslint-disable-next-line react/no-unused-state
+      toggle:false,
+      // eslint-disable-next-line react/no-unused-state
+      amount:0
     };
     this.chatScroll = React.createRef();
-    const { userProfileImg } = this.props;
     this.handleChange = this.handleChange.bind(this);
     this.handlePressKey = this.handlePressKey.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
+    this.toggleDonation=this.toggleDonation.bind(this)
+    this.onClickDonation=this.onClickDonation.bind(this)
+    this.onChangeMoney=this.onChangeMoney.bind(this)
   }
 
   componentDidMount() {
     this.props.user.getStreamManager().stream.session.on('signal:chat', (event) => {
       const data = JSON.parse(event.data);
       const { messageList } = this.state;
-      messageList.push({ connectionId: event.from.connectionId, nickname: data.nickname, message: data.message });
+      messageList.push({ connectionId: event.from.connectionId, nickname: data.nickname, message: data.message ,userProfileImg:data.userProfileImg});
       const { document } = window;
       setTimeout(() => {
         const userImg = document.getElementById(`userImg-${this.state.messageList.length - 1}`);
@@ -52,11 +62,28 @@ export default class ChatComponent extends Component {
     }
   }
 
+  onChangeMoney(e){
+    // eslint-disable-next-line react/no-unused-state
+    this.setState({amount:e.target.value})
+
+  }
+
+  onClickDonation(){
+    try{
+      this.props.liveDonation(this.state.amount)
+      this.props.updateAllAmount(this.state.amount)
+      this.setState({amount:0,toggle:false})  
+    }
+    catch(error){
+      console.error(error)
+    }
+  }
+  
   sendMessage() {
     if (this.props.user && this.state.message) {
       const message = this.state.message.replace(/ +(?= )/g, '');
       if (message !== '' && message !== ' ') {
-        const data = { message, nickname: this.props.user.getNickname(), streamId: this.props.user.getStreamManager().stream.streamId };
+        const data = { message, nickname: this.props.user.getNickname(), streamId: this.props.user.getStreamManager().stream.streamId,userProfileImg:this.props.user.getUserProfileImg() };
         this.props.user.getStreamManager().stream.session.signal({
           data: JSON.stringify(data),
           type: 'chat',
@@ -74,19 +101,50 @@ export default class ChatComponent extends Component {
     }, 20);
   }
 
+  toggleDonation(){
+    // eslint-disable-next-line react/no-unused-state, react/no-access-state-in-setstate
+    this.setState({toggle:!this.state.toggle})
+  }
+
+ 
+
   render() {
-    console.log(this.props.userCount)
+    // console.log(this.props.user)
+    // console.log(this.state.messageList)
     return (
       <div id="chatContainer">
         <div id="chatComponent">
           <div id="chatToolbar">
             <span> 채팅방</span>
+            <div className='pulse-button'>
+            <Tooltip title="후원하기" placement='right'>
+            <IconButton sx={{color:"rgba(236, 153, 75, 1) !important"}} onClick={this.toggleDonation} >
+            <PaidOutlinedIcon color='inherit' sx={{fontSize:28}}/>
+            </IconButton>
+            </Tooltip>
+            </div>
+          </div>
+
+          <div className={cn('donation-box',this.state.toggle?"toggle":"")}>
+            <div className='donation-contents'>
+            <p className='title'>라이브 방송 후원하기</p>
+            <div className='current-money-box'>
+              <p>현재 마일리지</p>
+              <p>{this.props.userCurrentMoney}</p>
+            </div>
+
+            <div className='donation-money-box'>
+              <p>후원할 금액</p>
+              <input className='donation-money-input' type="number" value={this.state.amount} name="money" onChange={this.onChangeMoney} />
+            </div>
+            <Button className='donation-button' variant='contained' onClick={this.onClickDonation} >후원하기</Button>
+            </div>
           </div>
           <div className="message-wrap" ref={this.chatScroll}>
             {this.state.messageList.map((data, i) => (
               <div key={i} id="remoteUsers" className={`message${data.connectionId !== this.props.user.getConnectionId() ? ' left' : ' left'}`}>
                 <div className="msg-detail">
-                  <img src={this.props.userProfileImg ? this.props.userProfileImg : defaultProfile} className="userProfileImage" alt="userprofile" />
+                  <img src={data.userProfileImg ? data.userProfileImg : defaultProfile} className="userProfileImage" alt="userprofile" />
                   <div className="message-contents-box">
                     <span className="uername">{data.nickname}</span>
                     <span className="chat-content">{data.message}</span>

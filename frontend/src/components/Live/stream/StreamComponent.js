@@ -18,12 +18,13 @@ export default class StreamComponent extends Component {
 
   render() {
     console.log("Stream!!!!!!!!!!!!!!!!!!!!!!!!!!!!",this.state)
-    console.log(this.props.userCount)
+    console.log(this.props.allAmount)
     return (
       <div className="OT_widget-container">
         <div className='info-box'>
         <div className="nickname">
             <span>{this.state.sessionId}의 봉사 라이브 </span>
+            {Number(this.props.allAmount)}
             {/* <span>현재 {this.props.userCount}명이 시청중입니다.</span> */}
         </div>
         <div className='count-box'>

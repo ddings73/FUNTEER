@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -12,9 +12,20 @@ import QuestionContainerItem from './QuestionContainerItem';
 import styles from './QuestionContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
 import { customAlert, w1500 } from '../../../utils/customAlert';
+import { useAppSelector } from '../../../store/hooks';
 
 export default function QuestionContainer() {
   const navigate = useNavigate();
+  /** 유저 ID */
+  const userId = useAppSelector((state) => state.userSlice.userId);
+  /** 유저 Type */
+  const userType = useAppSelector((state) => state.userSlice.userType);
+
+  useEffect(() => {
+    if (!userId) {
+      navigate('/login');
+    }
+  }, []);
 
   const [createMode, setCreateMode] = useState<boolean>(false);
   const [questionCreateInfo, setQuestionCreateInfo] = useState({
@@ -51,7 +62,7 @@ export default function QuestionContainer() {
       {!createMode && (
         <div className={styles['ques-board']}>
           <div className={styles['ques-btn-div']}>
-            <Button variant="outlined" sx={{ fontFamily: 'NanumSquareRound' }} className={styles['ques-btn']} onClick={onClickCreateQuesBtnHandler}>
+            <Button variant="outlined" sx={{ fontFamily: 'NanumSquare' }} className={styles['ques-btn']} onClick={onClickCreateQuesBtnHandler}>
               문의하기
             </Button>
           </div>
@@ -60,7 +71,7 @@ export default function QuestionContainer() {
               <Accordion sx={{ boxShadow: 'none' }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                   <div>
-                    <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquareRound' }}>{data.content}</Typography>
+                    <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquare' }}>{data.content}</Typography>
                     <p className={styles.state}>{data.state}</p>
                   </div>
                 </AccordionSummary>

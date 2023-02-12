@@ -46,7 +46,6 @@ import {
   CreateFunding,
   AdminTeamDeny,
   AdminFunding,
-  CustomerCenter,
   NoticeDetail,
   AdminDonation,
   AdminDonationCreate,
@@ -66,6 +65,8 @@ import {
   NoticeList,
   FAQList,
   QuestionList,
+  NoticeEdit,
+  LiveList,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -170,6 +171,10 @@ const router = createBrowserRouter([
         path: 'teamdonation/:teamId',
         element: <TeamDonation />,
       },
+      {
+        path:"live",
+        element:<LiveList/>
+      }
     ],
   },
   {
@@ -228,16 +233,16 @@ const router = createBrowserRouter([
         element: <ModifyFunding />,
       },
       {
-        path: '/cc',
-        element: <CustomerCenter />,
-      },
-      {
         path: '/notice',
         element: <NoticeList />,
       },
       {
-        path: '/notice/:nn', // nn: 공지사항 번호
+        path: '/notice/:noticeId',
         element: <NoticeDetail />,
+      },
+      {
+        path: '/notice/:noticeId/edit',
+        element: <NoticeEdit />,
       },
       {
         path: '/faq',

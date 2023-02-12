@@ -110,26 +110,6 @@ export function MainPageContainer() {
           <button className={styles.serviceBtn} type="button">
             서비스 상세보기
           </button>
-          <p>
-            <Link to="/funding/create" style={{ fontSize: '3rem', color: 'white' }}>
-              펀딩 페이지
-            </Link>
-          </p>
-          <p>
-            <Link to="/charge" style={{ fontSize: '3rem', color: 'white' }}>
-              충전 페이지
-            </Link>
-          </p>
-          <p>
-            <Link to="/admin" style={{ fontSize: '3rem', color: 'white' }}>
-              관리자 페이지
-            </Link>
-          </p>
-          <p>
-            <Link to="/team/88" style={{ fontSize: '3rem', color: 'white' }}>
-              단체 프로필
-            </Link>
-          </p>
         </div>
         <div className={styles.bannerImg} style={{ opacity: scrollPosition < 700 ? '1' : '0' }}>
           <div className={styles.planets}>
