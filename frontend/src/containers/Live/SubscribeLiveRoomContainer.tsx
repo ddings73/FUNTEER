@@ -45,6 +45,7 @@ function SubscribeLiveRoomContainer() {
     console.log(amount)
     try{
       const response = await requestLiveDonation(amount as number,sessionName as string)
+      await getUserMoney()
       alert("성공띠")
       console.log(response)
     }catch(error){

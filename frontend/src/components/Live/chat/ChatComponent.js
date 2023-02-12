@@ -70,6 +70,7 @@ export default class ChatComponent extends Component {
 
   onClickDonation(){
     this.props.liveDonation(this.state.amount)
+    this.setState({amount:0,toggle:false})
   }
   
   sendMessage() {
@@ -77,7 +78,6 @@ export default class ChatComponent extends Component {
       const message = this.state.message.replace(/ +(?= )/g, '');
       if (message !== '' && message !== ' ') {
         const data = { message, nickname: this.props.user.getNickname(), streamId: this.props.user.getStreamManager().stream.streamId,userProfileImg:this.props.user.getUserProfileImg() };
-        console.log(data)
         this.props.user.getStreamManager().stream.session.signal({
           data: JSON.stringify(data),
           type: 'chat',
