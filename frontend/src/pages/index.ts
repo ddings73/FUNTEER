@@ -47,6 +47,7 @@ export { default as NoticeDetail } from './CustomerCenter/Notice/NoticeDetail';
 export { default as NoticeEdit } from './CustomerCenter/Notice/NoticeEdit';
 export { default as FAQList } from './CustomerCenter/FAQ/FAQList';
 export { default as FAQDetail } from './CustomerCenter/FAQ/FAQDetail';
+export { default as FAQCreate } from './CustomerCenter/FAQ/FAQCreate';
 export { default as QuestionList } from './CustomerCenter/Question/QuestionList';
 
 export { default as Donation } from './Donation/Donation';
@@ -55,8 +56,7 @@ export { default as TeamProfile } from './TeamPage/TeamProfile';
 export { default as TeamEdit } from './TeamPage/TeamEdit';
 export { default as TeamDonation } from './TeamPage/TeamDonation';
 
-
-export {default as LiveList} from './Live/LiveList'
+export { default as LiveList } from './Live/LiveList';
 export { default as CreateLive } from './Live/CreateLive';
 export { default as PublisherLiveRoom } from './Live/PublisherLiveRoom';
 export { default as SubscribeLiveRoom } from './Live/SubscribeLiveRoom';
