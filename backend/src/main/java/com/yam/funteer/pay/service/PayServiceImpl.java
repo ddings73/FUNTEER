@@ -40,6 +40,7 @@ public class PayServiceImpl implements PayService {
 		}
 
 		charge.setPossibleRefund();
+		charge.setRefundReason(charge.getRefundReason());
 		member.setMoney(member.getMoney() - charge.getAmount());
 
 	}

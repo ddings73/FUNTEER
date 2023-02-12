@@ -45,7 +45,9 @@ export function MainPageContainer() {
       eventSource=new EventSourcePolyfill("https://i8e204.p.ssafy.io/api/v1/subscribe",{
         headers:{
           "Content-Type":"text/event-stream",
-          "Authorization":`Bearer ${token}`
+          "X-Accel-Buffering": "no",
+          "Authorization":`Bearer ${token}`,
+          "Transfer-Encoding": "chunked"
         },
         heartbeatTimeout:86400000,
         withCredentials:true,

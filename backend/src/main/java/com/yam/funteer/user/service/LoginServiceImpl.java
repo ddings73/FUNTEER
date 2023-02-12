@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -91,17 +92,17 @@ public class LoginServiceImpl implements LoginService{
         String refreshToken = tokenRequest.getRefreshToken();
 
         if(!jwtProvider.validateToken(refreshToken)){
-            throw new AccessDeniedException("Refresh Token이 유효하지 않습니다.");
+            throw new BadCredentialsException("Refresh Token이 유효하지 않습니다.");
         }
 
         Token token = tokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(()->new AccessDeniedException("로그아웃된 사용자 혹은 유효하지 않은 토큰입니다."));
+                .orElseThrow(()->new BadCredentialsException("로그아웃된 사용자 혹은 유효하지 않은 토큰입니다."));
 
         Long userId = token.getId();
         // access 토큰 만료 확인
         if(jwtProvider.validateToken(accessToken)){
             tokenRepository.deleteById(userId);
-            throw new AccessDeniedException("Access Token이 만료되지 않았습니다.");
+            throw new BadCredentialsException("Access Token이 만료되지 않았습니다.");
         }
 
 

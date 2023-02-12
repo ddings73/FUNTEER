@@ -1,16 +1,14 @@
 package com.yam.funteer.common.config;
 
 import com.yam.funteer.common.security.JwtAuthenticationEntryPoint;
-import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.common.security.filter.JwtAuthFilter;
 import com.yam.funteer.common.security.handler.JwtAccessDeniedHandler;
-import com.yam.funteer.common.security.handler.JwtExceptionFilter;
+import com.yam.funteer.common.security.filter.JwtExceptionFilter;
 import com.yam.funteer.common.security.handler.OAuth2SuccessHandler;
 import com.yam.funteer.common.security.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
