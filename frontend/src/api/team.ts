@@ -21,7 +21,7 @@ export const requestTeamSignUp = async (teamSignUpInfo: teamSignUpType) => {
   return res;
 };
 
-/** 단체 개인정보 조회 */
+/** 단체 정보 조회 */
 export const requestTeamAccountInfo = async () => {
   const res = await http.get('/team/account');
   return res;

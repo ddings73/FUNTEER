@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 // Material UI Imports
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -28,6 +28,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import NavbarMenuData from './NavbarMenuData';
 import { requestLogout } from '../api/user';
 import { openModal } from '../store/slices/modalSlice';
+import { Chip } from '@mui/material';
+import { requestTeamAccountInfo } from '../api/team';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
@@ -65,12 +67,12 @@ function ResponsiveAppBar() {
   // 로그아웃
   const logout = async () => {
     try {
-      console.log('1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111');
       const response = await requestLogout();
       console.log(response);
       dispatch(resetLoginState());
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
+      alert('로그아웃 되었습니다.');
       navigateTo('/');
     } catch (error) {
       console.log(error);
@@ -86,7 +88,34 @@ function ResponsiveAppBar() {
   let menuDataLength: number = NavbarMenuData.length;
   // console.log('로그인임?', isLogin);
 
+  // 회원 정보 GET
+  const profileImgUrl = useAppSelector((state) => state.userSlice.profileImgUrl);
+  const userName = useAppSelector((state) => state.userSlice.username);
+  const userType = useAppSelector((state) => state.userSlice.userType);
+
+  // 단체 정보 GET
+  const [teamInfo, setTeamInfo] = useState<TeamInfoType>({
+    email: '',
+    id: 0,
+    name: '',
+  });
+
+  async function getTeamInfo() {
+    const res = await requestTeamAccountInfo();
+    setTeamInfo(res.data);
+    console.log('팀정보', res);
+  }
+
+  type TeamInfoType = {
+    email: string;
+    id: number;
+    name: string;
+  };
+
   useEffect(() => {
+    if (isLogin && userType === 'TEAM') {
+      getTeamInfo();
+    }
     window.addEventListener('scroll', updateScroll);
   }, []);
 
@@ -144,15 +173,26 @@ function ResponsiveAppBar() {
                   </button>
                 </NavLink>
               </div>
-              <div style={{ display: isLogin ? 'flex' : 'none' }}>
+              <div style={{ display: isLogin ? 'flex' : 'none', alignItems: 'center' }}>
+                {userType === 'ADMIN' && (
+                  <NavLink to="/admin" style={{ textDecoration: 'none' }}>
+                    <Chip label="관리자" color="error" component="a" sx={{ marginRight: '10px', display: 'flex' }} size="small" clickable />
+                  </NavLink>
+                )}
+                {userType === 'TEAM' && <Chip label="단체회원" color="secondary" component="a" sx={{ marginRight: '10px', display: 'flex' }} size="small" />}
+                {userType === 'NORMAL' && <Chip label="일반회원" color="warning" component="a" sx={{ marginRight: '10px', display: 'flex' }} size="small" />}
+
+                <p style={{ color: 'black' }}>
+                  <span style={{ fontWeight: '800' }}>{userName}</span>님 환영합니다
+                </p>
                 <IconButton aria-label="notifi" className={styles.noti}>
                   <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
                     <NotificationsNoneIcon fontSize="large" />
                   </StyledBadge>
                 </IconButton>
                 <Tooltip title="Open settings">
-                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, border: '3px solid orange' }}>
+                    <Avatar alt="profileImg" src={profileImgUrl} />
                   </IconButton>
                 </Tooltip>
                 <Menu
@@ -175,8 +215,9 @@ function ResponsiveAppBar() {
                     <Typography
                       textAlign="center"
                       onClick={() => {
-                        navigateTo('/myPage');
+                        navigateTo(userType === 'NORMAL' ? '/myPage' : userType === 'TEAM' ? `/team/${teamInfo.id}` : '/admin');
                       }}
+                      sx={{ width: '100%' }}
                     >
                       마이페이지
                     </Typography>
@@ -187,6 +228,7 @@ function ResponsiveAppBar() {
                       onClick={() => {
                         navigateTo('/myFunding');
                       }}
+                      sx={{ width: '100%' }}
                     >
                       나의 펀딩 내역
                     </Typography>
@@ -197,6 +239,7 @@ function ResponsiveAppBar() {
                       onClick={() => {
                         navigateTo('/myDonates');
                       }}
+                      sx={{ width: '100%' }}
                     >
                       도네이션 내역
                     </Typography>
@@ -207,6 +250,7 @@ function ResponsiveAppBar() {
                       onClick={() => {
                         navigateTo('/myBadges');
                       }}
+                      sx={{ width: '100%' }}
                     >
                       1:1 문의 내역
                     </Typography>

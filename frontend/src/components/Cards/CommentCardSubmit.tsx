@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import { useParams } from 'react-router-dom';
+import SendIcon from '@mui/icons-material/Send';
 import styles from './CommentCardSubmit.module.scss';
 import profileTemp from '../../assets/images/default-profile-img.svg';
 import { postFundingComment } from '../../api/funding';
@@ -41,14 +42,24 @@ export function CommentCardSubmit() {
   return (
     <div className={styles.cardContainer}>
       <div className={styles.commentHead}>응원 댓글 등록</div>
-      <form onKeyUp={handleKeyPress} onSubmit={onSubmit} style={{ width: '80%', marginTop: '20px' }}>
+      <form onKeyUp={handleKeyPress} onSubmit={onSubmit} style={{ width: '80%', marginTop: '20px', display: 'flex' }}>
         <div className={styles.commentMid}>
           <img className={styles.commentImg} alt="프로필" src={profileTemp} />
-          <TextField className={styles.tesxtField} placeholder="댓글을 입력해주세요" variant="filled" sx={{ width: '80%' }} value={comment} onChange={commentOnChange} />
+          <TextField
+            className={styles.tesxtField}
+            placeholder="댓글을 입력해주세요"
+            variant="filled"
+            sx={{ width: '80%' }}
+            value={comment}
+            onChange={commentOnChange}
+            size="small"
+            color="warning"
+          />
         </div>
         <div className={styles.BtnGrop}>
           <button className={styles.commentBtn} type="submit">
-            댓글 등록
+            <SendIcon />
+            <p>댓글 등록</p>
           </button>
         </div>
       </form>
