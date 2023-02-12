@@ -3,6 +3,9 @@ package com.yam.funteer.funding.service;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,7 +30,7 @@ public interface FundingService {
 		IOException,
 		NotAuthenticatedTeamException;
 
-	FundingDetailResponse findFundingById(Long id, Pageable pageable);
+	FundingDetailResponse findFundingById(Long id, Pageable pageable) throws NotAuthenticatedMemberException;
 
 	FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception;
 
@@ -50,6 +53,8 @@ public interface FundingService {
 	Page<FundingListResponse> findFundingByKeyword(String keyword, Pageable pageable);
 
 	Page<FundingListResponse> findFundingByHashtag(String hashtag, Pageable pageable);
+
+	int updateHit(Long fundingId, HttpServletRequest request, HttpServletResponse response);
 
 
 }

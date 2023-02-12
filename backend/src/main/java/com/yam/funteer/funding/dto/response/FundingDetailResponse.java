@@ -59,6 +59,8 @@ public class FundingDetailResponse {
 
 	private String currentFundingAmount;
 
+	private int hit;
+
 	public static FundingDetailResponse from(Funding funding) {
 
 		DecimalFormat decFormat = new DecimalFormat("###,###");
@@ -79,6 +81,7 @@ public class FundingDetailResponse {
 			.thumbnail(funding.getThumbnail())
 			.currentFundingAmount(str)
 			.fundingDescription(funding.getFundingDescription())
+			.hit(funding.getHit())
 			.build();
 
 		// funding.getComments().ifPresent(comments -> {
