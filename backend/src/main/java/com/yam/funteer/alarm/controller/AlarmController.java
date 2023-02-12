@@ -20,12 +20,6 @@ public class AlarmController {
 
 	@GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
 	public ResponseEntity<SseEmitter> subscribe(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId){
-		HttpHeaders headers = new HttpHeaders();
-		alarmService.subscribe(lastEventId);
-		headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
-		headers.add(HttpHeaders.ACCESS_CONTROL_ALLOW_CREDENTIALS, "true");
-		return ResponseEntity.ok()
-			.headers(headers)
-			.build();
+		return ResponseEntity.ok(alarmService.subscribe(lastEventId));
 	}
 }
