@@ -185,6 +185,13 @@ export const requestCheckEmailAuthCode = async(code:string,email:string)=>{
  return response
 }
 
+/**
+ * @name 비밀번호재설정
+ * @param email 
+ * @param name 
+ * @param password 
+ * @returns 
+ */
 export const requestResetPassword = async(email:string,name:string,password:string)=>{
   const data = {
     email,
