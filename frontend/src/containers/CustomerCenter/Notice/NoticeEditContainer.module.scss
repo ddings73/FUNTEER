@@ -5,6 +5,7 @@
   width: 100%;
   min-height: 100vh;
   height: 100%;
+  padding-top: 77px;
   display: flex;
   justify-content: center;
   font-family: NanumSquare !important;
@@ -15,6 +16,7 @@
     align-items: center;
     width: 100%;
     max-width: 1160px;
+    background-color: #fcfcfc;
 
     .title {
       font-size: 2rem;
@@ -61,12 +63,14 @@
 
     .btn-div {
       display: flex;
-      justify-content: space-around;
-      margin: 2rem 0 4rem;
+      margin: 3rem;
 
       .submit {
-        background-color: $primary;
-        margin: 0 0.5rem;
+        margin-left: 0.5rem;
+        font-family: NanumSquare;
+      }
+
+      .cancel {
         font-family: NanumSquare;
       }
     }
@@ -78,6 +82,8 @@
       font-weight: bold;
 
       & p {
+        display: flex;
+        align-items: center;
         margin-bottom: 0.5rem;
 
         .withdraw-btn {

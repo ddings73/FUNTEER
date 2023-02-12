@@ -34,6 +34,10 @@ function TeamProfileContainer() {
     totalFundingAmount: 0,
   });
 
+  useEffect(() => {
+    requestTeamInfo();
+  }, []);
+
   /** 단체 프로필 정보 요청 */
   const requestTeamInfo = async () => {
     try {
@@ -46,10 +50,6 @@ function TeamProfileContainer() {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    requestTeamInfo();
-  }, []);
 
   /** 팔로우 요청 */
   const onClickFollowBtn = async () => {
@@ -83,7 +83,7 @@ function TeamProfileContainer() {
 
   return (
     <div className={styles.container}>
-      {userId === teamId && <TeamSideBarList teamId={teamId} />}
+      {userId.toString() === teamId && <TeamSideBarList teamId={teamId} />}
       <div className={styles.content}>
         <div className={styles['content-inner']}>
           {/* 프로필 카드 */}
@@ -102,7 +102,7 @@ function TeamProfileContainer() {
                     {!isFollowing && <BsBookmarkHeart color="red" onClick={onClickFollowBtn} className={styles['follow-btn']} />}
                   </div>
                 )}
-                {userId === teamId && <SettingsIcon className={styles.setting} onClick={onClickSetting} />}
+                {userId.toString() === teamId && <SettingsIcon className={styles.setting} onClick={onClickSetting} />}
               </h1>
               <div className={styles['profile-card-info-content']}>
                 <div className={styles['profile-card-info-left']}>

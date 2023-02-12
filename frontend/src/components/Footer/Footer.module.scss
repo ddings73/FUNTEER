@@ -2,15 +2,16 @@
 @import '../../styles/variable.scss';
 
 .footer {
+  bottom: 0px;
+  width: 100%;
+  height: 200px;
   display: flex;
   justify-content: center;
-  margin-top: 5rem;
   align-items: center;
-  width: 100%;
-  height: 170px;
-  bottom: 0px;
   border-top: 1px solid rgba(0, 0, 0, 0.2);
+  background-color: inherit;
   color: rgba(0, 0, 0, 0.8);
+  font-family: 'NanumSquare' !important;
 
   .contents {
     display: flex;
@@ -18,6 +19,7 @@
     align-items: center;
     width: 90%;
     max-width: 1440px;
+    padding-top: 2rem;
 
     @include mobile {
       flex-direction: column;
@@ -26,17 +28,14 @@
     .left {
       display: flex;
       flex-direction: column;
-      margin: 2rem 0;
 
       @include mobile {
-        margin: 1rem 0;
       }
 
       & h1 {
         font-size: 2.25rem;
         font-weight: bold;
-        margin: 4rem 0 2rem 0;
-        padding-top: 2rem;
+        margin: 0 0 2rem 0;
 
         @include mobile {
           margin: 1rem 0 2rem 0;
@@ -48,23 +47,18 @@
         & a {
           margin-right: 1rem;
           text-decoration: none;
-          font-family: NanumSquareRound;
         }
       }
 
       & p {
         margin-bottom: 2rem;
-        font-family: NanumSquareRound;
       }
     }
 
     .right {
-      margin: 4rem 0 2rem 0;
-
       & p {
-        padding-top: 2rem;
+        margin-bottom: 0.5rem;
         font-size: 1.4rem;
-        font-family: NanumSquareRound;
         color: rgba(0, 0, 0, 0.6);
       }
 

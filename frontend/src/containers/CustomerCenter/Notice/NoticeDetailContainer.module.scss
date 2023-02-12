@@ -3,23 +3,25 @@
 
 .container {
   width: 100%;
-  min-height: 100vh;
   display: flex;
   justify-content: center;
   margin-top: 77.6px;
+  font-family: NanumSquare !important;
 
   .contents {
+    max-width: 900px;
+    min-height: 100vh;
     width: 95%;
-    max-width: 950px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     padding: 0 5rem;
     background-color: #fcfcfc;
 
     .title {
-      margin: 10rem 0 1.5rem 0;
+      margin: 5rem 0 1.5rem 0;
       font-weight: bold;
-      font-size: 2.25rem;
+      font-size: 2rem;
       color: rgba(0, 0, 0, 0.8);
 
       @include tablet {
@@ -49,36 +51,66 @@
     }
 
     & hr {
-      margin: 3rem 0;
       width: 85%;
+      margin: 2rem 0;
+      opacity: 0.2;
 
       @include tablet {
-        margin: 2.5rem 0;
+        margin: 1.5rem 0;
       }
 
       @include mobile {
         width: 100%;
-        margin: 1rem 0;
+        margin: 0.5rem 0;
       }
     }
 
     .content {
       width: 80%;
-      font-size: 1.125rem;
-      line-height: 2rem;
-      font-family: NanumSquareRound;
+      padding: 1rem 0.5rem;
 
       @include mobile {
-        width: 100%;
-        font-size: 0.75rem;
+        width: 90%;
+      }
+    }
+
+    .file {
+      margin-top: 1rem;
+      text-decoration: none;
+      color: rgba(0, 0, 0, 0.8);
+
+      &:hover {
+        color: $primary;
       }
     }
 
     .back {
-      margin: 3rem auto 0 0;
+      margin: 3rem auto 5rem 0;
       background-color: inherit;
       border: none;
       color: $primary;
+      font-size: 1.25rem;
+      font-weight: bold;
+
+      &:hover {
+        cursor: pointer;
+        color: $second;
+      }
+
+      @include tablet {
+        font-size: 1.125rem;
+      }
+
+      @include mobile {
+        display: 0.75rem;
+      }
+    }
+
+    .edit {
+      margin: 3rem auto 5rem 2rem;
+      background-color: inherit;
+      border: none;
+      color: $error;
       font-size: 1.25rem;
       font-weight: bold;
 
