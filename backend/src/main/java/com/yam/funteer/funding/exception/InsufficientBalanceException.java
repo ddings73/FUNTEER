@@ -1,10 +1,8 @@
 package com.yam.funteer.funding.exception;
 
-public class InsufficientBalanceException extends Exception{
+public class InsufficientBalanceException extends RuntimeException{
 
-	public InsufficientBalanceException() {};
-
-	public InsufficientBalanceException(String message) {
-		super(message);
+	public InsufficientBalanceException() {
+		super("잔액이 부족합니다.");
 	}
 }

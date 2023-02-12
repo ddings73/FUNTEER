@@ -26,15 +26,13 @@ import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
 public interface FundingService {
 	Page<FundingListResponse> findFundingByCategory(Long categoryId, Pageable pageable);
 
-	FundingDetailResponse createFunding( FundingRequest data) throws
-		IOException,
-		NotAuthenticatedTeamException;
+	FundingDetailResponse createFunding( FundingRequest data);
 
-	FundingDetailResponse findFundingById(Long id, Pageable pageable) throws NotAuthenticatedMemberException;
+	FundingDetailResponse findFundingById(Long id, Pageable pageable);
 
-	FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception;
+	FundingDetailResponse updateFunding(Long fundingId, FundingRequest data);
 
-	void deleteFunding(Long fundingId) throws FundingNotFoundException;
+	void deleteFunding(Long fundingId);
 
 	FundingReportResponse createFundingReport(Long fundingId, FundingReportRequest data);
 
@@ -44,7 +42,7 @@ public interface FundingService {
 
 	void createFundingComment(Long fundingId, FundingCommentRequest data);
 
-	void deleteFundingComment(Long commentId) throws CommentNotFoundException, NotAuthenticatedMemberException;
+	void deleteFundingComment(Long commentId);
 
 	FundingListPageResponse findAllFunding(Pageable pageable);
 

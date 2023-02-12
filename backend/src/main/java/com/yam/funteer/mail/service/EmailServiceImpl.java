@@ -41,15 +41,20 @@ public class EmailServiceImpl implements EmailService{
     }
 
     @Override
-    public String sendPostRejectMessage(String to, String rejectReason, PostGroup postGroup) throws Exception {
-        MimeMessage message = createFundingMessage(to, rejectReason, postGroup);
+    public void sendPostRejectMessage(String to, String rejectReason, PostGroup postGroup)  {
+
         try{//예외처리
+            MimeMessage message = createFundingMessage(to, rejectReason, postGroup);
             emailSender.send(message);
-        }catch(MailException es){
+        } catch(MailException es){
             es.printStackTrace();
             throw new IllegalArgumentException();
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
         }
-        return rejectReason;
+
     }
 
     @Override
@@ -136,7 +141,8 @@ public class EmailServiceImpl implements EmailService{
         return key.toString();
     }
 
-    private MimeMessage createFundingMessage(String to, String rejectReason, PostGroup postGroup) throws Exception{
+    private MimeMessage createFundingMessage(String to, String rejectReason, PostGroup postGroup) throws
+        MessagingException, UnsupportedEncodingException {
         MimeMessage message = emailSender.createMimeMessage();
 
         message.addRecipients(Message.RecipientType.TO, to);//보내는 대상

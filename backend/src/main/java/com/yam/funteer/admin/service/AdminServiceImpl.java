@@ -1,8 +1,10 @@
 package com.yam.funteer.admin.service;
 
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.mail.MessagingException;
 import javax.transaction.Transactional;
 
 import org.springframework.data.domain.Page;
@@ -23,6 +25,8 @@ import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.entity.Report;
+import com.yam.funteer.funding.exception.FundingNotFoundException;
+import com.yam.funteer.funding.exception.NotFoundReportException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.funding.repository.ReportRepository;
 import com.yam.funteer.mail.service.EmailService;
@@ -104,28 +108,26 @@ public class AdminServiceImpl implements AdminService{
 		emailService.sendTeamRejectMessage(team.getEmail(), request.getRejectComment());
 	}
 
-
 	@Override
 	public void acceptFunding(Long fundingId) {
-		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
 		funding.setPostType(PostType.FUNDING_ACCEPT);
 	}
 
 	@Override
-	public String rejectFunding(Long fundingId, RejectReasonRequest data) throws Exception {
-		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
+	public void rejectFunding(Long fundingId, RejectReasonRequest data) {
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
 		funding.setPostType(PostType.FUNDING_REJECT);
 		funding.setRejectComment(data.getRejectReason());
 		emailService.sendPostRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.FUNDING);
-		return data.getRejectReason();
 	}
 
 	@Override
 	public void acceptReport(Long fundingId) {
 		log.info("fundingId => {}", fundingId);
-		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
 		log.info("funding => {}", funding);
-		Team team = teamRepository.findById(funding.getTeam().getId()).orElseThrow();
+		Team team = teamRepository.findById(funding.getTeam().getId()).orElseThrow(UserNotFoundException::new);
 		log.info("team => {}", team);
 		team.updateLastActivity();
 		team.addTotalFundingAmount(funding.getCurrentFundingAmount());
@@ -134,13 +136,12 @@ public class AdminServiceImpl implements AdminService{
 	}
 
 	@Override
-	public String rejectReport(Long fundingId, RejectReasonRequest data) throws Exception {
-		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
-		Report report = reportRepository.findByFundingFundingId(fundingId);
+	public void rejectReport(Long fundingId, RejectReasonRequest data) {
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
+		Report report = reportRepository.findByFundingFundingId(fundingId).orElseThrow(NotFoundReportException::new);
 		funding.setPostType(PostType.REPORT_REJECT);
 		report.setReportRejectComment(data.getRejectReason());
 		emailService.sendPostRejectMessage(funding.getTeam().getEmail(), data.getRejectReason(), PostGroup.REPORT);
-		return data.getRejectReason();
 	}
 
 }
