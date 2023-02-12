@@ -40,6 +40,7 @@ class VideoRoomComponent extends Component {
       subscribers: [],
       currentVideoDevice: undefined,
       userCount:0,
+      allAmount:0
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -49,6 +50,7 @@ class VideoRoomComponent extends Component {
     this.camStatusChanged = this.camStatusChanged.bind(this);
     this.micStatusChanged = this.micStatusChanged.bind(this);
     this.switchCamera = this.switchCamera.bind(this);
+    this.updateAllAmount = this.updateAllAmount.bind(this)
   }
 
   componentDidMount() {
@@ -82,6 +84,15 @@ class VideoRoomComponent extends Component {
     window.addEventListener('beforeunload', this.onbeforeunload);
     window.addEventListener('resize', this.updateLayout);
     this.joinSession();
+  }
+
+  updateAllAmount(amount){
+    // eslint-disable-next-line react/no-access-state-in-setstate
+    const prev = this.state.allAmount
+
+    console.log("alalalalalalalalalal")
+    console.log(prev,amount)
+    this.setState({allAmount:prev+amount})
   }
 
   componentWillUnmount() {
@@ -439,12 +450,12 @@ class VideoRoomComponent extends Component {
         <div id="layout" className="bounds">
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_big OT_publisher custom-class" id="localUser">
-              <StreamComponent user={localUser} sessionId={mySessionId} userCount={this.state.userCount} />
+              <StreamComponent user={localUser} sessionId={mySessionId} userCount={this.state.userCount} allAmount={this.state.allAmount} />
             </div>
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_small OT_publisher custom-class chat-box">
-              <ChatComponent user={localUser} userCount={this.state.userCount} userCurrentMoney={this.props.userCurrentMoney} liveDonation={this.props.liveDonation} />
+              <ChatComponent user={localUser} userCount={this.state.userCount} userCurrentMoney={this.props.userCurrentMoney} liveDonation={this.props.liveDonation} updateAllAmount={this.updateAllAmount} allAmount={this.state.allAmount}/>
             </div>
           )}
         </div>

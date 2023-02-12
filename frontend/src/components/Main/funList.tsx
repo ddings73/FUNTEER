@@ -15,7 +15,6 @@ export function funList() {
         <p className={styles.Title}>펀딩 봉사</p>
       </div>
       <div className={styles.contentWrapper}>
-        <div className={styles.filterDrop}> 달성률 ▼</div>
         <div className={styles.menuHeads}>
           <p className={styles.curStatus}>
             총 <span>250</span>건의 펀딩이 진행 중 입니다.

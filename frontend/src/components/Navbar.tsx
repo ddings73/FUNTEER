@@ -219,28 +219,32 @@ function ResponsiveAppBar() {
                       마이페이지
                     </Typography>
                   </MenuItem>
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      textAlign="center"
-                      onClick={() => {
-                        navigateTo('/myFunding');
-                      }}
-                      sx={{ width: '100%' }}
-                    >
-                      나의 펀딩 내역
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      textAlign="center"
-                      onClick={() => {
-                        navigateTo('/myDonates');
-                      }}
-                      sx={{ width: '100%' }}
-                    >
-                      도네이션 내역
-                    </Typography>
-                  </MenuItem>
+                  {userType === 'NORMAL' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo('/myFunding');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        나의 펀딩 내역
+                      </Typography>
+                    </MenuItem>
+                  )}
+                  {userType === 'NORMAL' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo('/myDonates');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        도네이션 내역
+                      </Typography>
+                    </MenuItem>
+                  )}
                   <MenuItem onClick={handleCloseUserMenu}>
                     <Typography
                       textAlign="center"
@@ -250,6 +254,17 @@ function ResponsiveAppBar() {
                       sx={{ width: '100%' }}
                     >
                       1:1 문의 내역
+                    </Typography>
+                  </MenuItem>
+                  <MenuItem onClick={handleCloseUserMenu}>
+                    <Typography
+                      textAlign="center"
+                      onClick={() => {
+                        navigateTo('/charge');
+                      }}
+                      sx={{ width: '100%' }}
+                    >
+                      마일리지 충전
                     </Typography>
                   </MenuItem>
                   <MenuItem onClick={handleCloseUserMenu}>
