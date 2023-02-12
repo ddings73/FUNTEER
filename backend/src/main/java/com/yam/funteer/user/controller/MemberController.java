@@ -5,6 +5,7 @@ import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
 import com.yam.funteer.user.dto.response.ChargeListResponse;
+import com.yam.funteer.user.dto.response.member.GiftDetailResponse;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
 import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
 import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
@@ -134,6 +135,19 @@ public class MemberController {
 		return ResponseEntity.ok(mileageDetailResponse);
 	}
 
+	@ApiOperation(value = "라이브 도네이션(GIFT) 내역 조회")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 400, message = "잘못된 요청정보"),
+			@ApiResponse(code = 401, message = "사용자 인증실패"),
+			@ApiResponse(code = 500, message = "서버 에러")
+	})
+	@GetMapping("/gift")
+	public ResponseEntity<GiftDetailResponse> getGiftDetails(@PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
+		GiftDetailResponse response = memberService.getGiftDetails(pageable);
+		return ResponseEntity.ok(response);
+	}
+
 	@ApiOperation(value = "충전 내역 조회", notes = "주어진 회원의 충전 내역을 조회할 수 있다.")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
@@ -148,9 +162,6 @@ public class MemberController {
 	}
 
 
-	/**
-	 * TODO 어느정도 구현
-	 */
 	@ApiOperation(value = "마일리지 충전", notes = "현재 회원의 마알리지를 충전할 수 있다")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),

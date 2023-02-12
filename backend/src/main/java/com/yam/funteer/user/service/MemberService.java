@@ -4,6 +4,7 @@ import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
 import com.yam.funteer.user.dto.response.ChargeListResponse;
+import com.yam.funteer.user.dto.response.member.GiftDetailResponse;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
 import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
 import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
@@ -30,4 +31,6 @@ public interface MemberService {
     void chargeMileage(ChargeRequest chargeRequest);
 
 	Page<ChargeListResponse> getChargeList(Pageable pageable);
+
+    GiftDetailResponse getGiftDetails(Pageable pageable);
 }
