@@ -69,8 +69,14 @@ export default class ChatComponent extends Component {
   }
 
   onClickDonation(){
-    this.props.liveDonation(this.state.amount)
-    this.setState({amount:0,toggle:false})
+    try{
+      this.props.liveDonation(this.state.amount)
+      this.props.updateAllAmount(this.state.amount)
+      this.setState({amount:0,toggle:false})  
+    }
+    catch(error){
+      console.error(error)
+    }
   }
   
   sendMessage() {
