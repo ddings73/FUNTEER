@@ -1,10 +1,47 @@
-.nickname {
-  background: rgba(58, 64, 74, 0.651);
-  padding: 5px !important;
+
+.info-box{
+  display: flex;
+  flex-direction: row;
   position: absolute;
+  align-items: center;
+  top:5px;
+  left: 5px;
   z-index: 999;
-  color: #ffffff;
 }
+
+.nickname {
+  box-sizing: border-box;
+  background:  rgba(236, 153, 75, 1);
+  padding: 8px !important;
+  color: #ffffff;
+  font-weight: bold;
+  letter-spacing: 1.2px;
+  line-height: 1.2;
+  font-size: 22px !important;
+}
+
+.count-box{
+  display: flex;
+  flex-direction: r;
+margin-left: 15px !important;
+}
+
+.count-box .left{
+  background-color: #c71100;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 5px;
+}
+.count-box .right{
+  text-align: center;
+  min-width: 50px;
+  background-color: #707070;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 5px;
+}
+
+
 .form-control {
   color: black;
 }

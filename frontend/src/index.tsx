@@ -66,6 +66,7 @@ import {
   FAQList,
   QuestionList,
   NoticeEdit,
+  LiveList,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -170,6 +171,10 @@ const router = createBrowserRouter([
         path: 'teamdonation/:teamId',
         element: <TeamDonation />,
       },
+      {
+        path:"live",
+        element:<LiveList/>
+      }
     ],
   },
   {
@@ -315,7 +320,7 @@ root.render(
     <PersistGate loading={null} persistor={persistor}>
       <RouterProvider router={router} />
     </PersistGate>
-  </Provider>,
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

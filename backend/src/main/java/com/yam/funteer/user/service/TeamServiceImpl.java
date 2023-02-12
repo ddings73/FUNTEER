@@ -1,6 +1,5 @@
 package com.yam.funteer.user.service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -12,16 +11,19 @@ import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.funding.repository.FundingRepository;
+import com.yam.funteer.pay.entity.Payment;
+import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.user.dto.request.team.UpdateTeamAccountRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
+import com.yam.funteer.user.dto.response.team.TeamPaymentReceiptResponse;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
-import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.MemberRepository;
-import com.yam.funteer.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -87,7 +89,6 @@ public class TeamServiceImpl implements TeamService{
 			teamAttachRepository.save(teamAttach);
 		});
 	}
-
 	@Override
 	public void setAccountSignOut(BaseUserRequest baseUserRequest) {
 		String password = baseUserRequest.getPassword().orElseThrow(()->
@@ -100,13 +101,11 @@ public class TeamServiceImpl implements TeamService{
 		team.validatePassword(passwordEncoder, password);
 		team.signOut();
 	}
-
-
 	@Override
 	public TeamProfileResponse getTeamProfile(Long userId, Pageable pageable) {
 		Team team = teamRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
-		Page<Funding> fundingPage = fundingRepository.findByTeam(team, pageable);
+		Page<Funding> fundingPage = fundingRepository.findAllByTeam(team, pageable);
 		List<Funding> fundingList = fundingPage.getContent();
 
 		long followerCnt = followRepository.countAllByTeam(team);
@@ -123,7 +122,6 @@ public class TeamServiceImpl implements TeamService{
 
 		return response;
 	}
-
 	@Override
 	public void updateProfile(UpdateTeamProfileRequest request) {
 		Long userId = SecurityUtil.getCurrentUserId();
@@ -162,7 +160,6 @@ public class TeamServiceImpl implements TeamService{
 		String description = request.getDescription();
 		team.updateDescription(description);
 	}
-
 	@Override
 	public TeamAccountResponse getTeamAccount() {
 		Team team = teamRepository.findById(SecurityUtil.getCurrentUserId())
@@ -183,7 +180,6 @@ public class TeamServiceImpl implements TeamService{
 
 		return response;
 	}
-
 	@Override
 	public void updateAccount(UpdateTeamAccountRequest request) {
 		Long userId = SecurityUtil.getCurrentUserId();

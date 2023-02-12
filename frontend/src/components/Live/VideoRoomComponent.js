@@ -38,6 +38,7 @@ class VideoRoomComponent extends Component {
       localUser: undefined,
       subscribers: [],
       currentVideoDevice: undefined,
+      userCount:0,
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -93,6 +94,7 @@ class VideoRoomComponent extends Component {
   }
 
   joinSession() {
+    console.log('joinSession!!!!!!!!!!!!!!!!!!!!!!!!')
     this.OV = new OpenVidu();
     this.OV.enableProdMode();
 
@@ -103,9 +105,32 @@ class VideoRoomComponent extends Component {
       async () => {
         console.dir(this.state.session);
         this.subscribeToStreamCreated();
-        await this.connectToSession();
+        this.subscribeToConnectionCreated()
+        this.subscribeToSessionDisconnected()
+        console.dir(this.state.session)
+        await this.connectToSession();        
       },
     );
+  }
+
+  
+  subscribeToSessionDisconnected(){
+    this.state.session.on("connectionDestroyed", async(event)=>{
+      event.preventDefault() 
+      console.log("어디가노 돌아온나!!!!!!!!!!!!!!",event)
+ // eslint-disable-next-line react/no-access-state-in-setstate
+      await this.setState({userCount:this.state.session.remoteConnections.size})
+
+    })
+  }
+
+  subscribeToConnectionCreated(){
+    this.state.session.on("connectionCreated", async(event)=>{
+      console.log("event!!!!!!!!!!!!!!!!!!!!",event)
+      // eslint-disable-next-line react/no-access-state-in-setstate
+     await this.setState({userCount:this.state.session.remoteConnections.size})
+    //  console.log(this.state.userCount)
+    })
   }
 
   async connectToSession() {
@@ -134,6 +159,7 @@ class VideoRoomComponent extends Component {
     this.state.session
       .connect(token, { clientData: this.state.myUserName })
       .then(() => {
+        console.log("connect-Sucess",this.state)
         this.connectWebCam();
       })
       .catch((error) => {
@@ -200,6 +226,7 @@ class VideoRoomComponent extends Component {
   }
 
   updateSubscribers() {
+    console.log("업데이트 다다다다다다다")
     const subscribers = this.remotes;
     this.setState(
       {
@@ -276,7 +303,7 @@ class VideoRoomComponent extends Component {
   subscribeToStreamCreated() {
     this.state.session.on('streamCreated', (event) => {
       const subscriber = this.state.session.subscribe(event.stream, undefined);
-
+      console.log("subscriber!!!!!!!!!!!!!!", subscriber)
 
       const newUser = new UserModel();
       newUser.setStreamManager(subscriber);
@@ -296,6 +323,8 @@ class VideoRoomComponent extends Component {
       }
     });
   }
+
+
 
   subscribeToStreamDestroyed() {
     // On every Stream destroyed...
@@ -382,10 +411,13 @@ class VideoRoomComponent extends Component {
     }
   }
 
+
   render() {
     console.log('state', this.state);
     const { mySessionId } = this.state;
     const { localUser } = this.state;
+    // const {remoteConnections} = this.state.session
+    // console.log(remoteConnections)
 
     return (
       <>
@@ -396,17 +428,18 @@ class VideoRoomComponent extends Component {
           micStatusChanged={this.micStatusChanged}
           switchCamera={this.switchCamera}
           leaveSession={this.leaveSession}
+          userCount={this.state.userCount}
         />
 
         <div id="layout" className="bounds">
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_big OT_publisher custom-class" id="localUser">
-              <StreamComponent user={localUser} sessionId={mySessionId}/>
+              <StreamComponent user={localUser} sessionId={mySessionId} userCount={this.state.userCount} />
             </div>
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_small OT_publisher custom-class chat-box">
-              <ChatComponent user={localUser} userProfileImg={this.props.userProfileImg} />
+              <ChatComponent user={localUser} userProfileImg={this.props.userProfileImg} userCount={this.state.userCount} />
             </div>
           )}
         </div>

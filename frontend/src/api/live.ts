@@ -8,3 +8,10 @@ export const requestCreateSession = async (sessionName: string, fundingId?: numb
   const response = await http.post('openvidu/sessions', data);
   return response;
 };
+
+
+export const requestLiveList = async () => {
+  const response = await http.get("openvidu/sessions")
+  return response;
+  
+}
