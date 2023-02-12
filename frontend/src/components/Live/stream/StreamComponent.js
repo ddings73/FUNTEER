@@ -13,17 +13,24 @@ import OvVideoComponent from './OvVideo';
 export default class StreamComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { nickname: this.props.user.getNickname(),sessionId:this.props.sessionId };
+    this.state = { nickname: this.props.user.getNickname(),sessionId:this.props.sessionId};
   }
 
   render() {
-    console.log(this.state)
+    console.log("Stream!!!!!!!!!!!!!!!!!!!!!!!!!!!!",this.state)
+    console.log(this.props.userCount)
     return (
       <div className="OT_widget-container">
+        <div className='info-box'>
         <div className="nickname">
-          <div>
-            <span id="nickname">{this.state.sessionId} 단체의 봉사 라이브</span>
-          </div>
+            <span>{this.state.sessionId}의 봉사 라이브 </span>
+            {/* <span>현재 {this.props.userCount}명이 시청중입니다.</span> */}
+        </div>
+        <div className='count-box'>
+          <p className='left'>LIVE</p>
+          <p className='right'>{this.props.userCount}</p>
+        </div>
+
         </div>
 
         {this.props.user !== undefined && this.props.user.getStreamManager() !== undefined ? (

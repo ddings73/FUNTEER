@@ -315,7 +315,7 @@ root.render(
     <PersistGate loading={null} persistor={persistor}>
       <RouterProvider router={router} />
     </PersistGate>
-  </Provider>,
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function
