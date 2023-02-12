@@ -285,6 +285,7 @@ public class LiveServiceImpl implements LiveService{
             Long userId = SecurityUtil.getCurrentUserId();
             Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
             Long amount = request.getAmount();
+            if(amount < 0) throw new IllegalArgumentException(" - 금액은 입력하실 수 없습니다");
 
             member.checkMoney(amount);
 
