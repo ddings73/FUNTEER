@@ -62,7 +62,7 @@ export default function QuestionContainer() {
       {!createMode && (
         <div className={styles['ques-board']}>
           <div className={styles['ques-btn-div']}>
-            <Button variant="outlined" sx={{ fontFamily: 'NanumSquareRound' }} className={styles['ques-btn']} onClick={onClickCreateQuesBtnHandler}>
+            <Button variant="outlined" sx={{ fontFamily: 'NanumSquare' }} className={styles['ques-btn']} onClick={onClickCreateQuesBtnHandler}>
               문의하기
             </Button>
           </div>
@@ -71,7 +71,7 @@ export default function QuestionContainer() {
               <Accordion sx={{ boxShadow: 'none' }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
                   <div>
-                    <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquareRound' }}>{data.content}</Typography>
+                    <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquare' }}>{data.content}</Typography>
                     <p className={styles.state}>{data.state}</p>
                   </div>
                 </AccordionSummary>

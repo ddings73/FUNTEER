@@ -92,6 +92,15 @@ function AdminNoticeCreateContainer() {
           ))}
         </div>
         <div className={styles['btn-div']}>
+          <Button
+            variant="contained"
+            className={styles.submit}
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            취소
+          </Button>
           <Button variant="contained" className={styles.submit} onClick={createNotice}>
             등록
           </Button>

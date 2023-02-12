@@ -30,12 +30,13 @@
       }
 
       @include mobile {
-        font-size: 1.125rem;
+        font-size: 1.5rem;
         margin: 5rem 0 0.5rem 0;
       }
     }
 
     .post-date {
+      margin-bottom: 0.5rem;
       font-weight: bold;
       color: rgba(0, 0, 0, 0.4);
       font-size: 1.25rem;
@@ -46,6 +47,7 @@
       }
 
       @include mobile {
+        margin-top: 0.5rem;
         font-size: 0.75rem;
       }
     }
@@ -70,14 +72,19 @@
       padding: 1rem 0.5rem;
 
       @include mobile {
-        width: 90%;
+        width: 95%;
+        padding: 0;
       }
     }
 
     .file {
+      display: flex;
+      text-align: center;
+      height: 1.5rem;
       margin-top: 1rem;
       text-decoration: none;
       color: rgba(0, 0, 0, 0.8);
+      font-size: 0.9rem;
 
       &:hover {
         color: $primary;

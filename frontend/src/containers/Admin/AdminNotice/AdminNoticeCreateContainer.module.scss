@@ -78,6 +78,9 @@
       font-weight: bold;
 
       & p {
+        height: 1.5rem;
+        display: flex;
+        align-items: center;
         margin-bottom: 0.5rem;
 
         .withdraw-btn {
@@ -85,13 +88,13 @@
           border: none;
           border-radius: 100%;
           box-shadow: none;
-          color: grey;
+          color: $error;
           font-size: 17px;
           font-weight: bold;
 
           &:hover {
             cursor: pointer;
-            color: $error;
+            color: $primary;
           }
         }
       }
