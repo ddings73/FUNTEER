@@ -68,6 +68,7 @@ import com.yam.funteer.post.repository.PostHashtagRepository;
 import com.yam.funteer.post.repository.PostRepository;
 import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
+import com.yam.funteer.user.entity.Wish;
 import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
 import com.yam.funteer.user.repository.WishRepository;
@@ -296,6 +297,11 @@ public class FundingServiceImpl implements FundingService{
 		fundingDetailResponse.setWishCount(wishCount);
 		Long tempId = funding.getId();
 
+		Member member = memberRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow();
+		Optional<Wish> byMemberAndFunding = wishRepository.findByMemberAndFunding(member, funding);
+
+		boolean isWished = byMemberAndFunding.isPresent() ? byMemberAndFunding.get().isChecked() : false;
+
 		// 목표금액
 		fundingDetailResponse.setTargetMoneyListLevelOne(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_ONE));
@@ -305,9 +311,8 @@ public class FundingServiceImpl implements FundingService{
 			id, TargetMoneyType.LEVEL_THREE));
 
 		Page<CommentResponse> collect = commentRepository.findAllByFundingId(tempId, pageable).map(m -> CommentResponse.from(m));
-		System.out.println(collect);
 		fundingDetailResponse.setComments(Optional.of(collect));
-		System.out.println(fundingDetailResponse);
+		fundingDetailResponse.setIsWished(isWished);
 
 
 		return fundingDetailResponse;
