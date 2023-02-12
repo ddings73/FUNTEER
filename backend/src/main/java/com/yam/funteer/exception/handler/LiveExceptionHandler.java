@@ -14,7 +14,7 @@ public class LiveExceptionHandler {
 
     @ExceptionHandler(SessionNotFoundException.class)
     public ResponseEntity<BaseResponseBody> handleSessionNotFoundException(SessionNotFoundException ex){
-        log.info("SessionNotFoundException => {}", ex.getMessage());
+        log.warn("SessionNotFoundException => {}", ex.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(BaseResponseBody.of("개설되지 않은 라이브 세션입니다."));
     }

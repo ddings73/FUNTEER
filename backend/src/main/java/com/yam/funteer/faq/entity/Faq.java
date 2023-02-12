@@ -24,4 +24,5 @@ public class Faq extends Post {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(insertable = false,updatable = false,nullable = false,unique = true )
 	private Long faqId;
+	private Long groupOrPerson;
 }

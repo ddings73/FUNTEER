@@ -30,7 +30,7 @@ public class Wish {
 	@ManyToOne
 	@JoinColumn(name = "member_id")
 	private Member member;
-	private boolean checked;
+	private Boolean checked;
 
 	private Wish(Member member, Funding funding){
 		this.member = member;
