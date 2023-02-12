@@ -12,14 +12,11 @@ import javax.persistence.Table;
 
 import com.yam.funteer.user.entity.Member;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name="gift")
-@Getter
+@Getter @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Gift {
@@ -36,4 +33,13 @@ public class Gift {
 
 	private Long amount;
 	private LocalDateTime giftDate;
+
+	public static Gift from(Live live, Member member, Long amount) {
+		return Gift.builder()
+				.live(live)
+				.member(member)
+				.amount(amount)
+				.giftDate(LocalDateTime.now())
+				.build();
+	}
 }

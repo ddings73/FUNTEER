@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.user.entity.Member;
 
+import com.yam.funteer.user.entity.Team;
 import lombok.*;
 
 @Entity
@@ -40,5 +41,9 @@ public class Live {
 
 	public void end() {
 		this.endTime = LocalDateTime.now();
+	}
+
+	public Team getTeam() {
+		return funding.getTeam();
 	}
 }

@@ -14,12 +14,17 @@ import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.live.dto.CreateConnectionRequest;
 import com.yam.funteer.live.dto.CreateConnectionResponse;
+import com.yam.funteer.live.dto.GiftRequest;
 import com.yam.funteer.live.dto.SessionLeaveRequest;
+import com.yam.funteer.live.entity.Gift;
 import com.yam.funteer.live.entity.Live;
+import com.yam.funteer.live.repository.GiftRepository;
 import com.yam.funteer.live.repository.LiveRepository;
+import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 
+import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
 import com.yam.funteer.user.repository.UserRepository;
 import io.openvidu.java.client.*;
@@ -54,9 +59,11 @@ public class LiveServiceImpl implements LiveService{
     private final AwsS3Uploader awsS3Uploader;
 
     private final UserRepository userRepository;
-    private final LiveRepository liveRepository;
-    private final FundingRepository fundingRepository;
     private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
+    private final LiveRepository liveRepository;
+    private final GiftRepository giftRepository;
+    private final FundingRepository fundingRepository;
     private final AttachRepository attachRepository;
     private final TeamAttachRepository teamAttachRepository;
 
@@ -126,45 +133,6 @@ public class LiveServiceImpl implements LiveService{
     }
 
 
-    private void recordSaveThisSession(String sessionId){
-        log.info("녹화 저장 시작");
-        Long teamId = SecurityUtil.getCurrentUserId();
-        Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
-
-        log.info("sessionId => {}", sessionId);
-        Recording recording = getSessionRecording(sessionId);
-
-        String fileUrl = recording.getUrl();
-        log.info(fileUrl);
-
-        File file = FileUtil.downloadFromUrl(fileUrl);
-        String path = awsS3Uploader.upload(file, "live");
-
-        Attach attach = Attach.of(file.getName(), path, FileType.LIVE);
-        attachRepository.save(attach);
-
-        TeamAttach teamAttach = TeamAttach.of(team, attach);
-        teamAttachRepository.save(teamAttach);
-
-        removeRecordingInServer(recording);
-    }
-
-    private void removeRecordingInServer(Recording recording) {
-        try{
-            this.openVidu.deleteRecording(recording.getId());
-        }catch (OpenViduJavaClientException | OpenViduHttpException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private Recording getSessionRecording(String sessionId) {
-        try {
-            return this.openVidu.getRecording(sessionId);
-        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private CreateConnectionResponse createNewSession(String sessionName, Funding funding, User user,
                                                       RecordingProperties recordingProperties) {
         try {
@@ -215,7 +183,7 @@ public class LiveServiceImpl implements LiveService{
             }
 
             Long userId = user.getId();
-            session.getConnections().forEach(connection -> {
+            session.getActiveConnections().forEach(connection -> {
                 log.info("클라이언트데이터 => {}",connection.getClientData());
                 log.info("서버데이터 => {}", connection.getServerData());
 
@@ -242,6 +210,45 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
+    private Recording getSessionRecording(String sessionId) {
+        try {
+            return this.openVidu.getRecording(sessionId);
+        } catch (OpenViduJavaClientException | OpenViduHttpException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private void recordSaveThisSession(String sessionId){
+        log.info("녹화 저장 시작");
+        Long teamId = SecurityUtil.getCurrentUserId();
+        Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
+
+        log.info("sessionId => {}", sessionId);
+        Recording recording = getSessionRecording(sessionId);
+
+        String fileUrl = recording.getUrl();
+        log.info(fileUrl);
+
+        File file = FileUtil.downloadFromUrl(fileUrl);
+        String path = awsS3Uploader.upload(file, "live");
+
+        Attach attach = Attach.of(file.getName(), path, FileType.LIVE);
+        attachRepository.save(attach);
+
+        TeamAttach teamAttach = TeamAttach.of(team, attach);
+        teamAttachRepository.save(teamAttach);
+
+        removeRecordingInServer(recording);
+
+    }
+
+    private void removeRecordingInServer(Recording recording) {
+        try{
+            this.openVidu.deleteRecording(recording.getId());
+        }catch (OpenViduJavaClientException | OpenViduHttpException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     public List<String> getCurrentActiveSessions() {
         openviduFetch();
@@ -257,6 +264,36 @@ public class LiveServiceImpl implements LiveService{
             }
         });
         return response;
+    }
+
+    @Override
+    public void giftToFundingTeam(GiftRequest request) {
+        String sessionName = request.getSessionName();
+        if(mapSessions.containsKey(sessionName)){
+            Session session = mapSessions.get(sessionName);
+            openviduFetch();
+
+            Session activeSession = this.openVidu.getActiveSession(session.getSessionId());
+            if(activeSession == null){
+                throw new IllegalArgumentException("존재하지 않는 세션입니다.");
+            }
+
+            Live live = liveRepository.findBySessionId(activeSession.getSessionId()).orElseThrow(() -> new IllegalArgumentException("개설되지 않은 세션입니다."));
+
+            Long userId = SecurityUtil.getCurrentUserId();
+            Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+            Long amount = request.getAmount();
+
+            Team team = live.getTeam();
+            team.updateMoney(amount);
+            member.updateMoney(-amount);
+
+            Gift gift = Gift.from(live, member, amount);
+            giftRepository.save(gift);
+            return;
+        }
+
+        throw new IllegalArgumentException("존재하지 않는 세션이름입니다");
     }
 
     private void openviduFetch(){
