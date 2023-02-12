@@ -88,8 +88,8 @@ public class MemberServiceImpl implements MemberService {
                 .orElseThrow(UserNotFoundException::new);
 
 
-        long followCnt = followRepository.countAllByMember(member);
-        long wishCnt = wishRepository.countAllByMember(member);
+        long followCnt = followRepository.countAllByMemberAndChecked(member, true);
+        long wishCnt = wishRepository.countAllByMemberAndChecked(member, true);
         List<UserBadge> userBadgeList = userBadgeRepository.findAllByUserId(member.getId());
 
         return MemberProfileResponse.of(member, wishCnt, followCnt, userBadgeList);
@@ -123,7 +123,7 @@ public class MemberServiceImpl implements MemberService {
 
         log.info("{}", member);
         log.info("{}", request);
-        member.updateDisplay(request.isDisplay());
+        member.updateDisplay(request.getDisplay());
     }
 
     @Override

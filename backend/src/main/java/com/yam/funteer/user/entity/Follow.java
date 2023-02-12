@@ -31,15 +31,15 @@ public class Follow {
 	@ManyToOne
 	@JoinColumn(name = "team_id")
 	private @NotNull Team team;
-	private boolean follow;
+	private Boolean checked;
 
 	public void toggle(){
-		this.follow = !this.follow;
+		this.checked = !this.checked;
 	}
 	private Follow(Member member, Team team){
 		this.member = member;
 		this.team = team;
-		this.follow = true;
+		this.checked = true;
 	}
 	public static Follow of(Member member, Team team){
 		return new Follow(member, team);
