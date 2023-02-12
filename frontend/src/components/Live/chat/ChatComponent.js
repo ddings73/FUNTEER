@@ -75,7 +75,7 @@ export default class ChatComponent extends Component {
   }
 
   render() {
-    console.log(this.props.user)
+    // console.log(this.props.user)
     // console.log(this.state.messageList)
     return (
       <div id="chatContainer">
