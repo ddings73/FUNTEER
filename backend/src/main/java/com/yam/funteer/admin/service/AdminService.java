@@ -1,5 +1,9 @@
 package com.yam.funteer.admin.service;
 
+import java.io.UnsupportedEncodingException;
+
+import javax.mail.MessagingException;
+
 import org.springframework.data.domain.Pageable;
 
 import com.yam.funteer.admin.dto.MemberListResponse;
@@ -24,9 +28,9 @@ public interface AdminService {
 
 	void acceptFunding(Long fundingId);
 
-	String rejectFunding(Long fundingId, RejectReasonRequest data) throws Exception;
+	void rejectFunding(Long fundingId, RejectReasonRequest data) throws Exception;
 
 	void acceptReport(Long fundingId);
 
-	String  rejectReport(Long fundingId, RejectReasonRequest data) throws Exception;
+	void rejectReport(Long fundingId, RejectReasonRequest data) throws MessagingException, UnsupportedEncodingException;
 }

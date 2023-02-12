@@ -1,6 +1,5 @@
 package com.yam.funteer.funding.service;
 
-import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -30,6 +29,7 @@ import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
+import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
 import com.yam.funteer.funding.dto.request.TargetMoneyDetailRequest;
@@ -48,11 +48,13 @@ import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.funding.entity.ReportDetail;
 import com.yam.funteer.funding.entity.TargetMoney;
 import com.yam.funteer.funding.entity.TargetMoneyDetail;
+import com.yam.funteer.funding.exception.CategoryNotFoundException;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.exception.InsufficientBalanceException;
 import com.yam.funteer.funding.exception.NotAuthenticatedMemberException;
 import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
+import com.yam.funteer.funding.exception.NotFoundReportException;
 import com.yam.funteer.funding.repository.FundingRepository;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
@@ -166,24 +168,24 @@ public class FundingServiceImpl implements FundingService{
 	 * @param cookie
 	 * @return
 	 * */
-	private Cookie createCookieForForNotOverlap(Long postId) {
-		Cookie cookie = new Cookie(VIEWCOOKIENAME+postId, String.valueOf(postId));
+	private Cookie createCookieForForNotOverlap(Long fundingId) {
+		Cookie cookie = new Cookie(VIEWCOOKIENAME+fundingId, String.valueOf(fundingId));
 		cookie.setComment("조회수 중복 증가 방지 쿠키");	// 쿠키 용도 설명 기재
-		cookie.setMaxAge(getRemainSecondForTommorow()); 	// 하루를 준다.
+		cookie.setMaxAge(getRemainSecondForTomorrow()); 	// 하루를 준다.
 		cookie.setHttpOnly(true);				// 서버에서만 조작 가능
 		return cookie;
 	}
 
 	// 다음 날 정각까지 남은 시간(초)
-	private int getRemainSecondForTommorow() {
+	private int getRemainSecondForTomorrow() {
 		LocalDateTime now = LocalDateTime.now();
-		LocalDateTime tommorow = LocalDateTime.now().plusDays(1L).truncatedTo(ChronoUnit.DAYS);
-		return (int) now.until(tommorow, ChronoUnit.SECONDS);
+		LocalDateTime tomorrow = LocalDateTime.now().plusDays(1L).truncatedTo(ChronoUnit.DAYS);
+		return (int) now.until(tomorrow, ChronoUnit.SECONDS);
 	}
 
 	@Override
 	public Page<FundingListResponse> findFundingByCategory(Long categoryId, Pageable pageable) {
-		Category category = categoryRepository.findById(categoryId).orElseThrow();
+		Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
 		Page<FundingListResponse> collect = fundingRepository.findAllByCategory(category, pageable).map(m -> FundingListResponse.from(m));
 		return collect;
 	}
@@ -207,15 +209,14 @@ public class FundingServiceImpl implements FundingService{
 
 
 	@Override
-	public FundingDetailResponse createFunding(FundingRequest data) throws
-		IOException,
-		NotAuthenticatedTeamException {
+	public FundingDetailResponse createFunding(FundingRequest data) {
+
 		// 인증 완료된 team 아니면 펀딩 작성 못함
 		Long currentUserId = SecurityUtil.getCurrentUserId();
 		Team team = teamRepository.findById(currentUserId).orElseThrow();
 
 		if (team.getUserType() != UserType.TEAM) {
-			throw new NotAuthenticatedTeamException();
+			throw new NotAuthenticatedTeamException("인증되지 않은 단체입니다.");
 		}
 
 		// category 들고오기
@@ -248,18 +249,11 @@ public class FundingServiceImpl implements FundingService{
 
 		Funding savedPost = fundingRepository.save(funding);
 
-		// s3 변환
-		// String thumbnailUrl = awsS3Uploader.upload(thumbnail, "thumbnails/" + savedPost.getId());
-		//
-		// savedPost.setThumbnail(thumbnailUrl);
-
 		addTargetMoney(data, savedPost);
 
 		List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
 		List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
 		addPostHashtags(funding, hashtags);
-
-
 
 		return FundingDetailResponse.from(savedPost);
 
@@ -341,16 +335,16 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public FundingDetailResponse findFundingById(Long id, Pageable pageable) throws NotAuthenticatedMemberException {
-		Funding funding = fundingRepository.findByFundingId(id).orElseThrow(() -> new IllegalArgumentException());
+	public FundingDetailResponse findFundingById(Long id, Pageable pageable) {
+		Funding funding = fundingRepository.findByFundingId(id).orElseThrow(FundingNotFoundException::new);
 		FundingDetailResponse fundingDetailResponse = FundingDetailResponse.from(funding);
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
 		fundingDetailResponse.setWishCount(wishCount);
 		Long tempId = funding.getId();
 
-		User user = userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow();
+		User user = userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
 		if (user.getUserType() == UserType.NORMAL || user.getUserType() == UserType.KAKAO ) {
-			Member member = memberRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow();
+			Member member = memberRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
 			Optional<Wish> byMemberAndFunding = wishRepository.findByMemberAndFunding(member, funding);
 			boolean isWished = byMemberAndFunding.isPresent() ? byMemberAndFunding.get().getChecked() : false;
 			fundingDetailResponse.setIsWished(isWished);
@@ -367,24 +361,28 @@ public class FundingServiceImpl implements FundingService{
 		Page<CommentResponse> collect = commentRepository.findAllByFundingId(tempId, pageable).map(m -> CommentResponse.from(m));
 		fundingDetailResponse.setComments(Optional.of(collect));
 
-
 		return fundingDetailResponse;
 	}
 
 	@Override
-	public FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) throws Exception {
-		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(() -> new FundingNotFoundException());
+	public FundingDetailResponse updateFunding(Long fundingId, FundingRequest data) {
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
+		Team team = teamRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
+
+		if (funding.getTeam() != team) {
+			throw new NotAuthenticatedTeamException("수정 권한이 없습니다.");
+		}
 
 		LocalDate endDate = LocalDate.parse(data.getEndDate(),
 			DateTimeFormatter.ofPattern("yyyy-MM-dd"));
 
 		if (funding.getPostType() == PostType.FUNDING_REJECT) {
 
-
 			// 기존 파일 삭제, 새로운 파일 추가
 			awsS3Uploader.delete("thumbnails/", funding.getThumbnail());
 
-			Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow();
+			Category category = categoryRepository.findById(data.getCategoryId()).orElseThrow(
+				CategoryNotFoundException::new);
 
 			setTargetMoney(data, funding);
 
@@ -413,9 +411,8 @@ public class FundingServiceImpl implements FundingService{
 		} else if (funding.getPostType() == PostType.FUNDING_IN_PROGRESS) {
 			funding.setEndDate(endDate);
 			funding.setPostType(PostType.FUNDING_EXTEND);
-		} else {
-			throw new Exception("no");
 		}
+
 		return FundingDetailResponse.from(funding);
 	}
 
@@ -432,8 +429,8 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public void deleteFunding(Long fundingId) throws FundingNotFoundException {
-		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(() -> new FundingNotFoundException());
+	public void deleteFunding(Long fundingId) {
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
 		awsS3Uploader.delete("thumbnails/" , funding.getThumbnail());
 		fundingRepository.delete(funding);
 		postRepository.delete(funding);
@@ -441,8 +438,11 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingReportResponse createFundingReport(Long fundingId, FundingReportRequest data) {
-		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
 		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
+
+		Report report = new Report(funding, data.getContent(), LocalDateTime.now());
+		reportRepository.save(report);
 
 		Attach attach = Attach.builder()
 			.name(fundingId + "-receiptFIle")
@@ -451,10 +451,16 @@ public class FundingServiceImpl implements FundingService{
 			.regDate(LocalDateTime.now())
 			.build();
 
-		attachRepository.save(attach);
+		List<ReportDetail> reportDetails = getReportDetails(data, report, attach);
 
-		Report report = new Report(funding, data.getContent(), LocalDateTime.now(), attach);
-		reportRepository.save(report);
+		report.setReportDetail(reportDetails);
+		funding.setPostType(PostType.REPORT_WAIT);
+		return FundingReportResponse.from(report);
+
+	}
+
+	private List<ReportDetail> getReportDetails(FundingReportRequest data, Report report, Attach attach) {
+		attachRepository.save(attach);
 
 		List<ReportDetail> reportDetails = new ArrayList<>();
 		for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
@@ -467,24 +473,20 @@ public class FundingServiceImpl implements FundingService{
 			reportDetailRepository.save(reportDetail);
 			reportDetails.add(reportDetail);
 		}
-
-		report.setReportDetail(reportDetails);
-		funding.setPostType(PostType.REPORT_WAIT);
-		return FundingReportResponse.from(report);
-
+		return reportDetails;
 	}
 
 	@Override
 	public FundingReportResponse findFundingReportById(Long fundingId) {
-		Report byFundingId = reportRepository.findByFundingFundingId(fundingId);
+		Report byFundingId = reportRepository.findByFundingFundingId(fundingId).orElseThrow(NotFoundReportException::new);
 		FundingReportResponse fundingReport = FundingReportResponse.from(byFundingId);
 		return fundingReport;
 	}
 
 	@Override
 	public FundingReportResponse updateFundingReport(Long fundingId, FundingReportRequest data) {
-		Report report = reportRepository.findByFundingFundingId(fundingId);
-		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
+		Report report = reportRepository.findByFundingFundingId(fundingId).orElseThrow(NotFoundReportException::new);
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
 
 		awsS3Uploader.delete("reports/" + fundingId + "/", report.getReceipts().getPath());
 		attachRepository.delete(report.getReceipts());
@@ -497,20 +499,7 @@ public class FundingServiceImpl implements FundingService{
 			.regDate(LocalDateTime.now())
 			.build();
 
-		attachRepository.save(attach);
-
-		List<ReportDetail> reportDetails = new ArrayList<>();
-
-		for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
-
-			String[] split = fundingReportDetailRequest.getAmount().split(",");
-			Long result = Long.parseLong(String.join("", split));
-
-			ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
-				result);
-			reportDetailRepository.save(reportDetail);
-			reportDetails.add(reportDetail);
-		}
+		List<ReportDetail> reportDetails = getReportDetails(data, report, attach);
 
 		report.setReportReceipts(attach);
 		report.setReportContent(data.getContent());
@@ -523,7 +512,7 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public void createFundingComment(Long fundingId, FundingCommentRequest data) {
-		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow();
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
 		Long userId = SecurityUtil.getCurrentUserId();
 		Member member = memberRepository.findById(userId).orElseThrow();
 
@@ -532,10 +521,10 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
-	public void deleteFundingComment(Long commentId) throws CommentNotFoundException, NotAuthenticatedMemberException {
+	public void deleteFundingComment(Long commentId) {
 		Long userId = SecurityUtil.getCurrentUserId();
-		Member member = memberRepository.findById(userId).orElseThrow();
-		Comment comment = commentRepository.findById(commentId).orElseThrow(() -> new CommentNotFoundException());
+		Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		Comment comment = commentRepository.findById(commentId).orElseThrow(CommentNotFoundException::new);
 
 		if (comment.getMember() != member) {
 			throw new NotAuthenticatedMemberException("댓글을 삭제할 권한이 없습니다.");
@@ -546,40 +535,33 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public void takeFunding(Long fundingId, TakeFundingRequest data) {
 
-		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(() -> new IllegalArgumentException());
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
 
 		Long memberId = SecurityUtil.getCurrentUserId();
-		Member member = memberRepository.findById(memberId).orElseThrow();
+		Member member = memberRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
 
 		String[] split = data.getAmount().split(",");
 		Long amount = Long.parseLong(String.join("", split));
 
-		try {
-			if (member.getMoney() < amount) {
-				throw new InsufficientBalanceException("잔액 부족");
-			}
-
-			Payment payment = Payment.builder()
-				.amount(amount)
-				.post(funding)
-				.payDate(LocalDateTime.now())
-				.user(member)
-				.build();
-
-			paymentRepository.save(payment);
-
-			member.updateMoney(-amount);
-			funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + amount);
-
-			badgeService.postBadges(member, PostGroup.FUNDING);
-			badgeService.totalPayAmount(member);
-
-
-		} catch ( InsufficientBalanceException e) {
-			String message = e.getMessage();
-			e.printStackTrace();
-
+		if (member.getMoney() < amount) {
+			throw new InsufficientBalanceException();
 		}
+
+		Payment payment = Payment.builder()
+			.amount(amount)
+			.post(funding)
+			.payDate(LocalDateTime.now())
+			.user(member)
+			.build();
+
+		paymentRepository.save(payment);
+
+		member.updateMoney(-amount);
+		funding.setCurrentFundingAmount(funding.getCurrentFundingAmount() + amount);
+
+		badgeService.postBadges(member, PostGroup.FUNDING);
+		badgeService.totalPayAmount(member);
+
 	}
 
 	// 자정이 되면 StartDate 가 당일인 펀딩들 중 승인 안료된 펀딩을 진행중으로 변경, 펀딩 금액에 따라 완료/실패 여부 판단
