@@ -103,7 +103,6 @@ export default class ChatComponent extends Component {
  
 
   render() {
-    console.log(this.props)
     // console.log(this.props.user)
     // console.log(this.state.messageList)
     return (
@@ -130,7 +129,7 @@ export default class ChatComponent extends Component {
 
             <div className='donation-money-box'>
               <p>후원할 금액</p>
-              <input className='donation-money-input' type="number" name="money" onChange={this.onChangeMoney} />
+              <input className='donation-money-input' type="number" value={this.state.amount} name="money" onChange={this.onChangeMoney} />
             </div>
             <Button className='donation-button' variant='contained' onClick={this.onClickDonation} >후원하기</Button>
             </div>
