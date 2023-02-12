@@ -1,25 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
-import { Box, CircularProgress, Fab } from '@mui/material';
+import { Box, CircularProgress, Fab, Tab, Tabs } from '@mui/material';
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import { styled } from '@material-ui/styles';
 import TextField from '@mui/material/TextField';
+import BeenhereIcon from '@mui/icons-material/Beenhere';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
-import { requestCommentList, requestFundingDetail, requestNextCommentList } from '../../api/funding';
+import { fundingJoin, requestCommentList, requestFundingDetail, requestFundingReport, requestNextCommentList, requestWish } from '../../api/funding';
 import TeamInfo from '../../components/Cards/TeamInfoCard';
 import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
 import CommentCard from '../../components/Cards/CommentCard';
 import CommentSkeleton from '../../components/Skeleton/CommentSkeleton';
-import { teamStateMap } from '../Admin/AdminTeam/AdminTeamContainer';
 import { useAppSelector } from '../../store/hooks';
 import { requestUserProfile } from '../../api/user';
 
 export interface ResponseInterface {
-  id: number;
   title: string;
   startDate: string;
   endDate: string;
@@ -27,12 +28,15 @@ export interface ResponseInterface {
   thumbnail: string;
   category: string;
   content: string;
+  targetMoneyListLevelOne: targetType;
+  targetMoneyListLevelTwo: targetType;
   targetMoneyListLevelThree: targetType;
   currentFundingAmount: string;
   wishCount: number;
   fundingDescription: string;
   comments: commentType[];
   team: teamType;
+  fundingId: string;
 }
 export type commentType = {
   memberNickName: string;
@@ -52,6 +56,19 @@ export type teamType = {
 type targetType = {
   amount?: string;
   targetMoneyType?: string;
+  descriptions?: descriptionType[];
+};
+type descriptionType = {
+  description?: string;
+};
+
+interface reportInterface {
+  content?: string;
+  regDate?: string;
+  reportDetailResponseList: responseListType[];
+}
+type responseListType = {
+  amount?: string;
   description?: string;
 };
 
@@ -68,7 +85,6 @@ export function FundingDetailContainer() {
   const [users, setUsers] = useState(null);
   const { fundIdx } = useParams();
   const [board, setBoard] = useState<ResponseInterface>({
-    id: 0,
     title: '',
     startDate: '',
     endDate: '',
@@ -77,6 +93,8 @@ export function FundingDetailContainer() {
     category: '',
     content: '',
     fundingDescription: '',
+    targetMoneyListLevelOne: {},
+    targetMoneyListLevelTwo: {},
     targetMoneyListLevelThree: {},
     currentFundingAmount: '',
     wishCount: 0,
@@ -88,12 +106,29 @@ export function FundingDetailContainer() {
       phone: '',
       profileImgUrl: '',
     },
+    fundingId: '',
   });
   // 게시물 좋아요
   const [isLiked, setIsLiked] = useState<boolean>(false);
 
-  const handleLikeClick = () => {
-    setIsLiked(!isLiked);
+  const handleLikeClick = async () => {
+    if (isLiked === true) {
+      try {
+        const response = await requestWish(fundIdx);
+        console.log('Liked res: ', response);
+        setIsLiked(false);
+      } catch (error) {
+        console.log(error);
+      }
+    } else {
+      try {
+        const response = await requestWish(fundIdx);
+        console.log('Liked 취소 res: ', response);
+        setIsLiked(true);
+      } catch (error) {
+        console.log(error);
+      }
+    }
   };
 
   // 펀딩 상세 게시물 로드
@@ -185,6 +220,7 @@ export function FundingDetailContainer() {
   const userId = useAppSelector((state) => state.userSlice.userId);
   // 잔액
   const [money, setMoney] = React.useState(0);
+
   useEffect(() => {
     requestMoneyInfo();
   }, []);
@@ -201,6 +237,76 @@ export function FundingDetailContainer() {
       console.error(error);
     }
   };
+
+  // 펀딩 참여
+  const [paying, setPaying] = useState('');
+
+  async function fundingHandler() {
+    console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불');
+    try {
+      const response = await fundingJoin(paying, fundIdx);
+      console.log('Fund paying Response: ', response);
+      alert(`${paying}원으로 펀딩을 완료했습니다!`);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  // 탭 변경
+  const [value, setValue] = React.useState('one');
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
+
+  // 보고서 탭
+  const [report, setReport] = useState<reportInterface>({
+    content: '',
+    regDate: '',
+    reportDetailResponseList: [
+      {
+        amount: '',
+        description: '',
+      },
+    ],
+  });
+
+  const fetchReportList = async () => {
+    try {
+      const response = await requestFundingReport(fundIdx);
+      console.log('Report res: ', response);
+      console.log('Report data res: ', response.data);
+      setReport(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchReportList();
+  }, []);
+
+  // 단계별 펀딩 정보
+  const levelOneData = () => (
+    <p style={{ whiteSpace: 'pre-line' }}>
+      {`1단계 금액: ${board.targetMoneyListLevelOne.amount}원
+      펀딩 설명: ${board.targetMoneyListLevelOne?.descriptions?.map((data) => data.description)}
+      `}
+    </p>
+  );
+  const levelTwoData = () => (
+    <p style={{ whiteSpace: 'pre-line' }}>
+      {`2단계 금액: ${board.targetMoneyListLevelTwo.amount}원
+      펀딩 설명: ${board.targetMoneyListLevelTwo?.descriptions?.map((data) => data.description)}
+      `}
+    </p>
+  );
+  const levelThreeData = () => (
+    <p style={{ whiteSpace: 'pre-line' }}>
+      {`3단계 금액: ${board.targetMoneyListLevelThree.amount}원
+      펀딩 설명: ${board.targetMoneyListLevelThree?.descriptions?.map((data) => data.description)}
+      `}
+    </p>
+  );
 
   return (
     <div className={styles.bodyContainer}>
@@ -220,7 +326,7 @@ export function FundingDetailContainer() {
             >
               라이브 시작
             </button>
-            <button className={styles.bannerBtn} type="button">
+            <button className={styles.bannerGrpBtn} type="button">
               펀딩 수정하기
             </button>
           </div>
@@ -231,8 +337,63 @@ export function FundingDetailContainer() {
           {' '}
           <FundSummary {...board} />
         </div>
+        <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+          <Tabs
+            value={value}
+            onChange={handleChange}
+            textColor="secondary"
+            indicatorColor="primary"
+            aria-label="secondary tabs example"
+            TabIndicatorProps={{
+              sx: { backgroundColor: '#E6750A' },
+            }}
+          >
+            <Tab value="one" label="프로젝트 상세 계획" />
+            <Tab value="two" label="프로젝트 보고" />
+          </Tabs>
+        </Box>
         <div className={styles.mainContent}>
-          <div dangerouslySetInnerHTML={{ __html: board.content }} className={styles.mainContentInner} />
+          {value === 'one' ? (
+            <div>
+              <div className={styles.fundingPlanner}>
+                <p className={styles.planTitle}>펀딩 금액에 따른 봉사계획</p>
+                <p className={styles.planSubTitle}>마우스를 올려 단계별 계획을 확인하세요!</p>
+                <div className={styles.planTag}>
+                  <BeenhereIcon className={styles.iconTag} sx={{ visibility: 'hidden' }} />
+                  <Tooltip title={levelOneData()} placement="top">
+                    <BeenhereIcon className={styles.iconTag} />
+                  </Tooltip>
+                  <Tooltip title={levelTwoData()} placement="top">
+                    <BeenhereIcon className={styles.iconTag} />
+                  </Tooltip>
+                  <Tooltip title={levelThreeData()} placement="top">
+                    <BeenhereIcon className={styles.iconTag} />
+                  </Tooltip>
+                </div>
+                <div className={styles.progressBar}>
+                  <div className={styles.status} style={{ width: `30%` }}>
+                    <p className={styles.statusNum}>40%</p>
+                  </div>
+                </div>
+              </div>
+              <div dangerouslySetInnerHTML={{ __html: board.content }} className={styles.mainContentInner} />
+            </div>
+          ) : (
+            <div className={styles.mainContentInner}>
+              <p>{report.content}</p>
+              <p>{report.regDate}</p>
+              <div className={styles.reslists}>
+                {report.reportDetailResponseList.map((resList, i) => (
+                  <div key={resList.description}>
+                    <h1>{i + 1}번째 보고서 총액</h1>
+                    <p>{resList.amount}원</p>
+                    <p>보고서 설명</p>
+                    <p>{resList.description}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
         <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard} style={{ width: '90%', marginLeft: '6%' }}>
@@ -246,7 +407,7 @@ export function FundingDetailContainer() {
           <p className={styles.attachItem}>증명서.pdf</p>
         </div>
         <div className={styles.mainFooterLikeWrapper}>
-          <button className={isLiked ? styles.mainFooterLikeButton : styles.mainFooterLikeButtonClicked} onClick={handleLikeClick} type="button">
+          <button className={isLiked ? styles.mainFooterLikeButtonDone : styles.mainFooterLikeButtonNone} onClick={handleLikeClick} type="button">
             <FavoriteIcon className={styles.mainFooterLike} />
           </button>
           <div className={styles.Likebox}>
@@ -312,11 +473,13 @@ export function FundingDetailContainer() {
               // eslint-disable-next-line
               onKeyUp={handleKeyUp}
               color="warning"
+              onChange={(e) => setPaying(e.target.value)}
+              value={paying}
             />
           </div>
 
           <p>마일리지로</p>
-          <button type="button" className={styles.payBtn}>
+          <button type="button" className={styles.payBtn} onClick={() => fundingHandler()}>
             펀딩 참여하기
           </button>
           <div className={styles.mileText}>

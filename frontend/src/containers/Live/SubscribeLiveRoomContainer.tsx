@@ -10,6 +10,7 @@ function SubscribeLiveRoomContainer() {
   const [check, setCheck] = useState<boolean>(false);
   const [token, setToken] = useState<string>('');
   const userName = useAppSelector((state) => state.userSlice.username);
+  const userProfileImg = useAppSelector(state=>state.userSlice.profileImgUrl)
 
   const createSession = async () => {
     try {
@@ -28,7 +29,7 @@ function SubscribeLiveRoomContainer() {
     createSession();
   }, []);
 
-  return <div className={styles.container}>{check && <VideoRoomComponent sessionName={sessionName} user={userName} token={token} />}</div>;
+  return <div className={styles.container}>{check && <VideoRoomComponent sessionName={sessionName}  userProfileImg={userProfileImg} user={userName} token={token} />}</div>;
 }
 
 export default SubscribeLiveRoomContainer;

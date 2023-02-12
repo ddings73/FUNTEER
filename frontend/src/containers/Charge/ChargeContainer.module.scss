@@ -1,14 +1,12 @@
 @import '../../styles/reset.scss';
 @import '../../styles/variable.scss';
-* {
-  font-family: NanumSquare !important;
-}
 
 .container {
   width: 100%;
   min-height: 100vh;
   height: 100%;
   padding-top: 76px;
+  font-family: NanumSquare !important;
 
   .banner {
     width: 100%;
@@ -183,7 +181,7 @@
 
         .cancel {
           text-decoration: none;
-          font-size: 1rem;
+          font-size: 0.8rem;
           color: rgb(156, 156, 156);
 
           &:hover {

@@ -6,7 +6,14 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { s1000, s1500, w1500, customAlert } from '../../utils/customAlert';
 import { memberSignUpType } from '../../types/user';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
-import { requestEmailDuplConfirm, requestMemberSignUp, requestNicknameDuplConfirm, requestPhoneDuplConfirm } from '../../api/user';
+import {
+  requestCheckEmailAuthCode,
+  requestEmailDuplConfirm,
+  requestMemberSignUp,
+  requestNicknameDuplConfirm,
+  requestPhoneDuplConfirm,
+  requestSendEmailAuthCode,
+} from '../../api/user';
 import styles from './MemberSignUpContainer.module.scss';
 
 function MemberSignUpContainer() {
@@ -33,7 +40,7 @@ function MemberSignUpContainer() {
   /** 이메일 인증 버튼을 이미 눌렀는지 확인 */
   const [emailAuthButtonPushed, setEmailAuthButtonPushed] = useState<boolean>(false);
   /** 이메일 인증 시간 제한 */
-  const initTime = 300;
+  const initTime = 180;
   const [time, setTime] = useState<number>(initTime);
   /** 인증 번호 */
   const [authNumber, setAuthNumber] = useState<string>('');
@@ -48,7 +55,6 @@ function MemberSignUpContainer() {
 
   /** 하이픈 자동 완성 */
   useEffect(() => {
-    console.log('바뀜');
     if (inputValue.length === 10) {
       setInputValue(inputValue.replace(/(\d{3})(\d{4})(\d{3})/, '$1-$2-$3'));
     }
@@ -146,7 +152,7 @@ function MemberSignUpContainer() {
   };
 
   /** 이메일 인증하기 버튼 */
-  const handleClickAuthEmail = () => {
+  const handleClickAuthEmail = async () => {
     if (!emailDuplConfirmed) {
       customAlert(w1500, '이메일 중복 체크를 먼저 완료해주세요.');
       return;
@@ -157,6 +163,12 @@ function MemberSignUpContainer() {
     }
 
     setEmailAuthButtonPushed(true);
+    try {
+      const response = await requestSendEmailAuthCode(memberSignUpInfo.email);
+      console.log('이메일 인증 코드 요청', response);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   /** 이메일 인증 타이머 */
@@ -171,7 +183,7 @@ function MemberSignUpContainer() {
       setButtonText(`${minute}분 ${second}초`);
 
       if (time === 0) {
-        customAlert(w1500, '인증번호 입력 시간이 초과되었습니다.');
+        customAlert(w1500, '인증 번호 입력 시간이 초과되었습니다.');
         setButtonText('이메일 인증하기');
         setEmailAuthButtonPushed(false);
         setTime(initTime);
@@ -186,20 +198,18 @@ function MemberSignUpContainer() {
     setAuthNumber(e.target.value);
   };
 
-  const checkAuthNumber = () => {
-    customAlert(s1500, '이메일 인증이 완료되었습니다.');
-    setCheckEmailAuth(true);
-    setEmailAuthButtonPushed(false);
-
-    /** if (백엔드에서 온 이메일 인증번호 === 유저가 입력한 인증번호) {
-     *    alert('이메일 인증이 완료되었습니다.')
-     *    setEmailAuthButtonPushed(false);
-     *    setCheckEmailAuth(true)
-     * } else {
-     *    alert(이메일 인증 번호가 틀렸습니다.)
-     *    setButtonText('이메일 인증하기')
-     *    setEmailAuthButtonPushed(false)
-     * } */
+  /** 인증 번호 검증 */
+  const checkAuthNumber = async () => {
+    try {
+      const response = await requestCheckEmailAuthCode(authNumber, memberSignUpInfo.email);
+      console.log('이메일 인증 요청', response);
+      customAlert(s1500, '이메일 인증이 완료되었습니다.');
+      setCheckEmailAuth(true);
+      setEmailAuthButtonPushed(false);
+    } catch (err) {
+      console.error(err);
+      customAlert(w1500, '인증 번호가 일치하지 않습니다.');
+    }
   };
 
   /** 개인 회원가입 요청 */
@@ -247,7 +257,15 @@ function MemberSignUpContainer() {
           <div className={styles['form-div']}>
             <div id="form-div-inner">
               <p>이름</p>
-              <TextField name="name" margin="dense" placeholder="이름을 입력해주세요." variant="outlined" onChange={onChangeHandler} sx={{ background: 'white' }} />
+              <TextField
+                name="name"
+                margin="dense"
+                placeholder="이름을 입력해주세요."
+                variant="outlined"
+                size="small"
+                sx={{ background: 'white' }}
+                onChange={onChangeHandler}
+              />
               <p>
                 이메일
                 {!emailDuplConfirmed && (
@@ -264,8 +282,9 @@ function MemberSignUpContainer() {
                     margin="dense"
                     placeholder="이메일을 입력해주세요."
                     variant="outlined"
-                    onChange={onChangeHandler}
+                    size="small"
                     sx={{ background: 'white' }}
+                    onChange={onChangeHandler}
                   />
                   <Button className={styles['auth-button']} variant="contained" onClick={handleClickAuthEmail}>
                     {buttonText}
@@ -277,7 +296,7 @@ function MemberSignUpContainer() {
                   <input
                     type="text"
                     name="authNumber"
-                    placeholder="인증번호를 입력해주세요."
+                    placeholder="인증 번호를 입력해주세요."
                     className={styles['auth-number-input']}
                     onChange={onAuthNumberChangeHandler}
                   />
@@ -295,6 +314,7 @@ function MemberSignUpContainer() {
                   margin="dense"
                   placeholder="비밀번호를 입력해주세요."
                   variant="outlined"
+                  size="small"
                   onChange={onChangeHandler}
                   sx={{ background: 'white' }}
                 />{' '}
@@ -315,6 +335,7 @@ function MemberSignUpContainer() {
                   />
                 )}
               </div>
+              <p className={styles.comment}>8~15자, 하나 이상의 문자와 숫자가 포함되어야 합니다.</p>
 
               <p>비밀번호 확인</p>
               <div className={styles['pw-div']}>
@@ -324,6 +345,7 @@ function MemberSignUpContainer() {
                   margin="dense"
                   placeholder="비밀번호를 입력해주세요."
                   variant="outlined"
+                  size="small"
                   onChange={onChangeHandler}
                   sx={{ background: 'white' }}
                 />
@@ -353,7 +375,15 @@ function MemberSignUpContainer() {
                   </a>
                 )}
               </p>
-              <TextField sx={{ background: 'white' }} name="nickname" margin="dense" placeholder="닉네임을 입력해주세요." variant="outlined" onChange={onChangeHandler} />
+              <TextField
+                sx={{ background: 'white' }}
+                name="nickname"
+                margin="dense"
+                placeholder="닉네임을 입력해주세요."
+                variant="outlined"
+                size="small"
+                onChange={onChangeHandler}
+              />
 
               <p>
                 휴대폰 번호
@@ -369,6 +399,7 @@ function MemberSignUpContainer() {
                 margin="dense"
                 placeholder="휴대폰 번호를 입력해주세요."
                 variant="outlined"
+                size="small"
                 value={inputValue}
                 onChange={onChangeHandler}
               />

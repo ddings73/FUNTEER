@@ -7,7 +7,7 @@
   display: flex;
   justify-content: center;
   margin-top: 77.594px;
-  font-family: NanumSquareRound;
+  font-family: NanumSquare !important;
 
   .contents {
     display: flex;
@@ -19,8 +19,8 @@
 
     .title {
       font-weight: bold;
-      font-size: 3rem;
-      margin: 5rem 0 2rem 0;
+      font-size: 2.25rem;
+      margin: 5rem 0 3rem 0;
 
       @include tablet {
         font-size: 2.25rem;
@@ -67,8 +67,8 @@
       }
 
       & p {
-        margin-top: 1rem;
-        font-size: 1.125rem;
+        margin-top: 2rem;
+        font-size: 1rem;
 
         @include mobile {
           font-size: 0.75rem;
@@ -128,9 +128,10 @@
 
         .auth-number-input {
           height: 20px;
-          border: 0.5px solid rgba(1, 1, 1, 0.5);
+          width: 70%;
+          border: 0.5px solid rgba(0, 0, 0, 0.2);
           border-radius: 5px;
-          padding: 5px;
+          padding: 8px;
           font-size: 0.75rem;
         }
 
@@ -144,7 +145,7 @@
       .authed-email {
         font-size: 1.25rem;
         color: grey;
-        margin-bottom: 1.5rem;
+        margin: 0.5rem 0 2rem 0;
       }
 
       .pw-div {
@@ -153,6 +154,7 @@
         box-shadow: none;
 
         .pwv-btn {
+          font-size: 1.2rem;
           color: rgba(1, 1, 1, 0.2);
           margin-left: 1rem;
 

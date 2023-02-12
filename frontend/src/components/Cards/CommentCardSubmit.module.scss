@@ -15,7 +15,7 @@
   }
 
   & .commentMid {
-    width: 100%;
+    width: 90%;
     margin-top: 15px;
     & .commentImg {
       border-radius: 50%;
@@ -23,18 +23,36 @@
       margin-right: 2%;
     }
     & .tesxtField {
-      width: 80%;
+      width: 85%;
     }
   }
   & .BtnGrop {
-    width: 100%;
+    width: 18%;
     display: flex;
     justify-content: flex-end;
-    margin-top: 10px;
+    margin-top: 15px;
     & .commentBtn {
-      width: 100px;
-      height: 40px;
+      width: 120px;
+      height: 50px;
       margin: 0 6.5%;
+      background-color: transparent;
+      border: 3px solid orange;
+      border-radius: 15px;
+      font-weight: 600;
+      font-size: 16px;
+      display: flex;
+      justify-content: space-around;
+      padding: 0 10px;
+      align-items: center;
+      color: rgb(88, 88, 88);
+      transition: 0.2s;
+      cursor: pointer;
+      &:hover {
+        color: black;
+      }
+      &:active {
+        scale: 0.9;
+      }
     }
   }
 }
