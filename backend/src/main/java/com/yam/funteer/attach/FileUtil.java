@@ -18,7 +18,7 @@ public class FileUtil {
 	private static final Tika tika = new Tika();
 
 	private static final List<String> validImgType = Arrays.asList("image/jpeg", "image/pjpeg", "image/png", "image/gif", "image/bmp",
-		"image/x-windows-bmp");
+		"image/x-windows-bmp", "image/svg+xml");
 
 	private static final List<String> validPdfType = Arrays.asList("application/pdf");
 	public static boolean validImgFile(InputStream inputStream){
