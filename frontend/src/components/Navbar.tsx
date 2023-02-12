@@ -116,8 +116,7 @@ function ResponsiveAppBar() {
     if (isLogin && userType === 'TEAM') {
       getTeamInfo();
     }
-    window.addEventListener('scroll', updateScroll);
-  }, []);
+  }, [userType]);
 
   return (
     <div>
@@ -175,12 +174,10 @@ function ResponsiveAppBar() {
               </div>
               <div style={{ display: isLogin ? 'flex' : 'none', alignItems: 'center' }}>
                 {userType === 'ADMIN' && (
-                  <NavLink to="/admin" style={{ textDecoration: 'none' }}>
-                    <Chip label="관리자" color="error" component="a" sx={{ marginRight: '10px', display: 'flex' }} size="small" clickable />
-                  </NavLink>
+                  <Chip label="관리자" color="error" component={NavLink} sx={{ marginRight: '10px', display: 'flex' }} size="small" to="/admin" clickable />
                 )}
-                {userType === 'TEAM' && <Chip label="단체회원" color="secondary" component="a" sx={{ marginRight: '10px', display: 'flex' }} size="small" />}
-                {userType === 'NORMAL' && <Chip label="일반회원" color="warning" component="a" sx={{ marginRight: '10px', display: 'flex' }} size="small" />}
+                {userType === 'TEAM' && <Chip label="단체회원" color="secondary" sx={{ marginRight: '10px', display: 'flex' }} size="small" />}
+                {userType === 'NORMAL' && <Chip label="일반회원" color="warning" sx={{ marginRight: '10px', display: 'flex' }} size="small" />}
 
                 <p style={{ color: 'black' }}>
                   <span style={{ fontWeight: '800' }}>{userName}</span>님 환영합니다
