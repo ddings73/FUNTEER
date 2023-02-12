@@ -7,6 +7,9 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.entity.Category;
@@ -30,4 +33,8 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 	Page<Funding> findAllByTeam(Team team, Pageable pageable);
 
 	Optional<Funding> findByFundingId(Long fundingId);
+
+	@Modifying
+	@Query("update Funding set hit = hit + 1 where fundingId = :fundingId")
+	int updateHit(@Param(value = "fundingId") Long fundingId);
 }

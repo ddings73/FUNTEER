@@ -3,6 +3,9 @@ package com.yam.funteer.funding.controller;
 import java.io.IOException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -105,7 +108,11 @@ public class FundingController {
 	@ApiOperation(value = "펀딩 상세 조회", notes = "펀딩 게시글 상세를 조회한다.")
 	@GetMapping("/{fundingId}")
 	public ResponseEntity<FundingDetailResponse> readFundingDetail(@PathVariable Long fundingId,
-		@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC)Pageable pageable){
+		@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC)Pageable pageable,
+		HttpServletRequest request,
+		HttpServletResponse response) throws
+		NotAuthenticatedMemberException {
+		fundingService.updateHit(fundingId, request, response);
 		return ResponseEntity.ok(fundingService.findFundingById(fundingId, pageable));
 	}
 
