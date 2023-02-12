@@ -42,9 +42,10 @@ export function MainPageContainer() {
       // sse 연결
       // http://localhost:8080/api/v1/subscribe
       // https://i8e204.p.ssafy.io/api/v1/subscribe
-      eventSource=new EventSourcePolyfill("http://i8e204.p.ssafy.io:8080/api/v1/subscribe",{
+      eventSource=new EventSourcePolyfill("https://i8e204.p.ssafy.io/api/v1/subscribe",{
         headers:{
           "Content-Type":"text/event-stream",
+          "Access-Control-Allow-Origin": "*",
           "Authorization":`Bearer ${token}`,
           "Cache-Control": "no-cache",
         },
