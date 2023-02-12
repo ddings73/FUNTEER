@@ -2,6 +2,8 @@ package com.yam.funteer.donation.service;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.donation.dto.request.DonationJoinReq;
 import com.yam.funteer.donation.dto.request.DonationRegisterReq;
@@ -11,11 +13,12 @@ import com.yam.funteer.donation.dto.response.DonationAdminListRes;
 import com.yam.funteer.donation.dto.response.DonationBaseRes;
 import com.yam.funteer.donation.dto.response.DonationListRes;
 
+import com.yam.funteer.donation.entity.Donation;
 import com.yam.funteer.pay.entity.Payment;
 
 public interface DonationService {
-	List<DonationListRes> donationGetList(int page,int size);
-	List<DonationAdminListRes>donationGetAdminList(int page,int size);
+	Page<Donation> donationGetList(int page,int size);
+	Page<Donation>donationGetAdminList(int page,int size);
 	Payment donationJoin(Long postId, DonationJoinReq donationJoinReq) ;
 	DonationBaseRes donationGetDetail(Long postId);
 	DonationBaseRes donationGetCurrent();

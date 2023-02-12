@@ -45,7 +45,7 @@ public class LoginServiceImpl implements LoginService{
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         TokenInfo tokenInfo = jwtProvider.generateToken(authentication); // 검증되면 jwt 만들어서 가져옴
         Long userId = Long.valueOf(authentication.getName());
-        User user = userFoundProcess(loginRequest, tokenInfo, userId);
+        User user = userFoundProcess(tokenInfo, userId);
 
         user.validate();
 
@@ -70,7 +70,7 @@ public class LoginServiceImpl implements LoginService{
         log.info("id => " + authentication.getName());
         TokenInfo tokenInfo = jwtProvider.generateToken(authentication); // 검증되면 jwt 만들어서 가져옴
         Long userId = Long.valueOf(authentication.getName());
-        User user = userFoundProcess(loginRequest, tokenInfo, userId);
+        User user = userFoundProcess(tokenInfo, userId);
 
         return LoginResponse.of(user, tokenInfo);
     }
@@ -113,9 +113,13 @@ public class LoginServiceImpl implements LoginService{
     }
 
 
-    private User userFoundProcess(LoginRequest loginRequest, TokenInfo tokenInfo, Long userId){
-        Token token = Token.from(userId, tokenInfo.getRefreshToken());
-        tokenRepository.save(token);
+    private User userFoundProcess(TokenInfo tokenInfo, Long userId){
+        tokenRepository.findById(userId).ifPresentOrElse(token -> {
+            token.update(tokenInfo.getRefreshToken());
+        }, ()->{
+            Token token = Token.from(userId, tokenInfo.getRefreshToken());
+            tokenRepository.save(token);
+        });
 
         return userRepository.findById(Long.valueOf(userId)).orElseThrow(UserNotFoundException::new);
     }

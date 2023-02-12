@@ -16,4 +16,5 @@ import lombok.ToString;
 public class DonationStatusModify {
 	private Long donationId;
 	private PostType postType;
+
 }
