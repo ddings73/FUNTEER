@@ -352,7 +352,7 @@ public class FundingServiceImpl implements FundingService{
 		if (user.getUserType() == UserType.NORMAL || user.getUserType() == UserType.KAKAO ) {
 			Member member = memberRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow();
 			Optional<Wish> byMemberAndFunding = wishRepository.findByMemberAndFunding(member, funding);
-			boolean isWished = byMemberAndFunding.isPresent() ? byMemberAndFunding.get().isChecked() : false;
+			boolean isWished = byMemberAndFunding.isPresent() ? byMemberAndFunding.get().getChecked() : false;
 			fundingDetailResponse.setIsWished(isWished);
 		}
 
