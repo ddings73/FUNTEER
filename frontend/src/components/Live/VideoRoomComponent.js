@@ -29,6 +29,7 @@ class VideoRoomComponent extends Component {
     const sessionName = this.props.sessionName ? this.props.sessionName : 'A';
     const userName = this.props.user ? this.props.user : Math.floor(Math.random() * 100);
 
+
     this.remotes = [];
     this.localUserAccessAllowed = false;
     this.state = {
@@ -443,7 +444,7 @@ class VideoRoomComponent extends Component {
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_small OT_publisher custom-class chat-box">
-              <ChatComponent user={localUser} userCount={this.state.userCount} />
+              <ChatComponent user={localUser} userCount={this.state.userCount} userCurrentMoney={this.props.userCurrentMoney} liveDonation={this.props.liveDonation} />
             </div>
           )}
         </div>
