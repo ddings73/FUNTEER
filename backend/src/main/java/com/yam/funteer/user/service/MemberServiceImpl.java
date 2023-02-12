@@ -10,11 +10,14 @@ import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
+import com.yam.funteer.live.entity.Gift;
+import com.yam.funteer.live.repository.GiftRepository;
 import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
 import com.yam.funteer.user.dto.response.ChargeListResponse;
+import com.yam.funteer.user.dto.response.member.GiftDetailResponse;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
 import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
 import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
@@ -48,6 +51,7 @@ public class MemberServiceImpl implements MemberService {
     private final FundingRepository fundingRepository;
     private final WishRepository wishRepository;
     private final PaymentRepository paymentRepository;
+    private final GiftRepository giftRepository;
     private final UserBadgeRepository userBadgeRepository;
 
     private final BadgeService badgeService;
@@ -207,8 +211,17 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Page<ChargeListResponse> getChargeList(Pageable pageable) {
         Long memberId = SecurityUtil.getCurrentUserId();
-        Page<ChargeListResponse> chargeList = chargeRepository.findAllByMemberId(memberId, pageable).map(m -> ChargeListResponse.from(m));
+        Member member = memberRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
+        Page<ChargeListResponse> chargeList = chargeRepository.findAllByMember(member, pageable).map(m -> ChargeListResponse.from(m));
         return chargeList;
+    }
+
+    @Override
+    public GiftDetailResponse getGiftDetails(Pageable pageable) {
+        Long memberId = SecurityUtil.getCurrentUserId();
+        Member member = memberRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
+        Page<Gift> giftPage = giftRepository.findAllByMember(member, pageable);
+        return GiftDetailResponse.of(giftPage);
     }
 
     private Member validateSameUser(Long i1, Long i2){
