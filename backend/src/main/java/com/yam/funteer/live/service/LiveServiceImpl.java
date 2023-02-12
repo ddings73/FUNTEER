@@ -284,6 +284,8 @@ public class LiveServiceImpl implements LiveService{
             Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
             Long amount = request.getAmount();
 
+            member.checkMoney(amount);
+
             Team team = live.getTeam();
             team.updateMoney(amount);
             member.updateMoney(-amount);
