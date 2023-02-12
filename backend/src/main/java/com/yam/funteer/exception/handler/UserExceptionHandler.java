@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@RestControllerAdvice("com.yam.funteer.user")
+@RestControllerAdvice
 public class UserExceptionHandler {
 
     @ExceptionHandler(DuplicateInfoException.class)
