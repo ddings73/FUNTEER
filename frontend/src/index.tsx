@@ -66,6 +66,7 @@ import {
   NoticeList,
   FAQList,
   QuestionList,
+  LiveList,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -170,6 +171,10 @@ const router = createBrowserRouter([
         path: 'teamdonation/:teamId',
         element: <TeamDonation />,
       },
+      {
+        path:"live",
+        element:<LiveList/>
+      }
     ],
   },
   {
