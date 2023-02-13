@@ -43,6 +43,7 @@ class VideoRoomComponent extends Component {
       allAmount: 0,
       checkLottie: false,
       amount: 0,
+      donationUser:""
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -147,9 +148,9 @@ class VideoRoomComponent extends Component {
       const prev = this.state.allAmount;
       console.log('UPDATE!!!!!!!!!!!!!!!!');
       console.log(this.state);
-      console.log(JSON.parse(event.data), prev);
+      console.log(event.data)
       // this.setState({ allAmount: prev + amount });
-      this.setState({ allAmount: prev + JSON.parse(event.data), checkLottie: true, amount: JSON.parse(event.data) });
+      this.setState({ allAmount: prev + JSON.parse(event.data.money), checkLottie: true, amount: JSON.parse(event.data.money),donationUser:JSON.parse(event.data.donationUser) });
     });
   }
 
