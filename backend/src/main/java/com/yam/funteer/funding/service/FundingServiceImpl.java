@@ -79,6 +79,7 @@ import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.entity.Wish;
 import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
+import com.yam.funteer.user.repository.UserBadgeRepository;
 import com.yam.funteer.user.repository.UserRepository;
 import com.yam.funteer.user.repository.WishRepository;
 import lombok.RequiredArgsConstructor;
@@ -89,6 +90,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
+	private final UserBadgeRepository userBadgeRepository;
 	private static final String VIEWCOOKIENAME = "alreadyViewCookie";
 	private final UserRepository userRepository;
 	private final AttachRepository attachRepository;
@@ -383,12 +385,14 @@ public class FundingServiceImpl implements FundingService{
 		fundingDetailResponse.setWishCount(wishCount);
 		Long tempId = funding.getId();
 
-		User user = userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
-		if (user.getUserType() == UserType.NORMAL || user.getUserType() == UserType.KAKAO ) {
-			Member member = memberRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
-			Optional<Wish> byMemberAndFunding = wishRepository.findByMemberAndFunding(member, funding);
-			boolean isWished = byMemberAndFunding.isPresent() ? byMemberAndFunding.get().getChecked() : false;
-			fundingDetailResponse.setIsWished(isWished);
+		if (SecurityUtil.getCurrentUserId() != null) {
+			User user = userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
+			if (user.getUserType() == UserType.NORMAL || user.getUserType() == UserType.KAKAO ) {
+				Member member = memberRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
+				Optional<Wish> byMemberAndFunding = wishRepository.findByMemberAndFunding(member, funding);
+				boolean isWished = byMemberAndFunding.isPresent() ? byMemberAndFunding.get().getChecked() : false;
+				fundingDetailResponse.setIsWished(isWished);
+			}
 		}
 
 		// 목표금액
