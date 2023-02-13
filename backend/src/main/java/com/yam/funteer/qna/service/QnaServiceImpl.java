@@ -1,7 +1,9 @@
 package com.yam.funteer.qna.service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -70,26 +72,29 @@ public class QnaServiceImpl implements QnaService {
 	public QnaBaseRes qnaRegister(QnaRegisterReq qnaRegisterReq){
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Qna qna=qnaRepository.save(qnaRegisterReq.toEntity(user));
-		List<String>attachList=new ArrayList<>();
+		Map<String,String>attachList=new HashMap<>();
 		List<MultipartFile>files=qnaRegisterReq.getFiles();
+
 		if(!files.isEmpty()){
 			for(MultipartFile file:files) {
 				if(file.isEmpty())break;
+
 				String fileUrl = awsS3Uploader.upload(file, "qna");
 				Attach attach = qnaRegisterReq.toAttachEntity(fileUrl, file.getOriginalFilename());
 				PostAttach postAttach = PostAttach.builder()
 					.attach(attach)
 					.post(qna)
 					.build();
-				attachList.add(fileUrl);
+				attachList.put(file.getOriginalFilename(),fileUrl);
 				attachRepository.save(attach);
 				postAttachRepository.save(postAttach);
 			}
 		}
+		List<Map.Entry<String,String>> pathList=attachList.entrySet().stream().collect(Collectors.toList());
 		List<User> adminList = userRepository.findAllByUserType(UserType.ADMIN);
 		List<String>adminEmailList=adminList.stream().map(User::getEmail).collect(Collectors.toList());
-		alarmService.sendList(adminEmailList,qna.getTitle()+", QnA가 등록되었습니다.", "/qna/"+qna.getId());
-		return new QnaBaseRes(qna,attachList);
+		alarmService.sendList(adminEmailList,qna.getTitle()+", QnA가 등록되었습니다.", "/qna/"+qna.getQnaId());
+		return new QnaBaseRes(qna,pathList);
 	}
 
 
@@ -97,15 +102,18 @@ public class QnaServiceImpl implements QnaService {
 	public QnaBaseRes qnaGetDetail(Long qnaId) {
 		Qna qna = qnaRepository.findByQnaId(qnaId).orElseThrow(() -> new QnaNotFoundException());
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
+
 		if (qna.getUser().getId()==user.getId()||user.getUserType().equals(UserType.ADMIN)) {
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
-			List<String>attachList=new ArrayList<>();
+			Map<String,String>attachList=new HashMap<>();
+
 			if(postAttachList.size()>0) {
 				for (PostAttach postAttach : postAttachList) {
-					attachList.add(postAttach.getAttach().getPath());
+					attachList.put(postAttach.getAttach().getName(),postAttach.getAttach().getPath());
 				}
 			}
-			return new QnaBaseRes(qna,attachList);
+			List<Map.Entry<String,String>> pathList=attachList.entrySet().stream().collect(Collectors.toList());
+			return new QnaBaseRes(qna,pathList);
 		}
 		else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
@@ -117,7 +125,7 @@ public class QnaServiceImpl implements QnaService {
 		if(replyRepository.findByQna(qna).isPresent()){
 			throw new IllegalArgumentException("이미 답변이 완료된 글입니다");
 		}
-		List<String>attachList=new ArrayList<>();
+
 		if(user.getId()==qna.getUser().getId()) {
 			qnaRepository.save(qnaRegisterReq.toEntity(user,qna.getId(),qnaId));
 			List<PostAttach>postAttachList=postAttachRepository.findAllByPost(qna);
@@ -128,7 +136,7 @@ public class QnaServiceImpl implements QnaService {
 			}
 
 			List<MultipartFile>files=qnaRegisterReq.getFiles();
-
+			Map<String,String>attachList=new HashMap<>();
 			if(!files.isEmpty()){
 				for(MultipartFile file:files) {
 					if(file.isEmpty())break;
@@ -138,12 +146,13 @@ public class QnaServiceImpl implements QnaService {
 						.attach(attach)
 						.post(qna)
 						.build();
-					attachList.add(fileUrl);
+					attachList.put(file.getOriginalFilename(),fileUrl);
 					attachRepository.save(attach);
 					postAttachRepository.save(postAttach);
 				}
 			}
-			return new QnaBaseRes(qna,attachList);
+			List<Map.Entry<String,String>> pathList=attachList.entrySet().stream().collect(Collectors.toList());
+			return new QnaBaseRes(qna,pathList);
 		}
 		else throw new IllegalArgumentException("접근권한이 없습니다.");
 	}
