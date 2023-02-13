@@ -11,15 +11,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.yam.funteer.user.entity.Member;
+import com.yam.funteer.user.entity.User;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Entity
 @Table(name="gift")
-@Getter
+@Getter @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Gift {
@@ -31,9 +29,18 @@ public class Gift {
 	private Live live;
 
 	@ManyToOne
-	@JoinColumn(name = "member_id")
-	private Member member;
+	@JoinColumn(name = "user_id")
+	private User user;
 
 	private Long amount;
 	private LocalDateTime giftDate;
+
+	public static Gift from(Live live, User user, Long amount) {
+		return Gift.builder()
+				.live(live)
+				.user(user)
+				.amount(amount)
+				.giftDate(LocalDateTime.now())
+				.build();
+	}
 }
