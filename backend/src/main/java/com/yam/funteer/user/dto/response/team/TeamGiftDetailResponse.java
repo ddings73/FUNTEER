@@ -39,7 +39,7 @@ public class TeamGiftDetailResponse {
 
 		public static GiftInfo of(Gift gift){
 			return GiftInfo.builder()
-				.userName(gift.getMember().getName())
+				.userName(gift.getUser().getName())
 				.amount(gift.getAmount())
 				.giftDate(gift.getGiftDate().toLocalDate())
 				.build();

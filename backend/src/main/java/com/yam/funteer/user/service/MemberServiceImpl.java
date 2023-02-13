@@ -42,6 +42,7 @@ import java.util.List;
 public class MemberServiceImpl implements MemberService {
 
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final AttachRepository attachRepository;
@@ -219,8 +220,8 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public GiftDetailResponse getGiftDetails(Pageable pageable) {
         Long memberId = SecurityUtil.getCurrentUserId();
-        Member member = memberRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
-        Page<Gift> giftPage = giftRepository.findAllByMember(member, pageable);
+        User user = userRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
+        Page<Gift> giftPage = giftRepository.findAllByUser(user, pageable);
         return GiftDetailResponse.of(giftPage);
     }
 
