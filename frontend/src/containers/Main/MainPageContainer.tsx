@@ -49,6 +49,7 @@ export function MainPageContainer() {
       });
 
       console.log(eventSource);
+      
       // 최초 연결
       eventSource.onopen = (event) => {
         setListening(true);
@@ -65,16 +66,11 @@ export function MainPageContainer() {
 
       eventSource.addEventListener('sse', ((event: CustomEvent) => {
         console.log(event);
+        
       }) as EventListener);
-
-      eventSource.onerror = (error) => {
-        if (eventSource) {
-          eventSource.close();
-          setListening(false);
-          console.log(error);
-        }
-      };
-    } else {
+    } 
+    
+    else {
       console.log('logout');
       eventSource?.close();
     }
