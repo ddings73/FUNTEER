@@ -45,7 +45,7 @@ export default class StreamComponent extends Component {
         {this.props.checkLottie && (
           <div className="donationAnimation-box">
             <p className='donation-contents'>
-              {this.props.nickname}님이 {this.props.amount}원을 후원했습니다.
+              {this.props.donationUser}님이 {this.props.amount}원을 후원!!!
             </p>
             <Lottie animationData={donationLottie} />
           </div>
