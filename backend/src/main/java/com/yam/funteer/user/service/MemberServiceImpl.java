@@ -2,27 +2,39 @@ package com.yam.funteer.user.service;
 
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
+import com.yam.funteer.live.entity.Gift;
+import com.yam.funteer.live.repository.GiftRepository;
+import com.yam.funteer.pay.entity.Payment;
+import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
+import com.yam.funteer.user.dto.response.ChargeListResponse;
+import com.yam.funteer.user.dto.response.member.GiftDetailResponse;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
 import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
+import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
 import com.yam.funteer.user.entity.*;
 import com.yam.funteer.user.repository.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.util.List;
 
 @Service @Slf4j
 @Transactional
@@ -30,6 +42,7 @@ import javax.transaction.Transactional;
 public class MemberServiceImpl implements MemberService {
 
     private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
     private final MemberRepository memberRepository;
     private final TeamRepository teamRepository;
     private final AttachRepository attachRepository;
@@ -38,6 +51,11 @@ public class MemberServiceImpl implements MemberService {
     private final FollowRepository followRepository;
     private final FundingRepository fundingRepository;
     private final WishRepository wishRepository;
+    private final PaymentRepository paymentRepository;
+    private final GiftRepository giftRepository;
+    private final UserBadgeRepository userBadgeRepository;
+
+    private final BadgeService badgeService;
 
 
     @Override
@@ -49,6 +67,7 @@ public class MemberServiceImpl implements MemberService {
         request.encryptPassword(passwordEncoder);
         Member member = request.toMember();
         memberRepository.save(member);
+        badgeService.initBadges(member);
     }
 
     @Override
@@ -69,12 +88,12 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(userId)
                 .orElseThrow(UserNotFoundException::new);
 
-        member.validate();
 
-        long followCnt = followRepository.countAllByMember(member);
-        long wishCnt = wishRepository.countAllByMember(member);
+        long followCnt = followRepository.countAllByMemberAndChecked(member, true);
+        long wishCnt = wishRepository.countAllByMemberAndChecked(member, true);
+        List<UserBadge> userBadgeList = userBadgeRepository.findAllByUserId(member.getId());
 
-        return MemberProfileResponse.of(member, wishCnt, followCnt);
+        return MemberProfileResponse.of(member, wishCnt, followCnt, userBadgeList);
     }
 
     @Override
@@ -82,17 +101,30 @@ public class MemberServiceImpl implements MemberService {
         Long userId = SecurityUtil.getCurrentUserId();
         Member member = validateSameUser(userId, request.getUserId());
 
-        request.validateProfile();
         MultipartFile profileImg = request.getProfileImg();
 
-        String filePath = awsS3Uploader.upload(profileImg, "user");
-        Attach profile = member.getProfileImg().orElseGet(() -> request.getProfile(filePath));
+        if(profileImg != null) {
+            request.validateProfile();
+            String fileName = profileImg.getOriginalFilename();
 
-        if(profile.getId() == null){
-            attachRepository.save(profile);
-        }else{
-            profile.update(profileImg.getOriginalFilename(), filePath);
+            String filePath = awsS3Uploader.upload(profileImg, "user");
+            Attach profile = member.getProfileImg().orElseGet(() -> request.getProfile(filePath));
+
+            log.info("{} 프로필 이미지 변경", profile.getName());
+
+            if (profile.getId() == null) {
+                log.info("새로운 프로필사진 저장");
+                attachRepository.save(profile);
+                member.updateProfile(profile);
+            } else {
+                log.info("기존 프로필사진 업데이트 {} ==> {}", profile.getName(), fileName);
+                profile.update(fileName, filePath);
+            }
         }
+
+        log.info("{}", member);
+        log.info("{}", request);
+        member.updateDisplay(request.getDisplay());
     }
 
     @Override
@@ -101,34 +133,33 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(userid)
             .orElseThrow(UserNotFoundException::new);
 
-        member.validate();
         return MemberAccountResponse.of(member);
     }
 
     @Override
-    public void updateAccount(BaseUserRequest request) {
+    public void updateAccount(UpdateMemberAccountRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
         Member member = validateSameUser(userId, request.getUserId());
 
-        String newPassword = request.getPassword().orElseThrow(()->{
+        String password = request.getPassword().orElseThrow(()->{
             throw new IllegalArgumentException("패스워드는 필수 입력 값입니다.");
         });
-//        member.validatePassword(passwordEncoder, originPassword);
-//
-//        String newPassword = request.getNewPassword().orElseThrow(()->{
-//            throw new IllegalArgumentException("신규 패스워드는 필수 입력 값입니다.");
-//        });
+        member.validatePassword(passwordEncoder, password);
 
-        String pw = passwordEncoder.encode(newPassword);
-        member.changePassword(pw);
+        request.getNewPassword().ifPresent(newPw -> {
+            String encryptedPw = passwordEncoder.encode(newPw);
+            member.changePassword(encryptedPw);
+        });
     }
 
     @Override
-    public void followTeam(FollowRequest followRequest) {
-        Member member = memberRepository.findById(followRequest.getMemberId())
+    public void followTeam(Long teamId) {
+        Long memberId = SecurityUtil.getCurrentUserId();
+
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(UserNotFoundException::new);
 
-        Team team = teamRepository.findById(followRequest.getTeamId())
+        Team team = teamRepository.findById(teamId)
                 .orElseThrow(UserNotFoundException::new);
 
         followRepository.findByMemberAndTeam(member, team)
@@ -139,11 +170,12 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void wishFunding(WishRequest wishRequest) {
-        Member member = memberRepository.findById(wishRequest.getMemberId())
+    public void wishFunding(Long fundingId) {
+        Long memberId = SecurityUtil.getCurrentUserId();
+        Member member = memberRepository.findById(memberId)
                 .orElseThrow(UserNotFoundException::new);
 
-        Funding funding = fundingRepository.findById(wishRequest.getFundingId())
+        Funding funding = fundingRepository.findByFundingId(fundingId)
                 .orElseThrow(IllegalArgumentException::new);
 
         wishRepository.findByMemberAndFunding(member, funding)
@@ -154,16 +186,43 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
+    public MileageDetailResponse getMileageDetails(PostGroup postGroup, Pageable pageable) {
+        Long userId = SecurityUtil.getCurrentUserId();
+        Member member = memberRepository.findById(userId)
+            .orElseThrow(UserNotFoundException::new);
+
+        List<Payment> paymentList = paymentRepository.findAllByUserAndPostPostGroup(member, postGroup);
+        return MileageDetailResponse.of(paymentList);
+    }
+
+
+    @Override
     public void chargeMileage(ChargeRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
-        validateSameUser(userId, request.getUserId());
 
         Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         Long amount = request.getAmount();
 
         Charge charge = request.toEntity(member);
         chargeRepository.save(charge);
+        charge.setPayImpUid(request.getImpUid());
         member.charge(amount);
+    }
+
+    @Override
+    public Page<ChargeListResponse> getChargeList(Pageable pageable) {
+        Long memberId = SecurityUtil.getCurrentUserId();
+        Member member = memberRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
+        Page<ChargeListResponse> chargeList = chargeRepository.findAllByMember(member, pageable).map(m -> ChargeListResponse.from(m));
+        return chargeList;
+    }
+
+    @Override
+    public GiftDetailResponse getGiftDetails(Pageable pageable) {
+        Long memberId = SecurityUtil.getCurrentUserId();
+        User user = userRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
+        Page<Gift> giftPage = giftRepository.findAllByUser(user, pageable);
+        return GiftDetailResponse.of(giftPage);
     }
 
     private Member validateSameUser(Long i1, Long i2){
@@ -172,5 +231,6 @@ public class MemberServiceImpl implements MemberService {
 
         return memberRepository.findById(i1).orElseThrow(UserNotFoundException::new);
     }
+
 
 }

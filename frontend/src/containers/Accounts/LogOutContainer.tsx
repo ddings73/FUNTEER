@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { useAppDispatch } from '../../store/hooks';
-import { setUserLoginState } from '../../store/slices/userSlice';
+import { resetLoginState, setUserLoginState } from '../../store/slices/userSlice';
 import styles from './LogOutContainer.module.scss';
 
 export function LogOutContainer() {
@@ -13,7 +13,7 @@ export function LogOutContainer() {
   });
   useEffect(() => {
     localStorage.removeItem('token');
-    dispatch(setUserLoginState(false));
+    dispatch(resetLoginState());
     alert('로그아웃 되었습니다.');
     navigate('/');
   }, [loginState]);

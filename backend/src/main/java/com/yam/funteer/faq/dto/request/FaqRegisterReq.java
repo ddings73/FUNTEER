@@ -3,9 +3,11 @@ package com.yam.funteer.faq.dto.request;
 import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.PostType;
+import com.yam.funteer.faq.entity.Faq;
 import com.yam.funteer.post.entity.Post;
 
 import lombok.AllArgsConstructor;
@@ -25,22 +27,27 @@ public class FaqRegisterReq {
 	private String title;
 	@NotBlank
 	private String content;
+	@NotNull
+	private Long groupOrPerson;
 
-	public Post toEntity(){
-		return Post.builder()
+	public Faq toEntity(){
+		return Faq.builder()
 			.content(content)
 			.regDate(LocalDateTime.now())
 			.title(title)
+			.groupOrPerson(groupOrPerson)
 			.postGroup(PostGroup.ETC)
 			.postType(PostType.FAQ).build();
 	}
 
-	public Post toEntity(Long postId){
-		return Post.builder()
+	public Faq toEntity(Long postId,Long faqId){
+		return Faq.builder()
 			.id(postId)
+			.faqId(faqId)
 			.content(content)
 			.regDate(LocalDateTime.now())
 			.title(title)
+			.groupOrPerson(groupOrPerson)
 			.postGroup(PostGroup.ETC)
 			.postType(PostType.FAQ).build();
 	}

@@ -1,8 +1,8 @@
 import React from 'react';
-import NoticleDetailContainer from '../../containers/CustomerCenter/Notice/NoticleDetailContainer';
+import NoticeDetailContainer from '../../containers/CustomerCenter/Notice/NoticeDetailContainer';
 
 function NoticeDetail() {
-  return <NoticleDetailContainer />;
+  return <NoticeDetailContainer />;
 }
 
 export default NoticeDetail;

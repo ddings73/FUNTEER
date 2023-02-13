@@ -1,21 +1,21 @@
 package com.yam.funteer.common.config;
 
 import com.yam.funteer.common.security.JwtAuthenticationEntryPoint;
-import com.yam.funteer.common.security.JwtProvider;
 import com.yam.funteer.common.security.filter.JwtAuthFilter;
 import com.yam.funteer.common.security.handler.JwtAccessDeniedHandler;
-import com.yam.funteer.common.security.handler.JwtExceptionFilter;
+import com.yam.funteer.common.security.filter.JwtExceptionFilter;
 import com.yam.funteer.common.security.handler.OAuth2SuccessHandler;
 import com.yam.funteer.common.security.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,17 +23,15 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig{
-
-    private final JwtProvider jwtProvider;
     private final JwtAuthFilter jwtAuthFilter;
     private final JwtExceptionFilter jwtExceptionFilter;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
     private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
-
     private final OAuth2SuccessHandler successHandler;
     private final CustomOAuth2UserService oAuth2UserService;
 
@@ -41,26 +39,30 @@ public class SecurityConfig{
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .cors().configurationSource(corsConfigurationSource())
-            .and()
+                .and()
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS) // JWT 사용하니 session 생성 X
-            .and()
+                .and()
                 .exceptionHandling()
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 .accessDeniedHandler(jwtAccessDeniedHandler)
-            .and()
+                .and()
                 .authorizeRequests()
+                .antMatchers("/admin/**/**").hasRole("ADMIN")
+                .antMatchers("/subscribe").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/member", "/team").permitAll() // 회원가입
                 .mvcMatchers(HttpMethod.GET, "/member/**/profile", "/team/**/profile").permitAll() // 프로필 조회
-                .antMatchers("/admin/**/**", "/member/**/**", "/team/**/**").authenticated()
+                .antMatchers("/member/**/**", "/team/**/**").authenticated()
                 .anyRequest().permitAll()
-            .and()
+                .and()
+                .addFilterBefore(jwtExceptionFilter, OAuth2LoginAuthenticationFilter.class)
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtExceptionFilter, JwtAuthFilter.class)
-            .oauth2Login()
+                .oauth2Login()
                 .successHandler(successHandler) // oAuth 정보를 가져오면 동작할 핸들러
                 .userInfoEndpoint().userService(oAuth2UserService); // 여기서 oAuth 정보를 가져옴
+
+
         return http.build();
     }
 

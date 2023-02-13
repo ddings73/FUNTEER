@@ -13,11 +13,6 @@ type adminSideBarDataType = {
 
 export const AdminSideBarItem: adminSideBarDataType[] = [
   {
-    title: '관리자 홈',
-    path: 'main',
-    icon: <AiIcons.AiFillHome color="white" />,
-  },
-  {
     title: '개인 회원관리',
     path: 'member',
     icon: <BsIcons.BsPersonFill color="white" />,
@@ -34,23 +29,13 @@ export const AdminSideBarItem: adminSideBarDataType[] = [
   },
   {
     title: '자체 기부 관리',
-    path: 'donate',
+    path: 'donation',
     icon: <FaIcons.FaMoneyBillWave color="white" />,
   },
   {
     title: '공지사항 관리',
-    path: 'announcement',
+    path: 'notice',
     icon: <AiIcons.AiFillExclamationCircle color="white" />,
-  },
-  {
-    title: 'FAQ 관리',
-    path: 'faq',
-    icon: <AiIcons.AiFillQuestionCircle color="white" />,
-  },
-  {
-    title: '라이브 관리',
-    path: 'live',
-    icon: <BsIcons.BsBroadcastPin color="white" />,
   },
 ];
 

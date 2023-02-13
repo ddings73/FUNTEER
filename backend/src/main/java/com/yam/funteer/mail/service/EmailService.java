@@ -1,9 +1,15 @@
 package com.yam.funteer.mail.service;
 
+import java.io.UnsupportedEncodingException;
+
+import javax.mail.MessagingException;
+
 import com.yam.funteer.common.code.PostGroup;
 
 public interface EmailService {
-    String sendSimpleMessage(String to) throws Exception;
+    void sendEmailCodeMessage(String to) throws Exception;
+    void sendPostRejectMessage(String to, String rejectReason, PostGroup postGroup);
+    void sendTeamRejectMessage(String to, String rejectReason);
 
-    String sendRejectMessage(String to, String rejectReason, PostGroup postGroup) throws Exception;
+    boolean confirmCode(String email, String code);
 }

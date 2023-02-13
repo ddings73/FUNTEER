@@ -3,9 +3,9 @@ import { FileModalType } from '../../types/modal';
 
 const initialState: FileModalType = {
   isOpen: false,
-  vmsNum: '',
-  vmsFile: '',
-  performFile: '',
+  userId: '',
+  vmsFileUrl: '',
+  performFileUrl: '',
   deniedNum: '',
 };
 
@@ -15,23 +15,23 @@ export const fileModalSlice = createSlice({
   reducers: {
     openModal: (state, action: PayloadAction<FileModalType>) => {
       state.isOpen = action.payload.isOpen;
-      state.vmsNum = action.payload.vmsNum;
-      state.vmsFile = action.payload.vmsFile;
-      state.performFile = action.payload.performFile;
+      state.userId = action.payload.userId;
+      state.vmsFileUrl = action.payload.vmsFileUrl;
+      state.performFileUrl = action.payload.performFileUrl;
       state.deniedNum = action.payload.deniedNum;
     },
     closeModal: (state) => {
       state.isOpen = false;
-      state.vmsNum = '';
-      state.vmsFile = '';
-      state.performFile = '';
+      state.userId = '';
+      state.vmsFileUrl = '';
+      state.performFileUrl = '';
       state.deniedNum = '';
     },
     denyTeam: (state, action: PayloadAction<FileModalType>) => {
       state.isOpen = action.payload.isOpen;
-      state.vmsNum = action.payload.vmsNum;
-      state.vmsFile = action.payload.vmsFile;
-      state.performFile = action.payload.performFile;
+      state.userId = action.payload.userId;
+      state.vmsFileUrl = action.payload.vmsFileUrl;
+      state.performFileUrl = action.payload.performFileUrl;
       state.deniedNum = action.payload.deniedNum;
     },
   },

@@ -2,11 +2,11 @@ package com.yam.funteer.user.controller;
 
 import java.util.List;
 
-import com.yam.funteer.common.BaseResponseBody;
 import com.yam.funteer.user.dto.request.BaseUserRequest;
 import com.yam.funteer.user.dto.request.team.CreateTeamRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamAccountRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
+import com.yam.funteer.user.dto.response.team.TeamGiftDetailResponse;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
 import com.yam.funteer.user.dto.response.team.TeamProfileResponse;
 import com.yam.funteer.user.service.TeamService;
@@ -18,13 +18,14 @@ import io.swagger.annotations.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController @Slf4j
 @RequestMapping("/team")
@@ -71,8 +72,9 @@ public class TeamController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @GetMapping("/{userId}/profile")
-    public ResponseEntity<TeamProfileResponse> getProfile(@PathVariable Long userId){
-        TeamProfileResponse teamProfile = teamService.getTeamProfile(userId);
+    public ResponseEntity<TeamProfileResponse> getProfile(@PathVariable Long userId,
+                                          @PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
+        TeamProfileResponse teamProfile = teamService.getTeamProfile(userId, pageable);
         return ResponseEntity.ok(teamProfile);
     }
 
@@ -84,9 +86,10 @@ public class TeamController {
             @ApiResponse(code = 500, message = "서버 에러")
     })
     @PutMapping("/profile")
-    public void modifyProfile(@Validated @ModelAttribute UpdateTeamProfileRequest request, BindingResult bindingResult){
+    public ResponseEntity modifyProfile(@Validated @ModelAttribute UpdateTeamProfileRequest request, BindingResult bindingResult){
         validateBinding(bindingResult);
         teamService.updateProfile(request);
+        return ResponseEntity.ok("프로필 수정 완료");
     }
 
     @ApiOperation(value = "단체회원 개인정보 조회", notes = "ID를 이용하여 개인정보 조회할 수 있다")
@@ -109,9 +112,17 @@ public class TeamController {
         @ApiResponse(code = 500, message = "서버 에러")
     })
     @PutMapping("/account")
-    public void modifyAccount(@Validated @ModelAttribute UpdateTeamAccountRequest request, BindingResult bindingResult){
+    public ResponseEntity modifyAccount(@ModelAttribute UpdateTeamAccountRequest request){
         teamService.updateAccount(request);
+        return ResponseEntity.ok("회원정보 수정 완료");
     }
+
+     @ApiOperation(value = "단체회원 GIFT 받은내역 조회")
+     @GetMapping("/account/gift")
+     public ResponseEntity<TeamGiftDetailResponse> getPaymentReceipt(@PageableDefault(size = 8, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+         TeamGiftDetailResponse response = teamService.getGiftDetails(pageable);
+         return ResponseEntity.ok(response);
+     }
 
     public void validateBinding(BindingResult bindingResult){
         if(bindingResult.hasErrors()){

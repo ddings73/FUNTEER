@@ -13,14 +13,12 @@ import javax.persistence.Table;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.user.entity.Member;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.yam.funteer.user.entity.Team;
+import lombok.*;
 
 @Entity
 @Table(name = "live")
-@Getter
+@Getter @Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Live {
@@ -29,12 +27,23 @@ public class Live {
 	@ManyToOne
 	@JoinColumn(name = "funding_id")
 	private Funding funding;
-
-	@ManyToOne
-	@JoinColumn(name = "member_id")
-	private Member member;
-	
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 	private String sessionId;
+
+	public static Live of(String sessionId, Funding funding) {
+		return Live.builder()
+				.sessionId(sessionId)
+				.funding(funding)
+				.startTime(LocalDateTime.now())
+				.build();
+	}
+
+	public void end() {
+		this.endTime = LocalDateTime.now();
+	}
+
+	public Team getTeam() {
+		return funding.getTeam();
+	}
 }

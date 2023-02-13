@@ -1,5 +1,8 @@
 package com.yam.funteer.faq.dto.response;
 
+import java.time.LocalDate;
+
+import com.yam.funteer.faq.entity.Faq;
 import com.yam.funteer.post.entity.Post;
 
 import lombok.Getter;
@@ -8,9 +11,13 @@ import lombok.Getter;
 public class FaqListRes {
 	private String title;
 	private Long id;
+	private LocalDate localDate;
+	private Long groupOrPersont;
 
-	public FaqListRes(Post post){
+	public FaqListRes(Faq post){
 		this.title=post.getTitle();
-		this.id=post.getId();
+		this.id=post.getFaqId();
+		this.localDate=post.getRegDate().toLocalDate();
+		this.groupOrPersont=post.getGroupOrPerson();
 	}
 }

@@ -4,10 +4,13 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.yam.funteer.funding.entity.Funding;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @NoArgsConstructor
@@ -23,14 +26,19 @@ public class FundingRequest {
 	@NotNull
 	private String content;
 	@NotNull
-	private String  startDate;
+	private String startDate;
 	@NotNull
 	private String endDate;
+
+	private String thumbnail;
 
 	@NotNull
 	private String fundingDescription;
 
-	private List<TargetMoneyRequest> targetMoneyRequestList;
+	private TargetMoneyRequest targetMoneyLevelOne;
+	private TargetMoneyRequest targetMoneyLevelTwo;
+	private TargetMoneyRequest targetMoneyLevelThree;
 	private String hashtags;
+
 
 }

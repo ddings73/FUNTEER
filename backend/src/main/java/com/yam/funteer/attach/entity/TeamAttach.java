@@ -19,6 +19,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "team_attach")
 @Getter @Builder
@@ -35,8 +37,6 @@ public class TeamAttach {
 	@JoinColumn(name = "team_id")
 	private Team team;
 
-	private String rejectComment;
-
 	private boolean confirm;
 
 	public static TeamAttach of(Team team, Attach attach) {
@@ -45,5 +45,14 @@ public class TeamAttach {
 			.attach(attach)
 			.confirm(false)
 			.build();
+	}
+
+	public void updateAttach(Attach attach) {
+		this.attach.update(attach.getName(), attach.getPath());
+	}
+
+
+	public void submit() {
+		this.confirm = true;
 	}
 }

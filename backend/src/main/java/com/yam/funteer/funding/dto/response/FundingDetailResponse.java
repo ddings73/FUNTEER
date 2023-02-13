@@ -1,13 +1,17 @@
 package com.yam.funteer.funding.dto.response;
 
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.Page;
+
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.post.entity.PostHashtag;
+import com.yam.funteer.post.repository.CommentRepository;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
 
 import lombok.AllArgsConstructor;
@@ -21,6 +25,8 @@ import lombok.Getter;
 @Getter
 public class FundingDetailResponse {
 
+	private final CommentRepository commentRepository;
+
 	private TeamAccountResponse team;
 
 	private Long wishCount;
@@ -32,138 +38,66 @@ public class FundingDetailResponse {
 	private String content;
 
 	private String category;
+	private Long categoryId;
 
-	private LocalDate start;
-	private LocalDate end;
+	private LocalDate startDate;
+	private LocalDate endDate;
 
 	private LocalDateTime postDate;
 
-	private List<TargetMoneyResponse> targetMoneyListLevelOne;
-	private List<TargetMoneyResponse> targetMoneyListLevelTwo;
-	private List<TargetMoneyResponse> targetMoneyListLevelThree;
+	private TargetMoneyResponse targetMoneyListLevelOne;
+	private TargetMoneyResponse targetMoneyListLevelTwo;
+	private TargetMoneyResponse targetMoneyListLevelThree;
 
 	private Optional<HashtagResponse> postHashtagList;
 
+	private Boolean isWished;
+
 	private String thumbnail;
 
-	private Optional<List<CommentResponse>> comments;
+	private Optional<Page<CommentResponse>> comments;
 
-	private Long currentFundingAmount;
+	private String currentFundingAmount;
+
+	private int hit;
 
 	public static FundingDetailResponse from(Funding funding) {
 
+		DecimalFormat decFormat = new DecimalFormat("###,###");
+		String str = decFormat.format(funding.getCurrentFundingAmount());
+
 		TeamAccountResponse team = TeamAccountResponse.from(funding.getTeam());
 
-		return FundingDetailResponse.builder()
+		FundingDetailResponse response = FundingDetailResponse.builder()
 			.team(team)
-			.fundingId(funding.getId())
+			.fundingId(funding.getFundingId())
 			.category(funding.getCategory().getName())
+			.categoryId(funding.getCategory().getId())
 			.title(funding.getTitle())
 			.content(funding.getContent())
-			.start(funding.getStartDate())
-			.end(funding.getEndDate())
+			.startDate(funding.getStartDate())
+			.endDate(funding.getEndDate())
 			.postDate(funding.getRegDate())
 			.thumbnail(funding.getThumbnail())
-			.currentFundingAmount(funding.getCurrentFundingAmount())
+			.currentFundingAmount(str)
 			.fundingDescription(funding.getFundingDescription())
+			.hit(funding.getHit())
 			.build();
 
-		// funding.getComments().ifPresent(comments -> comments.stream().map(comment -> CommentResponse.from(comment)).collect(Collectors.toList()));
-		// response.setComments(comments);
+		// funding.getComments().ifPresent(comments -> {
+		// 	Optional<List<CommentResponse>> collect = Optional.of(comments.stream()
+		// 		.map(comment -> CommentResponse.from(comment))
+		// 		.collect(Collectors.toList()));
+		// 	response.setComments(collect);
+		// });
 
 
-		// List<TargetMoneyResponse> targetMoneyResponses = new ArrayList<>();
-		// for (TargetMoney tm : funding.getTargetMoneyList()) {
-		// 	targetMoneyResponses.add(TargetMoneyResponse.from(tm));
-		// }
-		//
-		// try {
-		//
-		// 	if (funding.getComments() == null) {
-		// 		throw new NotFoundCommentsException();
-		// 	}
-		//
-		// 	if (funding.getHashtags() == null) {
-		// 		throw new NotFoundHashtagException();
-		// 	}
-		//
-		//
-		// 	List<CommentResponse> commentResponses = new ArrayList<>();
-		// 	for (Comment cm : funding.getComments()) {
-		// 		commentResponses.add(CommentResponse.from(cm));
-		// 	}
-		//
-		// 	return FundingDetailResponse.builder()
-		// 		.team(team)
-		// 		.fundingId(funding.getId())
-		// 		.category(funding.getCategory().getName())
-		// 		.title(funding.getTitle())
-		// 		.content(funding.getContent())
-		// 		.start(funding.getStartDate())
-		// 		.end(funding.getEndDate())
-		// 		.postDate(funding.getRegDate())
-		// 		.postHashtagList(HashtagResponse.from(funding.getHashtags()))
-		// 		.thumbnail(funding.getThumbnail())
-		// 		.comments(commentResponses)
-		// 		.currentFundingAmount(funding.getCurrentFundingAmount())
-		// 		.fundingDescription(funding.getFundingDescription())
-		// 		.build();
-		//
-		// } catch (NotFoundCommentsException e) {
-		//
-		// 	e.printStackTrace();
-		// 	return FundingDetailResponse.builder()
-		// 		.team(team)
-		// 		.fundingId(funding.getId())
-		// 		.category(funding.getCategory().getName())
-		// 		.title(funding.getTitle())
-		// 		.content(funding.getContent())
-		// 		.start(funding.getStartDate())
-		// 		.end(funding.getEndDate())
-		// 		.postDate(funding.getRegDate())
-		// 		.postHashtagList(HashtagResponse.from(funding.getHashtags()))
-		// 		.currentFundingAmount(funding.getCurrentFundingAmount())
-		// 		.thumbnail(funding.getThumbnail())
-		// 		.fundingDescription(funding.getFundingDescription())
-		// 		.build();
-		//
-		// } catch (NotFoundHashtagException e) {
-		//
-		// 	List<CommentResponse> commentResponses = new ArrayList<>();
-		// 	for (Comment cm : funding.getComments()) {
-		// 		commentResponses.add(CommentResponse.from(cm));
-		// 	}
-		//
-		// 	return FundingDetailResponse.builder()
-		// 		.team(team)
-		// 		.fundingId(funding.getId())
-		// 		.category(funding.getCategory().getName())
-		// 		.title(funding.getTitle())
-		// 		.content(funding.getContent())
-		// 		.start(funding.getStartDate())
-		// 		.end(funding.getEndDate())
-		// 		.postDate(funding.getRegDate())
-		// 		.thumbnail(funding.getThumbnail())
-		// 		.comments(commentResponses)
-		// 		.currentFundingAmount(funding.getCurrentFundingAmount())
-		// 		.fundingDescription(funding.getFundingDescription())
-		// 		.build();
-		//
-		// }  finally {
-		// 	return FundingDetailResponse.builder()
-		// 		.team(team)
-		// 		.fundingId(funding.getId())
-		// 		.category(funding.getCategory().getName())
-		// 		.title(funding.getTitle())
-		// 		.content(funding.getContent())
-		// 		.start(funding.getStartDate())
-		// 		.end(funding.getEndDate())
-		// 		.postDate(funding.getRegDate())
-		// 		.thumbnail(funding.getThumbnail())
-		// 		.currentFundingAmount(funding.getCurrentFundingAmount())
-		// 		.fundingDescription(funding.getFundingDescription())
-		// 		.build();
-		// }
+		funding.getPostHashtags().ifPresent(postHashtags -> {
+			Optional<HashtagResponse> hashtagList = Optional.of(HashtagResponse.from(postHashtags));
+			response.setPostHashtagList(hashtagList);
+		});
+
+		return response;
 	}
 
 }

@@ -13,22 +13,31 @@ import { FileModalType } from '../../types/modal';
 import { closeModal, denyTeam } from '../../store/slices/fileModalSlice';
 
 import styles from './FileModal.module.scss';
+import { requestAcceptTeam } from '../../api/admin';
+import { customAlert, s1000 } from '../../utils/customAlert';
 
-function FileModal({ isOpen, vmsNum, vmsFile, performFile, deniedNum }: FileModalType) {
+function FileModal({ isOpen, userId, vmsFileUrl, performFileUrl }: FileModalType) {
   const dispatch = useAppDispatch();
 
   const onClickCloseBtnHandler = () => {
     dispatch(closeModal());
   };
 
-  const onClickApproveBtnHandler = () => {
-    console.log('단체 가입 승인 요청');
+  const onClickApproveBtnHandler = async () => {
+    try {
+      const response = await requestAcceptTeam(parseInt(userId, 10));
+      console.log(response);
+      customAlert(s1000, '단체 승인 완료');
+      dispatch(closeModal());
+    } catch (error) {
+      console.error(error);
+    }
     dispatch(closeModal());
   };
 
   const onClickDenyBtnHandler = () => {
     console.log('단체 가입 승인 거부');
-    dispatch(denyTeam({ isOpen: false, vmsNum, vmsFile, performFile, deniedNum: vmsNum }));
+    dispatch(denyTeam({ isOpen: false, userId, vmsFileUrl, performFileUrl, deniedNum: userId.toString() }));
   };
 
   return (
@@ -36,17 +45,21 @@ function FileModal({ isOpen, vmsNum, vmsFile, performFile, deniedNum }: FileModa
       <button type="button" className={styles['close-btn']} onClick={onClickCloseBtnHandler}>
         X
       </button>
-      <DialogTitle id="alert-dialog-title">위촉 번호: {vmsNum}</DialogTitle>
+      <DialogTitle id="alert-dialog-title">유저 번호: {userId}</DialogTitle>
       <DialogContent>
-        <DialogContentText id="alert-dialog-description">VMS 파일: {vmsFile}</DialogContentText>
-        <DialogContentText id="alert-dialog-description">봉사 실적 파일: {performFile}</DialogContentText>
+        <DialogContentText id="alert-dialog-description">
+          VMS 파일: <a href={vmsFileUrl}>{`${userId}_vms_file`}</a>
+        </DialogContentText>
+        <DialogContentText id="alert-dialog-description">
+          봉사 실적 파일: <a href={performFileUrl}>{`${userId}_perform_file`}</a>
+        </DialogContentText>
       </DialogContent>
       <DialogActions>
         <Button variant="contained" onClick={onClickApproveBtnHandler} className={styles['approve-btn']}>
           승인
         </Button>
         <Button variant="contained" onClick={onClickDenyBtnHandler} className={styles['deny-btn']}>
-          거절
+          거부
         </Button>
       </DialogActions>
     </Dialog>

@@ -30,10 +30,10 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        String userId = (String)oAuth2User.getAttributes().get("userId");
+        String email = (String)oAuth2User.getAttributes().get("email");
 
-        String targetURI = UriComponentsBuilder.fromUriString("https://i8e204.p.ssafy.io/api/v1/login/kakao")
-            .queryParam("userId", userId).toUriString();
+        String targetURI = UriComponentsBuilder.fromUriString("http://localhost:3000/login/kakao")//https://i8e204.p.ssafy.io/login/kakao")
+            .queryParam("email", email).toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetURI);
     }
 }

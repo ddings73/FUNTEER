@@ -1,18 +1,19 @@
 package com.yam.funteer.funding.controller;
 
 import java.io.IOException;
-import java.util.List;
 
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.common.aws.AwsS3Uploader;
@@ -23,14 +24,16 @@ import com.yam.funteer.funding.dto.response.FundingListResponse;
 import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
-import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
 import com.yam.funteer.funding.exception.CommentNotFoundException;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
+import com.yam.funteer.funding.exception.NotAuthenticatedMemberException;
+import com.yam.funteer.funding.exception.NotAuthenticatedTeamException;
 import com.yam.funteer.funding.service.FundingService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -42,28 +45,41 @@ public class FundingController {
 	private final FundingService fundingService;
 	private final AwsS3Uploader awsS3Uploader;
 
+
 	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
 	@GetMapping("")
-	public ResponseEntity<FundingListPageResponse> findAllFunding() {
-		return ResponseEntity.ok(fundingService.findAllFunding());
+	public ResponseEntity<FundingListPageResponse> findAllFunding(
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+		return ResponseEntity.ok(fundingService.findAllFunding(pageRequest));
 	}
 
 	@ApiOperation(value = "펀딩 검색 조회", notes = "검색을 통해 제목과 내용에 키워드가 포함된 펀딩을 조회한다.")
 	@GetMapping("/search")
-	public ResponseEntity<List<FundingListResponse>> findFundingByKeyword(@RequestParam String keyword) {
-		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword));
+	public ResponseEntity<Page<FundingListResponse>> findFundingByKeyword(@RequestParam String keyword,
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword, pageRequest));
 	}
 
 	@ApiOperation(value = "해시태그별 펀딩 조회", notes = "해시태그별 펀딩 목록을 조회한다.")
 	@GetMapping("/hasgtag")
-	private ResponseEntity<List<FundingListResponse>> findFundingByHashtag(@RequestParam String hashtag) {
-		return ResponseEntity.ok(fundingService.findFundingByHashtag(hashtag));
+	private ResponseEntity<Page<FundingListResponse>> findFundingByHashtag(@RequestParam String hashtag,
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+		return ResponseEntity.ok(fundingService.findFundingByHashtag(hashtag, pageRequest));
 	}
 
 	@ApiOperation(value = "카테고리별 펀딩 리스트 조회", notes = "카테고리별 펀딩 리스트를 조회한다.")
 	@GetMapping("/category/{categoryId}")
-	public ResponseEntity<List<FundingListResponse>> findFundingByCategory(@PathVariable Long categoryId) {
-		return ResponseEntity.ok(fundingService.findFundingByCategory(categoryId));
+	public ResponseEntity<Page<FundingListResponse>> findFundingByCategory(@PathVariable Long categoryId,
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+		return ResponseEntity.ok(fundingService.findFundingByCategory(categoryId, pageRequest));
 	}
 
 	@ApiOperation(value = "펀딩 생성 시 s3에 파일업로드", notes = "펀딩 생성 시 s3에 파일을 업로드 한다.")
@@ -73,25 +89,37 @@ public class FundingController {
 		return fileName;
 	}
 
+	@ApiOperation(value = "펀딩 생성 시 썸네일 s3에 파일업로드", notes = "펀딩 생성 시 s3에 썸네일 파일을 업로드 한다.")
+	@PostMapping("/upload/thumbnail")
+	public String uploadThumbnail(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+		String fileName = awsS3Uploader.upload(multipartFile, "thumbnails/");
+		return fileName;
+	}
 
 	@ApiOperation(value = "펀딩 생성", notes = "새로운 펀딩 게시글을 생성한다.")
-	@PostMapping("")
-	public  ResponseEntity<?> createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException {
-		FundingDetailResponse funding = fundingService.createFunding(thumbnail, data);
+	@PostMapping(value = "", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+	public  ResponseEntity<?> createFunding(@RequestPart FundingRequest data) throws
+		IOException,
+		NotAuthenticatedTeamException {
+		FundingDetailResponse funding = fundingService.createFunding(data);
 		return ResponseEntity.ok(funding);
 	}
 
 	@ApiOperation(value = "펀딩 상세 조회", notes = "펀딩 게시글 상세를 조회한다.")
 	@GetMapping("/{fundingId}")
-	public ResponseEntity<FundingDetailResponse> readFundingDetail(@PathVariable Long fundingId) {
-		return ResponseEntity.ok(fundingService.findFundingById(fundingId));
+	public ResponseEntity<FundingDetailResponse> readFundingDetail(@PathVariable Long fundingId,
+		@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC)Pageable pageable,
+		HttpServletRequest request,
+		HttpServletResponse response) throws
+		NotAuthenticatedMemberException {
+		fundingService.updateHit(fundingId, request, response);
+		return ResponseEntity.ok(fundingService.findFundingById(fundingId, pageable));
 	}
 
 	@ApiOperation(value = "펀딩 게시글 수정", notes = "펀딩 게시글을 수정한다.")
-	@PutMapping("/{fundingId}")
-	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, MultipartFile thumbnail,
-		FundingRequest data) throws Exception {
-		return ResponseEntity.ok(fundingService.updateFunding(fundingId, thumbnail, data));
+	@PutMapping(value = "/{fundingId}", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+	public ResponseEntity<FundingDetailResponse> updateFunding(@PathVariable Long fundingId, @RequestPart FundingRequest data) throws Exception {
+		return ResponseEntity.ok(fundingService.updateFunding(fundingId, data));
 	}
 
 	@ApiOperation(value = "펀딩 게시글 삭제", notes = "펀딩 게시글을 삭제한다.")
@@ -122,7 +150,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 참여", notes = "회원이 펀딩에 참여한다.")
 	@PostMapping("/{fundingId}/pay")
-	public ResponseEntity<?> takeFunding(@PathVariable Long fundingId, TakeFundingRequest data) {
+	public ResponseEntity<?> takeFunding(@PathVariable Long fundingId, @RequestBody TakeFundingRequest data) {
 		fundingService.takeFunding(fundingId, data);
 		return ResponseEntity.ok("펀딩 참여 완료");
 	}
@@ -136,7 +164,9 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 댓글 삭제", notes = "펀딩 게시글의 댓글을 삭제한다.")
 	@DeleteMapping("/comment/{commentId}")
-	public ResponseEntity<?> deleteFundingComment(@PathVariable Long commentId) throws CommentNotFoundException {
+	public ResponseEntity<?> deleteFundingComment(@PathVariable Long commentId) throws
+		CommentNotFoundException,
+		NotAuthenticatedMemberException {
 		fundingService.deleteFundingComment(commentId);
 		return ResponseEntity.ok("삭제 완료");
 	}

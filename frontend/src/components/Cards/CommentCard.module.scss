@@ -1,17 +1,18 @@
 .cardContainer {
   width: 95%;
-  height: 150px;
-  background-color: rgb(255, 255, 255);
+  height: 90px;
+  background-image: linear-gradient(-45deg, #edf0f3, #ffffff);
   margin-bottom: 2%;
   border-radius: 10px;
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+  position: relative;
   & .commentMid {
     display: flex;
     align-items: center;
-    padding: 3%;
-    padding-top: 40px;
+    padding: 2% 3%;
     & .commentImg {
-      width: 6%;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       margin-right: 3%;
     }
@@ -23,6 +24,23 @@
       text-align: left;
       margin-bottom: 10px;
       font-weight: 600;
+      span {
+        margin-left: 10px;
+        font-size: 0.8em;
+        color: rgb(112, 112, 112);
+        font-weight: 600;
+      }
     }
+  }
+}
+
+.deleteBtn {
+  position: absolute;
+  right: 30px;
+  bottom: 30px;
+  cursor: pointer;
+  transition: 0.5s;
+  &:hover {
+    color: orangered;
   }
 }
