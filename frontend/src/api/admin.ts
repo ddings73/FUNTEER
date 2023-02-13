@@ -68,7 +68,7 @@ export const requestAdminFundingList = async (page: number, size: number) => {
     size,
   };
 
-  const response = http.get('funding', { params });
+  const response = http.get('admin/funding', { params });
 
   return response;
 };
