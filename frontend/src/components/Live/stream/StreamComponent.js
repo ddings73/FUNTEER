@@ -9,7 +9,9 @@ import VideocamOff from '@material-ui/icons/VideocamOff';
 import VolumeUp from '@material-ui/icons/VolumeUp';
 import VolumeOff from '@material-ui/icons/VolumeOff';
 import IconButton from '@material-ui/core/IconButton';
+import Lottie from 'lottie-react';
 import OvVideoComponent from './OvVideo';
+import donationLottie from '../../../lotties/115250-hand-and-coin-donation-request.json';
 
 export default class StreamComponent extends Component {
   constructor(props) {
@@ -17,9 +19,18 @@ export default class StreamComponent extends Component {
     this.state = { nickname: this.props.user.getNickname(), sessionId: this.props.sessionId };
   }
 
+  componentDidMount() {
+    // 일정 시간 지나면 도네이션 애니메이션 제거
+    if (this.props.checkLottie) {
+      setTimeout(() => {
+        this.setState({ checkLottie: false });
+      }, 3000);
+    }
+  }
+
   render() {
     console.log('Stream!!!!!!!!!!!!!!!!!!!!!!!!!!!!', this.state);
-    console.log(this.props.allAmount);
+    // console.log(this.props.allAmount);
     return (
       <div className="OT_widget-container">
         <div className="info-box">
@@ -39,6 +50,13 @@ export default class StreamComponent extends Component {
             </p>
           </div>
         </div>
+
+        {this.props.checkLottie && (
+          <div className="donationAnimation-box">
+            <p>{this.props.money}를 후원했습니다!!!!!</p>
+            <Lottie animationData={donationLottie} />
+          </div>
+        )}
 
         {this.props.user !== undefined && this.props.user.getStreamManager() !== undefined ? (
           <div className="streamComponent">
