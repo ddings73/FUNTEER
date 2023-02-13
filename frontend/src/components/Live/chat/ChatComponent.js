@@ -50,14 +50,14 @@ export default class ChatComponent extends Component {
       this.scrollToBottom();
     });
 
-    this.props.user.getStreamManager().stream.session.on('signal:updateAmount', async (event) => {
-      const data = JSON.parse(event.data);
-      console.log('씨그날ㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹ', data);
-      await this.props.liveDonation(data);
-      await this.props.updateAllAmount(data);
-      this.setState({ amount: '', toggle: false });
-      alert(`${data}원이 기부되었습니다`);
-    });
+    // this.props.user.getStreamManager().stream.session.on('signal:updateAmount', async (event) => {
+    //   const data = JSON.parse(event.data);
+    //   console.log('씨그날ㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹ', data);
+    //   await this.props.liveDonation(data);
+    //   await this.props.updateAllAmount(data);
+    //   this.setState({ amount: '', toggle: false });
+    //   alert(`${data}원이 기부되었습니다`);
+    // });
   }
 
   handleChange(event) {
@@ -80,14 +80,12 @@ export default class ChatComponent extends Component {
 
   onClickDonation() {
     const money = Number(this.state.amount.replaceAll(',', ''));
-    console.log(money);
-    console.log(this.props.userCurrentMoney);
-    if (money > this.props.userCurrentMoney) {
+    if (money > this.props.userCurrentMoney || money === 0) {
       alert('잔고 부족함띠 ㅡㅡ');
     } else {
       this.props.user.getStreamManager().stream.session.signal({
         data: JSON.stringify(money),
-        type: 'updateAmount',
+        type: 'liveDonation',
       });
       // this.props.liveDonation(money);
       // this.props.updateAllAmount(money);
@@ -129,6 +127,7 @@ export default class ChatComponent extends Component {
   }
 
   render() {
+    console.log(this.props);
     const regex = /[^0-9]/g;
     const userCurrentMoneyToString = stringToSeparator(String(this.props.userCurrentMoney).replaceAll(regex, ''));
     // console.log(this.props.user)
@@ -138,7 +137,7 @@ export default class ChatComponent extends Component {
         <div id="chatComponent">
           <div id="chatToolbar">
             <span> 채팅방</span>
-            {/* {this.props.userType !== 'TEAM' ? (
+            {this.props.userType !== 'TEAM' ? (
               <Tooltip title="후원하기" placement="right">
                 <IconButton sx={{ color: 'rgba(236, 153, 75, 1) !important' }} onClick={this.toggleDonation}>
                   <PaidOutlinedIcon color="inherit" sx={{ fontSize: 28 }} />
@@ -146,12 +145,12 @@ export default class ChatComponent extends Component {
               </Tooltip>
             ) : (
               ''
-            )} */}
-            <Tooltip title="후원하기" placement="right">
+            )}
+            {/* <Tooltip title="후원하기" placement="right">
               <IconButton sx={{ color: 'rgba(236, 153, 75, 1) !important' }} onClick={this.toggleDonation}>
                 <PaidOutlinedIcon color="inherit" sx={{ fontSize: 28 }} />
               </IconButton>
-            </Tooltip>
+            </Tooltip> */}
           </div>
 
           <div className={cn('donation-box', this.state.toggle ? 'toggle' : '')}>
