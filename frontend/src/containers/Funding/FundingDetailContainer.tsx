@@ -354,7 +354,7 @@ export function FundingDetailContainer() {
 
   const createSession = async () => {
     try {
-      const response = await requestCreateSession(teamInfo.name, 1);
+      const response = await requestCreateSession(teamInfo.name, Number(fundIdx));
       localStorage.setItem('liveToken', response.data.token);
       navigate(`../publisherLiveRoom/${teamInfo.name}`);
     } catch (e) {
