@@ -80,6 +80,7 @@ export default class ChatComponent extends Component {
 
   onClickDonation() {
     const money = Number(this.state.amount.replaceAll(',', ''));
+
     if (money > this.props.userCurrentMoney || money === 0) {
       alert('잔고 부족함띠 ㅡㅡ');
     } else {

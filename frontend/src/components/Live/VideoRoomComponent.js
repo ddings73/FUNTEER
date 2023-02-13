@@ -123,7 +123,7 @@ class VideoRoomComponent extends Component {
 
   subscribeToLiveDonation() {
     this.state.session.on('signal:liveDonation', (event) => {
-      const data = JSON.parse(event.date);
+      const data = JSON.parse(event.data);
       console.log(data);
       this.props.liveDonation(data);
     });
