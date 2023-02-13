@@ -8,6 +8,7 @@ import FunList from '../../components/Main/funList';
 import LiveList from '../../components/Main/liveList';
 import ast from '../../assets/images/mainPage/ast.png';
 import planet from '../../assets/images/mainPage/planet_funteer.png';
+import background from '../../assets/images/mainPage/background.png';
 import wave from '../../assets/images/mainPage/wave.svg';
 import wave2 from '../../assets/images/mainPage/wave2.svg';
 
@@ -37,12 +38,12 @@ export function MainPageContainer() {
       // sse 연결
       // http://localhost:8080/api/v1/subscribe
       // https://i8e204.p.ssafy.io/api/v1/subscribe
-      eventSource=new EventSourcePolyfill("https://i8e204.p.ssafy.io/api/v1/subscribe",{
-        headers:{
-          "Content-Type":"text/event-stream",
-          "Access-Control-Allow-Origin": "*",
-          "Authorization":`Bearer ${token}`,
-          "Cache-Control": "no-cache",
+      eventSource = new EventSourcePolyfill('https://i8e204.p.ssafy.io/api/v1/subscribe', {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache',
         },
         heartbeatTimeout: 86400000,
         withCredentials: true,
@@ -95,10 +96,16 @@ export function MainPageContainer() {
   );
 
   return (
-    <div className={scrollPosition < 800 ? styles.container : styles.container_scrolled}>
-      <div style={{ width: '100%', padding: '0 100px' }} className={styles.bannerContainer}>
+    <div className={styles.container}>
+      <div
+        style={{
+          width: '100%',
+          padding: '0 100px',
+        }}
+        className={styles.bannerContainer}
+      >
         {/* <div className={styles.bannerContainer}> */}
-        <div className={styles.typoBox}>
+        <div className={styles.typoBox} style={{ position: 'absolute', zIndex: '100' }}>
           <p className={styles.logoTypo}>
             당신의 착한 마음을 <br /> <span className={styles.logoStrong}>FUNTEER</span>가 응원합니다{' '}
           </p>
@@ -107,7 +114,8 @@ export function MainPageContainer() {
             서비스 상세보기
           </button>
         </div>
-        <div className={styles.bannerImg} style={{ opacity: scrollPosition < 700 ? '1' : '0' }}>
+
+        <div className={styles.bannerImg} style={{ opacity: scrollPosition < 700 ? '1' : '0', position: 'absolute', zIndex: '100', right: '-8%' }}>
           <div className={styles.planets}>
             <img src={planet} alt="planet" className={styles.planet} />
             <Tooltip TransitionComponent={Fade} title={tooltipText()} placement="top" followCursor>
@@ -118,7 +126,7 @@ export function MainPageContainer() {
             </Tooltip>
           </div>
         </div>
-        {/* </div> */}
+        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 500 ? '1' : '0' }} alt="back" />
       </div>
       <div className={styles.infoBanner}>
         <InfoCard />
@@ -129,10 +137,7 @@ export function MainPageContainer() {
       <div className={styles.volunLists}>
         <LiveList />
       </div>
-      <div className={styles.donate}>
-        <img src={wave} alt="wave" className={styles.waveBack} />
-        <img src={wave2} alt="wave2" className={styles.waveBack2} />
-      </div>
+      <div className={styles.donate}>123</div>
     </div>
   );
 }
