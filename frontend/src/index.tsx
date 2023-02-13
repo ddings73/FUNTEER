@@ -68,6 +68,8 @@ import {
   NoticeEdit,
   LiveList,
   FAQCreate,
+  FAQEdit,
+  QuestionCreate,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -260,6 +262,14 @@ const router = createBrowserRouter([
       {
         path: '/faq/create',
         element: <FAQCreate />,
+      },
+      {
+        path: '/faq/:fn/edit',
+        element: <FAQEdit />,
+      },
+      {
+        path: '/qna/create',
+        element: <QuestionCreate />,
       },
     ],
   },

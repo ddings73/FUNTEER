@@ -67,3 +67,10 @@ export const requestFaqDetail = async (postId?: number) => {
   console.log(res);
   return res;
 };
+
+/** faq 삭제 */
+export const requestFaqDelete = async (postId: number) => {
+  const res = await http.delete(`faq/${postId}`);
+
+  return res;
+};

@@ -17,7 +17,7 @@ function FAQCreateContainer() {
   const onChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
     if (FAQCreateInfo.title.length > 40) {
       customAlert(w1500, '질문은 40자 이내로 적어주세요.');
-      setFAQCreateInfo({ ...FAQCreateInfo, title: e.target.value.substr(0, 40) });
+      setFAQCreateInfo({ ...FAQCreateInfo, title: e.target.value.slice(0, 40) });
       return;
     }
     setFAQCreateInfo({ ...FAQCreateInfo, [e.target.name]: e.target.value });
@@ -56,13 +56,13 @@ function FAQCreateContainer() {
             질문 <img src={requiredIcon} alt="required icon" />
           </p>
         </div>
-        <input type="text" name="title" onChange={onChange} />
+        <input type="text" name="title" value={FAQCreateInfo.title} onChange={onChange} />
         <div className={styles['label-div']}>
           <p>
             답변 <img src={requiredIcon} alt="required icon" />
           </p>
         </div>
-        <textarea rows={10} name="content" onChange={onChange} />
+        <textarea rows={10} name="content" value={FAQCreateInfo.content} onChange={onChange} />
         <div className={styles['btn-div']}>
           <button
             type="button"
