@@ -93,6 +93,7 @@ export default class ChatComponent extends Component {
         money,
         donationUser:this.props.user.getNickname()
       }
+      console.log(data)
       this.props.user.getStreamManager().stream.session.signal({
         data: JSON.stringify(data),
         type: 'updateAmount',
