@@ -47,6 +47,8 @@ public class User {
 	private @NotNull String email;
 	private String password;
 	private @NotNull String name;
+
+	@Column(unique = true)
 	private String phone;
 	@OneToOne
 	@JoinColumn(name = "profile_id")
@@ -56,11 +58,12 @@ public class User {
 	@Enumerated(value = EnumType.STRING)
 	@Column(nullable = false)
 	private UserType userType;
+	private Long totalPayAmount;
 
 	public Optional<Attach> getProfileImg(){
 		return Optional.ofNullable(this.profileImg);
 	}
-	protected void updateProfile(Attach profileImg){
+	public void updateProfile(Attach profileImg){
 		this.profileImg = profileImg;
 	}
 	public void charge(Long amount) {
@@ -69,7 +72,7 @@ public class User {
 	public void changePassword(String password){
 		this.password = password;
 	}
-	public void signOut(UserType userType){
+	protected void signOut(UserType userType){
 		this.userType = userType;
 	}
 	public void validate(){
@@ -85,8 +88,19 @@ public class User {
 			throw new IllegalArgumentException();
 	}
 
-	public void setMoney(long amount) {
-		this.money = amount;
+	public void updateMoney(long amount) {
+		this.money += amount;
 	}
 
+	protected void teamAccept() {
+		this.userType = UserType.TEAM;
+	}
+
+	protected void expire() {
+		this.userType = UserType.TEAM_EXPIRED;
+	}
+
+	public void checkMoney(Long amount) {
+		if(this.money < amount) throw new IllegalArgumentException("잔고가 부족합니다.");
+	}
 }

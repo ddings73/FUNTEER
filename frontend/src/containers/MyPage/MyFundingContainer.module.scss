@@ -4,7 +4,6 @@
 
 .bodyContainer {
   & .contentContainer {
-    margin-top: 60px;
     margin-left: 250px;
     display: flex;
     flex-direction: column;
@@ -15,15 +14,22 @@
       width: 95%;
       margin-top: 4%;
       height: 100%;
-      border: 1px solid #000;
+
       & .contentBox {
         display: flex;
         flex-direction: column;
-        margin: 15% auto;
+        margin-top: 80px;
         width: 100%;
         align-items: center;
         font-size: 150px;
         box-sizing: border-box;
+      }
+      & .title {
+        margin-left: 80px;
+        margin-top: 80px;
+        font-family: 'nanumsquare';
+        font-weight: 800;
+        font-size: 40px;
       }
     }
     @media (max-width: 900px) {

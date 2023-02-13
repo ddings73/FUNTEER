@@ -8,9 +8,18 @@
     flex-direction: column;
     background-color: #363740;
 
-    .logo {
-      width: 70%;
-      margin: 2rem auto;
+    .logo-btn {
+      background-color: inherit;
+      border: none;
+
+      &:hover {
+        cursor: pointer;
+      }
+
+      .logo {
+        width: 70%;
+        margin: 2rem auto;
+      }
     }
 
     .menu-active {
@@ -29,7 +38,7 @@
     }
 
     & span {
-      font-family: NanumSquareRound;
+      font-family: NanumSquare;
       color: white;
       font-weight: bold;
       font-size: 1.125rem;

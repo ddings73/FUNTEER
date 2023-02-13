@@ -1,9 +1,11 @@
 package com.yam.funteer.funding.service;
 
-import java.io.IOException;
-import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
@@ -13,19 +15,22 @@ import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
-import com.yam.funteer.funding.exception.CommentNotFoundException;
-import com.yam.funteer.funding.exception.FundingNotFoundException;
+import com.yam.funteer.funding.entity.Funding;
 
 public interface FundingService {
-	List<FundingListResponse> findFundingByCategory(Long categoryId);
+	Page<FundingListResponse> findAllFundingByAdmin(Pageable pageable);
 
-	FundingDetailResponse createFunding(MultipartFile thumbnail, FundingRequest data) throws IOException;
+	Page<FundingListResponse> findFundingByCategory(Long categoryId, Pageable pageable);
 
-	FundingDetailResponse findFundingById(Long id);
+	Page<FundingListResponse> findFundingByKeywordByAdmin(String keyword, Pageable pageable);
 
-	FundingDetailResponse updateFunding(Long fundingId, MultipartFile thumbnail, FundingRequest data) throws Exception;
+	FundingDetailResponse createFunding( FundingRequest data);
 
-	void deleteFunding(Long fundingId) throws FundingNotFoundException;
+	FundingDetailResponse findFundingById(Long id, Pageable pageable);
+
+	FundingDetailResponse updateFunding(Long fundingId, FundingRequest data);
+
+	void deleteFunding(Long fundingId);
 
 	FundingReportResponse createFundingReport(Long fundingId, FundingReportRequest data);
 
@@ -35,15 +40,17 @@ public interface FundingService {
 
 	void createFundingComment(Long fundingId, FundingCommentRequest data);
 
-	void deleteFundingComment(Long commentId) throws CommentNotFoundException;
+	void deleteFundingComment(Long commentId);
 
-	FundingListPageResponse findAllFunding();
+	FundingListPageResponse findAllFunding(Pageable pageable);
 
 	void takeFunding(Long fundingId, TakeFundingRequest data);
 
-	List<FundingListResponse> findFundingByKeyword(String keyword);
+	Page<FundingListResponse> findFundingByKeyword(String keyword, Pageable pageable);
 
-	List<FundingListResponse> findFundingByHashtag(String hashtag);
+	Page<FundingListResponse> findFundingByHashtag(String hashtag, Pageable pageable);
+
+	int updateHit(Long fundingId, HttpServletRequest request, HttpServletResponse response);
 
 
 }

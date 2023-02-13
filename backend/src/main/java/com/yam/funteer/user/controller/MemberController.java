@@ -1,14 +1,24 @@
 package com.yam.funteer.user.controller;
 
+import com.yam.funteer.common.code.PostGroup;
+import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.user.dto.request.*;
 import com.yam.funteer.user.dto.request.member.*;
+import com.yam.funteer.user.dto.response.ChargeListResponse;
+import com.yam.funteer.user.dto.response.member.GiftDetailResponse;
 import com.yam.funteer.user.dto.response.member.MemberAccountResponse;
 import com.yam.funteer.user.dto.response.member.MemberProfileResponse;
+import com.yam.funteer.user.dto.response.member.MileageDetailResponse;
+import com.yam.funteer.user.repository.ChargeRepository;
 import com.yam.funteer.user.service.MemberService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import springfox.documentation.annotations.ApiIgnore;
 
 import org.springframework.http.ResponseEntity;
@@ -24,6 +34,7 @@ import java.util.List;
 @RequiredArgsConstructor @Slf4j
 @Api(tags ={"일반회원"})
 public class MemberController {
+	private final ChargeRepository chargeRepository;
 	private final MemberService memberService;
 
 	@ApiOperation(value = "회원 가입", notes = "<strong>이메일, 패스워드, 이름, 닉네임, 전화번호</strong>은 필수입력 값이다.")
@@ -76,9 +87,10 @@ public class MemberController {
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/profile")
-	public void modifyProfile(@Validated @ModelAttribute UpdateMemberProfileRequest request, BindingResult bindingResult){
+	public ResponseEntity modifyProfile(@Validated @ModelAttribute UpdateMemberProfileRequest request, BindingResult bindingResult){
 		validateBinding(bindingResult);
 		memberService.updateProfile(request);
+		return ResponseEntity.ok("프로필 수정 완료");
 	}
 
 	@ApiOperation(value = "회원정보 조회", notes = "회원의 개인정보( 이메일, 이름, 전화번호 )를 조회합니다.")
@@ -103,14 +115,12 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PutMapping("/account")
-	public void modifyAccount(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult) {
+	public ResponseEntity modifyAccount(@Validated @RequestBody UpdateMemberAccountRequest request, BindingResult bindingResult) {
 		validateBinding(bindingResult);
-		memberService.updateAccount(baseUserRequest);
+		memberService.updateAccount(request);
+		return ResponseEntity.ok("회원정보 수정 완료");
 	}
 
-	/**
-	 * TODO 미구현
-	 */
 	@ApiOperation(value = "마일리지 조회", notes = "주어진 회원의 마알리지 정보를 조회할 수 있다")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
@@ -119,15 +129,39 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/mileage")
-	public ResponseEntity getMileage(@Validated @RequestBody BaseUserRequest baseUserRequest, BindingResult bindingResult){
-		validateBinding(bindingResult);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<MileageDetailResponse> getMileageDetails(PostGroup postGroup,
+								   @PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
+		MileageDetailResponse mileageDetailResponse = memberService.getMileageDetails(postGroup, pageable);
+		return ResponseEntity.ok(mileageDetailResponse);
+	}
+
+	@ApiOperation(value = "라이브 도네이션(GIFT) 내역 조회")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "성공"),
+			@ApiResponse(code = 400, message = "잘못된 요청정보"),
+			@ApiResponse(code = 401, message = "사용자 인증실패"),
+			@ApiResponse(code = 500, message = "서버 에러")
+	})
+	@GetMapping("/gift")
+	public ResponseEntity<GiftDetailResponse> getGiftDetails(@PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
+		GiftDetailResponse response = memberService.getGiftDetails(pageable);
+		return ResponseEntity.ok(response);
+	}
+
+	@ApiOperation(value = "충전 내역 조회", notes = "주어진 회원의 충전 내역을 조회할 수 있다.")
+	@ApiResponses({
+		@ApiResponse(code = 200, message = "성공"),
+		@ApiResponse(code = 400, message = "잘못된 요청정보"),
+		@ApiResponse(code = 401, message = "사용자 인증실패"),
+		@ApiResponse(code = 500, message = "서버 에러")
+	})
+	@GetMapping("/chargeList")
+	public ResponseEntity<Page<ChargeListResponse>> getChargeList(Pageable pageable) {
+		Page<ChargeListResponse> chargeList = memberService.getChargeList(pageable);
+		return ResponseEntity.ok(chargeList);
 	}
 
 
-	/**
-	 * TODO 어느정도 구현
-	 */
 	@ApiOperation(value = "마일리지 충전", notes = "현재 회원의 마알리지를 충전할 수 있다")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "성공"),
@@ -150,10 +184,9 @@ public class MemberController {
 		@ApiResponse(code = 401, message = "사용자 인증실패"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@PutMapping("/follow")
-	public ResponseEntity followTeam(@Validated @RequestBody FollowRequest followRequest, BindingResult bindingResult){
-		validateBinding(bindingResult);
-		memberService.followTeam(followRequest);
+	@PutMapping("/follow/{teamId}")
+	public ResponseEntity followTeam(@PathVariable Long teamId){
+		memberService.followTeam(teamId);
 		return ResponseEntity.ok().build();
 	}
 
@@ -165,10 +198,9 @@ public class MemberController {
 		@ApiResponse(code = 401, message = "사용자 인증실패"),
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
-	@PutMapping("/like")
-	public ResponseEntity wishFunding(@Validated @RequestBody WishRequest wishRequest, BindingResult bindingResult){
-		validateBinding(bindingResult);
-		memberService.wishFunding(wishRequest);
+	@PutMapping("/like/{fundingId}")
+	public ResponseEntity wishFunding(@PathVariable Long fundingId){
+		memberService.wishFunding(fundingId);
 		return ResponseEntity.ok().build();
 	}
 

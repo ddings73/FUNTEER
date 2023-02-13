@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class CommentResponse {
 
+	private Long commentId;
 	private String memberProfileImg;
 
 	private String memberNickName;
@@ -22,6 +23,6 @@ public class CommentResponse {
 	private LocalDateTime regDate;
 
 	public static CommentResponse from(Comment comment) {
-		return new CommentResponse(comment.getMember().getProfileImg().get().getPath(), comment.getMember().getNickname(), comment.getContent(), comment.getRegDate());
+		return new CommentResponse(comment.getId(), comment.getMember().getProfileImg().get().getPath(), comment.getMember().getNickname(), comment.getContent(), comment.getRegDate());
 	}
 }

@@ -11,7 +11,7 @@ export function LongCard() {
           <h4 className={styles.fundGroup}>펀딩 단체명</h4>
           <div className={styles.fundInfo}>
             <p className={styles.fundTitle}>펀딩 제목</p>
-            <p className={styles.fundPeriod}>2023-01-06 ~ 2023-01-21</p>
+            <p className={styles.fundPeriod}>(2023-01-06 ~ 2023-01-21)</p>
           </div>
           <div className={styles.fundGauge}>
             <p className={styles.fundLevel}>진행중 (1단계 달성)</p>
@@ -22,6 +22,12 @@ export function LongCard() {
             </div>
             <p className={styles.funStatusNum}>40%</p>
           </div>
+        </div>
+        <div className={styles.joinDetail}>
+          <p className={styles.fundAmount}>
+            후원 금액 <br /> <span>5,000원</span>
+          </p>
+          <p className={styles.joinDate}>2023-01-15</p>
         </div>
       </div>
     </div>

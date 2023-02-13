@@ -1,3 +1,5 @@
+import { async } from 'q';
+// import { commentType } from '../components/Cards/CommentCardSubmit';
 import { FundingInterface } from '../types/funding';
 import { http } from './axios';
 
@@ -18,19 +20,28 @@ export const requestUploadImage = async (imageBase64: Blob) => {
  * @method POST
  * @param {FundingInterface} fundingData
  */
+
 export const requestCreateFunding = async (fundingData: FundingInterface) => {
   const formData = new FormData();
-  const entries = Object.entries(fundingData);
 
-  entries.forEach((data) => {
-    const key = data[0];
-    const value = data[1];
-    console.log(typeof value);
-
-    formData.append(`${key}`, value);
-  });
-
+  formData.append('thumbnail', fundingData.thumbnail);
+  formData.append('data', new Blob([JSON.stringify(fundingData)], { type: 'application/json' }));
   const res = await http.post('funding', formData);
+  return res;
+};
+
+/**
+ * 펀딩 수정 API
+ * @method PUT
+ * @param {FundingInterface} fundingData
+ */
+
+export const requestModifyFunding = async (fundIdx: string, fundingData: FundingInterface) => {
+  const formData = new FormData();
+
+  formData.append('thumbnail', fundingData.thumbnail);
+  formData.append('data', new Blob([JSON.stringify(fundingData)], { type: 'application/json' }));
+  const res = await http.put(`funding/${fundIdx}`, formData);
   return res;
 };
 
@@ -39,8 +50,8 @@ export const requestCreateFunding = async (fundingData: FundingInterface) => {
  * @method GET
  */
 
-export const requestFundingList = async () => {
-  const res = await http.get('funding/');
+export const requestFundingList = async (size: number) => {
+  const res = await http.get(`funding/?size=${size}`);
   console.log(res);
 
   return res;
@@ -54,15 +65,106 @@ export const requestFundingList = async () => {
 export const requestFundingSearch = async (text: string) => {
   const response = await http.get(`funding/search/?keyword=${text}`);
   return response;
-}
+};
 
 /*
  * 펀딩 상세 호출
  * @method GET
  */
 
-export const requestFundingDetail = async (id: number) => {
-  const res = await http.get(`funding/${id}`);
+export const requestFundingDetail = async (fundIdx?: string) => {
+  const res = await http.get(`funding/${fundIdx}`);
   console.log(res);
+  return res;
+};
+
+/**
+ * @name 다음펀딩리스트호출
+ * @returns
+ */
+export const requestNextFundingList = async (currentPage: number, size: number) => {
+  console.log(currentPage, size);
+
+  const response = await http.get(`funding/?page=${currentPage + 1}&size=${size}`);
+  return response;
+};
+
+/**
+ * @name 카테고리별펀딩리스트
+ * @method GET
+ */
+
+export const requestCategoryFundingList = async (categoryId: number) => {
+  const response = await http.get(`funding/category/${categoryId}`);
+  return response;
+};
+
+/**
+ * @name 펀딩좋아요
+ * @method PUT
+ */
+export const requestWish = async (fundingId?: string) => {
+  const res = await http.put(`member/like/${fundingId}`);
+  console.log(res);
+  return res;
+};
+
+/**
+ * 펀딩 썸테일 등록
+ */
+export const requestRegisterThumbnail = async (file: Blob) => {
+  const formData = new FormData();
+  formData.append('file', file);
+  const response = await http.post('funding/upload/thumbnail', formData);
+  return response;
+};
+/**
+ * @name 펀딩응원댓글
+ * @method POST
+ * @param {commentType} commentData
+ */
+export const postFundingComment = async (commentData: string, fundingId?: string) => {
+  const res = await http.post(`funding/${fundingId}/comment`, { content: commentData });
+  return res;
+};
+
+/**
+ * @name 펀딩댓글리스트호출API
+ * @method GET
+ */
+export const requestCommentList = async (fundingId?: string, sort?: string) => {
+  const res = await http.get(`funding/${fundingId}/?sort=${sort}`);
+  console.log('댓글호출', res);
+
+  return res;
+};
+
+/**
+ * @name 다음댓글리스트호출
+ * @returns
+ */
+export const requestNextCommentList = async (currentPage: number, fundingId?: string, sort?: string) => {
+  const response = await http.get(`funding/${fundingId}/?page=${currentPage + 1}&?sort=${sort}`);
+  return response;
+};
+
+/**
+ * @name 펀딩참여
+ * @method POST
+ * @param amount:string, fundingId: number
+ */
+export const fundingJoin = async (amount?: string, fundingId?: string) => {
+  const res = await http.post(`funding/${fundingId}/pay`, { amount, fundingId });
+  return res;
+};
+
+/**
+ * @name 펀딩보고서조회
+ * @method GET
+ */
+
+export const requestFundingReport = async (fundingId?: string) => {
+  const res = await http.get(`funding/${fundingId}/report`);
+  console.log('report res', res);
   return res;
 };

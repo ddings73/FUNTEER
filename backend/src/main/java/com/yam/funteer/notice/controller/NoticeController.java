@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yam.funteer.common.BaseResponseBody;
@@ -31,8 +32,8 @@ public class NoticeController {
 
 	@ApiOperation(value = "notice List")
 	@GetMapping("")
-	public ResponseEntity<?>NoticeGetList(){
-		return ResponseEntity.ok(noticeService.noticeGetList());
+	public ResponseEntity<?>NoticeGetList(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+		return ResponseEntity.ok(noticeService.noticeGetList(page,size));
 	}
 
 	@ApiOperation(value = "notice 등록")

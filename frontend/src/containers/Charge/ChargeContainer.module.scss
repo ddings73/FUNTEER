@@ -1,0 +1,217 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  height: 100%;
+  padding-top: 76px;
+  font-family: NanumSquare !important;
+
+  .banner {
+    width: 100%;
+    height: 200px;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 169, 103, 0.7);
+    background: radial-gradient(circle, rgba(255, 169, 103, 0.7) 16%, rgba(255, 185, 131, 0.7) 56%, rgba(230, 117, 10, 0.7) 100%);
+    transition: height 0.6s ease-in-out, background-color 0.6s ease-in-out;
+    z-index: 100;
+
+    @include mobile {
+      display: none;
+    }
+
+    &:hover {
+      opacity: 0.9;
+    }
+
+    & .title {
+      font-size: 3rem;
+      font-weight: bold;
+      color: white;
+      text-shadow: 0px 0px 10px rgba(156, 73, 0, 0.3);
+      transition: opacity 0.6s ease-in-out;
+
+      @include mobile {
+        font-size: 1.75rem;
+      }
+    }
+  }
+
+  .contents {
+    margin: 450px auto 200px auto;
+    width: 95%;
+    max-width: 1100px;
+
+    @include mobile {
+      margin: 0 auto;
+    }
+
+    & .charge-box {
+      margin-top: 5rem;
+      width: 100%;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      padding-bottom: 30px;
+
+      & p {
+        font-size: 1.75rem;
+        font-weight: bold;
+
+        @include mobile {
+          font-size: 1.5rem;
+        }
+      }
+
+      & div {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        margin-top: 15px;
+
+        & span {
+          font-size: 1.25rem;
+          font-weight: bold;
+        }
+
+        & button {
+          margin-left: 25px;
+          width: 77px;
+          height: 42px;
+          background-color: $primary;
+        }
+      }
+    }
+
+    & .notice-box {
+      margin-top: 2.5rem;
+
+      & p {
+        font-size: 1.75rem;
+        font-weight: bold;
+        margin-bottom: 30px;
+
+        @include mobile {
+          font-size: 1.5rem;
+        }
+      }
+
+      & ul li {
+        width: 80%;
+        margin-bottom: 33px;
+        line-height: 2rem;
+        color: rgba(0, 0, 0, 0.7);
+
+        @include mobile {
+          width: 95%;
+        }
+      }
+    }
+
+    & .charge-history-box {
+      margin-top: 4rem;
+
+      & .charge-title-box {
+        width: 97%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+
+        & p {
+          font-size: 1.75rem;
+          font-weight: bold;
+
+          @include mobile {
+            font-size: 1.5rem;
+          }
+        }
+      }
+
+      .title-line {
+        width: 95%;
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr;
+        align-items: center;
+        height: 2.8rem;
+        padding: 0 1rem;
+        background: linear-gradient(269.64deg, #ffe1be 9.38%, #ffccaf 95.73%);
+        border-bottom: 1px solid #ffccaf;
+        font-size: 1.25rem;
+        font-weight: bold;
+        color: rgba(0, 0, 0, 0.9);
+
+        @include mobile {
+          font-size: 0.8;
+        }
+      }
+
+      .content-line {
+        width: 95%;
+        display: grid;
+        grid-template-columns: 2fr 2fr 1fr;
+        align-items: center;
+        height: 2.5rem;
+        padding: 0 1rem;
+        border-bottom: 1px solid #ffeee4;
+        font-size: 1.125rem;
+        color: rgba(0, 0, 0, 0.9);
+
+        &:hover {
+          background-color: #fcf9f7;
+        }
+
+        @include mobile {
+          font-size: 0.75;
+        }
+      }
+
+      & li {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+
+        & p {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .cancel {
+          text-decoration: none;
+          font-size: 0.8rem;
+          color: rgb(156, 156, 156);
+
+          &:hover {
+            cursor: pointer;
+            color: $primary;
+          }
+
+          @include mobile {
+            font-size: 0.75;
+          }
+        }
+      }
+
+      .page-bar {
+        margin-top: 2rem;
+
+        & nav {
+          width: 100%;
+          display: flex;
+          justify-content: center;
+
+          & li {
+            width: auto;
+          }
+        }
+      }
+    }
+  }
+}
+
+.MuiPaginationItem-outlined {
+  background-color: #ffccaf;
+}

@@ -8,6 +8,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.ColumnDefault;
+
+import com.yam.funteer.badge.entity.Badge;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,6 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "user_badge")
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserBadge {
@@ -30,4 +35,11 @@ public class UserBadge {
 	@ManyToOne
 	@JoinColumn(name = "badge_id")
 	private Badge badge;
+	@ColumnDefault("false")
+	private boolean achieve;
+
+	public void achieve(){
+		this.achieve=true;
+	}
+
 }

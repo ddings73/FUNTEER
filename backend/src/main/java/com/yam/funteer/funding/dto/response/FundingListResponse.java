@@ -2,11 +2,11 @@ package com.yam.funteer.funding.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.yam.funteer.common.code.PostType;
+import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.funding.entity.Funding;
-
+import com.yam.funteer.funding.entity.TargetMoney;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,6 +21,8 @@ public class FundingListResponse {
 
 	private String title;
 
+	private String teamName;
+
 	private LocalDate startDate;
 
 	private LocalDate endDate;
@@ -33,28 +35,37 @@ public class FundingListResponse {
 
 	private PostType postType;
 
-	private int amount;
+	private Long targetAmount;
 
 	private String thumbnail;
 
-	private String categoryName;
+	private Long categoryId;
 
 	private HashtagResponse postHashtagList;
 
 	public static FundingListResponse from(Funding funding) {
 
+		Long targetAmount = 0L;
+
+		for (TargetMoney targetMoney : funding.getTargetMoneyList()) {
+			if (targetMoney.getTargetMoneyType() == TargetMoneyType.LEVEL_THREE) {
+				targetAmount += targetMoney.getAmount();
+			}
+		}
+
 		FundingListResponse response = FundingListResponse.builder()
-			.id(funding.getId())
+			.id(funding.getFundingId())
 			.title(funding.getTitle())
 			.startDate(funding.getStartDate())
 			.endDate(funding.getEndDate())
 			.postDate(funding.getRegDate())
 			.thumbnail(funding.getThumbnail())
+			.teamName(funding.getTeam().getName())
 			.fundingDescription(funding.getFundingDescription())
 			.currentFundingAmount(funding.getCurrentFundingAmount())
-			.amount(funding.getTargetMoneyList().get(2).getAmount())
+			.targetAmount(targetAmount)
 			.postType(funding.getPostType())
-			.categoryName(funding.getCategory().getName())
+			.categoryId(funding.getCategory().getId())
 			.build();
 
 

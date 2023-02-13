@@ -1,0 +1,126 @@
+@import '../../../styles/reset.scss';
+@import '../../../styles/variable.scss';
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+
+  .contents {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1160px;
+
+    .title {
+      font-size: 2.25rem;
+      font-weight: bold;
+      margin: 5rem 0;
+    }
+
+    .search-div {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 1rem;
+      font-family: NanumSquareRound;
+
+      & input {
+        width: 15rem;
+      }
+    }
+
+    .title-line {
+      width: 100%;
+      height: 3rem;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: $primary;
+      font-weight: bold;
+      font-size: 1rem;
+      color: white;
+      box-shadow: 0px 1px 2px rgba(1, 1, 1, 0.3);
+      border-radius: 3px;
+      margin-bottom: 0.1rem;
+      font-family: NanumSquareRound;
+
+      .title-col {
+        width: 300px;
+        display: flex;
+        justify-content: center;
+      }
+
+      & li {
+        width: 120px;
+        display: flex;
+        justify-content: center;
+      }
+    }
+
+    .list-line {
+      width: 100%;
+      height: auto;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      background-color: rgb(250, 250, 250);
+      font-size: 1rem;
+      border: none;
+      border-bottom: 1px solid rgba(1, 1, 1, 0.05);
+      margin: 0.1rem 0;
+      padding: 0.5rem 0;
+      font-family: NanumSquareRound;
+
+      .title-col-btn {
+        display: flex;
+        justify-content: center;
+        width: 290px;
+        font-size: 1rem;
+        padding: 0;
+        border: none;
+        background-color: inherit;
+
+        & li {
+          width: 100%;
+
+          & p {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-family: NanumSquareRound;
+          }
+        }
+
+        &:hover {
+          cursor: pointer;
+          font-weight: bold;
+        }
+      }
+
+      & li {
+        width: 120px;
+        display: flex;
+        justify-content: center;
+
+        & p {
+          max-width: 280px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+
+        .show-approve {
+          height: 2rem;
+        }
+
+        .hide-approve {
+          display: none;
+        }
+      }
+    }
+  }
+}

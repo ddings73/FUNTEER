@@ -8,9 +8,11 @@ import lombok.Getter;
 public class QnaListRes {
 	private String title;
 	private Long id;
+	private boolean respond;
 
 	public QnaListRes(Qna qna){
-		this.id=qna.getId();
+		this.id=qna.getQnaId();
 		this.title=qna.getTitle();
+		this.respond=qna.isRespond();
 	}
 }

@@ -8,15 +8,21 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import { ConfirmModalType } from '../../types/modal';
+import { useAppDispatch } from '../../store/hooks';
+import { closeModal } from '../../store/slices/modalSlice';
 
 function ConfirmModal({ isOpen, title, content, handleModal }: ConfirmModalType) {
   const [open, setOpen] = useState<boolean>(false);
+  const dispatch = useAppDispatch()
   const onClickHandler = () => {
+    dispatch(closeModal())
     setOpen(false);
     handleModal();
+
   };
 
   const onCloseModal = () => {
+    dispatch(closeModal())
     setOpen(false);
     handleModal();
   };

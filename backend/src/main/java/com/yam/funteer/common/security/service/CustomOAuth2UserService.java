@@ -1,6 +1,7 @@
 package com.yam.funteer.common.security.service;
 
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
@@ -31,13 +33,18 @@ import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.repository.MemberRepository;
 
-@Setter
 @Service @Slf4j
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
+
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    public void setPasswordEncoder(@Lazy PasswordEncoder passwordEncoder){
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     @Transactional

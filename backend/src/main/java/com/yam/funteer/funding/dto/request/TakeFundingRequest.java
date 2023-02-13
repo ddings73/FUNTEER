@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TakeFundingRequest {
 
-	Long amount;
+	String amount;
 
 }

@@ -1,8 +1,8 @@
 package com.yam.funteer.alarm.controller;
-import java.io.IOException;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,18 +12,21 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.yam.funteer.alarm.service.AlarmService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
-@Slf4j
 @RequiredArgsConstructor
 public class AlarmController {
 
 	private final AlarmService alarmService;
 
-	/**
-	 * @title 로그인 한 유저 sse 연결
-	 */
-	@GetMapping(value = "/subscribe", produces = "text/event-stream")
-	public SseEmitter subscribe(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId) {
-		return alarmService.subscribe(lastEventId);
+	@GetMapping(value = "/subscribe", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+	public ResponseEntity<SseEmitter> subscribe(@RequestHeader(value = "Last-Event-ID", required = false, defaultValue = "") String lastEventId,
+	HttpServletResponse response){
+		response.setHeader("Connection", "keep-alive");
+		response.setHeader("Cache-Control", "no-cache");
+		response.setHeader("X-Accel-Buffering", "no");
+
+		return ResponseEntity.ok(alarmService.subscribe(lastEventId));
 	}
 }

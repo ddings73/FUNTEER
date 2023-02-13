@@ -46,15 +46,18 @@ public class QnaRegisterReq {
 			.user(user)
 			.regDate(LocalDateTime.now())
 			.postGroup(PostGroup.ETC)
+			.respond(false)
 			.postType(PostType.QNA).build();
 	}
 
-	public Qna toEntity(User user,Long postId){
+	public Qna toEntity(User user,Long qnaId,Long postId){
 		return Qna.builder()
 			.id(postId)
+			.qnaId(qnaId)
 			.title(title)
 			.content(content)
 			.user(user)
+			.respond(false)
 			.regDate(LocalDateTime.now())
 			.postGroup(PostGroup.ETC)
 			.postType(PostType.QNA).build();

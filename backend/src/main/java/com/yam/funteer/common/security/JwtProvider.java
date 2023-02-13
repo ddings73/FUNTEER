@@ -33,7 +33,7 @@ public class JwtProvider {
     private String secretKey;
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
-    private final long accessPeriod = 1000L * 60L * 60L; // 1시간
+    private final long accessPeriod = 1000L * 60L * 60L * 24L; // 1시간 + 23시간
     private final long refreshPeriod = 1000L * 60L * 60L * 24L; // 1일
     @PostConstruct
     protected void init(){
@@ -50,10 +50,6 @@ public class JwtProvider {
         return createToken(userId, authorities);
     }
 
-    public TokenInfo generateTokenForOAuth(String userId){
-        String authorities = UserType.KAKAO.getAuthority();
-        return createToken(userId, authorities);
-    }
 
     public TokenInfo createToken(String userId, String authorities){
 
@@ -118,9 +114,5 @@ public class JwtProvider {
                     .setSigningKey(secretKey).build()
                     .parseClaimsJws(token)
                     .getBody();
-    }
-
-    public Long getUserId(String token){
-        return Long.valueOf(parseClaims(token).getSubject());
     }
 }

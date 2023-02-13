@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -13,6 +13,12 @@ import logo from '../../assets/images/FunteerLogoInversion.png';
 const drawerWidth = 280;
 
 export default function PermanentDrawerLeft() {
+  const navigate = useNavigate();
+
+  const onClickAdminLogo = () => {
+    navigate('/admin');
+  };
+
   return (
     <Drawer
       sx={{
@@ -28,7 +34,9 @@ export default function PermanentDrawerLeft() {
       className={styles.drawer}
     >
       <div className={styles.sidebar}>
-        <img src={logo} alt="FUNTEER" className={styles.logo} />
+        <button type="button" className={styles['logo-btn']} onClick={onClickAdminLogo}>
+          <img src={logo} alt="FUNTEER" className={styles.logo} />
+        </button>
         <List>
           {AdminSideBarItem.map((data) => (
             <NavLink to={data.path} id="nav-link" className={({ isActive }) => (isActive ? styles['menu-active'] : styles['menu-inactive'])}>

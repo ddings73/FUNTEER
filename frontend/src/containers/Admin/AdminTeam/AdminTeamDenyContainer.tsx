@@ -1,27 +1,25 @@
 import React, { useState } from 'react';
-import { useLocation, useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 import Button from '@mui/material/Button';
 import styles from './AdminTeamDenyContainer.module.scss';
 import { useAppDispatch } from '../../../store/hooks';
 import { closeModal } from '../../../store/slices/fileModalSlice';
+import requiredIcon from '../../../assets/images/funding/required.svg';
+import { customAlert, s1500, w1500 } from '../../../utils/customAlert';
+import { requestDenyTeam } from '../../../api/admin';
 
 function AdminTeamDenyContainer() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
+  /** 거부 당한 팀 번호 (유저 번호) */
   const { dn } = useParams();
 
   /** 단체 거부 정보 */
-  const [teamDenyInfo, setTeamDenyInfo] = useState({
-    title: '',
-    content: '',
-  });
+  const [content, setContent] = useState<string>('');
 
   /** 정보 입력 */
-  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    setTeamDenyInfo({ ...teamDenyInfo, [name]: value });
+  const handleChangeContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setContent(e.target.value);
   };
 
   /** 취소 버튼 클릭 */
@@ -32,34 +30,38 @@ function AdminTeamDenyContainer() {
 
   /** 전송 버튼 클릭 */
   const onClickSubmitHandler = () => {
-    if (teamDenyInfo.title.length < 10) {
-      alert('제목을 10자 이상 입력하세요.');
+    if (content.length < 5) {
+      customAlert(w1500, '내용을 5자 이상 입력해주세요.');
     }
 
-    if (teamDenyInfo.title.length < 20) {
-      alert('내용을 20자 이상 입력하세요.');
-    }
+    denyTeam();
+  };
 
-    console.log('단체 가입 거부 요청');
+  /** 팀 거부 요청 */
+  const denyTeam = async () => {
+    if (dn) {
+      try {
+        const response = await requestDenyTeam(parseInt(dn, 10), content);
+        console.log(response);
+        customAlert(s1500, '메일 전송 완료');
+        setTimeout(() => {
+          dispatch(closeModal());
+          navigate(-1);
+        }, 1500);
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
-        <h1 className={styles.title}>단체 가입 거부 사유</h1>
+        <h1 className={styles.title}>단체 가입 거부</h1>
         <div className={styles['label-div']}>
-          <p>
-            제목 <span>*</span>
-          </p>
+          <p>사유 작성</p> <img src={requiredIcon} alt="required icon" />
         </div>
-
-        <input name="title" type="text" className={styles['email-title']} placeholder="제목을 10자 이상 입력해주세요." />
-        <div className={styles['label-div']}>
-          <p>
-            내용 <span>*</span>
-          </p>
-        </div>
-        <textarea name="content" className={styles['email-content']} placeholder="내용을 20자 이상 입력해주세요." />
+        <textarea className={styles['email-content']} placeholder="내용을 5자 이상 입력해주세요." onChange={handleChangeContent} />
         <div className={styles['btn-div']}>
           <Button variant="contained" className={styles.submit} onClick={onClickBackHandler}>
             취소

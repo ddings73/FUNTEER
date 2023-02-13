@@ -2,16 +2,22 @@
 @import '../../styles/variable.scss';
 @import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
 
+* {
+  font-family: 'NanumSquare' !important;
+}
+
 .bodyContainer {
   width: 100%;
-  height: 100vh;
-  margin-top: 80px;
+  // min-height: 100vh;
+  height: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   & .banner {
+    margin-top: 80px;
     display: flex;
     width: 100%;
+    margin-top: 75px;
     min-height: 350px;
     background-image: linear-gradient(rgba(0, 0, 0, 0.637), rgba(0, 0, 0, 0.692)), url('../../assets/images/funding/funds.jpg');
     background-size: cover;
@@ -19,7 +25,7 @@
     justify-content: center;
     align-items: center;
     & .bannerContent {
-      width: 1160px;
+      width: 100%;
       display: flex;
       flex-direction: column;
       justify-content: space-around;
@@ -36,18 +42,40 @@
       & .bannerButtonGroup {
         width: 40%;
         margin-top: 5%;
-        margin-left: 70%;
+        margin-left: 55%;
         display: flex;
         align-items: flex-end;
         & .bannerGrpBtn {
           margin: 0 3%;
           width: 100px;
           height: 30px;
-        }
-        & .bannerBtn {
-          margin: 0 3%;
-          width: 100px;
-          height: 30px;
+          background-color: initial;
+          background-image: linear-gradient(-180deg, #ff8944, #e66903);
+          border-radius: 6px;
+          box-shadow: rgba(0, 0, 0, 0.1) 0 2px 4px;
+          color: #ffffff;
+          cursor: pointer;
+          display: flex;
+          line-height: 40px;
+          outline: 0;
+          overflow: hidden;
+          padding: 0 20px;
+          pointer-events: auto;
+          position: relative;
+          text-align: center;
+          touch-action: manipulation;
+          user-select: none;
+          -webkit-user-select: none;
+          vertical-align: top;
+          white-space: nowrap;
+          border: 0;
+          transition: box-shadow 0.2s;
+          justify-content: center;
+          align-items: center;
+
+          &:hover {
+            box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+          }
         }
       }
     }
@@ -59,6 +87,7 @@
     height: auto;
     text-align: center;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    box-sizing: border-box;
     & .mainSum {
       width: 100%;
       height: 300px;
@@ -66,7 +95,19 @@
     }
     & .mainContent {
       width: 100%;
-      height: 250vh;
+      height: auto;
+      overflow: hidden;
+      & .mainContentInner {
+        margin-top: 100px;
+        line-height: 500%;
+        h1 {
+          font-size: 50px;
+          font-weight: 600;
+        }
+        p {
+          font-size: 18px;
+        }
+      }
     }
     & .mainFooter {
       width: 100%;
@@ -79,28 +120,40 @@
     & .mainFooterAttatch {
       width: 100%;
       height: 250px;
-      background-color: rgb(87, 87, 87);
+      margin-top: 50px;
+      text-align: left;
+      margin-left: 60px;
+      & .attachTitle {
+        margin-bottom: 20px;
+      }
+      & .attachItem {
+        margin-left: 20px;
+        margin-bottom: 10px;
+        cursor: pointer;
+        &:hover {
+          color: blue;
+        }
+      }
     }
-    & .mainFooterdiv {
-      width: 100%;
-      height: 5px;
-    }
+
     & .mainFooterLikeWrapper {
       width: 100%;
       height: auto;
       display: flex;
       justify-content: center;
+
       & .mainFooterLike {
+        margin-right: 10px;
         width: 50px;
         height: 50px;
-        padding: 1%;
+        padding: 5%;
         border-radius: 50%;
         color: rgb(255, 0, 0);
         border: 3px solid #ec994b;
-        background: transprgb(255, 189, 104) t;
+        background: transprgb(255, 189, 104);
       }
       & .Likebox {
-        margin-left: 2%;
+        margin-left: 1%;
         display: flex;
         flex-direction: column;
         text-align: left;
@@ -122,16 +175,24 @@
     & .mainCommentSubmit {
       width: 100%;
       height: 200px;
+      margin-top: 40px;
+      margin-bottom: 20px;
+    }
+
+    & .toggles {
+      height: 70px;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
     }
 
     & .mainComments {
       width: 100%;
-      height: 500px;
+      height: auto;
       background-color: rgrgb(95, 95, 95);
     }
 
     & .mainComments {
-      margin-top: 5%;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -141,12 +202,219 @@
 
 .teamInfoCard {
   height: 150px;
-  padding: 5%;
 }
 
 .mainFooterLikeTestSub {
-  color: rgb(134, 134, 134);
+  color: rgb(133, 133, 133);
   font-size: 20px;
   font-family: 'nanumsquare';
   font-weight: 600;
+}
+.mainFooterLikeButtonNone,
+.mainFooterLikeButtonDone {
+  width: 85px;
+  height: 85px;
+  background: transparent;
+  border: none;
+  transition: 0.5s;
+  cursor: pointer;
+  & :active {
+    scale: 0.9;
+  }
+}
+
+.mainFooterLikeButtonNone {
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.payBar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  span {
+    font-weight: 600;
+    font-size: 1.9rem;
+  }
+  & .payBtn {
+    color: white;
+    margin: 0 20px;
+    width: 15rem;
+    height: 4rem;
+    font-size: 0.8em;
+    background-color: rgba(255, 166, 0, 0.788);
+    border: 3px solid white;
+    border-radius: 35px;
+    padding-bottom: 2px;
+    cursor: pointer;
+    filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
+    transition: scale 0.2s;
+    transition: background-color 0.4s;
+    &:active {
+      scale: 0.95;
+      background-color: rgba(255, 167, 85, 0.808);
+    }
+    &:hover {
+      background-color: rgba(255, 125, 85, 0.863);
+    }
+  }
+  & .milea {
+    text-align: center;
+    color: rgba(92, 92, 92, 0.568);
+    font-size: 0.7em;
+    font-weight: 600;
+    text-decoration: none;
+    &:hover {
+      font-weight: 800;
+      color: rgba(189, 53, 0, 0.568);
+      cursor: pointer;
+    }
+  }
+}
+
+.fabToggle::before {
+  content: '펀딩에 참여!';
+  position: absolute;
+  top: -30px;
+  width: 100px;
+  color: rgb(255, 94, 0);
+  height: 21px;
+  font-weight: 600;
+  animation: jump 2s linear alternate infinite;
+}
+
+.fabToggle {
+  position: relative;
+}
+
+.payBox {
+  background: rgba(204, 204, 204, 0.2);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(5.3px);
+  border: 3px solid rgba(255, 142, 97, 0.596);
+  -webkit-backdrop-filter: blur(8.3px);
+}
+
+@keyframes jump {
+  0% {
+    transform: scale(1, 1) translateY(0);
+  }
+  10% {
+    transform: scale(1.1, 0.9) translateY(0);
+  }
+  30% {
+    transform: scale(0.9, 1.1) translateY(-10px);
+  }
+  50% {
+    transform: scale(1, 1) translateY(0);
+  }
+  57% {
+    transform: scale(1, 1) translateY(-7px);
+  }
+  64% {
+    transform: scale(1, 1) translateY(0);
+  }
+  100% {
+    transform: scale(1, 1) translateY(0);
+  }
+}
+.milLink {
+  text-decoration: none;
+}
+.mileText {
+  margin-left: 20px;
+  p {
+    margin-top: 10px;
+    text-align: start;
+    font-size: 0.8em;
+    margin-bottom: 15px;
+  }
+}
+
+.tabsOn {
+  border-color: #ec994b !important;
+}
+
+.fundingPlanner {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5% 0;
+  margin-top: 20px;
+  background-image: linear-gradient(to bottom, #ffffff, #fffdff, #fffbfc, #fffaf5, #fffaf0);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  & .planTitle {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  & .planSubTitle {
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.555);
+    margin-bottom: 40px;
+  }
+  & .planTag {
+    width: 40%;
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+  }
+  & .progressBar {
+    align-items: center;
+    width: 40%;
+    background: rgb(129, 129, 129);
+    background: linear-gradient(90deg, rgba(49, 49, 52, 1) 0%, rgb(82, 82, 82) 0%, rgb(143, 143, 143) 100%);
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    border-radius: 15px;
+    display: flex;
+    padding: 3px;
+    height: 10px;
+    & .status {
+      background: rgb(49, 49, 52);
+      background: linear-gradient(90deg, rgba(49, 49, 52, 1) 0%, rgba(255, 166, 0, 1) 0%, rgb(255, 136, 0) 100%);
+      color: rgb(0, 0, 0);
+      padding-top: 12px;
+      text-align: right;
+      font-size: 20px;
+      border-radius: 15px;
+      transition: 2s;
+      position: relative;
+      & .statusNum {
+        position: absolute;
+        top: 20px;
+        right: -10px;
+        color: white;
+        border-radius: 100%;
+        padding: 7px;
+        background-color: rgb(211, 127, 0);
+        font-size: 0.7em;
+        border: 2px solid white;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+      }
+    }
+  }
+}
+.iconTag {
+  color: orange;
+  cursor: pointer;
+  transition: transform 1.5s;
+  &:hover {
+    color: rgb(255, 102, 0);
+    transform: translateY(-5px);
+  }
+}
+
+.reslists {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }

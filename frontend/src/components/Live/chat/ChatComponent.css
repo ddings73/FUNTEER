@@ -1,0 +1,202 @@
+#chatContainer {
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+#chatToolbar {
+  height: 40px;
+  line-height: 40px;
+  box-sizing: border-box;
+  font-weight: bold;
+  font-size: 20px;
+  text-align: center;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  color: #000000;
+}
+
+#closeButton {
+  position: absolute;
+  right: 0;
+  top: -8px;
+}
+
+#chatComponent {
+  background-color: #ffffff;
+  position: absolute;
+  z-index: 99999;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  height: calc(100% - 30px);
+  width: calc(100% - 30px);
+  border-radius: 20px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.message-wrap {
+  height: calc(100% - 80px);
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+.message {
+  position: relative;
+  padding: 5px 0;
+}
+
+.msg-detail {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  width: 100%;
+  padding: 5px 0;
+}
+
+.userProfileImage {
+  width: 26px;
+  height: 26px;
+  border-radius: 100%;
+  margin-right: 16px;
+}
+.message-contents-box {
+  display: flex;
+  align-items: center;
+  width: 80%;
+  height: 100%;
+  min-height: 26px;
+}
+
+.uername {
+  min-width: 39px;
+  font-size: 13px;
+  color: #11111199;
+  margin-right: 16px;
+}
+.chat-content {
+  font-size: 13px;
+  color: #000000;
+  line-height: 1.2;
+  word-wrap: break-word;
+}
+
+.msg-info {
+  margin-right: 16px;
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+}
+.msg-info p {
+  font-size: 13px;
+  color: #11111199;
+  min-width: 39px !important;
+}
+
+.msg-content {
+  width: auto;
+  max-width: 80%;
+}
+
+.text {
+  font-size: 13px;
+  color: #000000;
+  line-height: 1.2;
+}
+
+/* Start message from other user */
+
+/* .message > .left .msg-detail .msg-info {
+  text-align: left;
+} */
+
+.message.left .msg-detail {
+  padding-left: 25px;
+}
+
+.message.left .user-img {
+  left: -5px;
+  border: 1px solid #f0f0f094;
+}
+
+.message.left .msg-detail .msg-content {
+  float: left;
+}
+
+/* End message from other user */
+
+/* Start my messages */
+
+.message.right .msg-detail .msg-info {
+  text-align: right;
+}
+.message.right .user-img {
+  right: -5px;
+  border: 1px solid rgba(236, 153, 75, 1);
+}
+
+.message.right .msg-detail .msg-content {
+  background-color: rgba(236, 153, 75, 1);
+  float: right;
+}
+.message.right .msg-detail .msg-content span.triangle {
+  background-color: rgba(236, 153, 75, 1);
+  border-bottom-width: 0;
+  border-left-width: 0;
+  right: -5px;
+}
+
+/* End my messages */
+
+#messageInput {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  background-color: #ffffff;
+  text-align: center;
+  padding: 10px 0px;
+  height: 30px;
+  border-top: 1px solid rgba(236, 153, 75, 1);
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+#messageInput input {
+  width: 90%;
+  height: 100%;
+  border: none;
+
+  outline: none;
+  font-size: 16px;
+  margin-left: -6%;
+  padding-top: 5px;
+  color: #000000;
+}
+
+#sendButton {
+  position: absolute;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  box-shadow: none !important;
+  color: rgba(236, 153, 75, 1);
+}
+#sendButton {
+  margin-left: 3px !important;
+  margin-bottom: 2px !important;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #6b6b6b;
+}
+
+.chatComponentLight ::-webkit-scrollbar-thumb {
+  background-color: #eeeeee !important;
+}

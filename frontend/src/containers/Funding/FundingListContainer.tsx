@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import CountUp from 'react-countup';
 
 import InputLabel from '@mui/material/InputLabel';
@@ -9,31 +9,60 @@ import { Box } from '@mui/system';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
+import CircularProgress from '@mui/material/CircularProgress';
+import { useInView } from 'react-intersection-observer';
+import cn from 'classnames';
+import Skeleton from '@mui/material/Skeleton';
+import Typography, { TypographyProps } from '@mui/material/Typography';
+import { async } from 'q';
 import styles from './FundingListContainer.module.scss';
 import FundingListElement from '../../components/Funding/FundingListElement';
 import { FundingElementType } from '../../types/funding';
-import { requestFundingList, requestFundingSearch } from '../../api/funding';
-import { useAppSelector } from '../../store/hooks';
-
+import { requestCategoryFundingList, requestFundingList, requestFundingSearch, requestNextFundingList } from '../../api/funding';
 // icon
 import disable from '../../assets/images/funding/categoryIcon/disable.png';
 import child from '../../assets/images/funding/categoryIcon/child.png';
 import animal from '../../assets/images/funding/categoryIcon/animal.png';
 import oldman from '../../assets/images/funding/categoryIcon/oldman.png';
 import planet from '../../assets/images/funding/categoryIcon/planet.png';
+import FundingElementSkeleton from '../../components/Skeleton/FundingElementSkeleton';
 
+// 한번에 불러올 게시글 수
+const size = 12;
+const categoryList = [
+  { id: 4, url: disable, caption: '장애인' },
+  { id: 1, url: child, caption: '아동' },
+  { id: 3, url: animal, caption: '동물' },
+  { id: 2, url: oldman, caption: '노인' },
+  { id: 5, url: planet, caption: '환경' },
+];
 function FundingListContainer() {
   const [fundingList, setFundingList] = useState<FundingElementType[]>([]);
   const [successFundingCount, setSuccessFundingCount] = useState<number>(0);
   const [totalFundingAmount, setTotalFundingAmount] = useState<number>(0);
   const [totalFundingCount, setTotalFundingCount] = useState<number>(0);
-  const [searchText, setSearchText] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [nextLoading, setNextLoading] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(-1);
+  const [isLastPage, setIsLastPAge] = useState<boolean>(false);
+  const [ref, inView] = useInView();
+  const [selectCategory, setSelectCategory] = useState<number>(-1);
+  const [fundingStateFilter, setFundingStateFilter] = useState<string>('All');
+
+
+  // 펀딩개수 계싼
+  const fundingCount = useMemo(() => {
+    return totalFundingCount;
+  }, [totalFundingCount]);
 
   const search = async (text: string) => {
     try {
+      setIsLoading(true);
       const response = await requestFundingSearch(text);
-      console.log(response);
+      setFundingList([...response.data.content]);
+      setTotalFundingCount(response.data.numberOfElements);
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
@@ -44,22 +73,106 @@ function FundingListContainer() {
     search(value);
   };
 
-  const initFundingList = useCallback(async () => {
+  const hanlderFilter = (id:string) => {
+    getPostTypeList(id);
+  }
+
+  const getPostTypeList = async (filterdType: string) => {
+    console.log(filterdType)
     try {
-      const { data } = await requestFundingList();
-      console.log(data);
-      setFundingList([...data.fundingListResponses]);
-      setSuccessFundingCount(data.successFundingCount);
-      setTotalFundingAmount(data.totalFundingAmount);
-      setTotalFundingCount(data.totalFundingCount);
+      setIsLoading(true);
+      const { data } = await requestFundingList(size);
+      const temp = data.fundingListResponses.content;
+      let next
+      if (filterdType === 'FUNDING_IN_PROGRESS') {
+        next = temp.filter((el: { postType: string; }) => el.postType === "FUNDING_IN_PROGRESS")
+        setFundingList([...next])
+      } 
+      else if(filterdType === 'FUNDING_ACCEPT'){
+         next = temp.filter((el: { postType: string; }) => el.postType === "FUNDING_ACCEPT")
+         setFundingList([...next])
+      } 
+      else {
+        setFundingList([...temp])
+      }
+      setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
-  }, []);
+  }
+
+  const initFundingList = async () => {
+    try {
+      setIsLoading(true);
+      const { data } = await requestFundingList(size);
+      setFundingList([...data.fundingListResponses.content]);
+      setSuccessFundingCount(data.successFundingCount);
+      setTotalFundingAmount(data.totalFundingAmount);
+      setTotalFundingCount(data.totalFundingCount);
+      setCurrentPage(data.fundingListResponses.number);
+      setIsLastPAge(data.fundingListResponses.last);
+      setIsLoading(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const nextFundingList = async () => {
+    try {
+      setNextLoading(true);
+      const { data } = await requestNextFundingList(currentPage, size);
+      setFundingList([...fundingList, ...data.fundingListResponses.content]);
+      setCurrentPage(data.fundingListResponses.number);
+      setIsLastPAge(data.fundingListResponses.last);
+      setNextLoading(false);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  const onToggleCategory = async (categoryId: number) => {
+    try {
+      if (categoryId === selectCategory) {
+        setSelectCategory(-1);
+        setIsLoading(true);
+        const { data } = await requestFundingList(size);
+        setFundingList([...data.fundingListResponses.content]);
+        setSuccessFundingCount(data.successFundingCount);
+        setTotalFundingAmount(data.totalFundingAmount);
+        setTotalFundingCount(data.totalFundingCount);
+        setCurrentPage(data.fundingListResponses.number);
+        setIsLastPAge(data.fundingListResponses.last);
+        setIsLoading(false);
+
+      } else {
+        setSelectCategory(categoryId);
+        console.log(categoryId);
+        setIsLoading(true);
+        const response = await requestCategoryFundingList(categoryId);
+        setFundingList([...response.data.content]);
+        setTotalFundingCount(response.data.numberOfElements);
+        setIsLoading(false);
+        console.log(response);
+        
+      } 
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
 
   useEffect(() => {
     initFundingList();
   }, []);
+
+  useEffect(() => {
+    if (inView && !isLastPage) {
+      nextFundingList();
+    }
+  }, [inView]);
+
+  useEffect(() => {
+    console.log(selectCategory);
+  }, [selectCategory]);
 
   return (
     <div className={styles.container}>
@@ -82,26 +195,12 @@ function FundingListContainer() {
           </div>
         </div>
         <div className={styles['category-box']}>
-          <Link to="/asd" className={styles.link}>
-            <img src={animal} className={styles.icon} alt="동물" />
-            <span>동물 </span>
-          </Link>
-          <Link to="/asd" className={styles.link}>
-            <img src={planet} className={styles.icon} alt="환경" />
-            <span>환경</span>
-          </Link>
-          <Link to="/asd" className={styles.link}>
-            <img src={disable} className={styles.icon} alt="동물" />
-            <span>장애인</span>
-          </Link>
-          <Link to="/asd" className={styles.link}>
-            <img src={oldman} className={styles.icon} alt="노인" />
-            <span>노인</span>
-          </Link>
-          <Link to="/asd" className={styles.link}>
-            <img src={child} className={styles.icon} alt="아동" />
-            <span>아동</span>
-          </Link>
+          {categoryList.map((item) => (
+            <div aria-hidden="true" onClick={() => onToggleCategory(item.id)} className={cn(styles.link, item.id === selectCategory ? styles.toggle : '')} key={item.id}>
+              <img src={item.url} className={styles.icon} alt={item.caption} />
+              <span>{item.caption} </span>
+            </div>
+          ))}
         </div>
         <div className={styles['search-box']}>
           <TextField
@@ -118,19 +217,38 @@ function FundingListContainer() {
             }}
           />
         </div>
+
         <div className={styles['funding-list-box']}>
           <div className={styles['funding-filter-box']}>
             <p>
-              총 <span>{totalFundingCount}</span>건의 프로젝트가 진행중에 있어요.
+              <span>{fundingCount}</span>건의 프로젝트가 진행중에 있어요.
+            </p>
+            <p>
+              <button type='button' onClick={()=>hanlderFilter('All')}>전체 |</button>
+              <button type='button' onClick={()=>hanlderFilter('FUNDING_IN_PROGRESS')}>진행중 |</button>
+              <button type='button' onClick={()=>hanlderFilter('FUNDING_ACCEPT')}>오픈 예정</button>
             </p>
 
-            <div className={styles['funding-list']}>
-              {fundingList?.map((funding) => (
-                <FundingListElement {...funding} key={funding.id} />
-              ))}
-            </div>
+            {isLoading ? (
+              <FundingElementSkeleton />
+            ) : (
+              <div className={styles['funding-list']}>
+                {fundingList?.map((funding) => (
+                  <FundingListElement {...funding} key={funding.id} />
+                ))}
+
+                {nextLoading ? (
+                  <div className={styles['nextLoading-box']}>
+                    <CircularProgress color="warning" />
+                  </div>
+                ) : (
+                  ''
+                )}
+              </div>
+            )}
           </div>
         </div>
+        {currentPage >= 0 ? <div ref={ref} /> : ''}
       </div>
     </div>
   );

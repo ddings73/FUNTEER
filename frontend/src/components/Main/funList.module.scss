@@ -1,0 +1,67 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+.listContainer {
+  display: block;
+  & .TypoWrapper {
+    & .subTitle {
+      font-family: 'NanumSquare_ac';
+      font-style: normal;
+      font-weight: 400;
+      font-size: 20px;
+      line-height: 158.34%;
+      background: linear-gradient(253.58deg, #ffc000 1.55%, #ff8a00 95.8%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    & .Title {
+      font-family: 'NanumSquare';
+      font-weight: 800;
+      font-size: 100px;
+      background: linear-gradient(253.58deg, #ffc000 1.55%, #ff7300 95.8%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-top: 20px;
+    }
+  }
+  & .contentWrapper {
+    margin-top: 50px;
+    & .filterDrop {
+      margin-left: 30px;
+      margin-bottom: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100px;
+      height: 40px;
+      border: 3px solid #ff5e00;
+      border-radius: 15px;
+      color: #ff5e00;
+    }
+    & .menuHeads {
+      display: flex;
+      justify-content: space-between;
+      margin: 0 30px;
+      margin-bottom: 40px;
+      & .curStatus {
+        & span {
+          color: red;
+        }
+      }
+      & .linkTo {
+        cursor: pointer;
+        text-decoration: none;
+        &:hover {
+          color: $primary;
+          font-weight: 500;
+        }
+      }
+    }
+    & .carouselWrapper {
+      width: 100%;
+      height: auto;
+    }
+  }
+}

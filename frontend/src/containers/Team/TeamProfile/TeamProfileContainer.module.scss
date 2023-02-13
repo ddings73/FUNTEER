@@ -1,0 +1,314 @@
+@import '../../../styles/reset.scss';
+@import '../../../styles/variable.scss';
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  height: 100%;
+  display: flex;
+  padding-top: 77.6px;
+  font-family: NanumSquare !important;
+
+  .content {
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+
+    .content-inner {
+      max-width: 1160px;
+      width: 100%;
+      min-height: 100vh;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background-color: #fdfdfd;
+
+      .profile-card {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+
+        @include tablet {
+          flex-direction: column;
+        }
+
+        @include mobile {
+          flex-direction: column;
+        }
+
+        .profile-card-img-div {
+          width: 300px;
+          height: 300px;
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          margin: 3.5rem 2rem 2rem 2rem;
+
+          .profile-card-img-inner {
+            width: 260px;
+            height: 260px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 100%;
+            overflow: hidden;
+            border: 1px solid $primary;
+            box-shadow: rgba(161, 91, 0, 0.2) 0px 2px 8px;
+
+            & img {
+              width: 260px;
+              height: 260px;
+              border-radius: 100%;
+            }
+          }
+
+          @include tablet {
+            margin: 0 0 1rem 0;
+          }
+
+          @include mobile {
+            margin: 0 0 1rem 0;
+          }
+        }
+
+        .profile-card-info-div {
+          width: 60%;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+
+          @include tablet {
+            border: none;
+            margin: 0 0 0 2rem;
+          }
+
+          @include mobile {
+            border: none;
+            margin: 0 0 0 2rem;
+          }
+
+          .name {
+            width: 95%;
+            display: flex;
+            align-items: center;
+            margin: 6rem 0 0 0;
+            font-size: 1.75rem;
+            font-weight: bold;
+
+            .follow-btn-div {
+              margin-left: 1rem;
+
+              &:hover {
+                cursor: pointer;
+              }
+            }
+
+            @include tablet {
+              margin: 0;
+              padding: 0;
+            }
+
+            @include mobile {
+              margin: 0;
+              padding: 0;
+            }
+
+            .setting {
+              font-size: 40px;
+              margin-left: 0.5rem;
+              color: rgba(0, 0, 0, 0.3);
+              transition: 2s;
+
+              &:hover {
+                cursor: pointer;
+                color: rgba(0, 0, 0, 0.6);
+                transform: rotate(180deg);
+              }
+
+              @include tablet {
+                font-size: 30px;
+              }
+
+              @include mobile {
+                font-size: 20px;
+              }
+            }
+          }
+
+          .profile-card-info-content {
+            display: flex;
+            justify-content: space-between;
+            width: 95%;
+            margin: 3rem 0 0 0;
+            padding: 1rem;
+
+            @include tablet {
+              margin: 0;
+              padding: 0;
+              flex-direction: column;
+              justify-content: flex-start;
+            }
+
+            @include mobile {
+              margin: 0;
+              padding: 0;
+              flex-direction: column;
+              justify-content: flex-start;
+            }
+
+            .profile-card-info-left {
+              display: flex;
+              flex-direction: column;
+
+              @include tablet {
+                margin: 1rem 0 0 0;
+              }
+
+              @include mobile {
+                margin: 1rem 0 0 0;
+              }
+
+              .profile-card-info-item {
+                display: flex;
+                margin: 1rem 0;
+
+                & p {
+                  margin: 0 0 0 0.5rem;
+                  font-size: 1.125rem;
+
+                  & span {
+                    font-weight: bold;
+                  }
+                }
+              }
+            }
+
+            .profile-card-info-right {
+              display: flex;
+              flex-direction: column;
+              justify-content: flex-end;
+
+              @include tablet {
+                margin-top: 1rem;
+              }
+
+              @include mobile {
+                margin-top: 1rem;
+              }
+
+              .profile-card-info-btn {
+                max-width: 300px;
+                height: 2rem;
+                margin-bottom: 1rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                text-transform: none;
+
+                @include mobile {
+                }
+
+                & p {
+                  margin-left: 0.5rem;
+                }
+              }
+            }
+          }
+        }
+      }
+
+      .description-div {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin-top: 1rem;
+        border-radius: 5px;
+        background-color: #fdf7f2;
+
+        @include tablet {
+          width: 90%;
+          margin: 0;
+          padding: 0 0 2.5rem 0;
+        }
+
+        @include mobile {
+          width: 90%;
+          margin: 0;
+          padding: 0 0 2.5rem 0;
+        }
+
+        & p {
+          margin-top: 3rem;
+          font-size: 1.25rem;
+        }
+
+        & pre {
+          white-space: pre-wrap;
+          width: 80%;
+          margin: 1rem 0 3rem;
+          color: rgba(0, 0, 0, 0.7);
+          line-height: 2rem;
+        }
+      }
+
+      .funding-div {
+        width: 75%;
+        margin-top: 5rem;
+
+        @include tablet {
+          margin-top: 2rem;
+          padding: 0rem;
+        }
+
+        @include mobile {
+          margin-top: 2rem;
+          padding: 0rem;
+        }
+
+        & h1 {
+          font-size: 1.25rem;
+          color: rgba(0, 0, 0, 0.9);
+
+          & span {
+            color: $primary;
+          }
+        }
+      }
+    }
+  }
+}
+
+// 태그 영역 표시
+// .profile-card {
+//   border: 1px solid red;
+//   .profile-card-img-div {
+//     border: 1px solid orange;
+//   }
+//   .profile-card-info-div {
+//     border: 1px solid orange;
+//     .name {
+//       border: 1px solid rgb(186, 186, 0);
+//     }
+//     .profile-card-info-content {
+//       border: 1px solid rgb(186, 186, 0);
+//       .profile-card-info-left {
+//         border: 1px solid green;
+//       }
+//       .profile-card-info-right {
+//         border: 1px solid green;
+//       }
+//     }
+//   }
+// }
+// .description-div {
+//   border: 1px solid red;
+//   .funding-div {
+//     border: 1px solid red;
+//   }
+// }

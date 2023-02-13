@@ -9,6 +9,7 @@ export function MyFundingContainer() {
       <SideBarList />
       <div className={styles.contentContainer}>
         <div className={styles.backBox}>
+          <h1 className={styles.title}>나의 펀딩 내역</h1>
           <div className={styles.contentBox}>
             <LongCard />
           </div>

@@ -13,11 +13,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemberAccountResponse {
+	private Long id;
 	private String email;
 	private String name;
 	private String phone;
 
 	public static MemberAccountResponse of(Member member){
-		return new MemberAccountResponse(member.getEmail(), member.getName(), member.getPhone());
+		return new MemberAccountResponse(member.getId(), member.getEmail(), member.getName(), member.getPhone());
 	}
 }

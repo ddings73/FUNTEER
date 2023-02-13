@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import styled from 'styled-components';
 import { useLocation, useNavigate } from 'react-router-dom';
 import styles from './FundingListElement.module.scss';
@@ -21,13 +21,13 @@ const ProgressBar = styled.div<{ gage: number }>`
 `;
 
 function FundingListElement(funding: FundingElementType) {
-  const { id, thumbnail, title, startDate, postType, postDate, fundingDescription, endDate, currentFundingAmount, amount } = funding;
+  const { id, thumbnail, title, startDate, postType, postDate, fundingDescription, endDate, currentFundingAmount, targetAmount } = funding;
   const { pathname } = useLocation();
   const navigate = useNavigate();
 
   const enoughMoney = useMemo(() => {
-    return Math.floor((currentFundingAmount / amount) * 100);
-  }, [currentFundingAmount, amount]);
+    return Math.floor((currentFundingAmount / targetAmount) * 100);
+  }, [currentFundingAmount, targetAmount]);
 
   const moveFundingDetail = () => {
     navigate(`${pathname}/detail/${id}`);
@@ -36,8 +36,10 @@ function FundingListElement(funding: FundingElementType) {
   return (
     <div className={styles['funding-box']} onClick={moveFundingDetail} aria-hidden="true">
       <img src={thumbnail || defaultFundingThumbnail} alt="???" />
-      <p className={styles.title}>{title}</p>
-      <p className={styles.content}>{fundingDescription}</p>
+      <div className={styles['funding-info-box']}>
+        <p className={styles['list-title']}>{title}</p>
+        <p className={styles['list-description']}>{fundingDescription}</p>
+      </div>
 
       <div className={styles['progress-info-box']}>
         <p className={styles.money}>

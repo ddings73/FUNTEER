@@ -1,0 +1,81 @@
+@import '../../../styles/reset.scss';
+@import '../../../styles/variable.scss';
+
+.container {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  font-family: NanumSquare !important;
+
+  .contents {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 1440px;
+
+    .title {
+      font-size: 2rem;
+      font-weight: bold;
+      margin: 3rem 0;
+    }
+
+    .label-div {
+      display: flex;
+      align-items: center;
+      width: 800px;
+      margin: 0.5rem 0;
+      font-size: 1.25rem;
+
+      & img {
+        width: 8px;
+        margin-left: 0.5rem;
+        padding: 0 0 0.3rem 0;
+      }
+    }
+
+    .email-title {
+      width: 780px;
+      height: 35px;
+      margin-bottom: 1rem;
+      padding: 0 0.7rem;
+      border-radius: 5px;
+      font-family: NanumSquare;
+    }
+
+    .editor {
+      width: 805px;
+      height: 500px;
+      margin-bottom: 1rem;
+      padding: 1rem;
+      border-radius: 5px;
+      font-family: NanumSquare;
+    }
+
+    input[type='file']::file-selector-button {
+      width: 100px;
+      height: 30px;
+      margin: 0 0.5rem 0 0;
+      background: $primary;
+      border: none;
+      border-radius: 5px;
+      color: white;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-family: NanumSquare;
+    }
+
+    .btn-div {
+      display: flex;
+      justify-content: space-around;
+      margin: 2rem 0 4rem;
+
+      .submit {
+        background-color: $primary;
+        margin: 0 0.5rem;
+        font-family: NanumSquare;
+      }
+    }
+  }
+}

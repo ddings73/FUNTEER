@@ -1,5 +1,6 @@
 package com.yam.funteer.donation.dto.request;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +24,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 @Data
-@Getter @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
@@ -32,22 +33,24 @@ public class DonationModifyReq {
 	private String content;
 	@NotBlank
 	private String title;
-	@NotNull
-	private Long amount;
-
-	private List<MultipartFile>files=new ArrayList<>();
-
+	@NotBlank
+	private String amount;
+	@NotBlank
+	private MultipartFile file;
+	@NotBlank
 	private PostType postType;
 
-	public Donation toEntity(Long postId){
+	public Donation toEntity(Long postId,Long donationId,Long currentAmount, LocalDate regDate){
 		return Donation.builder()
 			.id(postId)
-			.regDate(LocalDateTime.now())
+			.donationId(donationId)
+			.startDate(regDate)
 			.postGroup(PostGroup.DONATION)
 			.postType(postType)
 			.title(title)
 			.content(content)
-			.amount(amount)
+			.amount(Long.parseLong(amount))
+			.currentAmount(currentAmount)
 			.build();
 	}
 
@@ -60,3 +63,4 @@ public class DonationModifyReq {
 	}
 
 }
+

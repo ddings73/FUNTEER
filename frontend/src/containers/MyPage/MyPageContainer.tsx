@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import EmailIcon from '@mui/icons-material/Email';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -6,37 +6,91 @@ import Tooltip from '@mui/material/Tooltip';
 import Alert from '@mui/material/Alert';
 import AlertTitle from '@mui/material/AlertTitle';
 import { useLocation } from 'react-router-dom';
+import Switch from '@mui/material/Switch';
+import { FormControlLabel, IconButton } from '@mui/material';
+import ControlPointOutlinedIcon from '@mui/icons-material/ControlPointOutlined';
 import SideBarList from '../../components/MyPageSideBar/SideBarList';
 import styles from './MyPageContainer.module.scss';
 import ProfileSvg from '../../assets/images/default-profile-img.svg';
-import { requestUserInfo } from '../../api/user';
+import { requestModifyUserDisplay, requestModifyUserProfileImage, requestUserInfo, requestUserProfile } from '../../api/user';
+import { useAppSelector } from '../../store/hooks';
+import { userProfileInterface } from '../../types/user';
+import { http } from '../../api/axios';
 
 export function MyPageContainer() {
-  const { pathname } = useLocation();
-  console.log(pathname);
+  const fileRef = useRef<HTMLInputElement>(null);
+  const userId = useAppSelector((state) => state.userSlice.userId);
+  const [thunmbnailPreview, setThumbnailPreview] = useState<string>();
+  const [profileImage, setProfileImage] = useState<Blob>(new Blob());
+  const [userProfile, setUserProfile] = useState<userProfileInterface>({
+    nickname: '',
+    profileImgUrl: '',
+    money: 0,
+    wishCnt: 0,
+    followingCnt: 0,
+  });
 
-  const handleCopyClipBoard = async (text: string, type: string) => {
+  const [display, setDisplay] = useState<boolean>(false);
+  const getRequestUserInfo = async () => {
     try {
-      await navigator.clipboard.writeText(text);
+      const response = await requestUserProfile(userId);
+      console.log(response.data);
 
-      alert(`${type}가 복사되었습니다.`);
+      setDisplay(response.data.display);
+      setUserProfile({ ...response.data });
     } catch (error) {
-      alert('복사에 실패했습니다');
+      console.log(error);
     }
   };
 
-  const getRequestUserInfo = async () => {
+  const onChangeSwitch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setDisplay(e.target.checked);
+  };
+
+  const modifyUserDisplay = async () => {
     try {
-      const response = await requestUserInfo();
-      console.log(response);
+      const response = await requestModifyUserDisplay(display, userId);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const onChangeFile = () => {
+    if (fileRef.current) fileRef.current.click();
+  };
+  const onFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files) {
+      return;
+    }
+    const file = e.target.files[0];
+    setProfileImage(file);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onloadend = () => {
+      setThumbnailPreview(reader.result as string);
+    };
+  };
+
+  const modifyThumbnail = async () => {
+    try {
+      const response = await requestModifyUserProfileImage(profileImage, userId);
+      getRequestUserInfo();
     } catch (error) {
       console.log(error);
     }
   };
 
   useEffect(() => {
+    modifyUserDisplay();
+  }, [display]);
+  useEffect(() => {
+    modifyThumbnail();
+  }, [profileImage]);
+
+  useEffect(() => {
     getRequestUserInfo();
   }, []);
+
   return (
     <div className={styles.bodyContainer}>
       <SideBarList />
@@ -47,40 +101,31 @@ export function MyPageContainer() {
               <div className={styles.profileCard}>
                 <div className={styles.profileEdit}>
                   {' '}
-                  <Tooltip title="프로필 수정" placement="bottom">
-                    <SettingsIcon sx={{ fontSize: '50px' }} />
-                  </Tooltip>
+                  <FormControlLabel control={<Switch onChange={onChangeSwitch} checked={display} />} labelPlacement="bottom" label="프로필 공개 설정" />
                 </div>
                 <div className={styles.image}>
-                  <img className={styles.profilePic} src={ProfileSvg} alt="" />
+                  <img className={styles.profilePic} src={userProfile.profileImgUrl || ProfileSvg} alt="" />
+                  <IconButton className={styles.plus} onClick={onChangeFile}>
+                    <ControlPointOutlinedIcon className={styles.plus} />
+                  </IconButton>
+                  <input type="file" ref={fileRef} onChange={onFileHandler} />
                 </div>
                 <div className={styles.data}>
-                  <h2>김승섭</h2>
-                  <span>광안리어쩌고닉네임</span>
+                  <h2>{userProfile.nickname}</h2>
                 </div>
                 <div className={styles.row}>
                   <div className={styles.info}>
                     <h3>팔로우</h3>
-                    <span>3</span>
+                    <span>{userProfile.followingCnt}</span>
                   </div>
                   <div className={styles.info}>
                     <h3>찜한 펀딩</h3>
-                    <span>100</span>
+                    <span>{userProfile.followingCnt}</span>
                   </div>
                   <div className={styles.info}>
                     <h3>총 기부</h3>
-                    <span>0</span>
+                    <span>{userProfile.money}</span>
                   </div>
-                </div>
-                <div className={styles.buttons}>
-                  <Tooltip title="깃허브 복사" placement="top">
-                    <GitHubIcon className={styles.btn} onClick={() => handleCopyClipBoard('@github', '깃허브 정보')}>
-                      GitHub
-                    </GitHubIcon>
-                  </Tooltip>
-                  <Tooltip title="이메일 복사" placement="top">
-                    <EmailIcon className={styles.btn} onClick={() => handleCopyClipBoard('Email@gmail.com', '이메일 주소')} />
-                  </Tooltip>
                 </div>
               </div>
             </section>
