@@ -81,7 +81,7 @@ export const requestAdminSearchedFundingList = async (page: number, size: number
     size,
   };
 
-  const response = http.get('funding/search', { params });
+  const response = http.get('admin/funding/search', { params });
 
   return response;
 };
