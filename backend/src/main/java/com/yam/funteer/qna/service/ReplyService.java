@@ -8,6 +8,6 @@ import com.yam.funteer.qna.exception.ReplyNotFoundException;
 public interface ReplyService {
 	ReplyBaseRes replyGetDetail(Long qnaId) ;
 	ReplyBaseRes replyRegister(Long qnaId, QnaReplyReq qnaReplyReq) ;
-	ReplyBaseRes replyModify(Long qnaId,QnaReplyReq qnaReplyReq) ;
+	ReplyBaseRes replyModify(Long qnaId, QnaReplyReq qnaReplyReq) ;
 	void replyDelete(Long qnaId);
 }
