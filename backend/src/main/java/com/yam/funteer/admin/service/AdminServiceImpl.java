@@ -108,6 +108,7 @@ public class AdminServiceImpl implements AdminService{
 		emailService.sendTeamRejectMessage(team.getEmail(), request.getRejectComment());
 	}
 
+
 	@Override
 	public void acceptFunding(Long fundingId) {
 		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);

@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -114,12 +115,31 @@ public class FundingServiceImpl implements FundingService{
 
 	private final BadgeService badgeService;
 
+	@Override
+	public Page<FundingListResponse> findAllFundingByAdmin(Pageable pageable) {
+		return fundingRepository.findAll(pageable).map(FundingListResponse::from);
+	}
 
 	@Override
 	public Page<FundingListResponse> findFundingByKeyword(String keyword, Pageable pageable) {
-		Page<FundingListResponse> collect = fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword,
-			pageable).map(m -> FundingListResponse.from(m));
-		return collect;
+		List<Funding> collect = fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword);
+		return getFundingListResponses(
+			pageable, collect);
+	}
+
+	@NotNull
+	private static Page<FundingListResponse> getFundingListResponses(Pageable pageable, List<Funding> collect) {
+		List<Funding> fundingArrayList = new ArrayList<>();
+
+		for (Funding funding: collect)
+			if (isaBoolean(funding)) {
+				fundingArrayList.add(funding);
+			}
+		List<FundingListResponse> responses = fundingArrayList.stream()
+			.map(FundingListResponse::from)
+			.collect(Collectors.toList());
+		Page<FundingListResponse> fundingListResponses = new PageImpl<>(responses.subList(0, collect.size()), pageable, responses.size());
+		return fundingListResponses;
 	}
 
 	@Override
@@ -129,13 +149,21 @@ public class FundingServiceImpl implements FundingService{
 		List<PostHashtag> byHashtag = postHashtagRepository.findByHashtagId(hashtagId);
 		List<Funding> posts = new ArrayList<>();
 		for (PostHashtag postHashtag : byHashtag) {
-			Optional<Funding> funding = fundingRepository.findByFundingId(postHashtag.getPost().getId());
-			posts.add(funding.get());
+			Funding funding = fundingRepository.findByFundingId(postHashtag.getPost().getId()).orElseThrow(FundingNotFoundException::new);
+			if (isaBoolean(funding)) {
+				posts.add(funding);
+			}
 		}
+
 		List<FundingListResponse> collect = posts.stream().map(m -> FundingListResponse.from(m)).collect(Collectors.toList());
 		Page<FundingListResponse> collect2 = new PageImpl<>(collect.subList(0, collect.size()), pageable, collect.size());
 		return collect2;
+	}
 
+	private static boolean isaBoolean(Funding funding) {
+		boolean b = funding.getPostType() != PostType.FUNDING_FAIL || funding.getPostType() != PostType.FUNDING_WAIT
+			|| funding.getPostType() != PostType.FUNDING_REJECT;
+		return b;
 	}
 
 	@Override
@@ -186,13 +214,19 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public Page<FundingListResponse> findFundingByCategory(Long categoryId, Pageable pageable) {
 		Category category = categoryRepository.findById(categoryId).orElseThrow(CategoryNotFoundException::new);
-		Page<FundingListResponse> collect = fundingRepository.findAllByCategory(category, pageable).map(m -> FundingListResponse.from(m));
-		return collect;
+		List<Funding> collect = fundingRepository.findAllByCategory(category);
+		Page<FundingListResponse> fundingListResponses = getFundingListResponses(
+			pageable, collect);
+		return fundingListResponses;
 	}
 
 	@Override
 	public FundingListPageResponse findAllFunding(Pageable pageable) {
-		Page<FundingListResponse> collect = fundingRepository.findAll(pageable).map(m -> FundingListResponse.from(m));
+		List<Funding> collect = fundingRepository.findAll();
+
+		Page<FundingListResponse> fundingListResponses = getFundingListResponses(
+			pageable, collect);
+
 		List<Funding> successFundingList = fundingRepository.findAllByPostType(PostType.REPORT_ACCEPT);
 
 		Long totalFundingCount = fundingRepository.findAll().stream().count();
@@ -203,8 +237,7 @@ public class FundingServiceImpl implements FundingService{
 			totalFundingAmount += funding.getCurrentFundingAmount();
 		}
 
-		FundingListPageResponse fundingListPageResponse = new FundingListPageResponse(collect, totalFundingCount, successFundingCount, totalFundingAmount);
-		return fundingListPageResponse;
+		return new FundingListPageResponse(fundingListResponses, totalFundingCount, successFundingCount, totalFundingAmount);
 	}
 
 
@@ -387,9 +420,7 @@ public class FundingServiceImpl implements FundingService{
 			setTargetMoney(data, funding);
 
 			List<PostHashtag> postHashtagList = funding.getHashtags();
-			for (PostHashtag postHashtag : postHashtagList) {
-				postHashtagRepository.delete(postHashtag);
-			}
+			postHashtagRepository.deleteAll(postHashtagList);
 
 			List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
 			List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
@@ -479,8 +510,7 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public FundingReportResponse findFundingReportById(Long fundingId) {
 		Report byFundingId = reportRepository.findByFundingFundingId(fundingId).orElseThrow(NotFoundReportException::new);
-		FundingReportResponse fundingReport = FundingReportResponse.from(byFundingId);
-		return fundingReport;
+		return FundingReportResponse.from(byFundingId);
 	}
 
 	@Override

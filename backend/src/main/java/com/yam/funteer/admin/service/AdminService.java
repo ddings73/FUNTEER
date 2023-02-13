@@ -18,6 +18,8 @@ public interface AdminService {
 
 	TeamListResponse findTeamWithPageable(String keyword, UserType userType, Pageable pageable);
 
+
+
 	void resignMember(Long memberId);
 
 	void resignTeam(Long teamId);
