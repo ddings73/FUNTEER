@@ -78,15 +78,7 @@ type responseListType = {
 
 export function FundingDetailContainer() {
   const navigate = useNavigate();
-  const [commentList, setCommentList] = useState([
-    {
-      commentId: 0,
-      memberNickName: '',
-      content: '',
-      memberProfileImg: '',
-      regDate: '',
-    },
-  ]);
+  const [commentList, setCommentList] = useState<commentType[]>([]);
   const userType = useAppSelector((state) => state.userSlice.userType);
   const { fundIdx } = useParams();
   const [board, setBoard] = useState<ResponseInterface>({
@@ -174,7 +166,7 @@ export function FundingDetailContainer() {
 
   const initCommentList = async () => {
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
       const { data } = await requestCommentList(fundIdx, 'regDate,DESC');
       setCommentList([...commentList, ...data.comments.content]);
       setCommentCount(data.comments.total);
@@ -192,6 +184,7 @@ export function FundingDetailContainer() {
     try {
       setNextLoading(true);
       const { data } = await requestNextCommentList(currentPage, fundIdx, 'regDate,DESC');
+      console.log(data.comments)
       setCommentList([...commentList, ...data.comments.content]);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
@@ -221,12 +214,12 @@ export function FundingDetailContainer() {
     initCommentList();
     alert('이닛');
   }, []);
-
   useEffect(() => {
     if (inView && !isLastPage) {
       nextCommentList();
     }
   }, [inView]);
+
 
   // 로그인 정보
   const userId = useAppSelector((state) => state.userSlice.userId);
@@ -476,7 +469,7 @@ export function FundingDetailContainer() {
         </div>
         <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.mainCommentSubmit}>
-          <CommentCardSubmit />
+          <CommentCardSubmit initCommentList={initCommentList}/>
         </div>
         <div className={styles.mainComments}>
           {isLoading ? (
