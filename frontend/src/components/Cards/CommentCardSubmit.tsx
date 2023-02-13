@@ -7,7 +7,7 @@ import profileTemp from '../../assets/images/default-profile-img.svg';
 import { postFundingComment, requestCommentList } from '../../api/funding';
 import { commentType } from '../../containers/Funding/FundingDetailContainer';
 
-export function CommentCardSubmit() {
+export function CommentCardSubmit(props: any) {
   const { fundIdx } = useParams();
 
   const [comment, setComment] = useState('');
@@ -24,10 +24,12 @@ export function CommentCardSubmit() {
   };
   const onSubmit = async (e: any) => {
     e.preventDefault();
-    fetchData();
+    await fetchData();
     alert('댓글 등록 완료!');
     setComment('');
     /* eslint-disable */
+    props.initCommentList();
+    
   };
   const handleKeyPress = (e: any) => {
     if (e.key === 'Enter') {
