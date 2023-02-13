@@ -58,6 +58,7 @@
   bottom: 0;
   right: 0;
   z-index: 999;
+  background-color: #707070;
 }
 
 .form-control {
