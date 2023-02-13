@@ -134,11 +134,12 @@ public class FundingServiceImpl implements FundingService{
 		for (Funding funding: collect)
 			if (isaBoolean(funding)) {
 				fundingArrayList.add(funding);
+				log.info(funding.getFundingId().toString());
 			}
 		List<FundingListResponse> responses = fundingArrayList.stream()
 			.map(FundingListResponse::from)
 			.collect(Collectors.toList());
-		Page<FundingListResponse> fundingListResponses = new PageImpl<>(responses.subList(0, collect.size()), pageable, responses.size());
+		Page<FundingListResponse> fundingListResponses = new PageImpl<>(responses, pageable, responses.size());
 		return fundingListResponses;
 	}
 
@@ -161,8 +162,8 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	private static boolean isaBoolean(Funding funding) {
-		boolean b = funding.getPostType() != PostType.FUNDING_FAIL || funding.getPostType() != PostType.FUNDING_WAIT
-			|| funding.getPostType() != PostType.FUNDING_REJECT;
+		boolean b = funding.getPostType() != PostType.FUNDING_FAIL && funding.getPostType() != PostType.FUNDING_WAIT
+			&& funding.getPostType() != PostType.FUNDING_REJECT;
 		return b;
 	}
 
