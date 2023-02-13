@@ -50,11 +50,11 @@ export default class ChatComponent extends Component {
       this.scrollToBottom();
     });
 
-    this.props.user.getStreamManager().stream.session.on('signal:updateAmount', (event) => {
+    this.props.user.getStreamManager().stream.session.on('signal:updateAmount', async (event) => {
       const data = JSON.parse(event.data);
       console.log('씨그날ㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹㄹ', data);
-      this.props.liveDonation(data);
-      this.props.updateAllAmount(data);
+      await this.props.liveDonation(data);
+      await this.props.updateAllAmount(data);
       this.setState({ amount: '', toggle: false });
       alert(`${data}원이 기부되었습니다`);
     });

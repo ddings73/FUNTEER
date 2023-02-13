@@ -25,11 +25,17 @@ function PublisherLiveRoomContainer() {
   };
 
   const liveDonation = async (amount: number) => {
-    console.log(amount);
+    console.log('뺴야할 금액', amount);
     try {
       const response = await requestLiveDonation(amount as number, userName as string);
+      console.log('결과띠', response);
+
       await getUserMoney();
+      alert('성공띠');
+      console.log(response);
     } catch (error) {
+      alert('실패띠');
+
       console.error(error);
     }
   };
