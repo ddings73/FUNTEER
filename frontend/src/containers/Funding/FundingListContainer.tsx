@@ -85,13 +85,17 @@ function FundingListContainer() {
       const temp = data.fundingListResponses.content;
       let next
       if (filterdType === 'FUNDING_IN_PROGRESS') {
-        next = temp.filter((el: { postType: string; }) => el.postType === "FUNDING_IN_PROGRESS")
+        next = temp.filter((el: { postType: string; }) => el.postType === "FUNDING_IN_PROGRESS" || el.postType === "FUNDING_EXTEND")
         setFundingList([...next])
       } 
       else if(filterdType === 'FUNDING_ACCEPT'){
          next = temp.filter((el: { postType: string; }) => el.postType === "FUNDING_ACCEPT")
          setFundingList([...next])
       } 
+      else if (filterdType === 'FUNDING_COMPLETE') {
+        next = temp.filter((el: { postType: string; }) => el.postType === "FUNDING_COMPLETE" || el.postType === "REPORT_WAIT" || el.postType === "REPORT_REJECT" || el.postType === "REPORT_ACCEPT")
+        setFundingList([...next])
+      }
       else {
         setFundingList([...temp])
       }
@@ -224,9 +228,10 @@ function FundingListContainer() {
               <span>{fundingCount}</span>건의 프로젝트가 진행중에 있어요.
             </p>
             <p>
-              <button type='button' onClick={()=>hanlderFilter('All')}>전체 |</button>
-              <button type='button' onClick={()=>hanlderFilter('FUNDING_IN_PROGRESS')}>진행중 |</button>
+              <button type='button' onClick={()=>hanlderFilter('All')}>전체</button>
+              <button type='button' onClick={()=>hanlderFilter('FUNDING_IN_PROGRESS')}>진행중</button>
               <button type='button' onClick={()=>hanlderFilter('FUNDING_ACCEPT')}>오픈 예정</button>
+              <button type='button' onClick={()=>hanlderFilter('FUNDING_COMPLETE')}>종료된 펀딩</button>
             </p>
 
             {isLoading ? (
