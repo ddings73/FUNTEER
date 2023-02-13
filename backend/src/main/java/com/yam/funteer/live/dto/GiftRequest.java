@@ -6,8 +6,9 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class SessionLeaveRequest {
-	private String sessionName;
+@NoArgsConstructor
+public class GiftRequest {
+    private String sessionName;
+    private Long amount;
 }

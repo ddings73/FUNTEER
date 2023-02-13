@@ -46,6 +46,7 @@ public class QnaRegisterReq {
 			.user(user)
 			.regDate(LocalDateTime.now())
 			.postGroup(PostGroup.ETC)
+			.respond(false)
 			.postType(PostType.QNA).build();
 	}
 
@@ -56,6 +57,7 @@ public class QnaRegisterReq {
 			.title(title)
 			.content(content)
 			.user(user)
+			.respond(false)
 			.regDate(LocalDateTime.now())
 			.postGroup(PostGroup.ETC)
 			.postType(PostType.QNA).build();

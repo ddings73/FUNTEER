@@ -24,7 +24,6 @@ import com.sun.istack.NotNull;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.common.code.UserType;
 
-import io.openvidu.java.client.OpenViduRole;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -89,8 +88,8 @@ public class User {
 			throw new IllegalArgumentException();
 	}
 
-	public void setMoney(long amount) {
-		this.money = amount;
+	public void updateMoney(long amount) {
+		this.money += amount;
 	}
 
 	protected void teamAccept() {
@@ -99,5 +98,9 @@ public class User {
 
 	protected void expire() {
 		this.userType = UserType.TEAM_EXPIRED;
+	}
+
+	public void checkMoney(Long amount) {
+		if(this.money < amount) throw new IllegalArgumentException("잔고가 부족합니다.");
 	}
 }

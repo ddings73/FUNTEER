@@ -8,6 +8,7 @@ import com.yam.funteer.common.security.handler.OAuth2SuccessHandler;
 import com.yam.funteer.common.security.service.CustomOAuth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -22,6 +23,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -48,6 +50,7 @@ public class SecurityConfig{
                 .and()
                 .authorizeRequests()
                 .antMatchers("/admin/**/**").hasRole("ADMIN")
+                .antMatchers("/subscribe").permitAll()
                 .mvcMatchers(HttpMethod.POST, "/member", "/team").permitAll() // 회원가입
                 .mvcMatchers(HttpMethod.GET, "/member/**/profile", "/team/**/profile").permitAll() // 프로필 조회
                 .antMatchers("/member/**/**", "/team/**/**").authenticated()

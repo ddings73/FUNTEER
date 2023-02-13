@@ -10,6 +10,6 @@ import com.yam.funteer.user.entity.Team;
 
 public interface FollowRepository extends JpaRepository<Follow, Long> {
 	long countAllByTeam(Team team);
-	long countAllByMember(Member member);
+	long countAllByMemberAndChecked(Member member, Boolean checked);
 	Optional<Follow> findByMemberAndTeam(Member member, Team team);
 }

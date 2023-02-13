@@ -15,6 +15,6 @@ public class FundingListPageResponse {
 
 	private int successFundingCount;
 
-	private Long totalFundingAmount;
+	private Long inProgressFundingAmount;
 
 }

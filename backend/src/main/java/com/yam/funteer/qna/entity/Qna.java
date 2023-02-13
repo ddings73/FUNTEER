@@ -32,4 +32,10 @@ public class Qna extends Post {
 	@JoinColumn(name="user_id")
 	private User user;
 
+	private boolean respond;
+
+	public void setRespond(){
+		this.respond=true;
+	}
+
 }

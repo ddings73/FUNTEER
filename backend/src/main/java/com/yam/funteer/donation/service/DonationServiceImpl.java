@@ -4,11 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,25 +61,21 @@ public class DonationServiceImpl implements DonationService{
 	private final AlarmService alarmService;
 	private final BadgeService badgeService;
 
-	public List<DonationListRes> donationGetList(int page,int size) {
+	public Page<Donation> donationGetList(int page,int size) {
 		PageRequest pageRequest=PageRequest.of(page,size);
-		List<Donation>donations=donationRepository.findAllByPostTypeOrderByDonationIdDesc(PostType.DONATION_CLOSE,pageRequest);
-		List<DonationListRes>list;
-		list=donations.stream().map(donation->new DonationListRes(donation)).collect(Collectors.toList());
+		Page<Donation> donations=donationRepository.findAllByPostTypeOrderByDonationIdDesc(PostType.DONATION_CLOSE,pageRequest);
 
-		return list;
+		return donations;
 	}
 
-	public List<DonationAdminListRes> donationGetAdminList(int page,int size) {
+	public Page<Donation> donationGetAdminList(int page,int size) {
 		PageRequest pageRequest=PageRequest.of(page,size);
-		List<Donation>donations=donationRepository.findAllByOrderByDonationIdDesc(pageRequest);
-		List<DonationAdminListRes>list;
-		list=donations.stream().map(donation->new DonationAdminListRes(donation)).collect(Collectors.toList());
+		Page<Donation>donations=donationRepository.findAllByOrderByDonationIdDesc(pageRequest);
 
-		return list;
+		return donations;
 	}
 
-	public DonationBaseRes donationGetDetail(Long donationId) {
+	public  DonationBaseRes donationGetDetail(Long donationId) {
 		Donation donation=donationRepository.findByDonationId(donationId).orElseThrow(()->new DonationNotFoundException());
 		PostAttach postAttach=postAttachRepository.findFirstByPost(donation);
 
@@ -97,13 +95,7 @@ public class DonationServiceImpl implements DonationService{
 		if(user.getMoney()<paymentAmount||user.getMoney()==0){
 			throw new DonationPayException();
 		}
-
-		Payment payment=Payment.builder()
-			.user(user)
-			.amount(paymentAmount)
-			.post(donation)
-			.payDate(LocalDateTime.now())
-			.build();
+		Payment payment=donationJoinReq.toPaymentEntity(paymentAmount,user,donation);
 
 		paymentRepository.save(payment);
 		donation.currentAmountUpdate(paymentAmount);
@@ -124,16 +116,15 @@ public class DonationServiceImpl implements DonationService{
 
 			MultipartFile file=donationRegisterReq.getFile();
 
-					String fileUrl = awsS3Uploader.upload(file, "donation");
-					Attach attach = donationRegisterReq.toAttachEntity(fileUrl, file.getOriginalFilename());
-					PostAttach postAttach = PostAttach.builder()
-						.attach(attach)
-						.post(donation)
-						.build();
-					attachList.add(fileUrl);
-					attachRepository.save(attach);
-					postAttachRepository.save(postAttach);
-
+			String fileUrl = awsS3Uploader.upload(file, "donation");
+			Attach attach = donationRegisterReq.toAttachEntity(fileUrl, file.getOriginalFilename());
+			PostAttach postAttach = PostAttach.builder()
+				.attach(attach)
+				.post(donation)
+				.build();
+			attachList.add(fileUrl);
+			attachRepository.save(attach);
+			postAttachRepository.save(postAttach);
 
 			return new DonationBaseRes(donation,fileUrl);
 		}else throw new IllegalArgumentException("접근 권한이 없습니다.");
@@ -182,7 +173,6 @@ public class DonationServiceImpl implements DonationService{
 				attachRepository.deleteById(postAttach.getAttach().getId());
 			}
 
-			List<String>attachList=new ArrayList<>();
 			MultipartFile file=donationModifyReq.getFile();
 
 			String fileUrl = awsS3Uploader.upload(file, "donation");
