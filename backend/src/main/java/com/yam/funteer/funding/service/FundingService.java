@@ -15,11 +15,14 @@ import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
+import com.yam.funteer.funding.entity.Funding;
 
 public interface FundingService {
 	Page<FundingListResponse> findAllFundingByAdmin(Pageable pageable);
 
 	Page<FundingListResponse> findFundingByCategory(Long categoryId, Pageable pageable);
+
+	Page<FundingListResponse> findFundingByKeywordByAdmin(String keyword, Pageable pageable);
 
 	FundingDetailResponse createFunding( FundingRequest data);
 

@@ -133,5 +133,13 @@ public class AdminController {
 		return ResponseEntity.ok(fundingService.findAllFundingByAdmin(pageRequest));
 	}
 
+	@ApiOperation(value = "관리자 펀딩 검색 조회", notes = "관리자 페이지에서 검색을 통해 제목과 내용에 키워드가 포함된 펀딩을 조회한다.")
+	@GetMapping("/funding/search")
+	public ResponseEntity<Page<FundingListResponse>> findFundingByKeyword(@RequestParam String keyword,
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword, pageRequest));
+	}
 
 }

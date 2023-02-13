@@ -121,6 +121,12 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	@Override
+	public Page<FundingListResponse> findFundingByKeywordByAdmin(String keyword, Pageable pageable) {
+		Page<FundingListResponse> collect = fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword, pageable).map(m -> FundingListResponse.from(m));
+		return collect;
+	}
+
+	@Override
 	public Page<FundingListResponse> findFundingByKeyword(String keyword, Pageable pageable) {
 		List<Funding> collect = fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword);
 		return getFundingListResponses(
