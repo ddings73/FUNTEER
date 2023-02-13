@@ -28,11 +28,8 @@ export function CommentCardSubmit(props: any) {
     alert('댓글 등록 완료!');
     setComment('');
     /* eslint-disable */
-<<<<<<< HEAD
     props.initCommentList();
     
-=======
->>>>>>> 094057f6194ec333be31261c0374a20205a424b1
   };
   const handleKeyPress = (e: any) => {
     if (e.key === 'Enter') {
