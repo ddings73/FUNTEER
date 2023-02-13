@@ -40,6 +40,11 @@ function DonationContainer() {
     startDate: '',
   });
 
+  useEffect(() => {
+    fetchData();
+    setInitUserMoney();
+  }, []);
+
   const onClickDonation = async () => {
     console.log('click');
   };
@@ -67,10 +72,6 @@ function DonationContainer() {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-    setInitUserMoney();
-  }, []);
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
@@ -78,7 +79,9 @@ function DonationContainer() {
           <p className={styles.contentTitle}>진행중인 기부 이벤트</p>
           <div className={styles['donation-box']}>
             <div className={styles.left}>
-              <img src={donBoard.file} alt="donationImage" />
+              <figure>
+                <img src={donBoard.file} alt="donationImage" />
+              </figure>
             </div>
             <div className={styles.right}>
               <p className={styles.title}>{donBoard.title}</p>
@@ -101,11 +104,6 @@ function DonationContainer() {
               <AccordionDetails>
                 <ListTable />
               </AccordionDetails>
-            </Accordion>
-            <Accordion sx={{ visibility: 'hidden' }}>
-              <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel2a-content" id="panel2a-header">
-                123
-              </AccordionSummary>
             </Accordion>
           </div>
         </div>

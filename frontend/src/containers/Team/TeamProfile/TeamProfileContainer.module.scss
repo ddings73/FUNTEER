@@ -24,10 +24,10 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      background-color: #fdfdfd;
+      background-color: rgba(236, 153, 75, 0.1);
 
       .profile-card {
-        width: 100%;
+        width: 70%;
         display: flex;
         justify-content: center;
 
@@ -40,8 +40,8 @@
         }
 
         .profile-card-img-div {
-          width: 300px;
-          height: 300px;
+          width: 250px;
+          height: 250px;
           position: relative;
           display: flex;
           justify-content: center;
@@ -49,19 +49,19 @@
           margin: 3.5rem 2rem 2rem 2rem;
 
           .profile-card-img-inner {
-            width: 260px;
-            height: 260px;
+            width: 250px;
+            height: 250px;
             display: flex;
             justify-content: center;
             align-items: center;
             border-radius: 100%;
             overflow: hidden;
-            border: 1px solid $primary;
+            border: 3px solid $primary;
             box-shadow: rgba(161, 91, 0, 0.2) 0px 2px 8px;
 
             & img {
-              width: 260px;
-              height: 260px;
+              width: 250px;
+              height: 250px;
               border-radius: 100%;
             }
           }
@@ -76,7 +76,7 @@
         }
 
         .profile-card-info-div {
-          width: 60%;
+          width: 65%;
           display: flex;
           flex-direction: column;
           align-items: center;
@@ -95,8 +95,8 @@
             width: 95%;
             display: flex;
             align-items: center;
-            margin: 6rem 0 0 0;
-            font-size: 1.75rem;
+            margin: 5rem 0 0 0;
+            font-size: 2rem;
             font-weight: bold;
 
             .follow-btn-div {
@@ -143,7 +143,7 @@
             display: flex;
             justify-content: space-between;
             width: 95%;
-            margin: 3rem 0 0 0;
+            margin: 1rem 0 0 0;
             padding: 1rem;
 
             @include tablet {
@@ -178,7 +178,7 @@
 
                 & p {
                   margin: 0 0 0 0.5rem;
-                  font-size: 1.125rem;
+                  font-size: 1.25rem;
 
                   & span {
                     font-weight: bold;
@@ -229,7 +229,7 @@
         align-items: center;
         margin-top: 1rem;
         border-radius: 5px;
-        background-color: #fdf7f2;
+        background-color: rgba(236, 153, 75, 0.1);
 
         @include tablet {
           width: 90%;
@@ -258,7 +258,7 @@
       }
 
       .funding-div {
-        width: 75%;
+        width: 95%;
         margin-top: 5rem;
 
         @include tablet {
@@ -272,11 +272,27 @@
         }
 
         & h1 {
+          margin-left: 2rem;
           font-size: 1.25rem;
           color: rgba(0, 0, 0, 0.9);
 
           & span {
             color: $primary;
+          }
+        }
+
+        .funding-list {
+          margin-top: 25px;
+          display: flex;
+          width: 100%;
+          flex-direction: row;
+          justify-content: flex-start;
+          flex-wrap: wrap;
+
+          & .nextLoading-box {
+            width: 100%;
+            left: 50%;
+            text-align: center;
           }
         }
       }

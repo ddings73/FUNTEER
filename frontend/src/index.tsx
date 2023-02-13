@@ -46,7 +46,6 @@ import {
   CreateFunding,
   AdminTeamDeny,
   AdminFunding,
-  CustomerCenter,
   NoticeDetail,
   AdminDonation,
   AdminDonationCreate,
@@ -66,10 +65,17 @@ import {
   NoticeList,
   FAQList,
   QuestionList,
+  NoticeEdit,
+  LiveList,
+  FAQCreate,
+  FAQEdit,
+  QuestionCreate,
+  QuestionDetail,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
+import ScrollToTop from './utils/ScrollToTop';
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
@@ -170,6 +176,10 @@ const router = createBrowserRouter([
         path: 'teamdonation/:teamId',
         element: <TeamDonation />,
       },
+      {
+        path: 'live',
+        element: <LiveList />,
+      },
     ],
   },
   {
@@ -228,16 +238,16 @@ const router = createBrowserRouter([
         element: <ModifyFunding />,
       },
       {
-        path: '/cc',
-        element: <CustomerCenter />,
-      },
-      {
         path: '/notice',
         element: <NoticeList />,
       },
       {
-        path: '/notice/:nn', // nn: 공지사항 번호
+        path: '/notice/:noticeId',
         element: <NoticeDetail />,
+      },
+      {
+        path: '/notice/:noticeId/edit',
+        element: <NoticeEdit />,
       },
       {
         path: '/faq',
@@ -248,8 +258,24 @@ const router = createBrowserRouter([
         element: <QuestionList />,
       },
       {
-        path: '/faq/:fn',
+        path: '/faq/:faqId',
         element: <FAQDetail />,
+      },
+      {
+        path: '/faq/create',
+        element: <FAQCreate />,
+      },
+      {
+        path: '/faq/:faqId/edit',
+        element: <FAQEdit />,
+      },
+      {
+        path: '/qna/create',
+        element: <QuestionCreate />,
+      },
+      {
+        path: '/qna/:qnaId',
+        element: <QuestionDetail />,
       },
     ],
   },
@@ -315,7 +341,7 @@ root.render(
     <PersistGate loading={null} persistor={persistor}>
       <RouterProvider router={router} />
     </PersistGate>
-  </Provider>
+  </Provider>,
 );
 
 // If you want to start measuring performance in your app, pass a function

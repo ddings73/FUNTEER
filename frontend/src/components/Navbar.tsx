@@ -208,50 +208,84 @@ function ResponsiveAppBar() {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      textAlign="center"
-                      onClick={() => {
-                        navigateTo(userType === 'NORMAL' ? '/myPage' : userType === 'TEAM' ? `/team/${teamInfo.id}` : '/admin');
-                      }}
-                      sx={{ width: '100%' }}
-                    >
-                      마이페이지
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      textAlign="center"
-                      onClick={() => {
-                        navigateTo('/myFunding');
-                      }}
-                      sx={{ width: '100%' }}
-                    >
-                      나의 펀딩 내역
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      textAlign="center"
-                      onClick={() => {
-                        navigateTo('/myDonates');
-                      }}
-                      sx={{ width: '100%' }}
-                    >
-                      도네이션 내역
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      textAlign="center"
-                      onClick={() => {
-                        navigateTo('/myBadges');
-                      }}
-                      sx={{ width: '100%' }}
-                    >
-                      1:1 문의 내역
-                    </Typography>
-                  </MenuItem>
+                  {userType === 'ADMIN' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo('/admin');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        관리자 페이지
+                      </Typography>
+                    </MenuItem>
+                  )}
+                  {userType !== 'ADMIN' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo(userType === 'NORMAL' ? '/myPage' : userType === 'TEAM' ? `/team/${teamInfo.id}` : '/admin');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        마이페이지
+                      </Typography>
+                    </MenuItem>
+                  )}
+                  {userType === 'NORMAL' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo('/myFunding');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        나의 펀딩 내역
+                      </Typography>
+                    </MenuItem>
+                  )}
+                  {userType === 'NORMAL' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo('/myDonates');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        도네이션 내역
+                      </Typography>
+                    </MenuItem>
+                  )}
+                  {userType === 'NORMAL' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo('/myBadges');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        1:1 문의 내역
+                      </Typography>
+                    </MenuItem>
+                  )}
+                  {userType === 'NORMAL' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo('/charge');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        마일리지 충전
+                      </Typography>
+                    </MenuItem>
+                  )}
                   <MenuItem onClick={handleCloseUserMenu}>
                     <Typography textAlign="center" sx={{ color: 'red', width: '100%' }} onClick={logout}>
                       로그아웃

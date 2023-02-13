@@ -2,6 +2,8 @@ package com.yam.funteer.donation.dto.response;
 
 import java.time.LocalDate;
 
+import org.springframework.data.domain.Pageable;
+
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.donation.entity.Donation;
 
@@ -17,8 +19,10 @@ public class DonationListRes {
 	private PostType postType;
 	private LocalDate startDate;
 	private LocalDate endDate;
+	private Pageable pageable;
 
-	public DonationListRes(Donation donation) {
+
+	public DonationListRes(Donation donation,Pageable pageable) {
 		this.id = donation.getDonationId();
 		this.title = donation.getTitle();
 		this.content = donation.getContent();
@@ -26,5 +30,6 @@ public class DonationListRes {
 		this.startDate = donation.getStartDate();
 		this.endDate = donation.getEndDate();
 		this.targetAmount = donation.getAmount().toString();
+		this.pageable=pageable;
 	}
 }

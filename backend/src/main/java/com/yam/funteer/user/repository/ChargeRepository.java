@@ -1,6 +1,7 @@
 package com.yam.funteer.user.repository;
 
 import java.util.List;
+import java.util.stream.DoubleStream;
 
 import com.yam.funteer.user.entity.Charge;
 import com.yam.funteer.user.entity.Member;
@@ -14,5 +15,5 @@ public interface ChargeRepository extends JpaRepository<Charge, Long> {
 
 	List<Charge> findAllByPossibleRefund(int b);
 
-	Page<Charge> findAllByMemberId(Long memberId, Pageable pageable);
+	Page<Charge> findAllByMember(Member member, Pageable pageable);
 }

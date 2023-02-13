@@ -52,12 +52,17 @@ export const requestCurrentDonation = async () => {
  * @method GET
  */
 
-export const requestDonationList = async (size: number) => {
-  const res = await http.get(`donation/list?size=${size}`);
-  console.log(res);
+export const requestDonationList = async (page: number, size: number) => {
+  const res = await http.get(`donation/list?page=${page}&size=${size}`);
+  console.log('dontationLists: ', res);
 
   return res;
 };
+
+/**
+ * ADMIN 도네이션 리스트 호출 API
+ * @method GET
+ */
 
 export const requestAdminDonationList = async (size: number, page?: number) => {
   const params = {

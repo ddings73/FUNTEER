@@ -24,11 +24,6 @@ public class QnaReplyReq {
 	@NotBlank
 	private String content;
 
-	@Builder
-	public QnaReplyReq(Long userId,String content){
-		this.content=content;
-	}
-
 	public Reply toEntity(Qna qna){
 		return Reply.builder()
 			.content(content)

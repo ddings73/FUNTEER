@@ -37,7 +37,14 @@
         color: aliceblue;
         font-weight: 600;
         text-align: center;
-        margin-top: 5%;
+      }
+      & .bannerSeen {
+        font-size: 1.3rem;
+        color: rgb(121, 121, 121);
+        margin-top: 20px;
+        font-weight: 600;
+        text-align: right;
+        width: 1160px;
       }
       & .bannerButtonGroup {
         width: 40%;
