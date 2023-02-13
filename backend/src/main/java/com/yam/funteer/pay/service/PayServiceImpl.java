@@ -1,6 +1,5 @@
 package com.yam.funteer.pay.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -41,7 +40,7 @@ public class PayServiceImpl implements PayService {
 
 		charge.setPossibleRefund();
 		charge.setRefundReason(charge.getRefundReason());
-		member.setMoney(member.getMoney() - charge.getAmount());
+		member.updateMoney(-charge.getAmount());
 
 	}
 

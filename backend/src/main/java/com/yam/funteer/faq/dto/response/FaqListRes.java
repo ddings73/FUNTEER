@@ -12,10 +12,12 @@ public class FaqListRes {
 	private String title;
 	private Long id;
 	private LocalDate localDate;
+	private Long groupOrPersont;
 
 	public FaqListRes(Faq post){
 		this.title=post.getTitle();
 		this.id=post.getFaqId();
 		this.localDate=post.getRegDate().toLocalDate();
+		this.groupOrPersont=post.getGroupOrPerson();
 	}
 }

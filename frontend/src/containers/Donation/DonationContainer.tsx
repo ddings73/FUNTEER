@@ -40,6 +40,11 @@ function DonationContainer() {
     startDate: '',
   });
 
+  useEffect(() => {
+    fetchData();
+    setInitUserMoney();
+  }, []);
+
   const onClickDonation = async () => {
     console.log('click');
   };
@@ -67,10 +72,6 @@ function DonationContainer() {
     }
   };
 
-  useEffect(() => {
-    fetchData();
-    setInitUserMoney();
-  }, []);
   return (
     <div className={styles.container}>
       <div className={styles.contents}>

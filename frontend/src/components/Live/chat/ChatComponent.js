@@ -80,6 +80,7 @@ export default class ChatComponent extends Component {
 
   onClickDonation() {
     const money = Number(this.state.amount.replaceAll(',', ''));
+
     if (money > this.props.userCurrentMoney || money === 0) {
       alert('잔고 부족함띠 ㅡㅡ');
     } else {
@@ -87,9 +88,20 @@ export default class ChatComponent extends Component {
         data: JSON.stringify(money),
         type: 'liveDonation',
       });
+
+      const data = {
+        money,
+        donationUser:this.props.user.getNickname()
+      }
+      console.log(data)
+      this.props.user.getStreamManager().stream.session.signal({
+        data: JSON.stringify(data),
+        type: 'updateAmount',
+      });
       // this.props.liveDonation(money);
       // this.props.updateAllAmount(money);
-      // this.setState({ amount: '', toggle: false });
+      this.setState({ amount: '', toggle: false });
+
       // alert(`${money}원이 기부되었습니다`);
     }
   }

@@ -8,6 +8,7 @@ import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import React, { Component } from 'react';
 import { browserHistory } from 'react-router-dom';
+import session from 'redux-persist/lib/storage/session';
 import StreamComponent from './stream/StreamComponent';
 import './VideoRoomComponent.css';
 
@@ -40,6 +41,9 @@ class VideoRoomComponent extends Component {
       currentVideoDevice: undefined,
       userCount: 0,
       allAmount: 0,
+      checkLottie: false,
+      amount: 0,
+      donationUser:""
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -96,6 +100,14 @@ class VideoRoomComponent extends Component {
     this.leaveSession();
   }
 
+  componentDidUpdate() {
+    if (this.state.checkLottie) {
+      setTimeout(() => {
+        this.setState({ checkLottie: false });
+      }, 3000);
+    }
+  }
+
   onbeforeunload(event) {
     this.leaveSession();
   }
@@ -123,7 +135,10 @@ class VideoRoomComponent extends Component {
 
   subscribeToLiveDonation() {
     this.state.session.on('signal:liveDonation', (event) => {
-      const data = JSON.parse(event.date);
+      console.log("DONATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      console.log(this.props)
+      console.log(event);
+      const data = JSON.parse(event.data);
       console.log(data);
       this.props.liveDonation(data);
     });
@@ -133,8 +148,11 @@ class VideoRoomComponent extends Component {
     this.state.session.on('signal:updateAmount', (event) => {
       // eslint-disable-next-line react/no-access-state-in-setstate
       const prev = this.state.allAmount;
+      console.log('UPDATE!!!!!!!!!!!!!!!!');
+      const data = JSON.parse(event.data)
       // this.setState({ allAmount: prev + amount });
-      this.setState({ allAmount: prev + JSON.parse(event.data) });
+      this.setState({donationUser:data.donationUser})
+      this.setState({ allAmount: prev + data.money, checkLottie: true, amount: data.money});
     });
   }
 
@@ -439,7 +457,8 @@ class VideoRoomComponent extends Component {
     // console.log('state', this.state);
     const { mySessionId } = this.state;
     const { localUser } = this.state;
-    console.log('최근잔고 !!!!!!!!', this.props.userCurrentMoney);
+    // console.log('최근잔고 !!!!!!!!', this.props.userCurrentMoney);
+    console.log(this.state);
     // console.log(localUser)
     // const {remoteConnections} = this.state.session
     // console.log(remoteConnections)
@@ -454,12 +473,23 @@ class VideoRoomComponent extends Component {
           switchCamera={this.switchCamera}
           leaveSession={this.leaveSession}
           userCount={this.state.userCount}
+          amount={this.state.amount}
+          donationUser={this.state.donationUser}
         />
 
         <div id="layout" className="bounds">
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_big OT_publisher custom-class" id="localUser">
-              <StreamComponent user={localUser} sessionId={mySessionId} userCount={this.state.userCount} allAmount={this.state.allAmount} />
+              <StreamComponent
+                user={localUser}
+                sessionId={mySessionId}
+                userCount={this.state.userCount}
+                allAmount={this.state.allAmount}
+                checkLottie={this.state.checkLottie}
+                userName={this.state.myUserName}
+                amount={this.state.amount}
+                donationUser={this.state.donationUser}
+              />
             </div>
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (

@@ -5,12 +5,11 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import Typography from '@mui/material/Typography';
-import FAQContainerMemberItem from './FAQContainerMemberItem';
-import FAQContainerTeamItem from './FAQContainerTeamItem';
 import styles from './FAQContainer.module.scss';
 import { useAppSelector } from '../../../store/hooks';
 import { FaqInterface } from '../../../types/faq';
-import { requestFaqList } from '../../../api/faq';
+import { requestFaqDelete, requestFaqList } from '../../../api/faq';
+import { customAlert, s1000 } from '../../../utils/customAlert';
 
 export default function FAQContainer() {
   const navigate = useNavigate();
@@ -32,6 +31,32 @@ export default function FAQContainer() {
 
   const onClickToggle = () => {
     setIsTeamMode(!isTeamMode);
+  };
+
+  const onClickDelete = async (postId: number) => {
+    requestDeleteFAQ(postId);
+  };
+
+  const onClickEdit = async (postId: number, groupOrPerson: number, title: string, content: string) => {
+    navigate(`${postId}/edit`, {
+      state: {
+        postId,
+        groupOrPerson,
+        title,
+        content,
+      },
+    });
+  };
+
+  const requestDeleteFAQ = async (postId: number) => {
+    try {
+      const response = await requestFaqDelete(postId);
+      console.log('FAQ 삭제 요청', response);
+      customAlert(s1000, '해당 FAQ가 삭제되었습니다.');
+      requestAllFAQ();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   const requestAllFAQ = async () => {
@@ -69,16 +94,22 @@ export default function FAQContainer() {
             {memberFAQList.map((data) => (
               <Accordion key={data.id} sx={{ boxShadow: 'none' }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                  <Typography sx={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.125rem', fontFamily: 'NanumSquareRound' }}>
+                  <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquare' }}>
                     <p>{data.title}</p>
-                    <div className={styles['item-btn-div']}>
-                      <button type="button">수정</button>
-                      <button type="button">삭제</button>
-                    </div>
                   </Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{ backgroundColor: 'rgb(255, 254, 252)', padding: '2rem', boxShadow: '0px 0px 20px rgba(255, 132, 0, 0.04) inset' }}>
-                  <Typography sx={{ display: 'flex', fontSize: '1rem', lineHeight: '2rem', fontFamily: 'NanumSquareRound' }}>{data.content}</Typography>
+                  <Typography sx={{ fontSize: '1rem', lineHeight: '2rem', fontFamily: 'NanumSquare' }}>{data.content}</Typography>
+                  {userType === 'ADMIN' && (
+                    <div className={styles['item-btn-div']}>
+                      <button type="button" onClick={() => onClickDelete(data.id as number)}>
+                        삭제
+                      </button>
+                      <button type="button" onClick={() => onClickEdit(data.id as number, data.groupOrPerson, data.title, data.content as string)}>
+                        수정
+                      </button>
+                    </div>
+                  )}
                 </AccordionDetails>
               </Accordion>
             ))}
@@ -90,10 +121,20 @@ export default function FAQContainer() {
             {teamFAQList.map((data) => (
               <Accordion key={data.id} sx={{ boxShadow: 'none' }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                  <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquareRound' }}>{data.title}</Typography>
+                  <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquare' }}>{data.title}</Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{ backgroundColor: 'rgb(255, 254, 252)', padding: '2rem', boxShadow: '0px 0px 20px rgba(255, 132, 0, 0.04) inset' }}>
-                  <Typography sx={{ fontSize: '1rem', lineHeight: '2rem', fontFamily: 'NanumSquareRound' }}>{data.content}</Typography>
+                  <Typography sx={{ fontSize: '1rem', lineHeight: '2rem', fontFamily: 'NanumSquare' }}>{data.content}</Typography>
+                  {userType === 'ADMIN' && (
+                    <div className={styles['item-btn-div']}>
+                      <button type="button" onClick={() => onClickDelete(data.id as number)}>
+                        삭제
+                      </button>
+                      <button type="button" onClick={() => onClickEdit(data.id as number, data.groupOrPerson, data.title, data.content as string)}>
+                        수정
+                      </button>
+                    </div>
+                  )}
                 </AccordionDetails>
               </Accordion>
             ))}
