@@ -4,22 +4,27 @@ import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Button from '@mui/material/Button';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import swal from 'sweetalert2';
-import QuestionContainerItem from './QuestionContainerItem';
 import styles from './QuestionContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
 import { customAlert, w1500 } from '../../../utils/customAlert';
 import { useAppSelector } from '../../../store/hooks';
+import { requestQNAList } from '../../../api/qna';
+import { QNAListInterface } from '../../../types/qna';
 
 export default function QuestionContainer() {
   const navigate = useNavigate();
   /** 유저 ID */
   const userId = useAppSelector((state) => state.userSlice.userId);
-  /** 유저 Type */
-  const userType = useAppSelector((state) => state.userSlice.userType);
+  const size = 8;
+  const [page, setPage] = useState<number>(1);
+  const [maxPage, setMaxPage] = useState<number>(0);
+  const [QNAList, setQNAList] = useState<QNAListInterface[]>([]);
 
   useEffect(() => {
     if (!userId) {
@@ -27,87 +32,81 @@ export default function QuestionContainer() {
     }
   }, []);
 
-  const [createMode, setCreateMode] = useState<boolean>(false);
-  const [questionCreateInfo, setQuestionCreateInfo] = useState({
-    title: '',
-    content: '',
-  });
+  useEffect(() => {
+    requestMaxPage();
+  }, []);
+
+  useEffect(() => {
+    if (maxPage) {
+      requestPageQNA();
+    }
+  }, [maxPage, page]);
 
   const onClickCreateQuesBtnHandler = () => {
-    setCreateMode(true);
+    navigate('create');
   };
 
-  const onClickCancelBtnHandler = () => {
-    setCreateMode(false);
+  const onClickQNAItem = (qnaId: number) => {
+    navigate(`${qnaId}`);
   };
 
-  const onChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-
-    setQuestionCreateInfo({ ...questionCreateInfo, [name]: value });
+  /** 페이지 교체 */
+  const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
+    setPage(selectedPage);
   };
 
-  const onClickPostBtnHandler = () => {
-    if (!questionCreateInfo.title || !questionCreateInfo.content) {
-      customAlert(w1500, '문의 정보를 입력해주세요.');
-      return;
+  /** 최대 페이지 설정 */
+  const requestMaxPage = async () => {
+    try {
+      const response = await requestQNAList(0, 10000);
+      console.log('1:1문의 최대 페이지 설정', response);
+      const len = response.data.length;
+      setMaxPage(len % size ? Math.floor(len / size) + 1 : len / size);
+    } catch (error) {
+      console.error(error);
     }
-    console.log('문의 등록 요청');
-    setCreateMode(false);
+  };
+
+  /** 페이지 QNA 설정 */
+  const requestPageQNA = async () => {
+    try {
+      const response = await requestQNAList(page - 1, size);
+      console.log('1:1문의 리스트 요청', response);
+      setQNAList(response.data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
     <div className={styles.container}>
       {/* 문의 목록 */}
-      {!createMode && (
-        <div className={styles['ques-board']}>
-          <div className={styles['ques-btn-div']}>
-            <Button variant="outlined" sx={{ fontFamily: 'NanumSquare' }} className={styles['ques-btn']} onClick={onClickCreateQuesBtnHandler}>
-              문의하기
-            </Button>
-          </div>
-          <div>
-            {QuestionContainerItem.map((data) => (
-              <Accordion sx={{ boxShadow: 'none' }}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                  <div>
-                    <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquare' }}>{data.content}</Typography>
-                    <p className={styles.state}>{data.state}</p>
-                  </div>
-                </AccordionSummary>
-                {data.ans && (
-                  <AccordionDetails sx={{ backgroundColor: 'rgb(255, 254, 253)', padding: '2rem', boxShadow: '0px 0px 20px rgba(255, 132, 0, 0.02) inset' }}>
-                    <Typography sx={{ fontSize: '1rem', lineHeight: '2rem', fontFamily: 'NanumSquareRound' }}>{data.ans}</Typography>
-                  </AccordionDetails>
-                )}
-              </Accordion>
-            ))}
-          </div>
+      <div className={styles.content}>
+        <div className={styles['ques-btn-div']}>
+          <Button variant="outlined" className={styles['ques-btn']} onClick={onClickCreateQuesBtnHandler}>
+            문의하기
+          </Button>
         </div>
-      )}
-      {/* 문의 생성 */}
-      {createMode && (
-        <div className={styles['ques-create']}>
-          <div className={styles['title-label']}>
-            <p>제목</p>
-            <img src={requiredIcon} alt="required icon" />
-          </div>
-          <TextField name="title" id="outlined-basic" variant="outlined" color="warning" className={styles['title-input']} onChange={onChangeHandler} />
-          <div className={styles['content-label']}>
-            <p>내용</p>
-            <img src={requiredIcon} alt="required icon" />
-          </div>
-          <TextField name="content" id="outlined-multiline-static" multiline rows={10} color="warning" className={styles['content-input']} onChange={onChangeHandler} />
-          <div className={styles['submit-btn-div']}>
-            <Button variant="contained" onClick={onClickCancelBtnHandler}>
-              취소
-            </Button>
-            <Button variant="contained" onClick={onClickPostBtnHandler}>
-              등록
-            </Button>
-          </div>
+
+        {QNAList.map((data) => (
+          <button
+            type="button"
+            className={styles.line}
+            onClick={() => {
+              onClickQNAItem(data.id);
+            }}
+          >
+            <p className={styles['item-title']}>{data.title}</p>
+            <p className={styles['item-respond']}>{data.respond ? '답변 완료' : '대기중'}</p>
+          </button>
+        ))}
+
+        <div className={styles['page-bar']}>
+          <Stack spacing={2}>
+            <Pagination showFirstButton showLastButton count={maxPage} variant="outlined" page={page} onChange={handleChangePage} />
+          </Stack>
         </div>
-      )}
+      </div>
     </div>
   );
 }

@@ -1,37 +1,40 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { requestCreateFaq } from '../../../api/faq';
+import { useLocation, useNavigate } from 'react-router';
+import { requestCreateFaq, requestModifyFaq } from '../../../api/faq';
 import { FaqInterface } from '../../../types/faq';
 import styles from './FAQCreateContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
 import { customAlert, s1000, w1500 } from '../../../utils/customAlert';
 
-function FAQCreateContainer() {
+function FAQEditContainer() {
   const navigate = useNavigate();
-  const [FAQCreateInfo, setFAQCreateInfo] = useState<FaqInterface>({
-    groupOrPerson: 0,
-    title: '',
-    content: '',
+  const location = useLocation();
+  const { postId, groupOrPerson, title, content } = location.state;
+  const [FAQEditInfo, setFAQEditInfo] = useState<FaqInterface>({
+    id: postId,
+    groupOrPerson,
+    title,
+    content,
   });
 
   const onChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
-    if (FAQCreateInfo.title.length > 40) {
+    if (FAQEditInfo.title.length > 40) {
       customAlert(w1500, '질문은 40자 이내로 적어주세요.');
-      setFAQCreateInfo({ ...FAQCreateInfo, title: e.target.value.slice(0, 40) });
+      setFAQEditInfo({ ...FAQEditInfo, title: e.target.value.slice(0, 40) });
       return;
     }
-    setFAQCreateInfo({ ...FAQCreateInfo, [e.target.name]: e.target.value });
+    setFAQEditInfo({ ...FAQEditInfo, [e.target.name]: e.target.value });
   };
 
   const onClickCreate = () => {
-    requestCreate();
+    requestEdit();
   };
 
-  const requestCreate = async () => {
+  const requestEdit = async () => {
     try {
-      const response = await requestCreateFaq(FAQCreateInfo);
-      console.log('FAQ 생성 요청', response);
-      customAlert(s1000, 'FAQ 등록이 완료되었습니다.');
+      const response = await requestModifyFaq(FAQEditInfo);
+      console.log('FAQ 수정 요청', response);
+      customAlert(s1000, 'FAQ 수정이 완료되었습니다.');
       navigate(-1);
     } catch (err) {
       console.error(err);
@@ -47,7 +50,7 @@ function FAQCreateContainer() {
             유저 타입 <img src={requiredIcon} alt="required icon" />
           </p>
         </div>
-        <select name="groupOrPerson" onChange={onChange}>
+        <select name="groupOrPerson" value={groupOrPerson} disabled>
           <option value={0}>개인</option>
           <option value={1}>단체</option>
         </select>
@@ -56,13 +59,13 @@ function FAQCreateContainer() {
             질문 <img src={requiredIcon} alt="required icon" />
           </p>
         </div>
-        <input type="text" name="title" value={FAQCreateInfo.title} onChange={onChange} />
+        <input type="text" name="title" value={FAQEditInfo.title} onChange={onChange} />
         <div className={styles['label-div']}>
           <p>
             답변 <img src={requiredIcon} alt="required icon" />
           </p>
         </div>
-        <textarea rows={10} name="content" value={FAQCreateInfo.content} onChange={onChange} />
+        <textarea rows={10} name="content" value={FAQEditInfo.content} onChange={onChange} />
         <div className={styles['btn-div']}>
           <button
             type="button"
@@ -81,4 +84,4 @@ function FAQCreateContainer() {
   );
 }
 
-export default FAQCreateContainer;
+export default FAQEditContainer;

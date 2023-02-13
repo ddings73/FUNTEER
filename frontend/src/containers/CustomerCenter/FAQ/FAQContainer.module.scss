@@ -6,11 +6,13 @@
   min-height: 100vh;
   height: 100%;
   padding-top: 77px;
+  display: flex;
+  justify-content: center;
   font-family: 'NanumSquare' !important;
 
   .content {
     max-width: 1160px;
-    width: 100%;
+    width: 90%;
     height: 100%;
 
     .line {
@@ -18,9 +20,10 @@
       justify-content: space-between;
 
       button {
-        padding: 0.5rem;
+        padding: 0.7rem;
         border: none;
         border-radius: 5px;
+        background-color: rgb(243, 243, 243);
         font-size: 1rem;
 
         &:hover {
@@ -47,23 +50,74 @@
       }
 
       .title {
-        margin-bottom: 1rem;
+        margin: 1.5rem 0 3rem 0;
         font-weight: bold;
         font-size: 2rem;
         color: $primary;
 
+        @include desktop {
+          opacity: 0;
+          transform: translateX(-50px);
+          animation: slide-in 1s forwards;
+
+          @keyframes slide-in {
+            from {
+              opacity: 0;
+              transform: translateX(-50px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
+        }
+
         @include tablet {
-          font-size: 1.25rem;
+          font-size: 1.75rem;
+          opacity: 0;
+          transform: translateX(-50px);
+          animation: slide-in 1s forwards;
+
+          @keyframes slide-in {
+            from {
+              opacity: 0;
+              transform: translateX(-50px);
+            }
+            to {
+              opacity: 1;
+              transform: translateX(0);
+            }
+          }
         }
 
         @include mobile {
-          font-size: 1.125rem;
+          font-size: 1.25rem;
         }
       }
 
       .item-btn-div {
-        margin: 0 0 0 2rem;
+        display: flex;
+        justify-content: flex-end;
+        & button {
+          margin: 1rem 0.5rem 0 0;
+          padding: 0.5rem;
+          font-size: 1rem;
+          border-radius: 5px;
+          border: none;
+          background-color: $primary;
+          color: white;
+
+          &:hover {
+            cursor: pointer;
+            background-color: $second;
+          }
+        }
       }
     }
+  }
+}
+
+@keyframes jump {
+  10% {
   }
 }

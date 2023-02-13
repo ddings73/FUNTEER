@@ -48,7 +48,10 @@ export { default as NoticeEdit } from './CustomerCenter/Notice/NoticeEdit';
 export { default as FAQList } from './CustomerCenter/FAQ/FAQList';
 export { default as FAQDetail } from './CustomerCenter/FAQ/FAQDetail';
 export { default as FAQCreate } from './CustomerCenter/FAQ/FAQCreate';
+export { default as FAQEdit } from './CustomerCenter/FAQ/FAQEdit';
 export { default as QuestionList } from './CustomerCenter/Question/QuestionList';
+export { default as QuestionCreate } from './CustomerCenter/Question/QuestionCreate';
+export { default as QuestionDetail } from './CustomerCenter/Question/QuestionDetail';
 
 export { default as Donation } from './Donation/Donation';
 
