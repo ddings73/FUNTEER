@@ -283,17 +283,18 @@ public class LiveServiceImpl implements LiveService{
             Live live = liveRepository.findBySessionId(activeSession.getSessionId()).orElseThrow(SessionNotFoundException::new);
 
             Long userId = SecurityUtil.getCurrentUserId();
-            Member member = memberRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+            User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
             Long amount = request.getAmount();
+
             if(amount < 0) throw new IllegalArgumentException("음수는 입력하시면 안돼요");
 
-            member.checkMoney(amount);
+            user.checkMoney(amount);
 
             Team team = live.getTeam();
             team.updateMoney(amount);
-            member.updateMoney(-amount);
+            user.updateMoney(-amount);
 
-            Gift gift = Gift.from(live, member, amount);
+            Gift gift = Gift.from(live, user, amount);
             giftRepository.save(gift);
             return;
         }
