@@ -6,10 +6,14 @@ import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.security.SecurityUtil;
+import com.yam.funteer.donation.entity.Donation;
+import com.yam.funteer.donation.repository.DonationRepository;
 import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
+import com.yam.funteer.funding.entity.Report;
 import com.yam.funteer.funding.repository.FundingRepository;
+import com.yam.funteer.funding.repository.ReportRepository;
 import com.yam.funteer.live.entity.Gift;
 import com.yam.funteer.live.repository.GiftRepository;
 import com.yam.funteer.pay.entity.Payment;
@@ -50,6 +54,8 @@ public class MemberServiceImpl implements MemberService {
     private final AwsS3Uploader awsS3Uploader;
     private final FollowRepository followRepository;
     private final FundingRepository fundingRepository;
+    private final ReportRepository reportRepository;
+    private final DonationRepository donationRepository;
     private final WishRepository wishRepository;
     private final PaymentRepository paymentRepository;
     private final GiftRepository giftRepository;
@@ -194,8 +200,19 @@ public class MemberServiceImpl implements MemberService {
         Member member = memberRepository.findById(userId)
             .orElseThrow(UserNotFoundException::new);
 
-        List<Payment> paymentList = paymentRepository.findAllByUserAndPostPostGroup(member, postGroup);
-        return MileageDetailResponse.of(paymentList);
+        Page<Payment> paymentPage = paymentRepository.findAllByUserAndPostPostGroup(member, postGroup, pageable);
+        MileageDetailResponse response = MileageDetailResponse.of(paymentPage);
+        List<Long> postIdList = response.getPostIdList();
+
+        if(postGroup.equals(PostGroup.FUNDING)){
+            List<Funding> fundingList = fundingRepository.findAllById(postIdList);
+            response.updateListFromFunding(fundingList);
+        }else if(postGroup.equals(PostGroup.DONATION)){
+            List<Donation> donationList = donationRepository.findAllById(postIdList);
+            response.updateListFromDonation(donationList);
+        }
+
+        return response;
     }
 
 
