@@ -140,3 +140,4 @@ export function MainPageContainer() {
 }
 
 export default MainPageContainer;
+

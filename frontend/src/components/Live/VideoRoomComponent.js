@@ -149,11 +149,10 @@ class VideoRoomComponent extends Component {
       // eslint-disable-next-line react/no-access-state-in-setstate
       const prev = this.state.allAmount;
       console.log('UPDATE!!!!!!!!!!!!!!!!');
-      console.log(this.state);
       const data = JSON.parse(event.data)
       // this.setState({ allAmount: prev + amount });
-      this.setState({ allAmount: prev + data.money, checkLottie: true, amount: data.money,donationUser:data.donationUser });
-      console.log(this.state)
+      this.setState({donationUser:data.donationUser})
+      this.setState({ allAmount: prev + data.money, checkLottie: true, amount: data.money});
     });
   }
 
@@ -489,6 +488,7 @@ class VideoRoomComponent extends Component {
                 checkLottie={this.state.checkLottie}
                 userName={this.state.myUserName}
                 amount={this.state.amount}
+                donationUser={this.state.donationUser}
               />
             </div>
           )}

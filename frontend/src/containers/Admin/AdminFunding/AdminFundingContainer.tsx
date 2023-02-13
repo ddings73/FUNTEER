@@ -105,8 +105,8 @@ function AdminFundingContainer() {
     try {
       const { data } = await requestAdminFundingList(page - 1, 8);
       console.log(data);
-      setMaxPage(data.fundingListResponses.totalPages);
-      setPageFundings([...data.fundingListResponses.content]);
+      setMaxPage(data.totalPages);
+      setPageFundings([...data.content]);
     } catch (error) {
       console.error(error);
     }
