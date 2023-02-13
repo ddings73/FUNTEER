@@ -2,7 +2,6 @@ package com.yam.funteer.funding.dto.response;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.code.TargetMoneyType;

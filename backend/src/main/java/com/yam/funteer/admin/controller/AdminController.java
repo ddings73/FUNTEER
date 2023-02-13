@@ -1,5 +1,7 @@
 package com.yam.funteer.admin.controller;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -21,11 +23,13 @@ import com.yam.funteer.admin.dto.TeamListResponse;
 import com.yam.funteer.admin.service.AdminService;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
+import com.yam.funteer.funding.dto.response.FundingListResponse;
 import com.yam.funteer.funding.exception.FundingNotFoundException;
 import com.yam.funteer.funding.service.FundingService;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -118,6 +122,15 @@ public class AdminController {
 		Exception {
 		adminService.rejectReport(fundingId, data);
 		return ResponseEntity.ok("보고서 승인이 거절되었습니다.");
+	}
+
+	@ApiOperation(value = "관리자 펀딩 리스트 조회", notes = "관리자 페이지에서 펀딩 리스트를 조회한다.")
+	@GetMapping("/funding")
+	public ResponseEntity<Page<FundingListResponse>> findAllFunding(
+		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
+		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+		return ResponseEntity.ok(fundingService.findAllFundingByAdmin(pageRequest));
 	}
 
 
