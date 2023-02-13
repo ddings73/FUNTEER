@@ -19,15 +19,6 @@ export default class StreamComponent extends Component {
     this.state = { nickname: this.props.user.getNickname(), sessionId: this.props.sessionId };
   }
 
-  componentDidMount() {
-    // 일정 시간 지나면 도네이션 애니메이션 제거
-    if (this.props.checkLottie) {
-      setTimeout(() => {
-        this.setState({ checkLottie: false });
-      }, 3000);
-    }
-  }
-
   render() {
     console.log('Stream!!!!!!!!!!!!!!!!!!!!!!!!!!!!', this.state);
     // console.log(this.props.allAmount);
@@ -53,7 +44,9 @@ export default class StreamComponent extends Component {
 
         {this.props.checkLottie && (
           <div className="donationAnimation-box">
-            <p>{this.props.money}를 후원했습니다!!!!!</p>
+            <p>
+              {this.props.userName}님이 {this.props.amount}원을 후원했습니다!!!!!
+            </p>
             <Lottie animationData={donationLottie} />
           </div>
         )}

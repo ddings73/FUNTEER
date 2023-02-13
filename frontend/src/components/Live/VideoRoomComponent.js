@@ -99,6 +99,14 @@ class VideoRoomComponent extends Component {
     this.leaveSession();
   }
 
+  componentDidUpdate() {
+    if (this.state.checkLottie) {
+      setTimeout(() => {
+        this.setState({ checkLottie: false });
+      }, 3000);
+    }
+  }
+
   onbeforeunload(event) {
     this.leaveSession();
   }
@@ -474,6 +482,8 @@ class VideoRoomComponent extends Component {
                 userCount={this.state.userCount}
                 allAmount={this.state.allAmount}
                 checkLottie={this.state.checkLottie}
+                userName={this.state.myUserName}
+                amount={this.state.amount}
               />
             </div>
           )}
