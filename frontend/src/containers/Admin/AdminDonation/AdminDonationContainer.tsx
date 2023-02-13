@@ -26,12 +26,8 @@ function AdminDonationContainer() {
 
   /** 최대 페이지를 못구했으면 먼저 구하고 도네 리스트 요청 */
   useEffect(() => {
-    if (!maxPage) {
-      getMaxPage();
-    } else {
-      requestPageDonations();
-    }
-  }, [page, maxPage]);
+    requestPageDonations();
+  }, [page]);
 
   /** 도네이션 종료 */
   const onStateChangeHandler = async (id: number, state: string) => {
@@ -43,7 +39,7 @@ function AdminDonationContainer() {
         console.log(error);
       }
     }
-    window.location.reload();
+    // window.location.reload();
   };
 
   /** 도네이션 상세 페이지로 */
@@ -61,24 +57,14 @@ function AdminDonationContainer() {
     setPage(selectedPage);
   };
 
-  /** 최대 페이지 구하기 */
-  const getMaxPage = async () => {
-    try {
-      const response = await requestAdminDonationList(10000);
-      const pageCalc = response.data.length % 8 ? Math.floor(response.data.length / 8) + 1 : response.data.length / 8;
-      setMaxPage(pageCalc);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   /** 페이지 요청 */
   const requestPageDonations = async () => {
     setDonationList([]);
     try {
       const response = await requestAdminDonationList(8, page - 1);
       console.log(response);
-      setDonationList(response.data);
+      setMaxPage(response.data.totalPages);
+      setDonationList(response.data.content);
     } catch (error) {
       console.error(error);
     }
@@ -117,15 +103,15 @@ function AdminDonationContainer() {
         {donationList.map((data) => (
           <div className={styles['list-line']}>
             <li>
-              <p>{data.id}</p>
+              <p>{data.donationId}</p>
             </li>
-            <button type="button" className={styles['title-col-btn']} onClick={() => onClickDonationItemHandler(data.id)}>
+            <button type="button" className={styles['title-col-btn']} onClick={() => onClickDonationItemHandler(data.donationId)}>
               <li>
                 <p>{data.title}</p>
               </li>
             </button>
             <li>
-              <p>{parseInt(data.targetAmount, 10).toLocaleString()}</p>
+              <p>{parseInt(data.amount, 10).toLocaleString()}</p>
             </li>
             <li>
               <p>{data.startDate}</p>
@@ -137,7 +123,7 @@ function AdminDonationContainer() {
               <Select
                 color="warning"
                 value={data.postType}
-                onChange={() => onStateChangeHandler(data.id, data.postType)}
+                onChange={() => onStateChangeHandler(data.donationId, data.postType)}
                 className={data.postType.includes('ACTIVE') ? styles['show-approve'] : styles['hide-approve']}
               >
                 <MenuItem value="DONATION_ACTIVE" sx={{ fontSize: '0.9rem' }}>

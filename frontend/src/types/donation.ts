@@ -13,9 +13,9 @@ export type DonationElementType = {
 };
 
 export type DonationListElementType = {
-  id: number;
+  donationId: number;
   title: string;
-  targetAmount: string;
+  amount: string;
   startDate: string;
   endDate: string;
   postType: string;

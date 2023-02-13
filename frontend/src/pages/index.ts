@@ -42,20 +42,24 @@ export { default as FundingList } from './Funding/FundingList';
 export { default as CreateFunding } from './Funding/CreateFunding';
 export { default as ModifyFunding } from './Funding/ModifyFunding';
 
-export { default as CustomerCenter } from './CustomerCenter/CustomerCenter';
-export { default as FAQDetail } from './CustomerCenter/FAQDetail';
-export { default as NoticeList } from './CustomerCenter/NoticeList';
-export { default as QuestionList } from './CustomerCenter/QuestionList';
-export { default as FAQList } from './CustomerCenter/FAQList'
+export { default as NoticeList } from './CustomerCenter/Notice/NoticeList';
+export { default as NoticeDetail } from './CustomerCenter/Notice/NoticeDetail';
+export { default as NoticeEdit } from './CustomerCenter/Notice/NoticeEdit';
+export { default as FAQList } from './CustomerCenter/FAQ/FAQList';
+export { default as FAQDetail } from './CustomerCenter/FAQ/FAQDetail';
+export { default as FAQCreate } from './CustomerCenter/FAQ/FAQCreate';
+export { default as FAQEdit } from './CustomerCenter/FAQ/FAQEdit';
+export { default as QuestionList } from './CustomerCenter/Question/QuestionList';
+export { default as QuestionCreate } from './CustomerCenter/Question/QuestionCreate';
+export { default as QuestionDetail } from './CustomerCenter/Question/QuestionDetail';
 
 export { default as Donation } from './Donation/Donation';
-
-export { default as NoticeDetail } from './CustomerCenter/NoticeDetail';
 
 export { default as TeamProfile } from './TeamPage/TeamProfile';
 export { default as TeamEdit } from './TeamPage/TeamEdit';
 export { default as TeamDonation } from './TeamPage/TeamDonation';
 
+export { default as LiveList } from './Live/LiveList';
 export { default as CreateLive } from './Live/CreateLive';
 export { default as PublisherLiveRoom } from './Live/PublisherLiveRoom';
 export { default as SubscribeLiveRoom } from './Live/SubscribeLiveRoom';
