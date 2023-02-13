@@ -141,7 +141,7 @@ class VideoRoomComponent extends Component {
       console.log(this.state);
       console.log(JSON.parse(event.data), prev);
       // this.setState({ allAmount: prev + amount });
-      this.setState({ allAmount: prev + JSON.parse(event.data), amount: JSON.parse(event.data) });
+      this.setState({ allAmount: prev + JSON.parse(event.data), checkLottie: true, amount: JSON.parse(event.data) });
     });
   }
 
