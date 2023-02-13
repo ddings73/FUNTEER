@@ -49,7 +49,6 @@ class VideoRoomComponent extends Component {
     this.camStatusChanged = this.camStatusChanged.bind(this);
     this.micStatusChanged = this.micStatusChanged.bind(this);
     this.switchCamera = this.switchCamera.bind(this);
-    this.updateAllAmount = this.updateAllAmount.bind(this);
   }
 
   componentDidMount() {
@@ -85,11 +84,11 @@ class VideoRoomComponent extends Component {
     this.joinSession();
   }
 
-  updateAllAmount(amount) {
-    // eslint-disable-next-line react/no-access-state-in-setstate
-    const prev = this.state.allAmount;
-    this.setState({ allAmount: prev + amount });
-  }
+  // updateAllAmount(amount) {
+  //   console.log('업데이트!!!!!!!!!!!!!!!', this.state);
+  //   // eslint-disable-next-line react/no-access-state-in-setstate
+
+  // }
 
   componentWillUnmount() {
     window.removeEventListener('beforeunload', this.onbeforeunload);
@@ -115,9 +114,28 @@ class VideoRoomComponent extends Component {
         this.subscribeToStreamCreated();
         this.subscribeToConnectionCreated();
         this.subscribeToSessionDisconnected();
+        this.subscribeToLiveDonation();
+        this.subscribeToUpdateAmount();
         await this.connectToSession();
       },
     );
+  }
+
+  subscribeToLiveDonation() {
+    this.state.session.on('signal:liveDonation', (event) => {
+      const data = JSON.parse(event.date);
+      console.log(data);
+      this.props.liveDonation(data);
+    });
+  }
+
+  subscribeToUpdateAmount() {
+    this.state.session.on('signal:updateAmount', (event) => {
+      // eslint-disable-next-line react/no-access-state-in-setstate
+      const prev = this.state.allAmount;
+      // this.setState({ allAmount: prev + amount });
+      this.setState({ allAmount: prev + JSON.parse(event.data) });
+    });
   }
 
   subscribeToSessionDisconnected() {
@@ -132,7 +150,6 @@ class VideoRoomComponent extends Component {
   subscribeToConnectionCreated() {
     this.state.session.on('connectionCreated', async (event) => {
       console.log('event!!!!!!!!!!!!!!!!!!!!', event);
-      console.log(this.props.userProfileImg);
       localUser.setUserProfileImg(this.props.userProfileImg);
       // eslint-disable-next-line react/no-access-state-in-setstate
       await this.setState({ userCount: this.state.session.remoteConnections.size });
@@ -222,6 +239,7 @@ class VideoRoomComponent extends Component {
     localUser.setNickname(this.state.myUserName);
     localUser.setConnectionId(this.state.session.connection.connectionId);
     localUser.setUserProfileImg(this.props.userProfileImg);
+    localUser.setAllAmount(this.state.allAmount);
 
     this.subscribeToUserChanged();
     this.subscribeToStreamDestroyed();
