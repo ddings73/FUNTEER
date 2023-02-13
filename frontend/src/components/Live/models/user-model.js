@@ -12,7 +12,6 @@ class UserModel {
 
   streamManager;
 
-
   type; // 'remote' | 'local'
 
   constructor() {
@@ -23,15 +22,24 @@ class UserModel {
     this.nickname = '';
     this.streamManager = null;
     this.type = 'local';
-    this.userProfileImg=""
+    this.userProfileImg = '';
+    this.allAmount = 0;
   }
 
-  getUserProfileImg(){
-    return this.userProfileImg
+  getAllAmount() {
+    return this.allAmount;
   }
 
-  setUserProfileImg(userProfileImg){
-    this.userProfileImg = userProfileImg
+  setAllAmount(allAmount) {
+    this.allAmount = allAmount;
+  }
+
+  getUserProfileImg() {
+    return this.userProfileImg;
+  }
+
+  setUserProfileImg(userProfileImg) {
+    this.userProfileImg = userProfileImg;
   }
 
   isAudioActive() {
@@ -89,8 +97,6 @@ class UserModel {
   setNickname(nickname) {
     this.nickname = nickname;
   }
-
-
 
   setType(type) {
     if ((type === 'local') | (type === 'remote')) {

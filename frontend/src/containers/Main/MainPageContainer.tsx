@@ -64,8 +64,8 @@ export function MainPageContainer() {
         if (event.data !== undefined) alert(event.data);
       };
 
-      eventSource.addEventListener('sse', ((event: CustomEvent) => {
-        console.log(event);
+      eventSource.addEventListener('sse', ((event: MessageEvent) => {
+        console.log(event.data);
         
       }) as EventListener);
     } 
