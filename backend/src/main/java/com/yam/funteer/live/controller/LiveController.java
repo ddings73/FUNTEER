@@ -12,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -53,8 +56,8 @@ public class LiveController {
 
     @ApiOperation(value = "현재 생성되어 있는 방 목록을 가져옴")
     @GetMapping("/sessions")
-    public ResponseEntity<List<String>> getCurrentActiveSessions(){
-        List<String> activeSessions = liveService.getCurrentActiveSessions();
+    public ResponseEntity<ActiveSessionsResponse> getCurrentActiveSessions(@PageableDefault(size = 12, sort = "id", direction = Sort.Direction.DESC)Pageable pageable){
+        ActiveSessionsResponse activeSessions = liveService.getCurrentActiveSessions(pageable);
         return ResponseEntity.ok(activeSessions);
     }
 
