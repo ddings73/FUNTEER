@@ -10,7 +10,6 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import swal from 'sweetalert2';
-import QuestionContainerItem from './QuestionContainerItem';
 import styles from './QuestionContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
 import { customAlert, w1500 } from '../../../utils/customAlert';
@@ -47,8 +46,8 @@ export default function QuestionContainer() {
     navigate('create');
   };
 
-  const onClickQNAItem = () => {
-    console.log();
+  const onClickQNAItem = (qnaId: number) => {
+    navigate(`${qnaId}`);
   };
 
   /** 페이지 교체 */
@@ -90,7 +89,13 @@ export default function QuestionContainer() {
         </div>
 
         {QNAList.map((data) => (
-          <button type="button" className={styles.line} onClick={onClickQNAItem}>
+          <button
+            type="button"
+            className={styles.line}
+            onClick={() => {
+              onClickQNAItem(data.id);
+            }}
+          >
             <p className={styles['item-title']}>{data.title}</p>
             <p className={styles['item-respond']}>{data.respond ? '답변 완료' : '대기중'}</p>
           </button>
