@@ -88,12 +88,7 @@ class VideoRoomComponent extends Component {
   updateAllAmount(amount) {
     // eslint-disable-next-line react/no-access-state-in-setstate
     const prev = this.state.allAmount;
-
-    console.log('alalalalalalalalalal');
-    console.log(prev, amount);
     this.setState({ allAmount: prev + amount });
-
-    console.log(this.state.allAmount)
   }
 
   componentWillUnmount() {
@@ -426,6 +421,7 @@ class VideoRoomComponent extends Component {
     // console.log('state', this.state);
     const { mySessionId } = this.state;
     const { localUser } = this.state;
+    console.log('최근잔고 !!!!!!!!', this.props.userCurrentMoney);
     // console.log(localUser)
     // const {remoteConnections} = this.state.session
     // console.log(remoteConnections)

@@ -40,9 +40,11 @@ function SubscribeLiveRoomContainer() {
   };
 
   const liveDonation = async (amount: number) => {
-    console.log(amount);
+    console.log('뺴야할 금액', amount);
     try {
       const response = await requestLiveDonation(amount as number, sessionName as string);
+      console.log('결과띠', response);
+
       await getUserMoney();
       alert('성공띠');
       console.log(response);
