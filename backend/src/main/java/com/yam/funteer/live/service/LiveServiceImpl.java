@@ -248,11 +248,12 @@ public class LiveServiceImpl implements LiveService{
     @Override
     public void giftToFundingTeam(GiftRequest request) {
         String sessionName = request.getSessionName();
-        liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).ifPresent(live -> {
+        liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).ifPresentOrElse(live -> {
             Session session = this.openVidu.getActiveSession(live.getSessionId());
             openviduFetch();
 
             if(session == null){
+                log.warn("세션이 없음");
                 throw new SessionNotFoundException();
             }
 
@@ -270,9 +271,9 @@ public class LiveServiceImpl implements LiveService{
 
             Gift gift = Gift.from(live, user, amount);
             giftRepository.save(gift);
+        }, () -> {
+            throw new SessionNotFoundException();
         });
-
-        throw new SessionNotFoundException();
     }
 
     private void openviduFetch(){
