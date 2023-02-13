@@ -79,7 +79,9 @@ public class LoginServiceImpl implements LoginService{
     public void processLogOut() {
         if(SecurityUtil.isLogin()) {
             Long userId = SecurityUtil.getCurrentUserId();
-            tokenRepository.deleteById(userId);
+            tokenRepository.findById(userId).ifPresent(token -> {
+                tokenRepository.delete(token);
+            });
             return;
         }
 
