@@ -124,7 +124,10 @@ public class MemberServiceImpl implements MemberService {
 
         log.info("{}", member);
         log.info("{}", request);
-        member.updateDisplay(request.getDisplay());
+
+        if(request.getDisplay() != null) {
+            member.updateDisplay(request.getDisplay());
+        }
     }
 
     @Override
