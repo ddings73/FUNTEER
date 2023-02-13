@@ -50,7 +50,7 @@ export function MainPageContainer() {
       });
 
       console.log(eventSource);
-      
+
       // 최초 연결
       eventSource.onopen = (event) => {
         setListening(true);
@@ -67,11 +67,8 @@ export function MainPageContainer() {
 
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
         console.log(event.data);
-        
       }) as EventListener);
-    } 
-    
-    else {
+    } else {
       console.log('logout');
       eventSource?.close();
     }
@@ -126,7 +123,7 @@ export function MainPageContainer() {
             </Tooltip>
           </div>
         </div>
-        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 500 ? '1' : '0' }} alt="back" />
+        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 700 ? '1' : '0' }} alt="back" />
       </div>
       <div className={styles.infoBanner}>
         <InfoCard />

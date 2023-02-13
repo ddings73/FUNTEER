@@ -204,14 +204,13 @@
 }
 
 .backgroundImg {
-  transition: opacity 1s;
+  transition: opacity 2s;
   width: 100%;
   height: auto;
   margin-top: 100px;
   position: absolute;
   top: -20px;
   z-index: 1;
-  animation: name duration timing-function delay iteration-count direction fill-mode;
   filter: brightness(60%);
   animation: starsGl 3s ease-in-out infinite;
 }
