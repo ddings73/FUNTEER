@@ -85,6 +85,7 @@ export function ListTable() {
     empty: boolean;
   };
 
+  const [page, setPage] = useState<number>(1);
   const [DonationListData, setDonationListData] = useState<DonationListDataType>({
     content: [
       {
@@ -106,16 +107,20 @@ export function ListTable() {
   const getDonationList = async () => {
     const size = 8;
     try {
-      const res = await requestDonationList(0, size);
+      const res = await requestDonationList(page - 1, size);
       setDonationListData(res.data);
     } catch (err) {
       console.log(err);
     }
   };
 
+  const onChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
+    setPage(selectedPage);
+  };
+
   useEffect(() => {
     getDonationList();
-  }, []);
+  }, [page]);
 
   console.log(DonationListData);
 
@@ -135,7 +140,7 @@ export function ListTable() {
           ))}
         </TableBody>
       </Table>
-      <Pagination count={DonationListData.totalPages} variant="outlined" color="primary" sx={{ margin: '3% 0' }} />
+      <Pagination count={DonationListData.totalPages} variant="outlined" color="primary" sx={{ margin: '3% 0' }} onChange={onChangePage} />
     </TableContainer>
   );
 }
