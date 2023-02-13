@@ -51,11 +51,15 @@ public class FundingDetailResponse {
 
 	private Optional<HashtagResponse> postHashtagList;
 
+	private Boolean isWished;
+
 	private String thumbnail;
 
 	private Optional<Page<CommentResponse>> comments;
 
 	private String currentFundingAmount;
+
+	private int hit;
 
 	public static FundingDetailResponse from(Funding funding) {
 
@@ -77,6 +81,7 @@ public class FundingDetailResponse {
 			.thumbnail(funding.getThumbnail())
 			.currentFundingAmount(str)
 			.fundingDescription(funding.getFundingDescription())
+			.hit(funding.getHit())
 			.build();
 
 		// funding.getComments().ifPresent(comments -> {

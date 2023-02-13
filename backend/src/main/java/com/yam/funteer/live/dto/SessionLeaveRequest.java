@@ -10,5 +10,4 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SessionLeaveRequest {
 	private String sessionName;
-	private String token;
 }

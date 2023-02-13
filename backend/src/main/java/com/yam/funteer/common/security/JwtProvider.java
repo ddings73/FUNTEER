@@ -115,8 +115,4 @@ public class JwtProvider {
                     .parseClaimsJws(token)
                     .getBody();
     }
-
-    public Long getUserId(String token){
-        return Long.valueOf(parseClaims(token).getSubject());
-    }
 }

@@ -11,17 +11,16 @@ import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
-import com.yam.funteer.common.code.PostGroup;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.funding.repository.FundingRepository;
-import com.yam.funteer.pay.entity.Payment;
-import com.yam.funteer.pay.repository.PaymentRepository;
+import com.yam.funteer.live.entity.Gift;
+import com.yam.funteer.live.repository.GiftRepository;
 import com.yam.funteer.user.dto.request.team.UpdateTeamAccountRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
-import com.yam.funteer.user.dto.response.team.TeamPaymentReceiptResponse;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
+import com.yam.funteer.user.dto.response.team.TeamGiftDetailResponse;
 import com.yam.funteer.user.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -56,6 +55,9 @@ public class TeamServiceImpl implements TeamService{
 	private final TeamRepository teamRepository;
 	private final AttachRepository attachRepository;
 	private final TeamAttachRepository teamAttachRepository;
+	private final GiftRepository giftRepository;
+
+
 	private final PasswordEncoder passwordEncoder;
 	private final AwsS3Uploader awsS3Uploader;
 	private final BadgeService badgeService;
@@ -205,6 +207,15 @@ public class TeamServiceImpl implements TeamService{
 		});
 
 
+	}
+
+	@Override
+	public TeamGiftDetailResponse getGiftDetails(Pageable pageable) {
+		Long teamId = SecurityUtil.getCurrentUserId();
+		Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
+		Page<Gift> giftPage = giftRepository.findByLiveFundingTeam(team, pageable);
+
+		return TeamGiftDetailResponse.of(giftPage);
 	}
 
 

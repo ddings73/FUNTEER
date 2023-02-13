@@ -6,7 +6,7 @@ import com.yam.funteer.user.dto.request.BaseUserRequest;
 import com.yam.funteer.user.dto.request.team.CreateTeamRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamAccountRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
-import com.yam.funteer.user.dto.response.team.TeamPaymentReceiptResponse;
+import com.yam.funteer.user.dto.response.team.TeamGiftDetailResponse;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
 import com.yam.funteer.user.dto.response.team.TeamProfileResponse;
 import com.yam.funteer.user.service.TeamService;
@@ -117,12 +117,12 @@ public class TeamController {
         return ResponseEntity.ok("회원정보 수정 완료");
     }
 
-    // @ApiOperation(value = "단체회원 GIFT 받은내역 조회")
-    // @GetMapping("/account/payment")
-    // public ResponseEntity<TeamPaymentReceiptResponse> getPaymentReceipt(@PageableDefault(size = 8, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
-    //     TeamPaymentReceiptResponse response = teamService.getPaymentReceipt(pageable);
-    //     return ResponseEntity.ok(response);
-    // }
+     @ApiOperation(value = "단체회원 GIFT 받은내역 조회")
+     @GetMapping("/account/gift")
+     public ResponseEntity<TeamGiftDetailResponse> getPaymentReceipt(@PageableDefault(size = 8, sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
+         TeamGiftDetailResponse response = teamService.getGiftDetails(pageable);
+         return ResponseEntity.ok(response);
+     }
 
     public void validateBinding(BindingResult bindingResult){
         if(bindingResult.hasErrors()){

@@ -26,6 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Alarm {
+
 	private String receiver;
 
 	private String content;

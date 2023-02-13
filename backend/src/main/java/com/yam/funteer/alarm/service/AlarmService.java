@@ -6,12 +6,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import com.yam.funteer.alarm.dto.response.PastAlarmListRes;
 import com.yam.funteer.alarm.entity.Alarm;
+import com.yam.funteer.alarm.entity.AlarmEntity;
+import com.yam.funteer.alarm.repository.AlarmEntityRepository;
 import com.yam.funteer.alarm.repository.AlarmRepository;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
@@ -28,6 +32,7 @@ public class AlarmService {
 
 	private final UserRepository userRepository;
 	private final AlarmRepository alarmRepository;
+	private final AlarmEntityRepository alarmEntityRepository;
 	private static final Long DEFAULT_TIMEOUT=60L*1000*60;
 
 	public SseEmitter subscribe( String lastEventId) {
@@ -90,7 +95,7 @@ public class AlarmService {
 
 	//유실된 데이터 다시 전송
 	private void sendLostData(String lastEventId, String email, String emitterId, SseEmitter emitter) {
-
+		log.info(lastEventId);
 		Map<String, Object> eventCaches = alarmRepository.findAllEventCacheStartWithByEmail(email);
 		eventCaches.entrySet().stream()
 			.filter(entry -> lastEventId.compareTo(entry.getKey()) < 0)
@@ -104,10 +109,19 @@ public class AlarmService {
 		// 로그인 한 유저의 SseEmitter 모두 가져오기
 		Map<String, SseEmitter> sseEmitters = alarmRepository.findAllEmitterStartWithByEmail(receiver);
 
+		AlarmEntity alarmEntity=AlarmEntity.builder()
+			.content(content)
+			.isRead(false)
+			.url(urlValue)
+			.userEmail(receiver)
+			.build();
+		alarmEntityRepository.save(alarmEntity);
+
 		sseEmitters.forEach(
 			(key, emitter) -> {
 				// 데이터 캐시 저장(유실된 데이터 처리하기 위함)
 				alarmRepository.saveEventCache(key, notification);
+
 				// 데이터 전송
 				sendToClient(emitter, key, notification);
 			}
@@ -120,6 +134,15 @@ public class AlarmService {
 		Map<String, SseEmitter> sseEmitters;
 		for (int i = 0; i < receiverList.size(); i++) {
 			int finalI = i;
+
+			AlarmEntity alarmEntity=AlarmEntity.builder()
+				.content(content)
+				.isRead(false)
+				.url(urlValue)
+				.userEmail(String.valueOf(receiverList.get(i)))
+				.build();
+			alarmEntityRepository.save(alarmEntity);
+
 			sseEmitters = new HashMap<>();
 			notifications.add(createNotification(receiverList.get(i).toString(), content, urlValue));
 			sseEmitters.putAll(alarmRepository.findAllEmitterStartWithByEmail(receiverList.get(i).toString()));
@@ -127,6 +150,7 @@ public class AlarmService {
 				(key, emitter) -> {
 					// 데이터 캐시 저장(유실된 데이터 처리하기 위함)
 					alarmRepository.saveEventCache(key, notifications.get(finalI));
+
 					// 데이터 전송
 					sendToClient(emitter, key, notifications.get(finalI));
 				});
@@ -135,12 +159,13 @@ public class AlarmService {
 
 	//알림 생성
 	private Alarm createNotification(String receiver, String content, String urlValue) {
-		return Alarm.builder()
+		Alarm alarm=Alarm.builder()
 			.content(content)
 			.receiver(receiver)
 			.url(urlValue)
 			.isRead(false).build();
 
+		return alarm;
 	}
 
 	//알림 전송
@@ -160,5 +185,21 @@ public class AlarmService {
 			alarmRepository.deleteById(id);
 			emitter.completeWithError(exception);
 		}
+	}
+
+	// db에서 알림 삭제
+	public void alarmRead(){
+		String userEmail=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new).getEmail();
+		alarmEntityRepository.deleteAllByUserEmail(userEmail);
+	}
+
+	// db 알림 가져오기
+	public List<PastAlarmListRes> getPastAlarmList(){
+		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
+		String email=user.getEmail();
+		List<AlarmEntity>alarmList=alarmEntityRepository.findAllByUserEmail(email);
+		List<PastAlarmListRes>pastAlarmList=alarmList.stream().map(alarmEntity ->new PastAlarmListRes(alarmEntity)).collect(
+			Collectors.toList());
+		return pastAlarmList;
 	}
 }
