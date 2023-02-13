@@ -88,9 +88,14 @@ export default class ChatComponent extends Component {
         data: JSON.stringify(money),
         type: 'liveDonation',
       });
+
+      this.props.user.getStreamManager().stream.session.signal({
+        data: JSON.stringify(money),
+        type: 'updateAmount',
+      });
       // this.props.liveDonation(money);
       // this.props.updateAllAmount(money);
-      // this.setState({ amount: '', toggle: false });
+      this.setState({ amount: '', toggle: false });
       // alert(`${money}원이 기부되었습니다`);
     }
   }

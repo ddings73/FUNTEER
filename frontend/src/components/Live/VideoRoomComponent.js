@@ -123,6 +123,7 @@ class VideoRoomComponent extends Component {
 
   subscribeToLiveDonation() {
     this.state.session.on('signal:liveDonation', (event) => {
+      console.log(event);
       const data = JSON.parse(event.data);
       console.log(data);
       this.props.liveDonation(data);
@@ -133,6 +134,8 @@ class VideoRoomComponent extends Component {
     this.state.session.on('signal:updateAmount', (event) => {
       // eslint-disable-next-line react/no-access-state-in-setstate
       const prev = this.state.allAmount;
+      console.log('UPDATE!!!!!!!!!!!!!!!!');
+      console.log(JSON.parse(event.data), prev);
       // this.setState({ allAmount: prev + amount });
       this.setState({ allAmount: prev + JSON.parse(event.data) });
     });
@@ -439,7 +442,8 @@ class VideoRoomComponent extends Component {
     // console.log('state', this.state);
     const { mySessionId } = this.state;
     const { localUser } = this.state;
-    console.log('최근잔고 !!!!!!!!', this.props.userCurrentMoney);
+    // console.log('최근잔고 !!!!!!!!', this.props.userCurrentMoney);
+    console.log(this.state);
     // console.log(localUser)
     // const {remoteConnections} = this.state.session
     // console.log(remoteConnections)
