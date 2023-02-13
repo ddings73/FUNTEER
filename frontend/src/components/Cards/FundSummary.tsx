@@ -1,3 +1,4 @@
+import { Tooltip } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { ResponseInterface } from '../../containers/Funding/FundingDetailContainer';
 import styles from './FundSummary.module.scss';
@@ -31,7 +32,9 @@ export function FundSummary(board: ResponseInterface) {
             <div className={styles.object}> 목표금액: {targetMoneyListLevelThree.amount}원</div>
             <div className={styles.progressBar}>
               <div className={styles.status} style={{ width: `${calc(targetMoneyListLevelThree.amount as string, currentFundingAmount)}%` }}>
-                <p className={styles.statusNum}>{calc(targetMoneyListLevelThree.amount as string, currentFundingAmount)}%</p>
+                <Tooltip title={`현재 모금 금액: ${currentFundingAmount}원`} placement="bottom">
+                  <p className={styles.statusNum}>{calc(targetMoneyListLevelThree.amount as string, currentFundingAmount)}%</p>
+                </Tooltip>
               </div>
             </div>
           </div>

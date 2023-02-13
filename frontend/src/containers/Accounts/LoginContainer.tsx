@@ -54,7 +54,7 @@ function LoginContainer() {
       }
     } catch (error) {
       console.error(error);
-      dispatch(openModal({ isOpen: true, title: '로그인 실패', content: '비밀번호가 틀림요', handleModal }));
+      dispatch(openModal({ isOpen: true, title: '로그인 실패', content: '비밀번호가 잘못 입력되었습니다.', handleModal }));
     }
   };
 

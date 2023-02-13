@@ -23,12 +23,18 @@
       display: flex;
       flex-direction: column;
       padding: 1rem;
-      background-color: #fdfdfd;
+      background-color: rgba(236, 153, 75, 0.1);
 
       .info-div {
-        width: 100%;
+        width: 90%;
         max-height: 364px;
+        margin-left: 5%;
         display: flex;
+
+        @include tablet {
+          flex-direction: column;
+          max-height: 100%;
+        }
 
         @include mobile {
           flex-direction: column;
@@ -39,7 +45,7 @@
           display: flex;
           justify-content: center;
           align-items: center;
-          padding: 2rem;
+          padding: 2rem 1rem 2rem 2rem;
 
           @include mobile {
             padding: 1rem;
@@ -80,15 +86,15 @@
               align-items: center;
               border-radius: 100%;
               padding: 0rem;
-              background-color: rgb(238, 238, 238);
+              background-color: rgb(238, 179, 125);
               border: 5px solid #fcfcfc;
               right: 11px;
               bottom: 11px;
+              color: white;
 
               &:hover {
                 cursor: pointer;
-                transition: 2s;
-                background-color: rgb(197, 197, 197);
+                background-color: rgb(239, 173, 112);
               }
 
               .camera {
@@ -110,6 +116,11 @@
           margin: 0 0 0 1rem;
           padding: 2rem;
           font-family: NanumSquare;
+
+          @include tablet {
+            width: 95%;
+            padding: 0;
+          }
 
           @include mobile {
             width: 95%;
@@ -149,7 +160,7 @@
         width: 90%;
         height: 0;
         margin: 2rem auto 1rem auto;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 
         @include mobile {
           margin: 1.5rem auto;
@@ -163,6 +174,10 @@
         margin: 2rem 0 0 0;
         padding: 1rem;
 
+        @include tablet {
+          padding: 0;
+        }
+
         @include mobile {
           margin: 0rem;
         }
@@ -171,7 +186,7 @@
           width: 85%;
           height: 0;
           margin: 2rem auto;
-          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+          border-bottom: 1px solid rgba(0, 0, 0, 0.07);
 
           @include mobile {
             margin: 1.5rem auto;
@@ -180,11 +195,7 @@
         }
 
         .item {
-          margin-left: 6rem;
-
-          @include mobile {
-            margin: 0rem;
-          }
+          margin-left: 10%;
 
           .pw-label {
             display: flex;
@@ -278,6 +289,28 @@
               opacity: 0.8;
             }
           }
+        }
+      }
+
+      .back {
+        margin: 7% auto 10% 10%;
+        background-color: inherit;
+        border: none;
+        color: $primary;
+        font-size: 1.25rem;
+        font-weight: bold;
+
+        &:hover {
+          cursor: pointer;
+          color: $second;
+        }
+
+        @include tablet {
+          font-size: 1.125rem;
+        }
+
+        @include mobile {
+          display: 0.75rem;
         }
       }
     }

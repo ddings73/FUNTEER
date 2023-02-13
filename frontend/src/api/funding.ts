@@ -141,11 +141,20 @@ export const requestCommentList = async (fundingId?: string, sort?: string) => {
 
 /**
  * @name 다음댓글리스트호출
- * @returns
+ * @method GET
  */
 export const requestNextCommentList = async (currentPage: number, fundingId?: string, sort?: string) => {
   const response = await http.get(`funding/${fundingId}/?page=${currentPage + 1}&?sort=${sort}`);
   return response;
+};
+
+/**
+ * @name 다음댓글리스트호출
+ * @method DELETE
+ */
+export const requestDeleteComment = async (commentId?: number) => {
+  const res = await http.delete(`funding/comment/${commentId}`);
+  console.log('삭제 댓글 res: ', res);
 };
 
 /**
