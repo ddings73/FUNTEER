@@ -44,12 +44,12 @@ export default class StreamComponent extends Component {
 
         {this.props.checkLottie && (
           <div className="donationAnimation-box">
-            <p>
-              {this.props.userName}님이 {this.props.amount}원을 후원했습니다!!!!!
+            <p className='donation-contents'>
+              {this.props.userName}님이 {this.props.amount}원을 후원했습니다.
             </p>
             <Lottie animationData={donationLottie} />
           </div>
-        )}
+         )} 
 
         {this.props.user !== undefined && this.props.user.getStreamManager() !== undefined ? (
           <div className="streamComponent">
