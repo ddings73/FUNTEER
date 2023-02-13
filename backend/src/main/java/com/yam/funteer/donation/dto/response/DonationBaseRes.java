@@ -3,6 +3,8 @@ package com.yam.funteer.donation.dto.response;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+
 import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.donation.entity.Donation;
 
@@ -30,6 +32,7 @@ public class DonationBaseRes {
 		this.postType=entity.getPostType();
 		this.startDate=entity.getStartDate();
 		this.endDate=entity.getEndDate();
+
 	}
 }
 

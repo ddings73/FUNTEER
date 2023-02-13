@@ -1,28 +1,35 @@
-
 package com.yam.funteer.donation.dto.response;
 
-	import java.time.LocalDate;
+import java.time.LocalDate;
 
-	import com.yam.funteer.common.code.PostType;
-	import com.yam.funteer.donation.entity.Donation;
+import org.springframework.data.domain.Pageable;
 
-	import lombok.Getter;
+import com.yam.funteer.common.code.PostType;
+import com.yam.funteer.donation.entity.Donation;
+
+import lombok.Getter;
 
 @Getter
 public class DonationAdminListRes {
 	private Long id;
 	private String title;
+	private String targetAmount;
+	private String currentAmount;
 	private PostType postType;
 	private LocalDate startDate;
 	private LocalDate endDate;
-	private String targetAmount;
+	private Pageable pageable;
 
-	public DonationAdminListRes(Donation donation){
-		this.id=donation.getDonationId();
-		this.title=donation.getTitle();
-		this.postType=donation.getPostType();
-		this.startDate=donation.getStartDate();
-		this.endDate=donation.getEndDate();
-		this.targetAmount=donation.getAmount().toString();
+	public DonationAdminListRes(Donation entity,Pageable pageable){
+		this.id=entity.getDonationId();
+		this.title=entity.getTitle();
+		this.targetAmount=entity.getAmount().toString();
+		this.currentAmount=entity.getCurrentAmount().toString();
+		this.postType=entity.getPostType();
+		this.startDate=entity.getStartDate();
+		this.endDate=entity.getEndDate();
+		this.pageable=pageable;
+
 	}
 }
+

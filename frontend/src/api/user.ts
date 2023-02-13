@@ -102,6 +102,11 @@ export const requestUserProfile = async (userId: string) => {
   return response;
 };
 
+export const requestTeamProfile = async (userId: string) => {
+  const response = await http.get(`team/${userId}/profile`);
+  return response;
+};
+
 /**
  * @name 유저정보수정
  * @param userInfo
@@ -148,57 +153,56 @@ export const requestModifyUserProfileImage = async (profileImage: Blob, userId: 
   return response;
 };
 
-
 /**
  * @name 이메일찾기
- * @param name 
- * @param phone 
- * @returns 
+ * @param name
+ * @param phone
+ * @returns
  */
-export const requestFindEmail = async(name:string,phone:string)=>{
+export const requestFindEmail = async (name: string, phone: string) => {
   const data = {
     name,
-    phone
-  }
-  const response = http.put("forget/email",data)
-  return response
-}
+    phone,
+  };
+  const response = http.put('forget/email', data);
+  return response;
+};
 
 /**
  * @name 이메일인증코드보내기
- * @param email 
- * @returns 
+ * @param email
+ * @returns
  */
-export const requestSendEmailAuthCode = async (email:string)=>{
-  const response = http.get(`mail/send/?email=${email}`)
+export const requestSendEmailAuthCode = async (email: string) => {
+  const response = http.get(`mail/send/?email=${email}`);
   return response;
-}
+};
 
 /**
  * @name 이메일인증코드확인
- * @param code 
- * @param email 
- * @returns 
+ * @param code
+ * @param email
+ * @returns
  */
-export const requestCheckEmailAuthCode = async(code:string,email:string)=>{
- const response  = await http.get(`mail/confirm/?code=${code}&email=${email}`)
- return response
-}
+export const requestCheckEmailAuthCode = async (code: string, email: string) => {
+  const response = await http.get(`mail/confirm/?code=${code}&email=${email}`);
+  return response;
+};
 
 /**
  * @name 비밀번호재설정
- * @param email 
- * @param name 
- * @param password 
- * @returns 
+ * @param email
+ * @param name
+ * @param password
+ * @returns
  */
-export const requestResetPassword = async(email:string,name:string,password:string)=>{
+export const requestResetPassword = async (email: string, name: string, password: string) => {
   const data = {
     email,
     name,
-    password
-  }
+    password,
+  };
 
-  const response = http.put("forget/pw",data)
+  const response = http.put('forget/pw', data);
   return response;
-}
+};

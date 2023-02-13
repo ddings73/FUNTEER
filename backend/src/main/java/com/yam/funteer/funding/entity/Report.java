@@ -13,10 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.hibernate.validator.constraints.UniqueElements;
-
 import com.yam.funteer.attach.entity.Attach;
-import com.yam.funteer.common.code.PostType;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -29,7 +26,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Report{
-	public Report(Funding funding, String content, LocalDateTime regDate, Attach receipts) {
+	public Report(Funding funding, String content, LocalDateTime regDate) {
 		this.funding = funding;
 		this.content = content;
 		this.regDate = regDate;

@@ -19,17 +19,15 @@ export const requestCreateFaq = async (faqData: FaqInterface) => {
 };
 
 /** faq 수정 API */
-export const requestModifyFaq = async (faqIdx: number, faqData: FaqInterface) => {
-  const formData = new FormData();
-  const entry = Object.entries(faqData);
+export const requestModifyFaq = async (FAQInfo: FaqInterface) => {
+  const data = {
+    groupOrPerson: FAQInfo.groupOrPerson,
+    title: FAQInfo.title,
+    content: FAQInfo.content,
+  };
 
-  entry.forEach((data) => {
-    const key = data[0];
-    const value = data[1];
-    formData.append(`${key}`, value);
-  });
+  const res = await http.put(`faq/${FAQInfo.id}`, data);
 
-  const res = await http.put(`faq/${faqIdx}`, formData);
   return res;
 };
 
@@ -65,5 +63,12 @@ export const requestNextAdminFaqList = async (currentPage: number, size: number)
 export const requestFaqDetail = async (postId?: number) => {
   const res = await http.get(`faq/${postId}`);
   console.log(res);
+  return res;
+};
+
+/** faq 삭제 */
+export const requestFaqDelete = async (postId: number) => {
+  const res = await http.delete(`faq/${postId}`);
+
   return res;
 };

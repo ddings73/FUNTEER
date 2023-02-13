@@ -1,7 +1,10 @@
 package com.yam.funteer.funding.controller;
 
 import java.io.IOException;
-import java.util.List;
+
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -105,7 +108,11 @@ public class FundingController {
 	@ApiOperation(value = "펀딩 상세 조회", notes = "펀딩 게시글 상세를 조회한다.")
 	@GetMapping("/{fundingId}")
 	public ResponseEntity<FundingDetailResponse> readFundingDetail(@PathVariable Long fundingId,
-		@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC)Pageable pageable){
+		@PageableDefault(size = 6, sort = "id", direction = Sort.Direction.DESC)Pageable pageable,
+		HttpServletRequest request,
+		HttpServletResponse response) throws
+		NotAuthenticatedMemberException {
+		fundingService.updateHit(fundingId, request, response);
 		return ResponseEntity.ok(fundingService.findFundingById(fundingId, pageable));
 	}
 
@@ -143,7 +150,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 참여", notes = "회원이 펀딩에 참여한다.")
 	@PostMapping("/{fundingId}/pay")
-	public ResponseEntity<?> takeFunding(@PathVariable Long fundingId, TakeFundingRequest data) {
+	public ResponseEntity<?> takeFunding(@PathVariable Long fundingId, @RequestBody TakeFundingRequest data) {
 		fundingService.takeFunding(fundingId, data);
 		return ResponseEntity.ok("펀딩 참여 완료");
 	}
