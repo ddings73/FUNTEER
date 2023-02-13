@@ -252,8 +252,7 @@ public class LiveServiceImpl implements LiveService{
             Session session = this.openVidu.getActiveSession(live.getSessionId());
             openviduFetch();
 
-            Session activeSession = this.openVidu.getActiveSession(session.getSessionId());
-            if(activeSession == null){
+            if(session == null){
                 throw new SessionNotFoundException();
             }
 
