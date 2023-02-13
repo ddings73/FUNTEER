@@ -11,7 +11,7 @@ function CreateLiveContainer() {
 
   const createSession = async () => {
     try {
-      const response = await requestCreateSession(username, 308);
+      const response = await requestCreateSession(username, 1);
       localStorage.setItem('liveToken', response.data.token);
       navigate(`../publisherLiveRoom/${username}`);
     } catch (error) {

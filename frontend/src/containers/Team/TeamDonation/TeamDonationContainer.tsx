@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { requestTeamAccountInfo } from '../../../api/team';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+import { requestTeamAccountInfo, requestTeamDonationList } from '../../../api/team';
 import TeamSideBarList from '../../../components/TeamPageSideBar/TeamSideBarList';
 import styles from './TeamDonationContainer.module.scss';
 
@@ -15,8 +17,25 @@ export type teamDonationType = {
 function TeamDonationContainer() {
   const { teamId } = useParams();
   const [name, setName] = useState<string>('');
+  const size = 8;
+  const [page, setPage] = useState<number>(1);
+  const [maxPage, setMaxPage] = useState<number>(1);
   const [donationList, setDonationList] = useState<teamDonationType[]>([]);
 
+  useEffect(() => {
+    requestTeamName();
+  }, []);
+
+  useEffect(() => {
+    requestPageDonationList();
+  }, [maxPage, page]);
+
+  /** 페이지 교체 */
+  const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
+    setPage(selectedPage);
+  };
+
+  /** 팀 이름 요청 */
   const requestTeamName = async () => {
     try {
       const response = await requestTeamAccountInfo();
@@ -26,50 +45,16 @@ function TeamDonationContainer() {
     }
   };
 
-  const requestDonationList = () => {
-    setDonationList([
-      {
-        donateId: 1,
-        fundingTitle: '잠시만두에게 키보드를 사주세요.',
-        username: '방봉빔',
-        amount: 100000,
-        date: '2023-02-03',
-      },
-      {
-        donateId: 2,
-        fundingTitle: '잠시만두에게 키보드를 사주세요.',
-        username: '방봉빔',
-        amount: 100000,
-        date: '2023-02-03',
-      },
-      {
-        donateId: 3,
-        fundingTitle: '잠시만두에게 키보드를 사주세요.',
-        username: '방봉빔',
-        amount: 100000,
-        date: '2023-02-03',
-      },
-      {
-        donateId: 4,
-        fundingTitle: '잠시만두에게 키보드를 사주세요.',
-        username: '방봉빔',
-        amount: 100000,
-        date: '2023-02-03',
-      },
-      {
-        donateId: 5,
-        fundingTitle: '잠시만두에게 키보드를 사주세요.',
-        username: '방봉빔',
-        amount: 100000,
-        date: '2023-02-03',
-      },
-    ]);
+  /** 도네이션 리스트 요청 */
+  const requestPageDonationList = async () => {
+    try {
+      const response = await requestTeamDonationList(page - 1, size, 'giftDate,DESC');
+      console.log('단체 도네이션 내역 요청', response);
+      setDonationList(response.data.giftList);
+    } catch (err) {
+      console.error(err);
+    }
   };
-
-  useEffect(() => {
-    requestTeamName();
-    requestDonationList();
-  }, []);
 
   return (
     <div className={styles.container}>
@@ -95,6 +80,11 @@ function TeamDonationContainer() {
               <li>{data.date}</li>
             </ul>
           ))}
+          <div className={styles['page-bar']}>
+            <Stack spacing={2}>
+              <Pagination showFirstButton showLastButton count={maxPage} variant="outlined" page={page} onChange={handleChangePage} />
+            </Stack>
+          </div>
         </div>
       </div>
     </div>

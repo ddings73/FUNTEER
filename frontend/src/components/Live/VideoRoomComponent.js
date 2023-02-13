@@ -8,6 +8,7 @@ import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import React, { Component } from 'react';
 import { browserHistory } from 'react-router-dom';
+import session from 'redux-persist/lib/storage/session';
 import StreamComponent from './stream/StreamComponent';
 import './VideoRoomComponent.css';
 
@@ -38,7 +39,11 @@ class VideoRoomComponent extends Component {
       localUser: undefined,
       subscribers: [],
       currentVideoDevice: undefined,
-      userCount:0,
+      userCount: 0,
+      allAmount: 0,
+      checkLottie: false,
+      amount: 0,
+      donationUser:""
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -83,10 +88,24 @@ class VideoRoomComponent extends Component {
     this.joinSession();
   }
 
+  // updateAllAmount(amount) {
+  //   console.log('업데이트!!!!!!!!!!!!!!!', this.state);
+  //   // eslint-disable-next-line react/no-access-state-in-setstate
+
+  // }
+
   componentWillUnmount() {
     window.removeEventListener('beforeunload', this.onbeforeunload);
     window.removeEventListener('resize', this.updateLayout);
     this.leaveSession();
+  }
+
+  componentDidUpdate() {
+    if (this.state.checkLottie) {
+      setTimeout(() => {
+        this.setState({ checkLottie: false });
+      }, 3000);
+    }
   }
 
   onbeforeunload(event) {
@@ -94,7 +113,7 @@ class VideoRoomComponent extends Component {
   }
 
   joinSession() {
-    console.log('joinSession!!!!!!!!!!!!!!!!!!!!!!!!')
+    console.log('joinSession!!!!!!!!!!!!!!!!!!!!!!!!');
     this.OV = new OpenVidu();
     this.OV.enableProdMode();
 
@@ -105,32 +124,53 @@ class VideoRoomComponent extends Component {
       async () => {
         console.dir(this.state.session);
         this.subscribeToStreamCreated();
-        this.subscribeToConnectionCreated()
-        this.subscribeToSessionDisconnected()
-        console.dir(this.state.session)
-        await this.connectToSession();        
+        this.subscribeToConnectionCreated();
+        this.subscribeToSessionDisconnected();
+        this.subscribeToLiveDonation();
+        this.subscribeToUpdateAmount();
+        await this.connectToSession();
       },
     );
   }
 
-  
-  subscribeToSessionDisconnected(){
-    this.state.session.on("connectionDestroyed", async(event)=>{
-      event.preventDefault() 
-      console.log("어디가노 돌아온나!!!!!!!!!!!!!!",event)
- // eslint-disable-next-line react/no-access-state-in-setstate
-      await this.setState({userCount:this.state.session.remoteConnections.size})
-
-    })
+  subscribeToLiveDonation() {
+    this.state.session.on('signal:liveDonation', (event) => {
+      console.log(event);
+      const data = JSON.parse(event.data);
+      console.log(data);
+      this.props.liveDonation(data);
+    });
   }
 
-  subscribeToConnectionCreated(){
-    this.state.session.on("connectionCreated", async(event)=>{
-      console.log("event!!!!!!!!!!!!!!!!!!!!",event)
+  subscribeToUpdateAmount() {
+    this.state.session.on('signal:updateAmount', (event) => {
       // eslint-disable-next-line react/no-access-state-in-setstate
-     await this.setState({userCount:this.state.session.remoteConnections.size})
-    //  console.log(this.state.userCount)
-    })
+      const prev = this.state.allAmount;
+      console.log('UPDATE!!!!!!!!!!!!!!!!');
+      console.log(this.state);
+      console.log(event.data)
+      // this.setState({ allAmount: prev + amount });
+      this.setState({ allAmount: prev + JSON.parse(event.data.money), checkLottie: true, amount: JSON.parse(event.data.money),donationUser:JSON.parse(event.data.donationUser) });
+    });
+  }
+
+  subscribeToSessionDisconnected() {
+    this.state.session.on('connectionDestroyed', async (event) => {
+      event.preventDefault();
+      console.log('어디가노 돌아온나!!!!!!!!!!!!!!', event);
+      // eslint-disable-next-line react/no-access-state-in-setstate
+      await this.setState({ userCount: this.state.session.remoteConnections.size });
+    });
+  }
+
+  subscribeToConnectionCreated() {
+    this.state.session.on('connectionCreated', async (event) => {
+      console.log('event!!!!!!!!!!!!!!!!!!!!', event);
+      localUser.setUserProfileImg(this.props.userProfileImg);
+      // eslint-disable-next-line react/no-access-state-in-setstate
+      await this.setState({ userCount: this.state.session.remoteConnections.size });
+      //  console.log(this.state.userCount)
+    });
   }
 
   async connectToSession() {
@@ -159,7 +199,7 @@ class VideoRoomComponent extends Component {
     this.state.session
       .connect(token, { clientData: this.state.myUserName })
       .then(() => {
-        console.log("connect-Sucess",this.state)
+        console.log('connect-Sucess', this.state);
         this.connectWebCam();
       })
       .catch((error) => {
@@ -214,6 +254,8 @@ class VideoRoomComponent extends Component {
 
     localUser.setNickname(this.state.myUserName);
     localUser.setConnectionId(this.state.session.connection.connectionId);
+    localUser.setUserProfileImg(this.props.userProfileImg);
+    localUser.setAllAmount(this.state.allAmount);
 
     this.subscribeToUserChanged();
     this.subscribeToStreamDestroyed();
@@ -226,7 +268,7 @@ class VideoRoomComponent extends Component {
   }
 
   updateSubscribers() {
-    console.log("업데이트 다다다다다다다")
+    console.log('업데이트 다다다다다다다');
     const subscribers = this.remotes;
     this.setState(
       {
@@ -303,7 +345,7 @@ class VideoRoomComponent extends Component {
   subscribeToStreamCreated() {
     this.state.session.on('streamCreated', (event) => {
       const subscriber = this.state.session.subscribe(event.stream, undefined);
-      console.log("subscriber!!!!!!!!!!!!!!", subscriber)
+      console.log('subscriber!!!!!!!!!!!!!!', subscriber);
 
       const newUser = new UserModel();
       newUser.setStreamManager(subscriber);
@@ -323,8 +365,6 @@ class VideoRoomComponent extends Component {
       }
     });
   }
-
-
 
   subscribeToStreamDestroyed() {
     // On every Stream destroyed...
@@ -411,11 +451,13 @@ class VideoRoomComponent extends Component {
     }
   }
 
-
   render() {
-    console.log('state', this.state);
+    // console.log('state', this.state);
     const { mySessionId } = this.state;
     const { localUser } = this.state;
+    // console.log('최근잔고 !!!!!!!!', this.props.userCurrentMoney);
+    console.log(this.state);
+    // console.log(localUser)
     // const {remoteConnections} = this.state.session
     // console.log(remoteConnections)
 
@@ -429,17 +471,33 @@ class VideoRoomComponent extends Component {
           switchCamera={this.switchCamera}
           leaveSession={this.leaveSession}
           userCount={this.state.userCount}
+          amount={this.state.amount}
         />
 
         <div id="layout" className="bounds">
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_big OT_publisher custom-class" id="localUser">
-              <StreamComponent user={localUser} sessionId={mySessionId} userCount={this.state.userCount} />
+              <StreamComponent
+                user={localUser}
+                sessionId={mySessionId}
+                userCount={this.state.userCount}
+                allAmount={this.state.allAmount}
+                checkLottie={this.state.checkLottie}
+                userName={this.state.myUserName}
+                amount={this.state.amount}
+              />
             </div>
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_small OT_publisher custom-class chat-box">
-              <ChatComponent user={localUser} userProfileImg={this.props.userProfileImg} userCount={this.state.userCount} />
+              <ChatComponent
+                user={localUser}
+                userCount={this.state.userCount}
+                userCurrentMoney={this.props.userCurrentMoney}
+                liveDonation={this.props.liveDonation}
+                updateAllAmount={this.updateAllAmount}
+                userType={this.props.userType}
+              />
             </div>
           )}
         </div>

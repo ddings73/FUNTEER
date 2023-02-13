@@ -13,16 +13,15 @@ import { closeModal } from '../../store/slices/modalSlice';
 
 function ConfirmModal({ isOpen, title, content, handleModal }: ConfirmModalType) {
   const [open, setOpen] = useState<boolean>(false);
-  const dispatch = useAppDispatch()
+  const dispatch = useAppDispatch();
   const onClickHandler = () => {
-    dispatch(closeModal())
+    dispatch(closeModal());
     setOpen(false);
     handleModal();
-
   };
 
   const onCloseModal = () => {
-    dispatch(closeModal())
+    dispatch(closeModal());
     setOpen(false);
     handleModal();
   };
@@ -38,7 +37,7 @@ function ConfirmModal({ isOpen, title, content, handleModal }: ConfirmModalType)
         <DialogContentText id="alert-dialog-description">{content}</DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={onClickHandler}>
+        <Button color="warning" variant="contained" onClick={onClickHandler}>
           닫기
         </Button>
       </DialogActions>
