@@ -1,8 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Parallax, ParallaxLayer } from '@react-spring/parallax';
 import { EventListener, EventSourcePolyfill } from 'event-source-polyfill';
-import { useAppSelector } from '../../store/hooks';
+import { Fade, Tooltip } from '@mui/material';
 import styles from './MainPageContainer.module.scss';
 import InfoCard from '../../components/Main/InfoCard';
 import FunList from '../../components/Main/funList';
@@ -14,19 +13,16 @@ import wave from '../../assets/images/mainPage/wave.svg';
 import wave2 from '../../assets/images/mainPage/wave2.svg';
 
 export function MainPageContainer() {
-  console.log(useAppSelector((state) => state.userSlice.userType));
-
   const [scrollPosition, setScrollPosition] = useState(0);
   const updateScroll = () => {
     setScrollPosition(window.scrollY || document.documentElement.scrollTop);
   };
 
-  const token=localStorage.getItem('accessToken');
-  const [listening,setListening]=useState(false);
-  const [sseData,setSseData]=useState({});
-  const [respon,setRespon]=useState(false);
+  const token = localStorage.getItem('accessToken');
+  const [listening, setListening] = useState(false);
+  const [sseData, setSseData] = useState({});
+  const [respon, setRespon] = useState(false);
   let eventSource: EventSourcePolyfill | undefined;
-  
 
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
@@ -36,10 +32,9 @@ export function MainPageContainer() {
     };
   });
 
-   // sse
-   useEffect(()=>{
-
-    if(!listening&&token&&!eventSource){
+  // sse
+  useEffect(() => {
+    if (!listening && token && !eventSource) {
       // sse 연결
       // http://localhost:8080/api/v1/subscribe
       // https://i8e204.p.ssafy.io/api/v1/subscribe
@@ -50,28 +45,26 @@ export function MainPageContainer() {
           Authorization: `Bearer ${token}`,
           'Cache-Control': 'no-cache',
         },
-        heartbeatTimeout:86400000,
-        withCredentials:true,
+        heartbeatTimeout: 86400000,
+        withCredentials: true,
       });
 
       console.log(eventSource);
 
       // 최초 연결
-      eventSource.onopen=(event)=>{
-        setListening(true)
-      }
+      eventSource.onopen = (event) => {
+        setListening(true);
+      };
 
-        // 서버에서 메시지 날릴 때
-      eventSource.onmessage=(event)=>{
-        
+      // 서버에서 메시지 날릴 때
+      eventSource.onmessage = (event) => {
         setSseData(event.data);
         setRespon(true);
         console.log(event.data);
-        console.log("onmessage");
-        if(event.data!==undefined)
-        alert(event.data);
-      }  
-    
+        console.log('onmessage');
+        if (event.data !== undefined) alert(event.data);
+      };
+
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
         console.log(event.data);
       }) as EventListener);
@@ -79,13 +72,25 @@ export function MainPageContainer() {
       console.log('logout');
       eventSource?.close();
     }
-    return ()=>{
-      if(!token&&eventSource!==undefined){
+    return () => {
+      if (!token && eventSource !== undefined) {
         eventSource.close();
         setListening(false);
       }
-    }
-},[token])
+    };
+  }, [token]);
+
+  // 우주인에 손을 올려보세요
+  const tooltipText = () => (
+    <p style={{ lineHeight: '200%', fontSize: '1.1em', whiteSpace: 'pre-line', textAlign: 'center' }}>
+      {`우주여행을 하는 우주선과 우주비행사들은 
+      모두를 대신해 그들의 염원과 희망을 품고 
+      우주로 떠납니다.
+ 우리 Funteer도 여러분을 대신해 
+ 나눔을 실천하는 봉사자분들을 돕고 응원합니다.      
+      `}
+    </p>
+  );
 
   return (
     <div className={styles.container}>
@@ -105,35 +110,17 @@ export function MainPageContainer() {
           <button className={styles.serviceBtn} type="button">
             서비스 상세보기
           </button>
-          <p>
-            <Link to="/funding/create" style={{ fontSize: '3rem', color: 'white' }}>
-              펀딩 페이지
-            </Link>
-          </p>
-          <p>
-            <Link to="/charge" style={{ fontSize: '3rem', color: 'white' }}>
-              충전 페이지
-            </Link>
-          </p>
-          <p>
-            <Link to="/admin" style={{ fontSize: '3rem', color: 'white' }}>
-              관리자 페이지
-            </Link>
-          </p>
-          <p>
-            <Link to="/team/88" style={{ fontSize: '3rem', color: 'white' }}>
-              단체 프로필
-            </Link>
-          </p>
         </div>
 
         <div className={styles.bannerImg} style={{ opacity: scrollPosition < 700 ? '1' : '0', position: 'absolute', zIndex: '100', right: '-8%' }}>
           <div className={styles.planets}>
             <img src={planet} alt="planet" className={styles.planet} />
-            <div className={styles.astWrap}>
-              <img src={ast} alt="ast" className={styles.ast} />
-              <img src={ast} alt="ast" className={styles.astCnt} />
-            </div>
+            <Tooltip TransitionComponent={Fade} title={tooltipText()} placement="top" followCursor>
+              <div className={styles.astWrap}>
+                <img src={ast} alt="ast" className={styles.ast} />
+                <img src={ast} alt="ast" className={styles.astCnt} />
+              </div>
+            </Tooltip>
           </div>
         </div>
         <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 700 ? '1' : '0' }} alt="back" />
@@ -153,3 +140,4 @@ export function MainPageContainer() {
 }
 
 export default MainPageContainer;
+
