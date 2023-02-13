@@ -135,6 +135,8 @@ class VideoRoomComponent extends Component {
 
   subscribeToLiveDonation() {
     this.state.session.on('signal:liveDonation', (event) => {
+      console.log("DONATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      console.log(this.props)
       console.log(event);
       const data = JSON.parse(event.data);
       console.log(data);
@@ -148,9 +150,10 @@ class VideoRoomComponent extends Component {
       const prev = this.state.allAmount;
       console.log('UPDATE!!!!!!!!!!!!!!!!');
       console.log(this.state);
-      console.log(event.data)
+      const data = JSON.parse(event.data)
       // this.setState({ allAmount: prev + amount });
-      this.setState({ allAmount: prev + JSON.parse(event.data.money), checkLottie: true, amount: JSON.parse(event.data.money),donationUser:JSON.parse(event.data.donationUser) });
+      this.setState({ allAmount: prev + data.money, checkLottie: true, amount: data.money,donationUser:data.donationUser });
+      console.log(this.state)
     });
   }
 
@@ -472,6 +475,7 @@ class VideoRoomComponent extends Component {
           leaveSession={this.leaveSession}
           userCount={this.state.userCount}
           amount={this.state.amount}
+          donationUser={this.state.donationUser}
         />
 
         <div id="layout" className="bounds">
