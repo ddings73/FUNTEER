@@ -10,23 +10,21 @@ function SubscribeLiveRoomContainer() {
   const { sessionName } = useParams();
   const [check, setCheck] = useState<boolean>(false);
   const [token, setToken] = useState<string>('');
-  const [userCurrentMoney,setUserCurrentMoney] = useState<number>(0);
+  const [userCurrentMoney, setUserCurrentMoney] = useState<number>(0);
   const userName = useAppSelector((state) => state.userSlice.username);
-  const userProfileImg = useAppSelector(state=>state.userSlice.profileImgUrl)
-  const userId = useAppSelector(state=>state.userSlice.userId)
-  console.log('sususususususus',userProfileImg)
+  const userProfileImg = useAppSelector((state) => state.userSlice.profileImgUrl);
+  const userId = useAppSelector((state) => state.userSlice.userId);
+  const userType = useAppSelector((state) => state.userSlice.userType);
 
-
-  const getUserMoney = async()=>{
-    try{
-      const {data}= await requestUserProfile(userId)
+  const getUserMoney = async () => {
+    try {
+      const { data } = await requestUserProfile(userId);
       console.log(data);
-      setUserCurrentMoney(data.money)
+      setUserCurrentMoney(data.money);
+    } catch (error) {
+      console.error(error);
     }
-    catch(error){
-      console.error(error)
-    }
-  }
+  };
 
   const createSession = async () => {
     try {
@@ -41,29 +39,41 @@ function SubscribeLiveRoomContainer() {
     }
   };
 
-  const liveDonation = async(amount:number)=>{
-    console.log(amount)
-    try{
-      const response = await requestLiveDonation(amount as number,sessionName as string)
-      await getUserMoney()
-      alert("성공띠")
-      console.log(response)
-    }catch(error){
-      alert("실패띠")
+  const liveDonation = async (amount: number) => {
+    console.log(amount);
+    try {
+      const response = await requestLiveDonation(amount as number, sessionName as string);
+      await getUserMoney();
+      alert('성공띠');
+      console.log(response);
+    } catch (error) {
+      alert('실패띠');
 
-      console.error(error)
+      console.error(error);
     }
-
-  }
+  };
 
   useEffect(() => {
-    getUserMoney()
-    createSession()
+    getUserMoney();
+    createSession();
   }, []);
   // return(
   //   <div>11</div>
   // )
-  return <div className={styles.container}>{check && <VideoRoomComponent sessionName={sessionName}  userProfileImg={userProfileImg} user={userName} userCurrentMoney={userCurrentMoney} liveDonation={liveDonation} />}</div>;
+  return (
+    <div className={styles.container}>
+      {check && (
+        <VideoRoomComponent
+          sessionName={sessionName}
+          userProfileImg={userProfileImg}
+          user={userName}
+          userCurrentMoney={userCurrentMoney}
+          liveDonation={liveDonation}
+          userType={userType}
+        />
+      )}
+    </div>
+  );
 }
 
 export default SubscribeLiveRoomContainer;

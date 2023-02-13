@@ -3,6 +3,7 @@
 import React, { Component } from 'react';
 import './StreamComponent.css';
 
+import CountUp from 'react-countup';
 import MicOff from '@material-ui/icons/MicOff';
 import VideocamOff from '@material-ui/icons/VideocamOff';
 import VolumeUp from '@material-ui/icons/VolumeUp';
@@ -13,25 +14,30 @@ import OvVideoComponent from './OvVideo';
 export default class StreamComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { nickname: this.props.user.getNickname(),sessionId:this.props.sessionId};
+    this.state = { nickname: this.props.user.getNickname(), sessionId: this.props.sessionId };
   }
 
   render() {
-    console.log("Stream!!!!!!!!!!!!!!!!!!!!!!!!!!!!",this.state)
-    console.log(this.props.allAmount)
+    console.log('Stream!!!!!!!!!!!!!!!!!!!!!!!!!!!!', this.state);
+    console.log(this.props.allAmount);
     return (
       <div className="OT_widget-container">
-        <div className='info-box'>
-        <div className="nickname">
+        <div className="info-box">
+          <div className="nickname">
             <span>{this.state.sessionId}의 봉사 라이브 </span>
-            {Number(this.props.allAmount)}
-            {/* <span>현재 {this.props.userCount}명이 시청중입니다.</span> */}
-        </div>
-        <div className='count-box'>
-          <p className='left'>LIVE</p>
-          <p className='right'>{this.props.userCount}</p>
-        </div>
 
+            {/* <span>현재 {this.props.userCount}명이 시청중입니다.</span> */}
+          </div>
+          <div className="count-box">
+            <p className="left">LIVE</p>
+            <p className="right">{this.props.userCount}</p>
+          </div>
+
+          <div className="allDonationAmount-box">
+            <p className="allDonationAmount">
+              총 후원금액 : <CountUp start={0} end={Number(this.props.allAmount)} separator="," duration={1} />원
+            </p>
+          </div>
         </div>
 
         {this.props.user !== undefined && this.props.user.getStreamManager() !== undefined ? (

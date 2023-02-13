@@ -1,17 +1,16 @@
-
-.info-box{
+.info-box {
   display: flex;
   flex-direction: row;
   position: absolute;
   align-items: center;
-  top:5px;
+  top: 5px;
   left: 5px;
   z-index: 999;
 }
 
 .nickname {
   box-sizing: border-box;
-  background:  rgba(236, 153, 75, 1);
+  background: rgba(236, 153, 75, 1);
   padding: 8px !important;
   color: #ffffff;
   font-weight: bold;
@@ -20,19 +19,19 @@
   font-size: 22px !important;
 }
 
-.count-box{
+.count-box {
   display: flex;
   flex-direction: r;
-margin-left: 15px !important;
+  margin-left: 15px !important;
 }
 
-.count-box .left{
+.count-box .left {
   background-color: #c71100;
   color: #ffffff;
   font-weight: bold;
   padding: 5px;
 }
-.count-box .right{
+.count-box .right {
   text-align: center;
   min-width: 50px;
   background-color: #707070;
@@ -41,6 +40,17 @@ margin-left: 15px !important;
   padding: 5px;
 }
 
+.allDonationAmount-box {
+  position: absolute;
+  top: 60px;
+  left: 5px;
+}
+
+.allDonationAmount {
+  padding: 5px;
+  font-size: 18px;
+  font-weight: bold;
+}
 
 .form-control {
   color: black;
