@@ -8,6 +8,7 @@ import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
 import React, { Component } from 'react';
 import { browserHistory } from 'react-router-dom';
+import session from 'redux-persist/lib/storage/session';
 import StreamComponent from './stream/StreamComponent';
 import './VideoRoomComponent.css';
 
@@ -135,9 +136,11 @@ class VideoRoomComponent extends Component {
       // eslint-disable-next-line react/no-access-state-in-setstate
       const prev = this.state.allAmount;
       console.log('UPDATE!!!!!!!!!!!!!!!!');
+      console.log(this.state);
       console.log(JSON.parse(event.data), prev);
       // this.setState({ allAmount: prev + amount });
       this.setState({ allAmount: prev + JSON.parse(event.data) });
+      this.setState({ session: { ...session, amount: 12 } });
     });
   }
 
