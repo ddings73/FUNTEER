@@ -219,7 +219,6 @@ export function FundingDetailContainer() {
   }
   useEffect(() => {
     initCommentList();
-    alert('이닛');
   }, []);
 
   useEffect(() => {
