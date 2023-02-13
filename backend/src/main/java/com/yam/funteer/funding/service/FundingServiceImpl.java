@@ -20,6 +20,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.attach.FileType;
@@ -385,7 +386,10 @@ public class FundingServiceImpl implements FundingService{
 		fundingDetailResponse.setWishCount(wishCount);
 		Long tempId = funding.getId();
 
-		if (SecurityUtil.getCurrentUserId() != null) {
+
+		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() == "anonymousUser") {
+			log.info("로그인 하지 않은 유저입니다.");
+		} else {
 			User user = userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
 			if (user.getUserType() == UserType.NORMAL || user.getUserType() == UserType.KAKAO ) {
 				Member member = memberRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
@@ -393,6 +397,7 @@ public class FundingServiceImpl implements FundingService{
 				boolean isWished = byMemberAndFunding.isPresent() ? byMemberAndFunding.get().getChecked() : false;
 				fundingDetailResponse.setIsWished(isWished);
 			}
+
 		}
 
 		// 목표금액
