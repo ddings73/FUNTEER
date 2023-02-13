@@ -230,7 +230,8 @@ public class FundingServiceImpl implements FundingService{
 
 		List<Funding> successFundingList = fundingRepository.findAllByPostType(PostType.REPORT_ACCEPT);
 
-		Long totalFundingCount = fundingRepository.findAll().stream().count();
+		Long inProgressFundingAmount = fundingRepository.findAllByPostType(PostType.FUNDING_IN_PROGRESS).stream().count();
+		inProgressFundingAmount += fundingRepository.findAllByPostType(PostType.FUNDING_EXTEND).stream().count();
 		int successFundingCount = successFundingList.size();
 
 		Long totalFundingAmount = 0L;
@@ -238,7 +239,7 @@ public class FundingServiceImpl implements FundingService{
 			totalFundingAmount += funding.getCurrentFundingAmount();
 		}
 
-		return new FundingListPageResponse(fundingListResponses, totalFundingCount, successFundingCount, totalFundingAmount);
+		return new FundingListPageResponse(fundingListResponses, inProgressFundingAmount, successFundingCount, totalFundingAmount);
 	}
 
 
