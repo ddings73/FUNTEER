@@ -37,7 +37,7 @@ export default class StreamComponent extends Component {
 
           <div className="allDonationAmount-box">
             <p className="allDonationAmount">
-              총 후원금액 : <CountUp start={0} end={Number(this.props.allAmount)} separator="," duration={1} />원
+              총 후원 받은 금액 : <CountUp start={0} end={Number(this.props.allAmount)} separator="," duration={1} />원
             </p>
           </div>
         </div>

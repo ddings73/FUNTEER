@@ -4,7 +4,7 @@
   position: absolute;
   align-items: center;
   top: 5px;
-  left: 5px;
+  left: 5px ;
   z-index: 999;
 }
 
@@ -43,13 +43,17 @@
 .allDonationAmount-box {
   position: absolute;
   top: 60px;
-  left: 5px;
+  min-width: 342px;
+
 }
 
 .allDonationAmount {
-  padding: 5px;
+  background-color: rgba(211, 79, 4, 1);
+  padding: 20px;
   font-size: 18px;
   font-weight: bold;
+  color: #ffff;
+  text-align: center;
 }
 .donationAnimation-box {
   position: absolute;
