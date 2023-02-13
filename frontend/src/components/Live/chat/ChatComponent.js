@@ -96,6 +96,7 @@ export default class ChatComponent extends Component {
       // this.props.liveDonation(money);
       // this.props.updateAllAmount(money);
       this.setState({ amount: '', toggle: false });
+
       // alert(`${money}원이 기부되었습니다`);
     }
   }
