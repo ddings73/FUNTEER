@@ -7,7 +7,7 @@ import ScrollToTop from '../utils/ScrollToTop';
 
 function UserRoot() {
   const confirmModalState = useAppSelector((state) => state.modalSlice);
-
+  
   return (
     <>
       <ScrollToTop />

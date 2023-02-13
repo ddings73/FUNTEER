@@ -16,3 +16,10 @@ export type FileModalType = {
 export type payModalType = {
   isOpen: boolean;
 };
+
+export type donateModalType = {
+  isOpen: boolean;
+  postId: number;
+  userId: number;
+  mileage: number;
+};

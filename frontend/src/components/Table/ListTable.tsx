@@ -140,7 +140,7 @@ export function ListTable() {
           ))}
         </TableBody>
       </Table>
-      <Pagination count={DonationListData.totalPages} variant="outlined" color="primary" sx={{ margin: '3% 0' }} onChange={onChangePage} />
+      <Pagination count={DonationListData.totalPages} variant="outlined" sx={{ margin: '3% 0' }} onChange={onChangePage} />
     </TableContainer>
   );
 }

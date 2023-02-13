@@ -112,3 +112,14 @@ export const requestDonationStatus = async (id: number, state: string) => {
 
   return res;
 };
+
+/** 도네이션 참여 */
+export const requestPayDonation = async (postId: number, paymentAmount: string) => {
+  const data = {
+    paymentAmount,
+  };
+
+  const response = http.post(`donation/${postId}/pay`, data);
+
+  return response;
+};
