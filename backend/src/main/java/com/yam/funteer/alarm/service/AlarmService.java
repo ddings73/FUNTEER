@@ -12,7 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import com.yam.funteer.alarm.entity.Alarm;
+import com.yam.funteer.alarm.entity.PastAlarm;
 import com.yam.funteer.alarm.repository.AlarmRepository;
+import com.yam.funteer.alarm.repository.PastAlarmRepository;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.user.entity.User;
@@ -28,6 +30,7 @@ public class AlarmService {
 
 	private final UserRepository userRepository;
 	private final AlarmRepository alarmRepository;
+	private final PastAlarmRepository pastAlarmRepository;
 	private static final Long DEFAULT_TIMEOUT=60L*1000*60;
 
 	public SseEmitter subscribe( String lastEventId) {
@@ -136,12 +139,20 @@ public class AlarmService {
 
 	//알림 생성
 	private Alarm createNotification(String receiver, String content, String urlValue) {
+		User user=userRepository.findByEmail(receiver).orElseThrow(UserNotFoundException::new);
+
+		PastAlarm pastAlarm=PastAlarm.builder()
+			.content(content)
+			.isRead(false)
+			.url(urlValue)
+			.user(user).build();
+		pastAlarmRepository.save(pastAlarm);
+
 		return Alarm.builder()
 			.content(content)
 			.receiver(receiver)
 			.url(urlValue)
 			.isRead(false).build();
-
 	}
 
 	//알림 전송
@@ -161,5 +172,13 @@ public class AlarmService {
 			alarmRepository.deleteById(id);
 			emitter.completeWithError(exception);
 		}
+	}
+
+	//알람 읽음
+	private void readAlarm(Long alarmId){
+		Long userId=SecurityUtil.getCurrentUserId();
+		User user=userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+		PastAlarm pastAlarm=pastAlarmRepository.findByUserAndAlarmId(user,alarmId).orElseThrow(()->new IllegalArgumentException("해당 알림이 존재하지 않습니다."));
+		pastAlarm.setRead();
 	}
 }
