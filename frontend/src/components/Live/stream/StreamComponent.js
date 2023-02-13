@@ -9,7 +9,9 @@ import VideocamOff from '@material-ui/icons/VideocamOff';
 import VolumeUp from '@material-ui/icons/VolumeUp';
 import VolumeOff from '@material-ui/icons/VolumeOff';
 import IconButton from '@material-ui/core/IconButton';
+import Lottie from 'lottie-react';
 import OvVideoComponent from './OvVideo';
+import donationLottie from '../../../lotties/115250-hand-and-coin-donation-request.json';
 
 export default class StreamComponent extends Component {
   constructor(props) {
@@ -19,7 +21,7 @@ export default class StreamComponent extends Component {
 
   render() {
     console.log('Stream!!!!!!!!!!!!!!!!!!!!!!!!!!!!', this.state);
-    console.log(this.props.allAmount);
+    // console.log(this.props.allAmount);
     return (
       <div className="OT_widget-container">
         <div className="info-box">
@@ -39,6 +41,15 @@ export default class StreamComponent extends Component {
             </p>
           </div>
         </div>
+
+        {this.props.checkLottie && (
+          <div className="donationAnimation-box">
+            <p>
+              {this.props.userName}님이 {this.props.amount}원을 후원했습니다!!!!!
+            </p>
+            <Lottie animationData={donationLottie} />
+          </div>
+        )}
 
         {this.props.user !== undefined && this.props.user.getStreamManager() !== undefined ? (
           <div className="streamComponent">

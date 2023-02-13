@@ -41,6 +41,8 @@ class VideoRoomComponent extends Component {
       currentVideoDevice: undefined,
       userCount: 0,
       allAmount: 0,
+      checkLottie: false,
+      amount: 0,
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -97,6 +99,14 @@ class VideoRoomComponent extends Component {
     this.leaveSession();
   }
 
+  componentDidUpdate() {
+    if (this.state.checkLottie) {
+      setTimeout(() => {
+        this.setState({ checkLottie: false });
+      }, 3000);
+    }
+  }
+
   onbeforeunload(event) {
     this.leaveSession();
   }
@@ -139,8 +149,7 @@ class VideoRoomComponent extends Component {
       console.log(this.state);
       console.log(JSON.parse(event.data), prev);
       // this.setState({ allAmount: prev + amount });
-      this.setState({ allAmount: prev + JSON.parse(event.data) });
-      this.setState({ session: { ...session, amount: 12 } });
+      this.setState({ allAmount: prev + JSON.parse(event.data), checkLottie: true, amount: JSON.parse(event.data) });
     });
   }
 
@@ -461,12 +470,21 @@ class VideoRoomComponent extends Component {
           switchCamera={this.switchCamera}
           leaveSession={this.leaveSession}
           userCount={this.state.userCount}
+          amount={this.state.amount}
         />
 
         <div id="layout" className="bounds">
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
             <div className="OT_root OV_big OT_publisher custom-class" id="localUser">
-              <StreamComponent user={localUser} sessionId={mySessionId} userCount={this.state.userCount} allAmount={this.state.allAmount} />
+              <StreamComponent
+                user={localUser}
+                sessionId={mySessionId}
+                userCount={this.state.userCount}
+                allAmount={this.state.allAmount}
+                checkLottie={this.state.checkLottie}
+                userName={this.state.myUserName}
+                amount={this.state.amount}
+              />
             </div>
           )}
           {localUser !== undefined && localUser.getStreamManager() !== undefined && (
