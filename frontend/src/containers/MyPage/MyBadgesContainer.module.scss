@@ -1,0 +1,35 @@
+@import '../../styles/reset.scss';
+@import '../../styles/variable.scss';
+
+
+.bodyContainer {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    min-height: 100vh;
+    height: 100%;
+    & .contentContainer {
+      margin-top: 80px;
+      margin-left: 250px;
+      width: 100%;
+        & .contentBox {
+        max-width: 980px;
+        height: 100%;
+        margin: 0 auto;
+        border: 1px solid red;
+        min-height: calc(100vh - 80px);
+          & .badgeBox{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            width: 100%;
+            height: 100%;
+
+            & img{
+                width: 150px;
+                height: 150px;
+            }
+          }
+        }
+    }
+  }
