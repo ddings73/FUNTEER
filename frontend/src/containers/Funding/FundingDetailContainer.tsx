@@ -170,12 +170,13 @@ export function FundingDetailContainer() {
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
   const [totalCommentCnt, setTotalCommentCnt] = useState();
-  const [commentCount, setCommentCount] = useState(0);
+  const [commentCount, setCommentCount] = useState<number>(0);
+
   const initCommentList = async () => {
     try {
       setIsLoading(true);
       const { data } = await requestCommentList(fundIdx, 'regDate,DESC');
-      setCommentList([...data.comments.content]);
+      setCommentList([...commentList, ...data.comments.content]);
       setCommentCount(data.comments.total);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
@@ -184,6 +185,7 @@ export function FundingDetailContainer() {
       console.log(error);
     }
   };
+
   const [nextLoading, setNextLoading] = useState<boolean>(false);
   // 한번에 불러올 게시글 수
   const nextCommentList = async () => {
@@ -215,9 +217,9 @@ export function FundingDetailContainer() {
       (document.activeElement as HTMLElement).blur();
     }
   }
-
   useEffect(() => {
     initCommentList();
+    alert('이닛');
   }, []);
 
   useEffect(() => {
@@ -474,7 +476,7 @@ export function FundingDetailContainer() {
         </div>
         <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.mainCommentSubmit}>
-          <CommentCardSubmit initCommentList={initCommentList} />
+          <CommentCardSubmit />
         </div>
         <div className={styles.mainComments}>
           {isLoading ? (
@@ -488,7 +490,7 @@ export function FundingDetailContainer() {
                   content={comment.content}
                   memberProfileImg={comment.memberProfileImg}
                   regDate={comment.regDate}
-                  key={comment.regDate}
+                  key={comment.commentId}
                 />
               );
             })
