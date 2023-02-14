@@ -119,8 +119,10 @@ public class FundingServiceImpl implements FundingService{
 	private final BadgeService badgeService;
 
 	@Override
-	public Page<FundingListResponse> findAllFundingByAdmin(Pageable pageable) {
-		return fundingRepository.findAll(pageable).map(FundingListResponse::from);
+	public Page<FundingListResponse> findAllFundingByAdmin(String keyword, PostType postType, Pageable pageable) {
+		Page<Funding> fundingPage = fundingRepository.findAllByTitleContainingAndPostType(keyword,
+			postType, pageable);
+		return fundingPage.map(FundingListResponse::from);
 	}
 
 	@Override
@@ -384,7 +386,6 @@ public class FundingServiceImpl implements FundingService{
 		FundingDetailResponse fundingDetailResponse = FundingDetailResponse.from(funding);
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
 		fundingDetailResponse.setWishCount(wishCount);
-		Long tempId = funding.getId();
 
 
 		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() == "anonymousUser") {
@@ -408,7 +409,7 @@ public class FundingServiceImpl implements FundingService{
 		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_THREE));
 
-		Page<CommentResponse> collect = commentRepository.findAllByFundingId(tempId, pageable).map(m -> CommentResponse.from(m));
+		Page<CommentResponse> collect = commentRepository.findAllByFundingId(funding.getFundingId(), pageable).map(m -> CommentResponse.from(m));
 		fundingDetailResponse.setComments(Optional.of(collect));
 
 		Long participatedCount = paymentRepository.findByPostId(funding.getId()).stream().count();
