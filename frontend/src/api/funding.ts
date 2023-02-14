@@ -149,7 +149,7 @@ export const requestNextCommentList = async (currentPage: number, fundingId?: st
 };
 
 /**
- * @name 다음댓글리스트호출
+ * @name 댓글삭제호출
  * @method DELETE
  */
 export const requestDeleteComment = async (commentId?: number) => {
@@ -164,6 +164,16 @@ export const requestDeleteComment = async (commentId?: number) => {
  */
 export const fundingJoin = async (amount?: string, fundingId?: string) => {
   const res = await http.post(`funding/${fundingId}/pay`, { amount, fundingId });
+  return res;
+};
+
+/**
+ * @name 펀딩참여조회
+ * @method GET
+ */
+
+export const requestFundingJoin = async (page: number, size: number, sort?: string) => {
+  const res = await http.get(`member/mileage?page=${page}&postGroup=FUNDING&?size=${size}&?sort=${sort}`);
   return res;
 };
 

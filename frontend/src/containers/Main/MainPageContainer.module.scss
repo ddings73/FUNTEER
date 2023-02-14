@@ -122,14 +122,12 @@
   z-index: 100;
 }
 .fundLists {
-  margin-top: 30%;
   width: 80%;
   height: 100vh;
   z-index: 100;
   overflow: visible !important;
 }
 .volunLists {
-  margin-top: 30%;
   width: 80%;
   height: 100vh;
   z-index: 100;
@@ -204,10 +202,10 @@
 }
 
 .backgroundImg {
-  transition: opacity 2s;
+  transition: opacity 0.5s;
   width: 100%;
   height: auto;
-  margin-top: 100px;
+  margin-top: 90px;
   position: absolute;
   top: -20px;
   z-index: 1;
