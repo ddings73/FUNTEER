@@ -409,7 +409,7 @@ public class FundingServiceImpl implements FundingService{
 		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_THREE));
 
-		Page<CommentResponse> collect = commentRepository.findAllByFundingId(funding.getFundingId(), pageable).map(m -> CommentResponse.from(m));
+		Page<CommentResponse> collect = commentRepository.findAllByFundingId(funding.getId(), pageable).map(m -> CommentResponse.from(m));
 		fundingDetailResponse.setComments(Optional.of(collect));
 
 		Long participatedCount = paymentRepository.findByPostId(funding.getId()).stream().count();
