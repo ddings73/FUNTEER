@@ -47,7 +47,6 @@ public class Live {
 				.build();
 	}
 
-	@Transactional(noRollbackFor = SessionNotFoundException.class)
 	public void end() {
 		this.endTime = LocalDateTime.now();
 	}

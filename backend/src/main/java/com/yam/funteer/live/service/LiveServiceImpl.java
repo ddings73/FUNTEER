@@ -59,7 +59,6 @@ public class LiveServiceImpl implements LiveService{
     private final GiftRepository giftRepository;
     private final FundingRepository fundingRepository;
     private final AttachRepository attachRepository;
-    private final EntityManager entityManager;
 
     @PostConstruct
     public void init(){
@@ -67,6 +66,7 @@ public class LiveServiceImpl implements LiveService{
     }
 
     @Override
+    @Transactional(noRollbackFor= SessionNotFoundException.class)
     public CreateConnectionResponse initializeSession(CreateConnectionRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
         User user = userRepository.findById(userId)
@@ -164,10 +164,6 @@ public class LiveServiceImpl implements LiveService{
             if(session == null){
                 log.warn("OpenVidu 서버에 동작중인 세션이 없음 in try");
                 live.end();
-
-                entityManager.flush();
-                entityManager.clear();
-
                 Team prevTeam = live.getFunding().getTeam();
                 if(prevTeam.getId().equals(user.getId())) {
                     return initializeSession(request);
@@ -202,9 +198,6 @@ public class LiveServiceImpl implements LiveService{
             log.error(e.getMessage());
             log.warn("OpenVidu 서버에 동작중인 세션이 없음 in catch");
             live.end();
-
-            entityManager.flush();
-            entityManager.clear();
 
             Team prevTeam = live.getFunding().getTeam();
             if(prevTeam.getId().equals(user.getId())) {
