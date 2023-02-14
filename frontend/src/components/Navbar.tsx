@@ -34,16 +34,17 @@ import { requestTeamAccountInfo } from '../api/team';
 import { http } from '../api/axios';
 import { off } from 'process';
 import { type } from 'os';
+import { string } from 'yargs';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
 
 function ResponsiveAppBar() {
   type eventListType={
-    url:String,
-    content:String,
-    alarmId:Number,
-    userEmail:String,
+    url:string,
+    content:string,
+    alarmId:number,
+    userEmail:string,
   }
   const token = localStorage.getItem('accessToken');
   const [listening, setListening] = useState(false);
@@ -224,12 +225,13 @@ function ResponsiveAppBar() {
 
 
   // 상세보기 및 삭제
-  const eventRead = async (alarmId:Number,url:String) => {
+  const eventRead = async (alarmId:number,url:string) => {
     
     try {
       await http.put(`subscribe/alarm/${alarmId}`);
       await http.delete(`subscribe/alarm/${alarmId}`);
-      navigateTo(typeof url);
+      requestGetAlarms();
+      clickNavigate(url);
     }  
      catch (error) {
       console.error(error);
