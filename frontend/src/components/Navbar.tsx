@@ -208,8 +208,10 @@ function ResponsiveAppBar() {
 
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
         console.log(event.data);
-        if(!event.data.includes('EventStream'))
+        if(!event.data.includes('EventStream')){
+          alert(event.data);
           requestGetAlarms();
+        }
       }) as EventListener);
     } else {
       console.log('logout');
