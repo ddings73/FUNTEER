@@ -13,15 +13,11 @@ import com.yam.funteer.exception.SessionNotFoundException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.funding.repository.FundingRepository;
-import com.yam.funteer.live.dto.CreateConnectionRequest;
-import com.yam.funteer.live.dto.CreateConnectionResponse;
-import com.yam.funteer.live.dto.GiftRequest;
-import com.yam.funteer.live.dto.SessionLeaveRequest;
+import com.yam.funteer.live.dto.*;
 import com.yam.funteer.live.entity.Gift;
 import com.yam.funteer.live.entity.Live;
 import com.yam.funteer.live.repository.GiftRepository;
 import com.yam.funteer.live.repository.LiveRepository;
-import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 
@@ -33,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +38,6 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -55,8 +52,6 @@ public class LiveServiceImpl implements LiveService{
     @Value("${OPENVIDU.SECRET}")
     private String OPENVIDU_SECRET;
     private OpenVidu openVidu;
-    private final Map<String, Session> mapSessions = new ConcurrentHashMap<>();
-
     private final AwsS3Uploader awsS3Uploader;
 
     private final UserRepository userRepository;
@@ -80,7 +75,9 @@ public class LiveServiceImpl implements LiveService{
                 .orElseThrow(UserNotFoundException::new);
 
         String sessionName = request.getSessionName();
-        if(mapSessions.containsKey(sessionName)){
+
+
+        if(liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).isPresent()){
             log.info("이미 생성된 세션 참여 => {}", sessionName);
             return joinExistingSession(request, user);
         }else if(canPublish(user)){ // 방을 생성할 수 있다면
@@ -106,31 +103,27 @@ public class LiveServiceImpl implements LiveService{
 
         Long userId = SecurityUtil.getCurrentUserId();
 
-        if(mapSessions.containsKey(sessionName)){
-            String sessionId = mapSessions.get(sessionName).getSessionId();
+        liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).ifPresent(live -> {
+            String sessionId = live.getSessionId();
             Session session = this.openVidu.getActiveSession(sessionId);
 
             Optional<Connection> optConn = session.getConnections().stream()
                     .filter(conn -> conn.getServerData().equals(String.valueOf(userId))).findFirst();
             optConn.ifPresent(connection -> {
                 if(connection.getRole().equals(OpenViduRole.PUBLISHER)) {
-                    Live live = liveRepository.findBySessionId(session.getSessionId()).orElseThrow(IllegalArgumentException::new);
                     live.end();
                     log.info("라이브 종료 => {}", live.getEndTime());
 
-                    mapSessions.remove(sessionName);
-                    log.info("map에서 {} 제거", sessionName);
-
                     // 녹화 종료
                     if(session.isBeingRecorded()) {
-                        recordSaveThisSession(session.getSessionId());
+                        recordSaveThisSession(live.getTeam(), sessionId);
                     }
                 }
 
                 openviduFetch();
             });
 
-        }
+        });
     }
 
 
@@ -151,8 +144,6 @@ public class LiveServiceImpl implements LiveService{
 
             String token = session.createConnection(connectionProperties).getToken();
 
-            mapSessions.put(sessionName, session);
-
             // DB에 저장
             Live live = Live.of(session.getSessionId(), funding);
             liveRepository.save(live);
@@ -160,7 +151,6 @@ public class LiveServiceImpl implements LiveService{
             return new CreateConnectionResponse(token);
         } catch (Exception e) {
             log.error(e.getMessage());
-            mapSessions.remove(sessionName);
             throw new RuntimeException(e.getMessage());
         }
     }
@@ -168,19 +158,18 @@ public class LiveServiceImpl implements LiveService{
     private CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, User user) {
 
         String sessionName = request.getSessionName();
-        String sessionId = mapSessions.get(sessionName).getSessionId();
-
+        Live live = liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).orElseThrow(SessionNotFoundException::new);
         try {
             openviduFetch();
-            Session session = this.openVidu.getActiveSession(sessionId);
+            Session session = this.openVidu.getActiveSession(live.getSessionId());
             if(session == null){
                 log.info("OpenVidu 서버에 동작중인 세션이 없음");
-                mapSessions.remove(sessionName);
+                live.end();
                 return initializeSession(request);
             }
 
             if(!session.isBeingRecorded()){
-                this.openVidu.startRecording(sessionId);
+                this.openVidu.startRecording(session.getSessionId());
             }
 
             Long userId = user.getId();
@@ -206,7 +195,6 @@ public class LiveServiceImpl implements LiveService{
             log.error(e.getMessage());
 
             log.info("OpenVidu 서버에 동작중인 세션이 없음");
-            mapSessions.remove(sessionName);
             return initializeSession(request);
         }
     }
@@ -219,10 +207,8 @@ public class LiveServiceImpl implements LiveService{
             throw new RuntimeException(e);
         }
     }
-    private void recordSaveThisSession(String sessionId){
+    private void recordSaveThisSession(Team team, String sessionId){
         log.info("녹화 저장 시작");
-        Long teamId = SecurityUtil.getCurrentUserId();
-        Team team = teamRepository.findById(teamId).orElseThrow(UserNotFoundException::new);
 
         log.info("sessionId => {}", sessionId);
         Recording recording = getSessionRecording(sessionId);
@@ -252,41 +238,30 @@ public class LiveServiceImpl implements LiveService{
     }
 
     @Override
-    public List<String> getCurrentActiveSessions() {
+    public ActiveSessionsResponse getCurrentActiveSessions(Pageable pageable) {
         openviduFetch();
-        List<Session> activeSessions = this.openVidu.getActiveSessions();
-        List<String> response = new ArrayList();
+        Page<Live> livePage = liveRepository.findByEndTimeIsNull(pageable);
 
-        mapSessions.forEach((s, session) -> {
-            Optional<Session> findSameSession = activeSessions.stream().filter(activeSession -> activeSession.getSessionId().equals(session.getSessionId())).findFirst();
-            if(!findSameSession.isPresent()){
-                mapSessions.remove(s);
-            }else{
-                response.add(s);
-            }
-        });
-        return response;
+        return ActiveSessionsResponse.of(livePage);
     }
 
     @Override
     public void giftToFundingTeam(GiftRequest request) {
         String sessionName = request.getSessionName();
-        if(mapSessions.containsKey(sessionName)){
-            Session session = mapSessions.get(sessionName);
+        liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).ifPresentOrElse(live -> {
+            Session session = this.openVidu.getActiveSession(live.getSessionId());
             openviduFetch();
 
-            Session activeSession = this.openVidu.getActiveSession(session.getSessionId());
-            if(activeSession == null){
+            if(session == null){
+                log.warn("세션이 없음");
                 throw new SessionNotFoundException();
             }
-
-            Live live = liveRepository.findBySessionId(activeSession.getSessionId()).orElseThrow(SessionNotFoundException::new);
 
             Long userId = SecurityUtil.getCurrentUserId();
             User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
             Long amount = request.getAmount();
 
-            if(amount < 0) throw new IllegalArgumentException("음수는 입력하시면 안돼요");
+            if(amount <= 0) throw new IllegalArgumentException("음수나 0은 입력하시면 안돼요");
 
             user.checkMoney(amount);
 
@@ -296,10 +271,9 @@ public class LiveServiceImpl implements LiveService{
 
             Gift gift = Gift.from(live, user, amount);
             giftRepository.save(gift);
-            return;
-        }
-
-        throw new SessionNotFoundException();
+        }, () -> {
+            throw new SessionNotFoundException();
+        });
     }
 
     private void openviduFetch(){

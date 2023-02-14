@@ -2,6 +2,8 @@ import { Button, Dialog, DialogActions, DialogContent, DialogContentText, Dialog
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { requestFindEmail } from '../../api/user';
+import { useAppDispatch } from '../../store/hooks';
+import { closeModal, openModal } from '../../store/slices/modalSlice';
 import styles from './FindEmailContainer.module.scss';
 
 type UserLoginType = {
@@ -10,6 +12,7 @@ type UserLoginType = {
 };
 
 function FindEmailContainer() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [onModal, setOnModal] = useState(false);
   const [userInfo, setUserInfo] = useState<UserLoginType>({
@@ -32,17 +35,26 @@ function FindEmailContainer() {
 
   };
 
+  const handleModal = ()=>{
+    dispatch(closeModal())
+  }
+
   const findEmail = async () => {
+    if(userInfo.name==="" || userInfo.phone === ""){
+      dispatch(openModal({isOpen:true,title:"이메일 찾기 실패", content:"사용자의 이름 또는 전화번호를 확인해 주세요",handleModal}))
+      return;
+    }
     try{
       const response = await requestFindEmail(userInfo.name,userInfo.phone)
       console.log(response)
-
+      setOnModal(true);
       setEmail(response.data.email)
     }
     catch(error){
+      dispatch(openModal({isOpen:true,title:"이메일 찾기 실패", content:"사용자의 이름 또는 전화번호를 확인해 주세요",handleModal}))
       console.log(error)
     }
-    setOnModal(!onModal);
+
   };
 
   const handleClose = () => {
@@ -70,23 +82,16 @@ function FindEmailContainer() {
             이메일 찾기
           </Button>
 
-          <Dialog open={onModal} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
-            <DialogTitle id="alert-dialog-title">이메일 찾기</DialogTitle>
-            <DialogContent>
-              <DialogContentText id="alert-dialog-description">회원님의 이메일은 {email}입니다</DialogContentText>
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleClose}>닫기</Button>
-              <Button
-                onClick={() => {
-                  navigate('/login');
-                }}
-                autoFocus
-              >
-                로그인하기
-              </Button>
-            </DialogActions>
-          </Dialog>
+          <Dialog fullWidth maxWidth="sm"open={onModal} onClose={handleClose} aria-labelledby="alert-dialog-title" aria-describedby="alert-dialog-description">
+      <DialogTitle id="alert-dialog-title">이메일 찾기</DialogTitle>
+      <DialogContent>
+        <DialogContentText id="alert-dialog-description">회원님의 이메일은 {email} 입니다</DialogContentText>
+      </DialogContent>
+      <DialogActions>
+      <Button variant='contained' color="warning" onClick={handleClose}>닫기</Button>
+      <Button   variant='contained' color="warning"  onClick={() => {navigate('/login');}}>로그인하기</Button>
+      </DialogActions>
+      </Dialog>
         </div>
       </div>
     </div>

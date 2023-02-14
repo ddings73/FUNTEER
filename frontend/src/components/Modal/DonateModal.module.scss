@@ -34,7 +34,8 @@
     font-weight: 700;
 
     & svg {
-      margin-right: 1rem;
+      font-size: 1rem;
+      margin-right: 0.7rem;
       color: rgb(0, 0, 0);
     }
   }
@@ -51,9 +52,9 @@
   }
 
   & input {
-    width: 50%;
-    height: 1.5rem;
-    margin: 0 0.5rem 1.5rem 5%;
+    width: 70%;
+    height: 2rem;
+    margin: 0 0.5rem 0.5rem 5%;
     padding: 0.2rem 0.5rem;
     border-radius: 5px;
     border: 1px solid rgb(177, 177, 177);
@@ -65,12 +66,36 @@
     margin: 0;
   }
 
-  & span {
+  .alarm {
+    margin-left: 6%;
     color: $primary;
+
+    & span {
+      color: rgb(177, 177, 177);
+    }
+  }
+
+  .warn {
+    margin: 1rem 0 0 6%;
+    font-size: 0.75rem;
+    color: red;
+    opacity: 0;
+    animation: fadein 0.5s ease-in-out forwards;
+  }
+
+  @keyframes fadein {
+    0% {
+      transform: scale(0);
+      opacity: 0;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
   }
 
   .charge {
-    margin: 1rem 0 2.5rem 0;
+    margin: 2.5rem 0 2.5rem 0;
     text-align: center;
     text-decoration: none;
     color: rgb(108, 108, 108);

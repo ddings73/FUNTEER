@@ -126,12 +126,12 @@ function PayModal({ isOpen }: payModalType) {
               <MenuItem value="100000" sx={{ fontFamily: 'NanumSquare' }}>
                 100,000 원
               </MenuItem>
-              <MenuItem value="direct" sx={{ fontFamily: 'NanumSquare' }}>
+              {/* <MenuItem value="direct" sx={{ fontFamily: 'NanumSquare' }}>
                 직접 입력
-              </MenuItem>
+              </MenuItem> */}
             </Select>
           )}
-          {onDirect && <TextField color="warning" variant="outlined" label="직접 입력" sx={{ marginTop: '1rem' }} onChange={changeDirectAmountHandler} />}
+          {/* {onDirect && <TextField color="warning" variant="outlined" label="직접 입력" sx={{ marginTop: '1rem' }} onChange={changeDirectAmountHandler} />} */}
         </FormControl>
       </DialogContent>
       <DialogActions>

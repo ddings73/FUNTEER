@@ -308,7 +308,7 @@ function TeamSignUpContainer() {
         <div className={styles.contents}>
           <h1 className={styles.title}>단체 회원가입</h1>
           <div className={styles['form-div']}>
-            <div id="form-div-inner">
+            <div className={styles['form-div-inner']}>
               <p>
                 단체명
                 {!nameDuplConfirmed && (
@@ -323,7 +323,6 @@ function TeamSignUpContainer() {
                 margin="dense"
                 placeholder="이름을 입력해주세요."
                 variant="outlined"
-                size="small"
                 sx={{ background: 'white' }}
                 onChange={onChangeHandler}
               />
@@ -344,7 +343,6 @@ function TeamSignUpContainer() {
                     margin="dense"
                     placeholder="이메일을 입력해주세요."
                     variant="outlined"
-                    size="small"
                     sx={{ background: 'white' }}
                     onChange={onChangeHandler}
                   />
@@ -376,7 +374,6 @@ function TeamSignUpContainer() {
                   margin="dense"
                   placeholder="비밀번호를 입력해주세요."
                   variant="outlined"
-                  size="small"
                   sx={{ background: 'white' }}
                   onChange={onChangeHandler}
                 />{' '}
@@ -407,7 +404,6 @@ function TeamSignUpContainer() {
                   margin="dense"
                   placeholder="비밀번호를 입력해주세요."
                   variant="outlined"
-                  size="small"
                   sx={{ background: 'white' }}
                   onChange={onChangeHandler}
                 />
@@ -435,7 +431,6 @@ function TeamSignUpContainer() {
                 margin="dense"
                 placeholder="휴대폰 번호를 입력해주세요."
                 variant="outlined"
-                size="small"
                 sx={{ background: 'white' }}
                 value={inputValue}
                 onChange={onChangeHandler}
@@ -452,7 +447,6 @@ function TeamSignUpContainer() {
                 margin="dense"
                 placeholder="계좌 번호를 입력해주세요."
                 variant="outlined"
-                size="small"
                 sx={{ background: 'white' }}
                 value={inputValue}
                 onChange={onChangeHandler}

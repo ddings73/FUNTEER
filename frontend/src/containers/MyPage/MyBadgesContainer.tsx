@@ -49,7 +49,7 @@ export function MyPageContainer() {
                 <Tooltip title={badge.description} placement="top">
                   <div className={styles.badgeStyle}>
                     <img src={badge.badgeImgPath} alt="뱃지" key={index + 1} className={cn(badge.achieve ? styles.achieve : '')} />
-                    <p>{badge.name}</p>
+                    <p className={styles['badge-description']}>{badge.name}</p>
                   </div>
                 </Tooltip>
               ))}

@@ -39,8 +39,8 @@ export default function PermanentDrawerLeft() {
         </button>
         <List>
           {AdminSideBarItem.map((data) => (
-            <NavLink to={data.path} id="nav-link" className={({ isActive }) => (isActive ? styles['menu-active'] : styles['menu-inactive'])}>
-              <ListItem key={data.title} className={styles['list-item']}>
+            <NavLink key={data.title} to={data.path} id="nav-link" className={({ isActive }) => (isActive ? styles['menu-active'] : styles['menu-inactive'])}>
+              <ListItem className={styles['list-item']}>
                 <ListItemButton>
                   <ListItemIcon>{data.icon}</ListItemIcon>
                   <ListItemText primary={data.title} />

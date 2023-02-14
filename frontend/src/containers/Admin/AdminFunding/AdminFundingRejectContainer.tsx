@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
+import { AxiosError } from 'axios';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import Button from '@mui/material/Button';
 import styles from './AdminFundingRejectContainer.module.scss';
 import { useAppDispatch } from '../../../store/hooks';
 import { closeModal } from '../../../store/slices/fileModalSlice';
 import requiredIcon from '../../../assets/images/funding/required.svg';
-import { customAlert, s1500, w1500 } from '../../../utils/customAlert';
+import { customAlert, s1000, s1500, w1500 } from '../../../utils/customAlert';
 import { requestDenyTeam, requestRejectFunding } from '../../../api/admin';
 
 function AdminFundingRejectContainer() {
   const navigate = useNavigate();
   const location = useLocation();
   const { id, fundingState } = location.state;
-  console.log(id, fundingState);
-
   const [content, setContent] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
 
   /** 정보 입력 */
   const handleChangeContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -30,7 +31,10 @@ function AdminFundingRejectContainer() {
   const handleClickSubmit = () => {
     if (content.length < 5) {
       customAlert(w1500, '내용을 5자 이상 입력해주세요.');
+      return;
     }
+
+    setIsLoading(true);
 
     rejectFunding();
   };
@@ -40,12 +44,16 @@ function AdminFundingRejectContainer() {
     try {
       const response = await requestRejectFunding(id, fundingState === 'REPORT_WAIT', content);
       console.log(response);
-      customAlert(s1500, '메일 전송 완료');
+      setIsLoading(false);
+      customAlert(s1000, '메일 전송 완료');
       setTimeout(() => {
         navigate(-1);
-      }, 1500);
-    } catch (error) {
-      console.error(error);
+      }, 1000);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message);
+        console.error(error);
+      }
     }
   };
 
@@ -63,7 +71,8 @@ function AdminFundingRejectContainer() {
             취소
           </Button>
           <Button variant="contained" className={styles.submit} onClick={handleClickSubmit}>
-            전송
+            {!isLoading && '전송'}
+            {isLoading && <AiOutlineLoading3Quarters className={styles.loading} />}
           </Button>
         </div>
       </div>

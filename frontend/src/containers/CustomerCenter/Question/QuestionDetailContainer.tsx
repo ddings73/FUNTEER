@@ -31,7 +31,7 @@ function QuestionDetailContainer() {
       requestQNAInfo();
       requestReplyInfo();
     }
-  }, [qnaId]);
+  }, [qnaId, onReplyForm]);
 
   const isImage = (fileUrl: string) => {
     // eslint-disable-next-line
@@ -71,7 +71,7 @@ function QuestionDetailContainer() {
       console.log('답변 요청', response);
       setReply(response.data.content);
     } catch (error) {
-      console.error(error);
+      console.error('답변이 아직 없습니다', error);
     }
   };
 
@@ -80,6 +80,7 @@ function QuestionDetailContainer() {
       const response = await requestCreateReply(parseInt(qnaId as string, 10), reply);
       console.log('답변 작성 요청', response);
       customAlert(s1000, '문의 답변 작성 완료');
+      setOnReplyForm(false);
     } catch (err) {
       console.error(err);
     }
@@ -92,14 +93,18 @@ function QuestionDetailContainer() {
           <h1 className={styles.title}>{QNAInfo.title}</h1> <p className={styles['is-responded']}>{QNAInfo.respond ? '답변 완료' : '대기중'}</p>
         </div>
         <hr />
-        <p className={styles['faq-content']}>{QNAInfo.content}</p>
-        {QNAInfo.files?.map((file) => (
-          <a href={Object.values(file)[0]} className={styles.file}>
-            {isImage(Object.values(file)[0]) && <BsFillImageFill style={{ marginRight: '0.5rem' }} />}
-            {!isImage(Object.values(file)[0]) && <AiOutlineFileText style={{ marginRight: '0.4rem' }} />}
-            {Object.keys(file)[0]}
-          </a>
-        ))}
+        <div className={styles['text-div']}>
+          <p className={styles['faq-content']}>{QNAInfo.content}</p>
+        </div>
+        <div className={styles['text-div']}>
+          {QNAInfo.files?.map((file) => (
+            <a key={Object.values(file)[0]} href={Object.values(file)[0]} className={styles.file}>
+              {isImage(Object.values(file)[0]) && <BsFillImageFill style={{ marginRight: '0.5rem' }} />}
+              {!isImage(Object.values(file)[0]) && <AiOutlineFileText style={{ marginRight: '0.4rem' }} />}
+              {Object.keys(file)[0]}
+            </a>
+          ))}
+        </div>
         {!QNAInfo.respond && userType === 'ADMIN' && (
           <>
             <hr />
@@ -133,7 +138,9 @@ function QuestionDetailContainer() {
             <div className={styles['label-div']}>
               <p style={{ color: 'rgba(236, 153, 75, 1)' }}>답변</p>
             </div>
-            <p className={styles['reply-text']}>{reply}</p>
+            <div className={styles['text-div']}>
+              <p className={styles['reply-text']}>{reply}</p>
+            </div>
           </>
         )}
         <button type="button" className={styles.back} onClick={() => navigate(-1)}>

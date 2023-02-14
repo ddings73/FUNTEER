@@ -40,14 +40,22 @@
             min-height: 192px;
             margin: 15px;
             text-align: center;
+
+            & img {
+              width: 192px;
+              height: 192px;
+              opacity: 0.6;
+              margin-bottom: 15px;
+              filter: grayscale(1);
+            }
+
+            & .badge-description{
+              font-family: 'establishRoomNo703OTF' !important;
+              font-weight: bold;
+              letter-spacing: 3px;
+            }
           }
-          & img {
-            width: 192px;
-            height: 192px;
-            opacity: 0.6;
-            margin-bottom: 15px;
-            filter: grayscale(1);
-          }
+       
 
           .achieve {
             filter: grayscale(0);

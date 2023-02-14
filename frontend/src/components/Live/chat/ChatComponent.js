@@ -12,7 +12,7 @@ import { Button, IconButton } from '@mui/material';
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import cn from 'classnames';
 import defaultProfile from '../../../assets/images/default-profile-img.svg';
-import { stringToSeparator } from '../../../types/convert';
+import { stringToSeparator } from '../../../utils/convert';
 
 export default class ChatComponent extends Component {
   constructor(props) {

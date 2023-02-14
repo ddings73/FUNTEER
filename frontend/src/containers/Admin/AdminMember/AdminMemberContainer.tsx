@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -8,6 +9,7 @@ import { AiOutlineClose, AiOutlineSearch, AiOutlineReload } from 'react-icons/ai
 import { requestMembers, requestWithdrawMember } from '../../../api/admin';
 import { AdminMemberInterface } from '../../../types/user';
 import styles from './AdminMemberContainer.module.scss';
+import { customAlert, s1000 } from '../../../utils/customAlert';
 
 export enum MemberState {
   All = '전체',
@@ -39,17 +41,15 @@ function AdminMemberContainer() {
   const [memberSearch, setMemberSearch] = useState<string>('');
   /** 필터 */
   const [memberStateFilter, setMemberStateFilter] = useState<string>('All');
+  const memberStateSet = Object.values(MemberState);
 
   useEffect(() => {
     requestPageMembers();
-  }, []);
+  }, [page, memberStateFilter]);
 
   /** 페이지 교체 */
   const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
-    console.log('타겟벨류', e.target.value);
-    console.log('selectedPage', selectedPage);
     setPage(selectedPage);
-    requestPageMembers();
   };
 
   /** 검색창 입력 */
@@ -58,16 +58,22 @@ function AdminMemberContainer() {
   };
 
   /** 검색 */
-  const handleClickSearch = async (e: React.MouseEvent<SVGElement>) => {
-    setPage(1);
-    requestPageMembers();
+  const handleClickSearch = async () => {
+    if (page === 1) {
+      requestPageMembers();
+    } else {
+      setPage(1);
+    }
   };
 
   /** 엔터 검색 */
   const handleEnter = async (e: React.KeyboardEvent<HTMLDivElement>) => {
-    setPage(1);
     if (e.key === 'Enter') {
-      requestPageMembers();
+      if (page === 1) {
+        requestPageMembers();
+      } else {
+        setPage(1);
+      }
     }
   };
 
@@ -79,10 +85,7 @@ function AdminMemberContainer() {
   /** 필터 변경 */
   const handleChangeFilter = (e: SelectChangeEvent<string>) => {
     setMemberStateFilter(e.target.value);
-    requestPageMembers();
   };
-
-  const memberStateSet = Object.values(MemberState);
 
   /** 회원 탈퇴 버튼 클릭 */
   const handleWithdrawBtn = (e: React.MouseEvent<SVGElement>, id: number) => {
@@ -112,9 +115,13 @@ function AdminMemberContainer() {
     try {
       const response = await requestWithdrawMember(id);
       console.log(response);
+      customAlert(s1000, '회원 탈퇴 처리가 완료되었습니다.');
       requestPageMembers();
-    } catch (error) {
-      console.error(error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message);
+        console.error(error);
+      }
     }
   };
 
