@@ -411,6 +411,9 @@ public class FundingServiceImpl implements FundingService{
 		Page<CommentResponse> collect = commentRepository.findAllByFundingId(tempId, pageable).map(m -> CommentResponse.from(m));
 		fundingDetailResponse.setComments(Optional.of(collect));
 
+		Long participatedCount = paymentRepository.findByPostId(funding.getId()).stream().count();
+		fundingDetailResponse.setParticipatedCount(participatedCount);
+
 		return fundingDetailResponse;
 	}
 
