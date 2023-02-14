@@ -156,7 +156,7 @@ public class LiveServiceImpl implements LiveService{
     }
 
     @Transactional(noRollbackFor = {SessionNotFoundException.class})
-    private CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, User user) {
+    protected CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, User user) {
 
         String sessionName = request.getSessionName();
         Live live = liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).orElseThrow(SessionNotFoundException::new);
