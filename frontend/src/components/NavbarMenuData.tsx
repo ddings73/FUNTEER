@@ -24,8 +24,8 @@ export const NavbarMenuData: NavbarMenuDataType[] = [
   },
   {
     title: '라이브방송',
-    subRoutes: ['전체 라이브 목록', '도네이션'],
-    subPath: ['service', 'donation'],
+    subRoutes: ['전체 라이브 목록'],
+    subPath: ['live'],
   },
   {
     title: '고객센터',
