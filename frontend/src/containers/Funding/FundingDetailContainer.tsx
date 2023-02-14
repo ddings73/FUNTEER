@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { Box, CircularProgress, Fab, Tab, Tabs } from '@mui/material';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
@@ -9,6 +9,7 @@ import { styled } from '@material-ui/styles';
 import TextField from '@mui/material/TextField';
 import BeenhereIcon from '@mui/icons-material/Beenhere';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import { useDispatch } from 'react-redux';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
 import { fundingJoin, requestCommentList, requestFundingDetail, requestFundingReport, requestNextCommentList, requestWish } from '../../api/funding';
@@ -17,10 +18,13 @@ import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
 import CommentCard from '../../components/Cards/CommentCard';
 import CommentSkeleton from '../../components/Skeleton/CommentSkeleton';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { requestUserProfile } from '../../api/user';
 import { requestTeamAccountInfo } from '../../api/team';
 import { requestCreateSession } from '../../api/live';
+import { reportModalType } from '../../types/modal';
+import ReportModal from '../../components/Modal/ReportModal';
+import { openModal } from '../../store/slices/reportModalSlice';
 
 export interface ResponseInterface {
   title: string;
@@ -39,7 +43,8 @@ export interface ResponseInterface {
   comments: commentType[];
   team: teamType;
   fundingId: string;
-  isWished: boolean;
+  hit: number;
+  participatedCount: number;
 }
 export type commentType = {
   commentId: number;
@@ -77,10 +82,13 @@ type responseListType = {
 };
 
 export function FundingDetailContainer() {
+  // 보고서 모달
+  const reportModalState = useAppSelector((state) => state.reportModalSlice);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [commentList, setCommentList] = useState<commentType[]>([]);
   const userType = useAppSelector((state) => state.userSlice.userType);
-  const { fundIdx } = useParams();
+  const { fundIdx } = useParams<string>();
   const [board, setBoard] = useState<ResponseInterface>({
     title: '',
     startDate: '',
@@ -104,33 +112,9 @@ export function FundingDetailContainer() {
       profileImgUrl: '',
     },
     fundingId: '',
-    isWished: false,
+    hit: 0,
+    participatedCount: 0,
   });
-  // 게시물 좋아요
-  const [isLiked, setIsLiked] = useState<boolean>(false);
-  const [wished, setWished] = useState<boolean>(board.isWished);
-
-  const handleLikeClick = async () => {
-    if (isLiked === true) {
-      try {
-        const response = await requestWish(fundIdx);
-        console.log('Liked 취소함');
-        setIsLiked(false);
-        setWished(false);
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      try {
-        const response = await requestWish(fundIdx);
-        console.log('Liked!');
-        setIsLiked(true);
-        setWished(true);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
 
   // 펀딩 상세 게시물 로드
   const fetchData = async () => {
@@ -161,7 +145,6 @@ export function FundingDetailContainer() {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
-  const [totalCommentCnt, setTotalCommentCnt] = useState();
   const [commentCount, setCommentCount] = useState<number>(0);
 
   const initCommentList = async () => {
@@ -169,7 +152,8 @@ export function FundingDetailContainer() {
       // setIsLoading(true);
       const { data } = await requestCommentList(fundIdx, 'regDate,DESC');
       setCommentList([...data.comments.content]);
-      setCommentCount(data.comments.total);
+      setCommentCount(data.comments.totalElements);
+      console.log('댓글 개수: ', data.comments.totalElements);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
       setIsLoading(false);
@@ -184,7 +168,7 @@ export function FundingDetailContainer() {
     try {
       setNextLoading(true);
       const { data } = await requestNextCommentList(currentPage, fundIdx, 'regDate,DESC');
-      console.log(data.comments)
+      console.log(data.comments);
       setCommentList([...commentList, ...data.comments.content]);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
@@ -218,7 +202,6 @@ export function FundingDetailContainer() {
       nextCommentList();
     }
   }, [inView]);
-
 
   // 로그인 정보
   const userId = useAppSelector((state) => state.userSlice.userId);
@@ -359,10 +342,10 @@ export function FundingDetailContainer() {
       <div className={styles.banner}>
         <div className={styles.bannerContent}>
           <h1 className={styles.bannerTitle}>{board.title}</h1>
-          <p className={styles.bannerSeen}> 조회수 0회</p>
+          <p className={styles.bannerSeen}> 조회수 {board.hit}회</p>
           {userType === 'TEAM' && teamInfo.id === board.team.id && (
             <div className={styles.bannerButtonGroup}>
-              <button className={styles.bannerGrpBtn} type="button">
+              <button className={styles.bannerGrpBtn} type="button" onClick={() => dispatch(openModal({ isOpen: true, fundingId: fundIdx as string }))}>
                 보고서 제출
               </button>
               <button
@@ -374,9 +357,11 @@ export function FundingDetailContainer() {
               >
                 라이브 시작
               </button>
-              <button className={styles.bannerGrpBtn} type="button">
-                펀딩 수정하기
-              </button>
+              <NavLink to={`/funding/modify/${fundIdx}`} style={{ textDecoration: 'none', margin: '0 3%' }}>
+                <button className={styles.bannerGrpBtn} type="button">
+                  펀딩 수정하기
+                </button>
+              </NavLink>
             </div>
           )}
         </div>
@@ -451,24 +436,9 @@ export function FundingDetailContainer() {
           <TeamInfo {...board.team} />
         </div>
         <DetailArcodian />
-
-        <div className={styles.mainFooterAttatch}>
-          <p className={styles.attachTitle}>첨부파일</p>
-          <p className={styles.attachItem}>인증서.hwp</p>
-          <p className={styles.attachItem}>증명서.pdf</p>
-        </div>
-        <div className={styles.mainFooterLikeWrapper}>
-          <button className={isLiked && wished ? styles.mainFooterLikeButtonDone : styles.mainFooterLikeButtonNone} onClick={handleLikeClick} type="button">
-            <FavoriteIcon className={styles.mainFooterLike} />
-          </button>
-          <div className={styles.Likebox}>
-            <div className={styles.mainFooterLikeTest}> 펀딩 찜</div>
-            <div className={styles.mainFooterLikeTestSub}> 찜 수 {board.wishCount}</div>
-          </div>
-        </div>
-        <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.mainCommentSubmit}>
-          <CommentCardSubmit initCommentList={initCommentList}/>
+          <p className={styles.commentHead}>응원 댓글 등록({commentCount})</p>
+          <CommentCardSubmit initCommentList={initCommentList} />
         </div>
         <div className={styles.mainComments}>
           {isLoading ? (
@@ -513,7 +483,7 @@ export function FundingDetailContainer() {
       >
         <div className={styles.payBar}>
           <p>
-            <span>{board.team.name}</span>님의 펀딩에 총 <span>123,456</span>명이 참여했어요
+            <span>{board.team.name}</span>님의 펀딩에 총 <span>{board.participatedCount}</span>명이 참여했어요
           </p>
           <div>
             <TextField
@@ -542,6 +512,7 @@ export function FundingDetailContainer() {
           </div>
         </div>
       </Box>
+      <ReportModal />
     </div>
   );
 }
