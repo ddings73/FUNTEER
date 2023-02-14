@@ -154,7 +154,6 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
-    @Transactional(noRollbackFor = SessionNotFoundException.class)
     protected CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, User user) {
 
         String sessionName = request.getSessionName();
