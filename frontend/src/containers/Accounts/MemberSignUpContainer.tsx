@@ -255,7 +255,7 @@ function MemberSignUpContainer() {
         <div className={styles.contents}>
           <h1 className={styles.title}>개인 회원가입</h1>
           <div className={styles['form-div']}>
-            <div id="form-div-inner">
+            <div className={styles['form-div-inner']}>
               <p>이름</p>
               <TextField
                 color="warning"
@@ -263,7 +263,6 @@ function MemberSignUpContainer() {
                 margin="dense"
                 placeholder="이름을 입력해주세요."
                 variant="outlined"
-                size="small"
                 sx={{ background: 'white' }}
                 onChange={onChangeHandler}
               />
@@ -284,7 +283,6 @@ function MemberSignUpContainer() {
                     margin="dense"
                     placeholder="이메일을 입력해주세요."
                     variant="outlined"
-                    size="small"
                     sx={{ background: 'white' }}
                     onChange={onChangeHandler}
                   />
@@ -317,7 +315,6 @@ function MemberSignUpContainer() {
                   margin="dense"
                   placeholder="비밀번호를 입력해주세요."
                   variant="outlined"
-                  size="small"
                   onChange={onChangeHandler}
                   sx={{ background: 'white' }}
                 />{' '}
@@ -349,7 +346,6 @@ function MemberSignUpContainer() {
                   margin="dense"
                   placeholder="비밀번호를 입력해주세요."
                   variant="outlined"
-                  size="small"
                   onChange={onChangeHandler}
                   sx={{ background: 'white' }}
                 />
@@ -386,7 +382,6 @@ function MemberSignUpContainer() {
                 margin="dense"
                 placeholder="닉네임을 입력해주세요."
                 variant="outlined"
-                size="small"
                 onChange={onChangeHandler}
               />
 
@@ -405,7 +400,6 @@ function MemberSignUpContainer() {
                 margin="dense"
                 placeholder="휴대폰 번호를 입력해주세요."
                 variant="outlined"
-                size="small"
                 value={inputValue}
                 onChange={onChangeHandler}
               />
