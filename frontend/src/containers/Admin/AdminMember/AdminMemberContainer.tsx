@@ -140,6 +140,7 @@ function AdminMemberContainer() {
         <div className={styles['filter-div']}>
           <div className={styles['search-div']}>
             <TextField
+              size="small"
               color="warning"
               label="회원 검색"
               variant="outlined"

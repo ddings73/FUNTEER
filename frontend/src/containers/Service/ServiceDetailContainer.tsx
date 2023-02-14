@@ -19,7 +19,7 @@ function ServiceDetailContainer() {
       <div className={styles.contents}>
         <div className={styles.totalContainer}>
           <div className={styles.serviceHeader}>FUNTEER</div>
-          <div className={styles.serviceComment}>기부형 크라우드 펀딩을 통한 봉사활동 중계 플랫폼</div>
+          <div className={styles.serviceComment}>기부형 크라우드 펀딩을 통한 봉사활동 중개 플랫폼</div>
           <div className={styles.serviceContents}>
             {[
               <p className={styles.serviceContent} key={1}>
