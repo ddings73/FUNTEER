@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { EventListener, EventSourcePolyfill } from 'event-source-polyfill';
-import { useEffectOnce } from 'usehooks-ts';
 import { Fade, Tooltip } from '@mui/material';
 import styles from './MainPageContainer.module.scss';
 import InfoCard from '../../components/Main/InfoCard';
@@ -15,96 +13,11 @@ import wave2 from '../../assets/images/mainPage/wave2.svg';
 import { http } from '../../api/axios';
 
 export function MainPageContainer() {
-  const eventListType={
-    content:String,
-    alarmId:String,
-    userEmail:String,
-  }
+  
   const [scrollPosition, setScrollPosition] = useState(0);
   const updateScroll = () => {
     setScrollPosition(window.scrollY || document.documentElement.scrollTop);
   };
-
-  const token = localStorage.getItem('accessToken');
-  const [listening, setListening] = useState(false);
-  const [sseData, setSseData] = useState({});
-  const [respon, setRespon] = useState(false);
-  const [eventList, setEventList] = useState<typeof eventListType[]>();
-  let eventSource: EventSourcePolyfill | undefined;
-
-  useEffect(() => {
-    window.addEventListener('scroll', updateScroll);
-    console.log(scrollPosition);
-    return () => {
-      window.removeEventListener('scroll', updateScroll);
-    };
-  });
-
-
-  const requestGetAlarms = async () => {
-    setEventList([]);
-    try {
-      const response = await http.get('subscribe/alarm');
-      console.log(response);
-      setEventList(response.data);
-
-      response.data.forEach((event:typeof eventListType)=>{
-        // alert(event.content);
-      })
-      
-    } catch (error) {
-      console.error(error);
-    }
-};
-
-  // sse
-  useEffect(() => {
-    if (!listening && token && !eventSource) {
-      // sse 연결
-      // http://localhost:8080/api/v1/subscribe
-      // https://i8e204.p.ssafy.io/api/v1/subscribe
-      eventSource = new EventSourcePolyfill('https://i8e204.p.ssafy.io/api/v1/subscribe', {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Access-Control-Allow-Origin': '*',
-          Authorization: `Bearer ${token}`,
-          'Cache-Control': 'no-cache',
-        },
-        heartbeatTimeout: 86400000,
-        withCredentials: true,
-      });
-
-      console.log(eventSource);
-
-      // 최초 연결
-      eventSource.onopen = (event) => {
-        setListening(true);
-      };
-
-      // 서버에서 메시지 날릴 때
-      eventSource.onmessage = (event) => {
-        setSseData(event.data);
-        setRespon(true);
-        console.log(event.data);
-        console.log('onmessage');
-        if (event.data !== undefined) alert(event.data);
-      };
-
-      eventSource.addEventListener('sse', ((event: MessageEvent) => {
-        console.log(event.data);
-        requestGetAlarms();
-      }) as EventListener);
-    } else {
-      console.log('logout');
-      eventSource?.close();
-    }
-    return () => {
-      if (!token && eventSource !== undefined) {
-        eventSource.close();
-        setListening(false);
-      }
-    };
-  }, [token]);
 
   // 우주인에 손을 올려보세요
   const tooltipText = () => (
