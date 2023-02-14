@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -190,7 +191,7 @@ public class AlarmService {
 
 
 
-			// db에서 알림 전체 삭제
+	// db에서 알림 전체 삭제
 	@Transactional
 	public void alarmAllDelete(){
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
@@ -211,7 +212,8 @@ public class AlarmService {
 	public List<PastAlarmListRes> getUserAlarmList(){
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
 		String email=user.getEmail();
-		List<AlarmEntity>alarmList=alarmEntityRepository.findAllByUserEmail(email);
+		PageRequest pagerequest=PageRequest.of(0,5);
+		List<AlarmEntity>alarmList=alarmEntityRepository.findAllByUserEmailOrderByIdDesc(email,pagerequest);
 		List<PastAlarmListRes>pastAlarmList=alarmList.stream().map(alarmEntity ->new PastAlarmListRes(alarmEntity)).collect(
 			Collectors.toList());
 		return pastAlarmList;
