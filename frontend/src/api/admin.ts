@@ -2,13 +2,16 @@ import { NoticeInterface } from '../types/notice';
 import { http } from './axios';
 
 /** 개인 회원 목록 조회 */
-export const requestMembers = async (page: number, size: number, keyword?: string) => {
+export const requestMembers = async (page: number, size: number, keyword?: string, userType?: string) => {
   const params = {
     page,
     size,
     keyword,
-    sort: 'id,ASC',
+    userType,
+    sort: 'id,DESC',
   };
+
+  console.log(params);
 
   const response = http.get('admin/members', { params });
 
