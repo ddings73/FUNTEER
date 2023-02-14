@@ -145,6 +145,7 @@ export const requestModifyUserDisplay = async (display: boolean, userId: string)
  */
 
 export const requestModifyUserProfileImage = async (profileImage: Blob, userId: string) => {
+  
   const formDate = new FormData();
   formDate.append('profileImg', profileImage);
   formDate.append('userId', userId);

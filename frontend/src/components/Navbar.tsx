@@ -34,15 +34,17 @@ import { requestTeamAccountInfo } from '../api/team';
 import { http } from '../api/axios';
 import { off } from 'process';
 import { type } from 'os';
+import { string } from 'yargs';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
 
 function ResponsiveAppBar() {
   type eventListType={
-    content:String,
-    alarmId:Number,
-    userEmail:String,
+    url:string,
+    content:string,
+    alarmId:number,
+    userEmail:string,
   }
   const token = localStorage.getItem('accessToken');
   const [listening, setListening] = useState(false);
@@ -206,8 +208,10 @@ function ResponsiveAppBar() {
 
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
         console.log(event.data);
-        if(!event.data.includes('EventStream'))
+        if(!event.data.includes('EventStream')){
+          alert(event.data);
           requestGetAlarms();
+        }
       }) as EventListener);
     } else {
       console.log('logout');
@@ -223,11 +227,13 @@ function ResponsiveAppBar() {
 
 
   // 상세보기 및 삭제
-  const eventRead = async (alarmId:Number) => {
+  const eventRead = async (alarmId:number,url:string) => {
     
     try {
       await http.put(`subscribe/alarm/${alarmId}`);
       await http.delete(`subscribe/alarm/${alarmId}`);
+      requestGetAlarms();
+      clickNavigate(url);
     }  
      catch (error) {
       console.error(error);
@@ -307,7 +313,7 @@ function ResponsiveAppBar() {
                   <Menu open={open} onClose={handleClose}>
                     {
                       eventList.map((event)=>(
-                        <MenuItem onClick={()=>eventRead(event.alarmId)}>{event.content}</MenuItem>
+                        <MenuItem onClick={()=>eventRead(event.alarmId,event.url)}>{event.content}</MenuItem>
                       ))
                     }
                   </Menu>
