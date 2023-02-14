@@ -12,11 +12,13 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.exception.SessionNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.user.entity.Member;
 
 import com.yam.funteer.user.entity.Team;
 import lombok.*;
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @Table(name = "live")
@@ -45,6 +47,7 @@ public class Live {
 				.build();
 	}
 
+	@Transactional(noRollbackFor = SessionNotFoundException.class)
 	public void end() {
 		this.endTime = LocalDateTime.now();
 	}
