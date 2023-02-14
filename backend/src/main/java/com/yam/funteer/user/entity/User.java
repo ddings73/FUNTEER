@@ -80,7 +80,7 @@ public class User {
 			case NORMAL_RESIGN:
 			case TEAM_RESIGN: throw new AccessDeniedException("탈퇴한 회원입니다.");
 			case KAKAO: throw new AccessDeniedException("카카오 회원은 카카오로 로그인해주세요");
-			case TEAM_WAIT: throw new AccessDeniedException("가입 대기중인 회원입니다.");
+			// case TEAM_WAIT: throw new AccessDeniedException("가입 대기중인 회원입니다.");
 		}
 	}
 	public void validatePassword(PasswordEncoder passwordEncoder, String password){
