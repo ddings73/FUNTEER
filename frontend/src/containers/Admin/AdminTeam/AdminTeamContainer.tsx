@@ -167,6 +167,7 @@ function AdminTeamContainer() {
         <div className={styles['filter-div']}>
           <div className={styles['search-div']}>
             <TextField
+              size="small"
               color="warning"
               label="단체 검색"
               variant="outlined"

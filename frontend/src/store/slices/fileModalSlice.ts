@@ -10,7 +10,7 @@ const initialState: FileModalType = {
 };
 
 export const fileModalSlice = createSlice({
-  name: 'modalSlice',
+  name: 'fileModalSlice',
   initialState,
   reducers: {
     openModal: (state, action: PayloadAction<FileModalType>) => {

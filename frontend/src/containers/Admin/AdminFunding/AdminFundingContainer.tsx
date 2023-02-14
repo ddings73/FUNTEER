@@ -188,6 +188,7 @@ function AdminFundingContainer() {
         <div className={styles['search-filter-div']}>
           <div className={styles['search-div']}>
             <TextField
+              size="small"
               color="warning"
               value={fundingSearch}
               label="펀딩 검색"
