@@ -101,6 +101,7 @@ public class User {
 	}
 
 	public void checkMoney(Long amount) {
+		if(amount <= 0) throw new IllegalArgumentException("음수나 0은 입력하시면 안돼요");
 		if(this.money < amount) throw new IllegalArgumentException("잔고가 부족합니다.");
 	}
 }

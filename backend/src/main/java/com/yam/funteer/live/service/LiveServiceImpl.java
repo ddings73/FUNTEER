@@ -261,8 +261,6 @@ public class LiveServiceImpl implements LiveService{
             User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
             Long amount = request.getAmount();
 
-            if(amount <= 0) throw new IllegalArgumentException("음수나 0은 입력하시면 안돼요");
-
             user.checkMoney(amount);
 
             Team team = live.getTeam();
