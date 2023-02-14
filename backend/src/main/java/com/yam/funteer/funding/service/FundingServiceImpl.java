@@ -122,9 +122,9 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public Page<FundingListResponse> findAllFundingByAdmin(String keyword, PostType postType, Pageable pageable) {
-		Page<Funding> fundingPage = fundingRepository.findAllByTitleContainingAndPostType(keyword,
-			postType, pageable);
-		return fundingPage.map(FundingListResponse::from);
+		return postType == null
+				? fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword, pageable).map(FundingListResponse::from)
+				: fundingRepository.findAllByPostTypeAndTitleContainingOrContentContaining(postType, keyword, keyword, pageable).map(FundingListResponse::from);
 	}
 
 	@Override
