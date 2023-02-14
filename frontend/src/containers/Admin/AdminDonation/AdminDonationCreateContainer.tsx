@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Editor as ToastEditor } from '@toast-ui/react-editor';
@@ -68,8 +69,11 @@ function AdminDonationCreateContainer() {
       const response = await requestCreateDonation(donationData);
       console.log(response);
       navigate(-1);
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message);
+        console.error(error);
+      }
     }
   };
 

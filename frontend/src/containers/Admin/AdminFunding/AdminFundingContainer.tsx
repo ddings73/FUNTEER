@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
+import { AxiosError } from 'axios';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { AiOutlineSearch, AiOutlineReload } from 'react-icons/ai';
@@ -8,7 +9,6 @@ import { Button } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import styles from './AdminFundingContainer.module.scss';
 import { requestAdminFundingList, requestFundingAccept } from '../../../api/admin';
-import { requestAdminSearchedFundingList } from '../../../api/admin';
 import { customAlert, s1000 } from '../../../utils/customAlert';
 
 enum FundingState {
@@ -34,7 +34,18 @@ type adminFundingListContainerItemType = {
   postType: FundingState;
 };
 
-const FundingStateMap = new Map<string, string>([
+const fundingStateMap = new Map<string, string>([
+  ['전체', 'All'],
+  ['승인 대기', 'FUNDING_WAIT'],
+  ['승인', 'FUNDING_ACCEPT'],
+  ['거절', 'FUNDING_REJECT'],
+  ['진행중', 'FUNDING_INPROGRESS'],
+  ['펀딩 실패', 'FUNDING_FAIL'],
+  ['연장', 'FUNDING_EXTEND'],
+  ['펀딩 완료', 'FUNDING_COMPLETE'],
+  ['보고서 대기', 'REPORT_WAIT'],
+  ['보고서 승인', 'REPORT_ACCEPT'],
+  ['보고서 거부', 'REPORT_REJECT'],
   ['All', '전체'],
   ['FUNDING_WAIT', '승인 대기'],
   ['FUNDING_ACCEPT', '승인'],
@@ -50,19 +61,17 @@ const FundingStateMap = new Map<string, string>([
 
 function AdminFundingContainer() {
   const navigate = useNavigate();
+  const size = 8;
   const [page, setPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState<number>(0);
   const [pageFundings, setPageFundings] = useState<adminFundingListContainerItemType[]>([]);
   const [fundingSearch, setFundingSearch] = useState<string>('');
-  const [fundingStateFilter, setFundingStateFilter] = useState<string>('전체');
+  const [fundingStateFilter, setFundingStateFilter] = useState<string>('All');
+  const fundingStateSet = Object.values(FundingState);
 
   useEffect(() => {
-    if (!fundingSearch) {
-      requestPageFundings();
-    } else {
-      requestPageFundingsWithKeyword();
-    }
-  }, [page]);
+    requestPageFundings();
+  }, [page, fundingStateFilter]);
 
   /** 페이지 교체 */
   const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
@@ -75,69 +84,54 @@ function AdminFundingContainer() {
   };
 
   /** 검색 */
-  const handleClickSearch = async (e: React.MouseEvent<SVGElement>) => {
-    setPage(1);
-    requestPageFundingsWithKeyword();
+  const handleClickSearch = async () => {
+    if (page === 1) {
+      requestPageFundings();
+    } else {
+      setPage(1);
+    }
   };
 
   /** 엔터 검색 */
   const handleEnter = async (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      setPage(1);
-      requestPageFundingsWithKeyword();
+      if (page === 1) {
+        requestPageFundings();
+      } else {
+        setPage(1);
+      }
     }
   };
 
   /** 검색 초기화 및 새로고침 */
   const handleClickInit = async () => {
-    setFundingSearch('');
-    setPage(1);
-    requestPageFundings();
+    window.location.reload();
   };
 
+  /** 필터 교체 */
   const handleChangeFilter = (e: SelectChangeEvent) => {
     setFundingStateFilter(e.target.value);
   };
 
-  /** 일반 페이지 펀딩 요청 */
+  /** 펀딩 리스트 요청 */
   const requestPageFundings = async () => {
     setPageFundings([]);
     try {
-      const { data } = await requestAdminFundingList(page - 1, 8);
-      console.log(data);
-      setMaxPage(data.totalPages);
-      setPageFundings([...data.content]);
+      let response;
+      if (fundingStateFilter === 'All') {
+        response = await requestAdminFundingList(page - 1, size, fundingSearch);
+      } else {
+        response = await requestAdminFundingList(page - 1, size, fundingSearch, fundingStateFilter);
+      }
+      console.log('관리자 펀딩 리스트 요청', response);
+      setMaxPage(response.data.totalPages);
+      setPageFundings(response.data.content);
     } catch (error) {
       console.error(error);
     }
   };
 
-  /** 검색 동반 페이지 펀딩 요청 */
-  const requestPageFundingsWithKeyword = async () => {
-    setPageFundings([]);
-    try {
-      const { data } = await requestAdminSearchedFundingList(page - 1, 8, fundingSearch);
-      console.log('검색 펀딩', data);
-      setMaxPage(data.totalPages);
-      setPageFundings([...data.content]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const filtedFundings = pageFundings.filter((funding) => {
-    let filter;
-    if (fundingStateFilter === '전체') {
-      filter = true;
-    } else {
-      filter = FundingStateMap.get(funding.postType) === fundingStateFilter;
-    }
-    return filter;
-  });
-
-  const fundingStateSet = Object.values(FundingState);
-
-  const onClickFundingItemHandler = (data: adminFundingListContainerItemType, e: React.MouseEvent<HTMLButtonElement>) => {
+  const onClickFundingItemHandler = (data: adminFundingListContainerItemType) => {
     navigate(`../../funding/detail/${data.id}`, { state: { data } });
     console.log('펀딩 관리 상세 페이지 이동');
   };
@@ -156,8 +150,11 @@ function AdminFundingContainer() {
           customAlert(s1000, '펀딩 상태 변경 완료');
           setPage(1);
           requestPageFundings();
-        } catch (error) {
-          console.error(error);
+        } catch (error: unknown) {
+          if (error instanceof AxiosError) {
+            alert(error.response?.data.message);
+            console.error(error);
+          }
         }
       } else if (fundingState === 'REPORT_WAIT') {
         try {
@@ -166,8 +163,11 @@ function AdminFundingContainer() {
           customAlert(s1000, '펀딩 상태 변경 완료');
           setPage(1);
           requestPageFundings();
-        } catch (error) {
-          console.error(error);
+        } catch (error: unknown) {
+          if (error instanceof AxiosError) {
+            alert(error.response?.data.message);
+            console.error(error);
+          }
         }
       }
       // 펀딩 또는 보고서 거부 시 안내 페이지로
@@ -208,7 +208,7 @@ function AdminFundingContainer() {
             sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}
           >
             {fundingStateSet.map((state) => (
-              <MenuItem key={state} value={state} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
+              <MenuItem key={state} value={fundingStateMap.get(state)} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
                 {state}
               </MenuItem>
             ))}
@@ -223,7 +223,7 @@ function AdminFundingContainer() {
           <li style={{ maxWidth: '120px' }}>상태</li>
           <li style={{ maxWidth: '120px' }}>승인</li>
         </ul>
-        {filtedFundings.map((data) => (
+        {pageFundings.map((data) => (
           <div key={data.id} className={styles['list-line']}>
             <li>
               <p>{data.id}</p>
@@ -231,8 +231,8 @@ function AdminFundingContainer() {
             <button
               type="button"
               className={styles['title-col-btn']}
-              onClick={(e) => {
-                onClickFundingItemHandler(data, e);
+              onClick={() => {
+                onClickFundingItemHandler(data);
               }}
             >
               <li>
@@ -249,7 +249,7 @@ function AdminFundingContainer() {
               <p>{data.endDate}</p>
             </li>
             <li>
-              <p>{FundingStateMap.get(data.postType)}</p>
+              <p>{fundingStateMap.get(data.postType)}</p>
             </li>
             <li>
               <Select
@@ -259,7 +259,7 @@ function AdminFundingContainer() {
                 className={data.postType.includes('WAIT') ? styles['show-approve'] : styles['hide-approve']}
               >
                 <MenuItem value={data.postType} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
-                  {FundingStateMap.get(data.postType)}
+                  {fundingStateMap.get(data.postType)}
                 </MenuItem>
                 <MenuItem value="accept" sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
                   승인
