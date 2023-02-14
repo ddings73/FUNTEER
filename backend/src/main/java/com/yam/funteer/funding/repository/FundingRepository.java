@@ -40,5 +40,6 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 	@Query("update Funding set hit = hit + 1 where fundingId = :fundingId")
 	int updateHit(@Param(value = "fundingId") Long fundingId);
 
-	Page<Funding> findAllByTitleContainingAndPostType(String keyword, PostType postType, Pageable pageable);
+
+	Page<Funding> findAllByPostTypeAndTitleContainingOrContentContaining(PostType postType, String keyword, String keyword2, Pageable pageable);
 }
