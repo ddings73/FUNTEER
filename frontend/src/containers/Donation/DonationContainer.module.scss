@@ -4,6 +4,7 @@
 .container {
   width: 100%;
   height: auto;
+  background-color: rgb(255, 253, 250);
   font-family: 'NanumSquare' !important;
 
   @include tablet {
@@ -21,7 +22,6 @@
     display: flex;
     flex-direction: column;
     padding: 0 15px;
-    background-color: rgb(255, 250, 245);
 
     & .contentTitle {
       margin: 0 0 1rem 5rem;
@@ -72,7 +72,7 @@
         height: auto;
         border: 7px solid $primary;
         border-radius: 18px;
-        background-color: rgb(254, 252, 250);
+        background-color: rgb(255, 255, 255);
         @include tablet {
           width: 80%;
         }
