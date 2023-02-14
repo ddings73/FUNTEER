@@ -123,7 +123,7 @@ export function MainPageContainer() {
             </Tooltip>
           </div>
         </div>
-        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 700 ? '1' : '0' }} alt="back" />
+        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 500 ? '1' : '0' }} alt="back" />
       </div>
       <div className={styles.infoBanner}>
         <InfoCard />

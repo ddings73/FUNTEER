@@ -168,7 +168,7 @@ export function FundingDetailContainer() {
     try {
       // setIsLoading(true);
       const { data } = await requestCommentList(fundIdx, 'regDate,DESC');
-      setCommentList([...commentList, ...data.comments.content]);
+      setCommentList([...data.comments.content]);
       setCommentCount(data.comments.total);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
@@ -212,7 +212,6 @@ export function FundingDetailContainer() {
   }
   useEffect(() => {
     initCommentList();
-    alert('이닛');
   }, []);
   useEffect(() => {
     if (inView && !isLastPage) {
