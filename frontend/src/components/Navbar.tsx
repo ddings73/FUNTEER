@@ -52,6 +52,16 @@ function ResponsiveAppBar() {
   let eventSource: EventSourcePolyfill | undefined;
   const [eventListsize,setEventListsize]=useState(0);
 
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const navigateTo = useNavigate();
   const dispatch = useDispatch();
   function clickNavigate(address: string) {
@@ -288,13 +298,21 @@ function ResponsiveAppBar() {
                 <p style={{ color: 'black' }}>
                   <span style={{ fontWeight: '800' }}>{userName}</span>님 환영합니다
                 </p>
-                <IconButton aria-label="notifi" className={styles.noti} onClick={()=>{
-                 
-                }}>
-                  <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
-                    <NotificationsNoneIcon fontSize="large" />
-                  </StyledBadge>
-                </IconButton>
+                <div>
+                  <IconButton aria-label="notifi" className={styles.noti}  onClick={handleClick}>
+                    <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
+                      <NotificationsNoneIcon fontSize="large" />
+                    </StyledBadge>
+                  </IconButton>
+                  <Menu open={open} onClose={handleClose}>
+                    {
+                      eventList.map((event)=>(
+                        <MenuItem onClick={()=>eventRead(event.alarmId)}>{event.content}</MenuItem>
+                      ))
+                    }
+                  </Menu>
+                </div>
+               
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, border: '3px solid orange' }}>
                     <Avatar alt="profileImg" src={profileImgUrl} />
