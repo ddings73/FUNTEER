@@ -11,7 +11,6 @@
 
   .content {
     width: 100%;
-    min-height: 100vh;
     height: 100%;
     display: flex;
     justify-content: center;
@@ -19,15 +18,15 @@
     .content-inner {
       max-width: 1160px;
       width: 100%;
-      min-height: 100vh;
       height: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
-      background-color: rgba(236, 153, 75, 0.1);
+      background-color: rgba(255, 223, 193, 0.1);
 
       .profile-card {
-        width: 70%;
+        width: 80%;
+        margin-bottom: 2rem;
         display: flex;
         justify-content: center;
 
@@ -100,6 +99,8 @@
             font-weight: bold;
 
             .follow-btn-div {
+              display: flex;
+              align-items: center;
               margin-left: 1rem;
 
               &:hover {
@@ -172,15 +173,22 @@
                 margin: 1rem 0 0 0;
               }
 
+              & svg {
+                font-size: 1.6rem;
+              }
+
               .profile-card-info-item {
                 display: flex;
                 margin: 1rem 0;
 
                 & p {
+                  display: flex;
+                  align-items: center;
                   margin: 0 0 0 0.5rem;
                   font-size: 1.25rem;
 
                   & span {
+                    margin-left: 0.5rem;
                     font-weight: bold;
                   }
                 }
@@ -228,8 +236,9 @@
         justify-content: center;
         align-items: center;
         margin-top: 1rem;
-        border-radius: 5px;
-        background-color: rgba(236, 153, 75, 0.1);
+        // border-radius: 5px;
+        background-color: rgba(255, 209, 167, 0.1);
+        box-shadow: 0px 0px 10px rgba(255, 123, 0, 0.1) inset;
 
         @include tablet {
           width: 90%;

@@ -3,12 +3,46 @@ import { useNavigate } from 'react-router';
 import { useInterval } from 'usehooks-ts';
 import { Button, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import MenuItem from '@mui/material/MenuItem';
+import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { s1000, s1500, w1500, customAlert } from '../../utils/customAlert';
 import { teamSignUpType } from '../../types/user';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
 import { requestCheckEmailAuthCode, requestEmailDuplConfirm, requestNameDuplConfirm, requestSendEmailAuthCode } from '../../api/user';
 import { requestTeamSignUp } from '../../api/team';
 import styles from './TeamSignUpContainer.module.scss';
+
+const bankKind = [
+  '카카오뱅크',
+  '농협',
+  '신한',
+  'IBK기업',
+  '하나',
+  '우리',
+  '국민',
+  'SC제일',
+  '대구',
+  '부산',
+  '광주',
+  '새마을금고',
+  '경남',
+  '전북',
+  '제주',
+  '산업',
+  '우체국',
+  '신협',
+  '수협',
+  '씨티',
+  '케이뱅크',
+  '토스뱅크',
+  '도이치',
+  'BOA',
+  'BNP',
+  'HSBC',
+  'JP모간',
+  '산립조합',
+  '저축은행',
+];
 
 function TeamSignUpContainer() {
   const navigate = useNavigate();
@@ -20,6 +54,7 @@ function TeamSignUpContainer() {
     password: '',
     passwordCheck: '',
     phone: '',
+    accountNumber: '',
   });
 
   /** 이메일 인증 버튼에 표시되는 텍스트 */
@@ -193,6 +228,15 @@ function TeamSignUpContainer() {
     }
   }, [passwordVisibility]);
 
+  /** 계좌 인증 알림, 구현 패스 */
+  const onClickAccountBtn = () => {
+    if (teamSignUpInfo.accountNumber.length <= 5) {
+      customAlert(w1500, '올바른 계좌 번호를 입력해주세요.');
+      return;
+    }
+    customAlert(s1000, '계좌 인증이 완료되었습니다.');
+  };
+
   /** vms 파일 업로드 */
   const onVmsChangeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -260,135 +304,193 @@ function TeamSignUpContainer() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.contents}>
-        <h1 className={styles.title}>단체 회원가입</h1>
-        <div className={styles['form-div']}>
-          <div id="form-div-inner">
-            <p>
-              단체명
-              {!nameDuplConfirmed && (
-                <a href="./" onClick={onClickNameDuplBtnHandler} className={styles['dupl-btn']}>
-                  중복체크
-                </a>
-              )}
-            </p>
-            <TextField name="name" margin="dense" placeholder="이름을 입력해주세요." variant="outlined" size="small" onChange={onChangeHandler} />
-            <p>
-              이메일
-              {!emailDuplConfirmed && (
-                <a href="./" onClick={onClickEmailDuplBtnHandler} className={styles['dupl-btn']}>
-                  중복체크
-                </a>
-              )}
-            </p>
-            {checkEmailAuth && <p className={styles['authed-email']}>{teamSignUpInfo.email}</p>}
-            {!checkEmailAuth && (
-              <div className={styles['not-shadow']}>
-                <TextField name="email" margin="dense" placeholder="이메일을 입력해주세요." variant="outlined" size="small" onChange={onChangeHandler} />
-                <Button className={styles['auth-btn']} variant="contained" onClick={handleClickAuthEmail}>
-                  {btnText}
-                </Button>
-              </div>
-            )}
-            {emailAuthButtonPushed && (
-              <div className={styles['auth-input-div']}>
-                <input
-                  type="text"
-                  name="authNumber"
-                  placeholder="인증 번호를 입력해주세요."
-                  className={styles['auth-number-input']}
-                  onChange={onAuthNumberChangeHandler}
-                />
-                <Button className={styles['auth-check-btn']} variant="contained" onClick={checkAuthNumber}>
-                  인증
-                </Button>
-              </div>
-            )}
-            <p>비밀번호</p>
-            <div className={styles['pw-div']}>
+      <div className={styles.area}>
+        <div className={styles.contents}>
+          <h1 className={styles.title}>단체 회원가입</h1>
+          <div className={styles['form-div']}>
+            <div id="form-div-inner">
+              <p>
+                단체명
+                {!nameDuplConfirmed && (
+                  <a href="./" onClick={onClickNameDuplBtnHandler} className={styles['dupl-btn']}>
+                    중복체크
+                  </a>
+                )}
+              </p>
               <TextField
-                name="password"
-                type={!passwordVisibility ? 'password' : ''}
+                color="warning"
+                name="name"
                 margin="dense"
-                placeholder="비밀번호를 입력해주세요."
+                placeholder="이름을 입력해주세요."
                 variant="outlined"
                 size="small"
-                onChange={onChangeHandler}
-              />{' '}
-              {passwordVisibility && (
-                <Visibility
-                  onClick={() => {
-                    setPasswordVisibility(!passwordVisibility);
-                  }}
-                  className={styles['pwv-btn']}
-                />
-              )}
-              {!passwordVisibility && (
-                <VisibilityOff
-                  onClick={() => {
-                    setPasswordVisibility(!passwordVisibility);
-                  }}
-                  className={styles['pwv-btn']}
-                />
-              )}
-            </div>
-            <p className={styles.comment}>8~15자, 하나 이상의 문자와 숫자가 포함되어야 합니다.</p>
-            <p>비밀번호 확인</p>
-            <div className={styles['pw-div']}>
-              <TextField
-                name="passwordCheck"
-                type={!passwordCheckVisibility ? 'password' : ''}
-                margin="dense"
-                placeholder="비밀번호를 입력해주세요."
-                variant="outlined"
-                size="small"
+                sx={{ background: 'white' }}
                 onChange={onChangeHandler}
               />
-              {passwordCheckVisibility && (
-                <Visibility
-                  onClick={() => {
-                    setPasswordCheckVisibility(!passwordCheckVisibility);
-                  }}
-                  className={styles['pwv-btn']}
-                />
+              <p>
+                이메일
+                {!emailDuplConfirmed && (
+                  <a href="./" onClick={onClickEmailDuplBtnHandler} className={styles['dupl-btn']}>
+                    중복체크
+                  </a>
+                )}
+              </p>
+              {checkEmailAuth && <p className={styles['authed-email']}>{teamSignUpInfo.email}</p>}
+              {!checkEmailAuth && (
+                <div className={styles['not-shadow']}>
+                  <TextField
+                    color="warning"
+                    name="email"
+                    margin="dense"
+                    placeholder="이메일을 입력해주세요."
+                    variant="outlined"
+                    size="small"
+                    sx={{ background: 'white' }}
+                    onChange={onChangeHandler}
+                  />
+                  <Button className={styles['auth-btn']} variant="contained" onClick={handleClickAuthEmail}>
+                    {btnText}
+                  </Button>
+                </div>
               )}
-              {!passwordCheckVisibility && (
-                <VisibilityOff
-                  onClick={() => {
-                    setPasswordCheckVisibility(!passwordCheckVisibility);
-                  }}
-                  className={styles['pwv-btn']}
-                />
+              {emailAuthButtonPushed && (
+                <div className={styles['auth-input-div']}>
+                  <input
+                    type="text"
+                    name="authNumber"
+                    placeholder="인증 번호를 입력해주세요."
+                    className={styles['auth-number-input']}
+                    onChange={onAuthNumberChangeHandler}
+                  />
+                  <Button className={styles['auth-check-btn']} variant="contained" onClick={checkAuthNumber}>
+                    인증
+                  </Button>
+                </div>
               )}
+              <p>비밀번호</p>
+              <div className={styles['pw-div']}>
+                <TextField
+                  color="warning"
+                  name="password"
+                  type={!passwordVisibility ? 'password' : ''}
+                  margin="dense"
+                  placeholder="비밀번호를 입력해주세요."
+                  variant="outlined"
+                  size="small"
+                  sx={{ background: 'white' }}
+                  onChange={onChangeHandler}
+                />{' '}
+                {passwordVisibility && (
+                  <Visibility
+                    onClick={() => {
+                      setPasswordVisibility(!passwordVisibility);
+                    }}
+                    className={styles['pwv-btn']}
+                  />
+                )}
+                {!passwordVisibility && (
+                  <VisibilityOff
+                    onClick={() => {
+                      setPasswordVisibility(!passwordVisibility);
+                    }}
+                    className={styles['pwv-btn']}
+                  />
+                )}
+              </div>
+              <p className={styles.comment}>8~15자, 하나 이상의 문자와 숫자가 포함되어야 합니다.</p>
+              <p>비밀번호 확인</p>
+              <div className={styles['pw-div']}>
+                <TextField
+                  color="warning"
+                  name="passwordCheck"
+                  type={!passwordCheckVisibility ? 'password' : ''}
+                  margin="dense"
+                  placeholder="비밀번호를 입력해주세요."
+                  variant="outlined"
+                  size="small"
+                  sx={{ background: 'white' }}
+                  onChange={onChangeHandler}
+                />
+                {passwordCheckVisibility && (
+                  <Visibility
+                    onClick={() => {
+                      setPasswordCheckVisibility(!passwordCheckVisibility);
+                    }}
+                    className={styles['pwv-btn']}
+                  />
+                )}
+                {!passwordCheckVisibility && (
+                  <VisibilityOff
+                    onClick={() => {
+                      setPasswordCheckVisibility(!passwordCheckVisibility);
+                    }}
+                    className={styles['pwv-btn']}
+                  />
+                )}
+              </div>
+              <p>대표자 연락처</p>
+              <TextField
+                color="warning"
+                name="phone"
+                margin="dense"
+                placeholder="휴대폰 번호를 입력해주세요."
+                variant="outlined"
+                size="small"
+                sx={{ background: 'white' }}
+                value={inputValue}
+                onChange={onChangeHandler}
+              />
+              <p>단체 계좌 정보</p>
+              <select name="accountBank">
+                {bankKind.map((bank) => (
+                  <option value={bank}>{bank}</option>
+                ))}
+              </select>
+              <TextField
+                color="warning"
+                name="accountNumber"
+                margin="dense"
+                placeholder="계좌 번호를 입력해주세요."
+                variant="outlined"
+                size="small"
+                sx={{ background: 'white' }}
+                value={inputValue}
+                onChange={onChangeHandler}
+              />
+              <Button className={styles['auth-btn']} variant="contained" onClick={onClickAccountBtn}>
+                계좌 인증하기
+              </Button>
+              <hr />
+              <label htmlFor="file">
+                <p>VMS 위촉 임명장</p>
+                <input type="file" name="file" id="file" onChange={onVmsChangeHandler} />
+              </label>
+              <p className={styles.comment}>VMS에 인증된 봉사 단체인지 확인합니다.</p>
+              <label htmlFor="file">
+                <p>봉사 실적</p>
+                <input type="file" name="file" id="file" onChange={onPerformChangeHandler} />
+              </label>
+              <p className={styles.comment}>펀딩 진행 시 1년 이내의 봉사 실적이 필요합니다.</p>
+              <p className={styles['last-comment']}>가입 승인 시 인증된 이메일 주소로 메일을 보내드립니다.</p>
+              <Button className={styles['signup-btn']} variant="contained" onClick={requestSignUp}>
+                회원가입
+              </Button>
             </div>
-            <p>대표자 연락처</p>
-            <TextField
-              name="phone"
-              margin="dense"
-              placeholder="휴대폰 번호를 입력해주세요."
-              variant="outlined"
-              size="small"
-              value={inputValue}
-              onChange={onChangeHandler}
-            />
-            <hr />
-            <label htmlFor="file">
-              <p>VMS 위촉 임명장</p>
-              <input type="file" name="file" id="file" onChange={onVmsChangeHandler} />
-            </label>
-            <p className={styles.comment}>VMS에 인증된 봉사 단체인지 확인합니다.</p>
-            <label htmlFor="file">
-              <p>봉사 실적</p>
-              <input type="file" name="file" id="file" onChange={onPerformChangeHandler} />
-            </label>
-            <p className={styles.comment}>펀딩 진행 시 1년 이내의 봉사 실적이 필요합니다.</p>
-            <p className={styles['last-comment']}>가입 승인 시 인증된 이메일 주소로 메일을 보내드립니다.</p>
-            <Button className={styles['signup-btn']} variant="contained" onClick={requestSignUp}>
-              회원가입
-            </Button>
           </div>
         </div>
       </div>
+      <ul className={styles.circles}>
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+        <li />
+      </ul>
     </div>
   );
 }
