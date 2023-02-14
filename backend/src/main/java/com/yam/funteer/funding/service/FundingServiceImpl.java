@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.attach.repository.PostAttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
@@ -91,6 +92,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
+	private final PostAttachRepository postAttachRepository;
 	private final UserBadgeRepository userBadgeRepository;
 	private static final String VIEWCOOKIENAME = "alreadyViewCookie";
 	private final UserRepository userRepository;
@@ -531,7 +533,13 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public FundingReportResponse findFundingReportById(Long fundingId) {
 		Report byFundingId = reportRepository.findByFundingFundingId(fundingId).orElseThrow(NotFoundReportException::new);
-		return FundingReportResponse.from(byFundingId);
+		FundingReportResponse response = FundingReportResponse.from(byFundingId);
+
+		Funding byFundingId1 = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
+		String liveUrlPath = postAttachRepository.findByPostId(byFundingId1.getId()).getAttach().getPath();
+		response.setLiveUrl(liveUrlPath);
+
+		return response;
 	}
 
 	@Override
