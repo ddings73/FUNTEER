@@ -118,16 +118,21 @@ export function ReportModal() {
   function initModalClose() {
     setAmount('');
     setDescription('');
-    setReportContent({
-      content: '',
-      reportDetailResponseList: [
-        {
-          amount: '',
-          description: '',
-        },
-      ],
-    });
-    setResponseList([]);
+    // setReportContent({
+    //   content: '',
+    //   reportDetailResponseList: [
+    //     {
+    //       amount: '',
+    //       description: '',
+    //     },
+    //   ],
+    // });
+    setResponseList([
+      {
+        amount: '',
+        description: '',
+      },
+    ]);
     setContentText('');
     dispatch(closeModal());
   }
