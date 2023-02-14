@@ -129,8 +129,8 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/mileage")
-	public ResponseEntity<MileageDetailResponse> getMileageDetails(PostGroup postGroup,
-								   @PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
+	public ResponseEntity<MileageDetailResponse> getMileageDetails(@RequestParam PostGroup postGroup,
+								   @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 		MileageDetailResponse mileageDetailResponse = memberService.getMileageDetails(postGroup, pageable);
 		return ResponseEntity.ok(mileageDetailResponse);
 	}
@@ -156,7 +156,7 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/chargeList")
-	public ResponseEntity<Page<ChargeListResponse>> getChargeList(Pageable pageable) {
+	public ResponseEntity<Page<ChargeListResponse>> getChargeList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 		Page<ChargeListResponse> chargeList = memberService.getChargeList(pageable);
 		return ResponseEntity.ok(chargeList);
 	}
