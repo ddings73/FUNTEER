@@ -168,7 +168,7 @@ export function FundingDetailContainer() {
     try {
       // setIsLoading(true);
       const { data } = await requestCommentList(fundIdx, 'regDate,DESC');
-      setCommentList([...commentList, ...data.comments.content]);
+      setCommentList([...data.comments.content]);
       setCommentCount(data.comments.total);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
@@ -184,7 +184,7 @@ export function FundingDetailContainer() {
     try {
       setNextLoading(true);
       const { data } = await requestNextCommentList(currentPage, fundIdx, 'regDate,DESC');
-      console.log(data.comments)
+      console.log(data.comments);
       setCommentList([...commentList, ...data.comments.content]);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
@@ -218,7 +218,6 @@ export function FundingDetailContainer() {
       nextCommentList();
     }
   }, [inView]);
-
 
   // 로그인 정보
   const userId = useAppSelector((state) => state.userSlice.userId);
@@ -468,7 +467,7 @@ export function FundingDetailContainer() {
         </div>
         <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.mainCommentSubmit}>
-          <CommentCardSubmit initCommentList={initCommentList}/>
+          <CommentCardSubmit initCommentList={initCommentList} />
         </div>
         <div className={styles.mainComments}>
           {isLoading ? (

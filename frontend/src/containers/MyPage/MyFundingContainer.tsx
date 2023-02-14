@@ -24,7 +24,7 @@ export function MyFundingContainer() {
     },
   ]);
   // 정렬 설정
-  const [alignment, setAlignment] = useState('DESC');
+  const [alignment, setAlignment] = useState('payDate,DESC');
 
   const handleChange = (event: React.MouseEvent<HTMLElement>, newAlignment: string) => {
     setAlignment(newAlignment);
@@ -53,13 +53,14 @@ export function MyFundingContainer() {
           <h1 className={styles.title}>나의 펀딩 내역</h1>
           <div className={styles.toggleBtn}>
             <ToggleButtonGroup color="warning" value={alignment} exclusive onChange={handleChange} aria-label="Platform" className={styles.btnGrp}>
-              <ToggleButton value="DESC">최신순</ToggleButton>
-              <ToggleButton value="ASC">오래된순</ToggleButton>
+              <ToggleButton value="payDate,DESC">최신순</ToggleButton>
+              <ToggleButton value="payDate,ASC">오래된순</ToggleButton>
             </ToggleButtonGroup>
           </div>
           <div className={styles.contentBox}>
-            {fundList.map((data) => (
-              <LongCard {...data} key={data.postId} />
+            {fundList.map((data, idx) => (
+              // eslint-disable-next-line
+              <LongCard {...data} key={idx} />
             ))}
           </div>
         </div>

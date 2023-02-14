@@ -133,7 +133,7 @@ export const postFundingComment = async (commentData: string, fundingId?: string
  * @method GET
  */
 export const requestCommentList = async (fundingId?: string, sort?: string) => {
-  const res = await http.get(`funding/${fundingId}/?sort=${sort}`);
+  const res = await http.get(`funding/${fundingId}/sort=${sort}`);
   console.log('댓글호출', res);
 
   return res;
@@ -144,7 +144,7 @@ export const requestCommentList = async (fundingId?: string, sort?: string) => {
  * @method GET
  */
 export const requestNextCommentList = async (currentPage: number, fundingId?: string, sort?: string) => {
-  const response = await http.get(`funding/${fundingId}/?page=${currentPage + 1}&?sort=${sort}`);
+  const response = await http.get(`funding/${fundingId}/?page=${currentPage + 1}&sort=${sort}`);
   return response;
 };
 
@@ -173,7 +173,7 @@ export const fundingJoin = async (amount?: string, fundingId?: string) => {
  */
 
 export const requestFundingJoin = async (page: number, size: number, sort?: string) => {
-  const res = await http.get(`member/mileage?page=${page}&postGroup=FUNDING&?size=${size}&?sort=${sort}`);
+  const res = await http.get(`member/mileage?page=${page}&postGroup=FUNDING&size=${size}&sort=${sort}`);
   return res;
 };
 
