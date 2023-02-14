@@ -40,10 +40,4 @@ public class Member extends User{
 	public void signOut(){
 		super.signOut(UserType.NORMAL_RESIGN);
 	}
-
-	public void checkMoney(Long amount) {
-		if(this.getMoney() < amount){
-			throw new IllegalArgumentException("소지한 금액보다 액수가 큽니다.");
-		}
-	}
 }
