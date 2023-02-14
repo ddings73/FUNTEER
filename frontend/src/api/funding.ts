@@ -84,7 +84,6 @@ export const requestFundingDetail = async (fundIdx?: string) => {
  */
 export const requestNextFundingList = async (currentPage: number, size: number) => {
   console.log(currentPage, size);
-
   const response = await http.get(`funding/?page=${currentPage + 1}&size=${size}`);
   return response;
 };
@@ -133,7 +132,7 @@ export const postFundingComment = async (commentData: string, fundingId?: string
  * @method GET
  */
 export const requestCommentList = async (fundingId?: string, sort?: string) => {
-  const res = await http.get(`funding/${fundingId}/sort=${sort}`);
+  const res = await http.get(`funding/${fundingId}/?page=0&sort=${sort}`);
   console.log('댓글호출', res);
 
   return res;

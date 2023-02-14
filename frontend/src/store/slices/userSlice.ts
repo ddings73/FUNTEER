@@ -7,7 +7,7 @@ export interface UserStateInterface {
   userType: string;
   userId: string;
   username: string;
-  profileImgUrl:string
+  profileImgUrl: string;
 }
 
 const initialState: UserStateInterface = {
@@ -15,7 +15,7 @@ const initialState: UserStateInterface = {
   userType: '',
   userId: '',
   username: '',
-  profileImgUrl:''
+  profileImgUrl: '',
 };
 
 export const userSlice = createSlice({
@@ -27,7 +27,7 @@ export const userSlice = createSlice({
       state.userType = action.payload.userType;
       state.userId = action.payload.userId;
       state.username = action.payload.username;
-      state.profileImgUrl=action.payload.profileImgUrl
+      state.profileImgUrl = action.payload.profileImgUrl;
     },
     setUserType: (state, action: PayloadAction<string>) => {
       state.userType = action.payload;
@@ -44,5 +44,6 @@ export const userSlice = createSlice({
 export const { setUserLoginState, setUserType, resetLoginState } = userSlice.actions;
 
 export const isLoginState = (state: RootState) => state.userSlice.isLogin;
+export const profileImgState = (state: RootState) => state.userSlice.profileImgUrl;
 
 export default userSlice.reducer;
