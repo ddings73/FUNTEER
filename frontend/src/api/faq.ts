@@ -1,54 +1,49 @@
 import { FaqInterface } from '../types/faq';
 import { http } from './axios';
 
-
 /**
  * faq 생성 API
  * @method POST
  * @param {FaqInterface} faqData
  */
-
 export const requestCreateFaq = async (faqData: FaqInterface) => {
-  const data={
-    title:faqData.title,
-    content:faqData.content
-  }
+  const data = {
+    groupOrPerson: faqData.groupOrPerson,
+    title: faqData.title,
+    content: faqData.content,
+  };
 
   const res = await http.post('faq', data);
+
   return res;
 };
-
 
 /** faq 수정 API */
-export const requestModifyFaq = async (faqIdx:number, faqData: FaqInterface) => {
-  const formData = new FormData();
-  const entry = Object.entries(faqData);
+export const requestModifyFaq = async (FAQInfo: FaqInterface) => {
+  const data = {
+    groupOrPerson: FAQInfo.groupOrPerson,
+    title: FAQInfo.title,
+    content: FAQInfo.content,
+  };
 
-  entry.forEach((data) => {
-    const key = data[0];
-    const value = data[1];
-    formData.append(`${key}`, value);
-  });
-  
-  const res = await http.put(`faq/${faqIdx}`, formData);
+  const res = await http.put(`faq/${FAQInfo.id}`, data);
+
   return res;
 };
-
-
-
 
 /**
  * faq 리스트 호출 API
  * @method GET
  */
+export const requestFaqList = async (size?: number) => {
+  const params = {
+    size,
+  };
 
-export const requestFaqList = async (size: number) => {
-  const res = await http.get(`faq?size=${size}`);
-  console.log(res);
+  const res = await http.get('faq', { params });
 
   return res;
 };
-
 
 /**
  * @name 다음 faq리스트호출
@@ -65,9 +60,15 @@ export const requestNextAdminFaqList = async (currentPage: number, size: number)
  * faq 상세 호출
  * @method GET
  */
-
 export const requestFaqDetail = async (postId?: number) => {
   const res = await http.get(`faq/${postId}`);
   console.log(res);
+  return res;
+};
+
+/** faq 삭제 */
+export const requestFaqDelete = async (postId: number) => {
+  const res = await http.delete(`faq/${postId}`);
+
   return res;
 };

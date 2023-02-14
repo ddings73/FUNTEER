@@ -14,5 +14,6 @@ public interface QnaRepository extends JpaRepository<Qna,Long> {
 	List <Qna>findAllByUserOrderByQnaIdDesc(User user, Pageable pageable);
 	List<Qna>findAllByOrderByQnaIdDesc(Pageable pageable);
 	Optional<Qna>findByQnaId(Long qnaId);
+	Qna findLastByOrderById();
 
 }

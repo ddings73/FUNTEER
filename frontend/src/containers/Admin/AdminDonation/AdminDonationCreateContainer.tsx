@@ -1,20 +1,16 @@
-import React, { ChangeEvent, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Dayjs } from 'dayjs';
 import '@toast-ui/editor/dist/toastui-editor.css';
+import { AiOutlineClose } from 'react-icons/ai';
 import { Editor as ToastEditor } from '@toast-ui/react-editor';
 import { Button } from '@mui/material';
-import { blob } from 'stream/consumers';
-import requiredIcon from '../../../assets/images/funding/required.svg';
 import { requestCreateDonation } from '../../../api/donation';
-import styles from './AdminDonationCreateContainer.module.scss';
-import { stringToSeparator } from '../../../types/convert';
 import { DonationInterface } from '../../../types/donation';
+import styles from './AdminDonationCreateContainer.module.scss';
+import requiredIcon from '../../../assets/images/funding/required.svg';
 
 function AdminDonationCreateContainer() {
-  /** 여기서 함수, 변수 선언하거나 axios 요청 */
   const navigate = useNavigate();
-  const [filePreview, setFilePreview] = useState<string>();
   const editorRef = useRef<ToastEditor>(null);
   const [donationData, setDonationData] = useState<DonationInterface>({
     file: null,
@@ -77,7 +73,6 @@ function AdminDonationCreateContainer() {
     }
   };
 
-  /** 아래는 TSX 문법, HTML 코드 작성 */
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
@@ -86,10 +81,13 @@ function AdminDonationCreateContainer() {
           <p>제목</p> <img src={requiredIcon} alt="required icon" />
         </div>
         <input name="title" type="text" className={styles['email-title']} placeholder="제목을 입력해주세요." onChange={onChangeTextHandler} />
-        <div className={styles.editor}>
+        <div className={styles['label-div']}>
+          <p>내용</p> <img src={requiredIcon} alt="required icon" />
+        </div>
+        <div>
           <ToastEditor
             ref={editorRef}
-            placeholder="* 진행하시는 펀딩에 대해 자세히 설명해주세요."
+            placeholder="기부 행사에 대한 설명을 기입해주세요."
             height="500px"
             useCommandShortcut
             initialEditType="wysiwyg"
@@ -98,8 +96,7 @@ function AdminDonationCreateContainer() {
             hideModeSwitch // 하단의 타입 선택 탭 숨기기
           />
         </div>
-
-        <div className={styles['label-div']}>
+        <div className={styles['label-div']} style={{ marginTop: '3rem' }}>
           <p>목표 금액</p> <img src={requiredIcon} alt="required icon" />
         </div>
         <input type="text" name="amount" className={styles['email-title']} placeholder="목표금액을 입력해주세요." onChange={onChangeTextHandler} />
@@ -107,7 +104,7 @@ function AdminDonationCreateContainer() {
           <p>첨부파일</p>
           <img src={requiredIcon} alt="required icon" />
         </div>
-        <input name="file" type="file" style={{ width: '795px' }} accept="image/*" onChange={onFileHandler} required />
+        <input name="file" type="file" style={{ width: '815px' }} accept="image/*" onChange={onFileHandler} required />
 
         <div className={styles['btn-div']}>
           <Button variant="contained" className={styles.submit} onClick={onClickCancel}>

@@ -21,6 +21,7 @@ import com.yam.funteer.admin.dto.MemberListResponse;
 import com.yam.funteer.admin.dto.TeamConfirmRequest;
 import com.yam.funteer.admin.dto.TeamListResponse;
 import com.yam.funteer.admin.service.AdminService;
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.funding.dto.request.RejectReasonRequest;
 import com.yam.funteer.funding.dto.response.FundingListResponse;
@@ -127,10 +128,10 @@ public class AdminController {
 	@ApiOperation(value = "관리자 펀딩 리스트 조회", notes = "관리자 페이지에서 펀딩 리스트를 조회한다.")
 	@GetMapping("/funding")
 	public ResponseEntity<Page<FundingListResponse>> findAllFunding(
-		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
-		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
-		return ResponseEntity.ok(fundingService.findAllFundingByAdmin(pageRequest));
+			@RequestParam(required = false, defaultValue = "") String keyword,
+			@RequestParam(required = false) PostType postType,
+			@PageableDefault(size = 8, sort = "id",  direction = Sort.Direction.DESC) Pageable pageable) {
+		return ResponseEntity.ok(fundingService.findAllFundingByAdmin(keyword, postType, pageable));
 	}
 
 	@ApiOperation(value = "관리자 펀딩 검색 조회", notes = "관리자 페이지에서 검색을 통해 제목과 내용에 키워드가 포함된 펀딩을 조회한다.")
@@ -139,7 +140,7 @@ public class AdminController {
 		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
 		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
 		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
-		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword, pageRequest));
+		return ResponseEntity.ok(fundingService.findFundingByKeywordByAdmin(keyword, pageRequest));
 	}
 
 }

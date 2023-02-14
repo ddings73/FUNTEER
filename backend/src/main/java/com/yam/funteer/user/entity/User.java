@@ -80,7 +80,7 @@ public class User {
 			case NORMAL_RESIGN:
 			case TEAM_RESIGN: throw new AccessDeniedException("탈퇴한 회원입니다.");
 			case KAKAO: throw new AccessDeniedException("카카오 회원은 카카오로 로그인해주세요");
-			case TEAM_WAIT: throw new AccessDeniedException("가입 대기중인 회원입니다.");
+			// case TEAM_WAIT: throw new AccessDeniedException("가입 대기중인 회원입니다.");
 		}
 	}
 	public void validatePassword(PasswordEncoder passwordEncoder, String password){
@@ -101,6 +101,7 @@ public class User {
 	}
 
 	public void checkMoney(Long amount) {
+		if(amount <= 0) throw new IllegalArgumentException("음수나 0은 입력하시면 안돼요");
 		if(this.money < amount) throw new IllegalArgumentException("잔고가 부족합니다.");
 	}
 }

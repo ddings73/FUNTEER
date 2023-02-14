@@ -4,6 +4,7 @@
 .container {
   width: 100%;
   min-height: 100vh;
+  height: 100%;
   display: flex;
   justify-content: center;
   font-family: NanumSquare !important;
@@ -13,7 +14,7 @@
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 1440px;
+    max-width: 1160px;
 
     .title {
       font-size: 2rem;
@@ -24,7 +25,7 @@
     .label-div {
       display: flex;
       align-items: center;
-      width: 800px;
+      width: 815px;
       margin: 0.5rem 0;
       font-size: 1.25rem;
 
@@ -36,19 +37,11 @@
     }
 
     .email-title {
-      width: 780px;
+      width: 790px;
       height: 35px;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
       padding: 0 0.7rem;
-      border-radius: 5px;
-      font-family: NanumSquare;
-    }
-
-    .editor {
-      width: 805px;
-      height: 500px;
-      margin-bottom: 1rem;
-      padding: 1rem;
+      border: 1px solid rgb(179, 179, 179);
       border-radius: 5px;
       font-family: NanumSquare;
     }

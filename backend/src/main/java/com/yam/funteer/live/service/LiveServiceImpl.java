@@ -116,7 +116,8 @@ public class LiveServiceImpl implements LiveService{
 
                     // 녹화 종료
                     if(session.isBeingRecorded()) {
-                        recordSaveThisSession(live.getTeam(), sessionId);
+                        Attach attach = recordSaveThisSession(live.getTeam(), sessionId);
+                        live.saveFile(attach);
                     }
                 }
 
@@ -216,7 +217,7 @@ public class LiveServiceImpl implements LiveService{
             throw new RuntimeException(e);
         }
     }
-    private void recordSaveThisSession(Team team, String sessionId){
+    private Attach recordSaveThisSession(Team team, String sessionId){
         log.info("녹화 저장 시작");
 
         log.info("sessionId => {}", sessionId);
@@ -231,11 +232,10 @@ public class LiveServiceImpl implements LiveService{
         Attach attach = Attach.of(file.getName(), path, FileType.LIVE);
         attachRepository.save(attach);
 
-        TeamAttach teamAttach = TeamAttach.of(team, attach);
-        teamAttachRepository.save(teamAttach);
 
         removeRecordingInServer(recording);
 
+        return attach;
     }
 
     private void removeRecordingInServer(Recording recording) {
@@ -269,8 +269,6 @@ public class LiveServiceImpl implements LiveService{
             Long userId = SecurityUtil.getCurrentUserId();
             User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
             Long amount = request.getAmount();
-
-            if(amount <= 0) throw new IllegalArgumentException("음수나 0은 입력하시면 안돼요");
 
             user.checkMoney(amount);
 

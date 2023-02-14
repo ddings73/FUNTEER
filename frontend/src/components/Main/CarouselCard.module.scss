@@ -3,9 +3,29 @@
 
 .box {
   height: 300px;
-  background-color: brown;
-  color: aliceblue;
+  color: rgb(143, 143, 143);
   font-size: 200px;
+  position: relative;
+  text-decoration: none;
+  & .boxImg {
+    width: 95%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 10px 10px 10px 10px;
+  }
+  & .boxImgLabel {
+    display: flex;
+    position: absolute;
+    width: 95%;
+    height: 13%;
+    background-color: rgba(0, 0, 0, 0.39);
+    bottom: 0;
+    font-size: 1.3rem;
+    color: aliceblue;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0px 0px 10px 10px;
+  }
 }
 .slick-prev {
   left: 3% !important;
