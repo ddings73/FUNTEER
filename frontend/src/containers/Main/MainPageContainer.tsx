@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { EventListener, EventSourcePolyfill } from 'event-source-polyfill';
+import { useEffectOnce } from 'usehooks-ts';
 import { Fade, Tooltip } from '@mui/material';
 import styles from './MainPageContainer.module.scss';
 import InfoCard from '../../components/Main/InfoCard';
@@ -11,8 +12,14 @@ import planet from '../../assets/images/mainPage/planet_funteer.png';
 import background from '../../assets/images/mainPage/background.png';
 import wave from '../../assets/images/mainPage/wave.svg';
 import wave2 from '../../assets/images/mainPage/wave2.svg';
+import { http } from '../../api/axios';
 
 export function MainPageContainer() {
+  const eventListType={
+    content:String,
+    alarmId:String,
+    userEmail:String,
+  }
   const [scrollPosition, setScrollPosition] = useState(0);
   const updateScroll = () => {
     setScrollPosition(window.scrollY || document.documentElement.scrollTop);
@@ -22,6 +29,7 @@ export function MainPageContainer() {
   const [listening, setListening] = useState(false);
   const [sseData, setSseData] = useState({});
   const [respon, setRespon] = useState(false);
+  const [eventList, setEventList] = useState<typeof eventListType[]>();
   let eventSource: EventSourcePolyfill | undefined;
 
   useEffect(() => {
@@ -31,6 +39,28 @@ export function MainPageContainer() {
       window.removeEventListener('scroll', updateScroll);
     };
   });
+
+  useEffectOnce(()=>{
+    if(token){
+      requestGetAlarms();
+    }
+  })
+
+  const requestGetAlarms = async () => {
+    setEventList([]);
+    try {
+      const response = await http.get('subscribe/alarm');
+      // console.log(response);
+      setEventList(response.data);
+
+      response.data.forEach((event:typeof eventListType)=>{
+        // alert(event.content);
+      })
+      
+    } catch (error) {
+      console.error(error);
+    }
+};
 
   // sse
   useEffect(() => {
