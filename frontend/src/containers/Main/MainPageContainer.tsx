@@ -40,17 +40,12 @@ export function MainPageContainer() {
     };
   });
 
-  useEffectOnce(()=>{
-    if(token){
-      requestGetAlarms();
-    }
-  })
 
   const requestGetAlarms = async () => {
     setEventList([]);
     try {
       const response = await http.get('subscribe/alarm');
-      // console.log(response);
+      console.log(response);
       setEventList(response.data);
 
       response.data.forEach((event:typeof eventListType)=>{
@@ -97,6 +92,7 @@ export function MainPageContainer() {
 
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
         console.log(event.data);
+        requestGetAlarms();
       }) as EventListener);
     } else {
       console.log('logout');
