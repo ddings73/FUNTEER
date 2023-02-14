@@ -40,6 +40,7 @@ const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내�
 
 function ResponsiveAppBar() {
   type eventListType={
+    url:String,
     content:String,
     alarmId:Number,
     userEmail:String,
@@ -223,11 +224,12 @@ function ResponsiveAppBar() {
 
 
   // 상세보기 및 삭제
-  const eventRead = async (alarmId:Number) => {
+  const eventRead = async (alarmId:Number,url:String) => {
     
     try {
       await http.put(`subscribe/alarm/${alarmId}`);
       await http.delete(`subscribe/alarm/${alarmId}`);
+      navigateTo(typeof url);
     }  
      catch (error) {
       console.error(error);
@@ -307,7 +309,7 @@ function ResponsiveAppBar() {
                   <Menu open={open} onClose={handleClose}>
                     {
                       eventList.map((event)=>(
-                        <MenuItem onClick={()=>eventRead(event.alarmId)}>{event.content}</MenuItem>
+                        <MenuItem onClick={()=>eventRead(event.alarmId,event.url)}>{event.content}</MenuItem>
                       ))
                     }
                   </Menu>
