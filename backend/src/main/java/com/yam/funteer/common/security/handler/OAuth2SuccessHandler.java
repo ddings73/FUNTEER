@@ -32,7 +32,7 @@ public class OAuth2SuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
         String email = (String)oAuth2User.getAttributes().get("email");
 
-        String targetURI = UriComponentsBuilder.fromUriString("http://localhost:3000/login/kakao")//https://i8e204.p.ssafy.io/login/kakao")
+        String targetURI = UriComponentsBuilder.fromUriString("https://i8e204.p.ssafy.io/login/kakao")
             .queryParam("email", email).toUriString();
         getRedirectStrategy().sendRedirect(request, response, targetURI);
     }
