@@ -43,6 +43,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service @Slf4j
+@Transactional
 @RequiredArgsConstructor
 public class LiveServiceImpl implements LiveService{
     @Value("${OPENVIDU.URL}")
@@ -67,7 +68,6 @@ public class LiveServiceImpl implements LiveService{
     }
 
     @Override
-    @Transactional
     public CreateConnectionResponse initializeSession(CreateConnectionRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
         User user = userRepository.findById(userId)
@@ -127,8 +127,7 @@ public class LiveServiceImpl implements LiveService{
     }
 
 
-    @Transactional
-    protected CreateConnectionResponse createNewSession(String sessionName, Funding funding, User user,
+    private CreateConnectionResponse createNewSession(String sessionName, Funding funding, User user,
                                                       RecordingProperties recordingProperties) {
         try {
             log.info("세션 생성 ===========> {}", sessionName);
@@ -211,9 +210,7 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
-
-    @Transactional
-    protected Recording getSessionRecording(String sessionId) {
+    private Recording getSessionRecording(String sessionId) {
         try {
             Recording recording = this.openVidu.getRecording(sessionId);
             return this.openVidu.stopRecording(recording.getId());
@@ -221,9 +218,7 @@ public class LiveServiceImpl implements LiveService{
             throw new RuntimeException(e);
         }
     }
-
-
-    protected Attach recordSaveThisSession(Team team, String sessionId){
+    private Attach recordSaveThisSession(Team team, String sessionId){
         log.info("녹화 저장 시작");
 
         log.info("sessionId => {}", sessionId);
@@ -244,9 +239,7 @@ public class LiveServiceImpl implements LiveService{
         return attach;
     }
 
-
-    @Transactional
-    protected void removeRecordingInServer(Recording recording) {
+    private void removeRecordingInServer(Recording recording) {
         try{
             this.openVidu.deleteRecording(recording.getId());
         }catch (OpenViduJavaClientException | OpenViduHttpException e) {
@@ -254,6 +247,7 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
+    @Override
     public ActiveSessionsResponse getCurrentActiveSessions(Pageable pageable) {
         openviduFetch();
         Page<Live> livePage = liveRepository.findByEndTimeIsNull(pageable);
@@ -262,7 +256,6 @@ public class LiveServiceImpl implements LiveService{
     }
 
     @Override
-    @Transactional
     public void giftToFundingTeam(GiftRequest request) {
         String sessionName = request.getSessionName();
         liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).ifPresentOrElse(live -> {
@@ -291,9 +284,7 @@ public class LiveServiceImpl implements LiveService{
         });
     }
 
-
-    @Transactional
-    protected void openviduFetch(){
+    private void openviduFetch(){
         try {
             this.openVidu.fetch();
         } catch (OpenViduJavaClientException e) {
