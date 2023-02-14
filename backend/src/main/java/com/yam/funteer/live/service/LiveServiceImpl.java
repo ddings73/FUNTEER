@@ -164,9 +164,14 @@ public class LiveServiceImpl implements LiveService{
             openviduFetch();
             Session session = this.openVidu.getActiveSession(live.getSessionId());
             if(session == null){
-                log.info("OpenVidu 서버에 동작중인 세션이 없음");
+                log.warn("OpenVidu 서버에 동작중인 세션이 없음");
                 live.end();
-                return initializeSession(request);
+
+                Team prevTeam = live.getFunding().getTeam();
+                if(prevTeam.getId().equals(user.getId())) {
+                    return initializeSession(request);
+                }
+                throw new SessionNotFoundException();
             }
 
             if(!session.isBeingRecorded()){
@@ -194,9 +199,13 @@ public class LiveServiceImpl implements LiveService{
             return new CreateConnectionResponse(token);
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             log.error(e.getMessage());
+            log.warn("OpenVidu 서버에 동작중인 세션이 없음");
 
-            log.info("OpenVidu 서버에 동작중인 세션이 없음");
-            return initializeSession(request);
+            Team prevTeam = live.getFunding().getTeam();
+            if(prevTeam.getId().equals(user.getId())) {
+                return initializeSession(request);
+            }
+            throw new SessionNotFoundException();
         }
     }
 
