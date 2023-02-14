@@ -26,5 +26,5 @@ export type donateModalType = {
 
 export type reportModalType = {
   isOpen: boolean;
-  content: string;
+  fundingId: string;
 };

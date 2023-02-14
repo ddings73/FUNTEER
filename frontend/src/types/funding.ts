@@ -57,7 +57,3 @@ export type amountLevelType = {
 export type descriptionType = {
   description: string;
 };
-
-// export type commentType ={
-
-// }

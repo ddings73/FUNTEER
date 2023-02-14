@@ -1,6 +1,6 @@
 import { async } from 'q';
 // import { commentType } from '../components/Cards/CommentCardSubmit';
-import { FundingInterface } from '../types/funding';
+import { FundingInterface, FundingReportInterface } from '../types/funding';
 import { http } from './axios';
 
 /**
@@ -185,4 +185,16 @@ export const requestFundingReport = async (fundingId?: string) => {
   const res = await http.get(`funding/${fundingId}/report`);
   console.log('report res', res);
   return res;
+};
+
+/**
+ * @name 펀딩보고서 작성
+ * @param fundingId
+ */
+export const fundingReportPost = async (fundingId?: string, reportData?: FundingReportInterface) => {
+  const formData = new FormData();
+  formData.append('content', reportData?.content as string);
+  formData.append('reportDetailResponseList', new Blob([JSON.stringify(reportData?.reportDetailResponseList)]));
+  const res = await http.post(`funding/${fundingId}/report`, formData);
+  console.log('전송된 report res', res);
 };

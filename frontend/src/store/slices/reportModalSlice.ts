@@ -3,26 +3,23 @@ import { reportModalType } from '../../types/modal';
 
 const initialState: reportModalType = {
   isOpen: false,
-  content: '',
+  fundingId: '',
 };
 
 export const reportModalSlice = createSlice({
   name: 'reportModalSlice',
   initialState,
   reducers: {
-    openModal: (state) => {
+    openModal: (state, action: PayloadAction<reportModalType>) => {
       state.isOpen = true;
+      state.fundingId = action.payload.fundingId;
     },
-    closeModalWith: (state, action: PayloadAction<reportModalType>) => {
-      state.isOpen = action.payload.isOpen;
-      state.content = action.payload.content;
-    },
-    closeModalPlain: (state) => {
+    closeModal: (state) => {
       state.isOpen = false;
     },
   },
 });
 
-export const { openModal, closeModalWith, closeModalPlain } = reportModalSlice.actions;
+export const { openModal, closeModal } = reportModalSlice.actions;
 
 export default reportModalSlice.reducer;

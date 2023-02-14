@@ -24,7 +24,7 @@ import { requestTeamAccountInfo } from '../../api/team';
 import { requestCreateSession } from '../../api/live';
 import { reportModalType } from '../../types/modal';
 import ReportModal from '../../components/Modal/ReportModal';
-import { closeModalPlain, openModal } from '../../store/slices/reportModalSlice';
+import { openModal } from '../../store/slices/reportModalSlice';
 
 export interface ResponseInterface {
   title: string;
@@ -88,7 +88,7 @@ export function FundingDetailContainer() {
   const navigate = useNavigate();
   const [commentList, setCommentList] = useState<commentType[]>([]);
   const userType = useAppSelector((state) => state.userSlice.userType);
-  const { fundIdx } = useParams();
+  const { fundIdx } = useParams<string>();
   const [board, setBoard] = useState<ResponseInterface>({
     title: '',
     startDate: '',
@@ -345,7 +345,7 @@ export function FundingDetailContainer() {
           <p className={styles.bannerSeen}> 조회수 {board.hit}회</p>
           {userType === 'TEAM' && teamInfo.id === board.team.id && (
             <div className={styles.bannerButtonGroup}>
-              <button className={styles.bannerGrpBtn} type="button" onClick={() => dispatch(openModal())}>
+              <button className={styles.bannerGrpBtn} type="button" onClick={() => dispatch(openModal({ isOpen: true, fundingId: fundIdx as string }))}>
                 보고서 제출
               </button>
               <button
