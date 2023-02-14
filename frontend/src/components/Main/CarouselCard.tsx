@@ -1,10 +1,26 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Slider from 'react-slick';
+import { NavLink } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
 import styles from './CarouselCard.module.scss';
+import { requestFundingList } from '../../api/funding';
+
+type fundCarouselType = {
+  id: number;
+  title: string;
+  thumbnail: string;
+};
 
 export function CarouselCard() {
+  const [fundDataList, setFundDataList] = useState<fundCarouselType[]>([
+    {
+      id: 0,
+      title: '',
+      thumbnail: '',
+    },
+  ]);
+
   const settings = {
     dots: false,
     infinite: true,
@@ -26,27 +42,31 @@ export function CarouselCard() {
       },
     ],
   };
+
+  const getRecentFundList = async () => {
+    try {
+      const res = await requestFundingList(10);
+      console.log('캐러셀 데이터', res.data.fundingListResponses.content);
+      setFundDataList(res.data.fundingListResponses.content);
+      console.log('ㅇㅇ', fundDataList);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  useEffect(() => {
+    getRecentFundList();
+  }, []);
+
   return (
     <div>
       <Slider {...settings}>
-        <div className={styles.box}>
-          <h3>1</h3>
-        </div>
-        <div className={styles.box}>
-          <h3>2</h3>
-        </div>
-        <div className={styles.box}>
-          <h3>3</h3>
-        </div>
-        <div className={styles.box}>
-          <h3>4</h3>
-        </div>
-        <div className={styles.box}>
-          <h3>5</h3>
-        </div>
-        <div className={styles.box}>
-          <h3>6</h3>
-        </div>
+        {fundDataList.map((data, i) => (
+          <NavLink to={`/funding/detail/${data.id}`} className={styles.box} key={data.id}>
+            <img className={styles.boxImg} src={data.thumbnail} alt="Img" />
+            <div className={styles.boxImgLabel}>{data.title.length > 15 ? `${data.title.substring(0, 15)}...` : data.title}</div>
+          </NavLink>
+        ))}
       </Slider>
     </div>
   );

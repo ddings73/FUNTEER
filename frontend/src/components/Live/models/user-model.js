@@ -22,6 +22,24 @@ class UserModel {
     this.nickname = '';
     this.streamManager = null;
     this.type = 'local';
+    this.userProfileImg = '';
+    this.allAmount = 0;
+  }
+
+  getAllAmount() {
+    return this.allAmount;
+  }
+
+  setAllAmount(allAmount) {
+    this.allAmount = allAmount;
+  }
+
+  getUserProfileImg() {
+    return this.userProfileImg;
+  }
+
+  setUserProfileImg(userProfileImg) {
+    this.userProfileImg = userProfileImg;
   }
 
   isAudioActive() {

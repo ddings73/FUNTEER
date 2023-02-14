@@ -1,4 +1,5 @@
 import { string } from 'yargs';
+import { FundingElementType } from './funding';
 
 export type UserSignInType = {
   email: string;
@@ -31,7 +32,7 @@ export type teamProfileType = {
   phone: string;
   money: number;
   description: string;
-  fundingList: object;
+  fundingList: FundingElementType[];
   totalFundingAmount: number;
 };
 

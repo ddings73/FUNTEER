@@ -1,10 +1,81 @@
-.nickname {
-  background: rgba(58, 64, 74, 0.651);
-  padding: 5px !important;
+.info-box {
+  display: flex;
+  flex-direction: row;
   position: absolute;
+  align-items: center;
+  top: 5px;
+  left: 5px ;
   z-index: 999;
-  color: #ffffff;
 }
+
+.nickname {
+  box-sizing: border-box;
+  background: rgba(236, 153, 75, 1);
+  padding: 8px !important;
+  color: #ffffff;
+  font-weight: bold;
+  letter-spacing: 1.2px;
+  line-height: 1.2;
+  font-size: 22px !important;
+}
+
+.count-box {
+  display: flex;
+  flex-direction: r;
+  margin-left: 15px !important;
+}
+
+.count-box .left {
+  background-color: #c71100;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 5px;
+}
+.count-box .right {
+  text-align: center;
+  min-width: 50px;
+  background-color: #707070;
+  color: #ffffff;
+  font-weight: bold;
+  padding: 5px;
+}
+
+.allDonationAmount-box {
+  position: absolute;
+  top: 60px;
+  min-width: 342px;
+  height: 50px !important;
+  background-color: rgba(211, 79, 4, 1);
+}
+
+.allDonationAmount {
+  line-height: 50px;
+  padding: 20px;
+  font-size: 18px !important;
+  font-weight: bold;
+  color: #ffff;
+  text-align: center;
+}
+.donationAnimation-box {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  bottom: 0;
+  right: 0;
+  z-index: 999;
+  background-color: transparent;
+}
+
+.donationAnimation-box .donation-contents{
+  border-radius: 10px;
+  text-align: center;
+  padding: 20px;
+  font-size: 17px;
+  color: #fff;
+  font-weight: bold;
+  background-color: rgba(240, 175, 142, 1)
+}
+
 .form-control {
   color: black;
 }

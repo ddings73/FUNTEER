@@ -25,7 +25,7 @@
     .label-div {
       display: flex;
       align-items: center;
-      width: 810px;
+      width: 815px;
       margin: 1rem 0 0.5rem 0;
       font-size: 1.25rem;
 
@@ -37,19 +37,11 @@
     }
 
     .email-title {
-      width: 780px;
+      width: 790px;
       height: 35px;
-      margin-bottom: 1rem;
+      margin-bottom: 2rem;
       padding: 0 1rem;
-      border-radius: 5px;
-      font-family: NanumSquare;
-    }
-
-    .email-content {
-      width: 700px;
-      height: 400px;
-      margin-bottom: 1rem;
-      padding: 1rem;
+      border: 1px solid rgb(179, 179, 179);
       border-radius: 5px;
       font-family: NanumSquare;
     }
@@ -69,7 +61,8 @@
 
     .btn-div {
       display: flex;
-      margin-top: 1rem;
+      justify-content: space-around;
+      margin: 2rem 0 4rem;
 
       .submit {
         background-color: $primary;
@@ -79,11 +72,32 @@
     }
 
     .file-list {
-      width: 800px;
-      margin-top: 1rem;
+      width: 815px;
       color: $primary;
       font-size: 1rem;
       font-weight: bold;
+
+      & p {
+        height: 1.5rem;
+        display: flex;
+        align-items: center;
+        margin-bottom: 0.5rem;
+
+        .withdraw-btn {
+          margin-left: 0.5rem;
+          border: none;
+          border-radius: 100%;
+          box-shadow: none;
+          color: $error;
+          font-size: 17px;
+          font-weight: bold;
+
+          &:hover {
+            cursor: pointer;
+            color: $primary;
+          }
+        }
+      }
     }
   }
 }

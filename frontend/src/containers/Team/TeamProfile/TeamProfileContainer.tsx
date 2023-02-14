@@ -5,6 +5,7 @@ import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 import Button from '@mui/material/Button';
 import EmailIcon from '@mui/icons-material/Email';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { CircularProgress } from '@mui/material';
 import { requestTeamProfileInfo } from '../../../api/team';
 import TeamSideBarList from '../../../components/TeamPageSideBar/TeamSideBarList';
 import { teamProfileType } from '../../../types/user';
@@ -12,6 +13,8 @@ import { requestFollow } from '../../../api/user';
 import styles from './TeamProfileContainer.module.scss';
 import defaultImage from '../../../assets/images/default-profile-img.svg';
 import { useAppSelector } from '../../../store/hooks';
+import FundingListElement from '../../../components/Funding/FundingListElement';
+import { FundingElementType } from '../../../types/funding';
 
 function TeamProfileContainer() {
   const navigate = useNavigate();
@@ -34,6 +37,10 @@ function TeamProfileContainer() {
     totalFundingAmount: 0,
   });
 
+  useEffect(() => {
+    requestTeamInfo();
+  }, []);
+
   /** 단체 프로필 정보 요청 */
   const requestTeamInfo = async () => {
     try {
@@ -46,10 +53,6 @@ function TeamProfileContainer() {
       console.error(error);
     }
   };
-
-  useEffect(() => {
-    requestTeamInfo();
-  }, []);
 
   /** 팔로우 요청 */
   const onClickFollowBtn = async () => {
@@ -83,7 +86,7 @@ function TeamProfileContainer() {
 
   return (
     <div className={styles.container}>
-      {userId === teamId && <TeamSideBarList teamId={teamId} />}
+      {userId.toString() === teamId && <TeamSideBarList teamId={teamId} />}
       <div className={styles.content}>
         <div className={styles['content-inner']}>
           {/* 프로필 카드 */}
@@ -102,7 +105,7 @@ function TeamProfileContainer() {
                     {!isFollowing && <BsBookmarkHeart color="red" onClick={onClickFollowBtn} className={styles['follow-btn']} />}
                   </div>
                 )}
-                {userId === teamId && <SettingsIcon className={styles.setting} onClick={onClickSetting} />}
+                {userId.toString() === teamId && <SettingsIcon className={styles.setting} onClick={onClickSetting} />}
               </h1>
               <div className={styles['profile-card-info-content']}>
                 <div className={styles['profile-card-info-left']}>
@@ -151,8 +154,12 @@ function TeamProfileContainer() {
           <div className={styles['funding-div']}>
             <h1>
               프로젝트 <span style={{ color: 'orange', fontWeight: 'bold' }}>{Object.keys(teamProfileInfo.fundingList).length}</span>
-              <div style={{ marginTop: '2rem', color: 'grey' }}>... 펀딩 리스트에서 가져올 예정 ...</div>
             </h1>
+            <div className={styles['funding-list']}>
+              {teamProfileInfo.fundingList?.map((funding: FundingElementType) => (
+                <FundingListElement {...funding} key={funding.id} />
+              ))}
+            </div>
           </div>
         </div>
       </div>

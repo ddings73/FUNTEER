@@ -171,15 +171,16 @@
       & li {
         width: 100%;
         display: flex;
-        justify-content: center;
 
         & p {
+          margin-left: 2rem;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
         }
 
         .cancel {
+          margin-left: 2rem;
           text-decoration: none;
           font-size: 0.8rem;
           color: rgb(156, 156, 156);

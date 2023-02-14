@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { BsCameraFill } from 'react-icons/bs';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import TextField from '@mui/material/TextField';
@@ -11,6 +11,7 @@ import { requestChangeDescription, requestChangePassword, requestChangePerform, 
 import { customAlert, s1000, w1500 } from '../../../utils/customAlert';
 
 function TeamEditContainer() {
+  const navigate = useNavigate();
   const location = useLocation();
 
   /** 프로필 정보 */
@@ -258,6 +259,9 @@ function TeamEditContainer() {
                 </div>
               )}
             </div>
+            <button type="button" className={styles.back} onClick={() => navigate(-1)}>
+              {'< 프로필 페이지'}
+            </button>
           </div>
         </div>
       </div>
