@@ -67,7 +67,7 @@ function DonateModal({ isOpen, postId, userId, mileage }: donateModalType) {
       </DialogTitle>
       <DialogContent>
         <DialogContentText className={styles['text-label']}>현재 마일리지</DialogContentText>
-        <DialogContentText className={styles['text-content']}>{mileage.toLocaleString('ko-KR')}</DialogContentText>
+        <DialogContentText className={styles['text-content']}>{mileage.toLocaleString('ko-KR')} 원</DialogContentText>
         <DialogContentText className={styles['text-label']}>기부 금액</DialogContentText>
         <input type="number" value={amount} onChange={onChangeAmount} /> {amount > 0 && <span>{amount.toLocaleString('ko-KR')} 원</span>}
       </DialogContent>
