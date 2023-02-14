@@ -298,7 +298,8 @@ class VideoRoomComponent extends Component {
       console.dir(mySession);
       this.leaveThisSession(this.state.mySessionId, mySession.token);
       console.log('세션 종료 성공띠!!!');
-      // window.history.
+      alert("라이브가 종료되었습니다")
+      window.location.href="/"
     }
 
     // Empty all properties...
