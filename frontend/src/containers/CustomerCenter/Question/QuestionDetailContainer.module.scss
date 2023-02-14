@@ -16,7 +16,7 @@
     min-height: 100vh;
     height: 100%;
     padding: 0 5rem;
-    background-color: #fcfcfc;
+    background-color: rgb(255, 253, 250);
 
     .title-div {
       margin-top: 5rem;
@@ -44,6 +44,7 @@
     }
 
     .faq-content {
+      width: 85%;
       line-height: 2rem;
       margin-bottom: 2rem;
     }
@@ -92,6 +93,7 @@
     }
 
     .reply-text {
+      width: 85%;
       line-height: 2rem;
     }
 
