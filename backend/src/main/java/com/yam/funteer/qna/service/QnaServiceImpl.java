@@ -36,7 +36,9 @@ import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class QnaServiceImpl implements QnaService {
@@ -72,9 +74,9 @@ public class QnaServiceImpl implements QnaService {
 	public QnaBaseRes qnaRegister(QnaRegisterReq qnaRegisterReq){
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(()->new UserNotFoundException());
 		Qna qna=qnaRepository.save(qnaRegisterReq.toEntity(user));
+
 		Map<String,String>attachList=new HashMap<>();
 		List<MultipartFile>files=qnaRegisterReq.getFiles();
-
 		if(!files.isEmpty()){
 			for(MultipartFile file:files) {
 				if(file.isEmpty())break;
@@ -93,10 +95,9 @@ public class QnaServiceImpl implements QnaService {
 		List<Map.Entry<String,String>> pathList=attachList.entrySet().stream().collect(Collectors.toList());
 		List<User> adminList = userRepository.findAllByUserType(UserType.ADMIN);
 		List<String>adminEmailList=adminList.stream().map(User::getEmail).collect(Collectors.toList());
-		alarmService.sendList(adminEmailList,qna.getTitle()+", QnA가 등록되었습니다.", "/qna/"+qna.getQnaId());
+		alarmService.sendList(adminEmailList,qna.getTitle()+", QnA가 등록되었습니다.", "/qna");
 		return new QnaBaseRes(qna,pathList);
 	}
-
 
 	@Override
 	public QnaBaseRes qnaGetDetail(Long qnaId) {
