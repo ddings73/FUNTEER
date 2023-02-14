@@ -3,7 +3,6 @@ package com.yam.funteer.live.service;
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.FileUtil;
 import com.yam.funteer.attach.entity.Attach;
-import com.yam.funteer.attach.entity.TeamAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
@@ -33,9 +32,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
 
 import java.io.File;
 import java.util.List;
@@ -156,7 +155,8 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
-    private CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, User user) {
+    @Transactional(noRollbackFor = {SessionNotFoundException.class})
+    protected CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, User user) {
 
         String sessionName = request.getSessionName();
         Live live = liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).orElseThrow(SessionNotFoundException::new);
@@ -166,6 +166,11 @@ public class LiveServiceImpl implements LiveService{
             if(session == null){
                 log.warn("OpenVidu 서버에 동작중인 세션이 없음");
                 live.end();
+
+                Team prevTeam = live.getFunding().getTeam();
+                if(prevTeam.getId().equals(user.getId())) {
+                    return initializeSession(request);
+                }
                 throw new SessionNotFoundException();
             }
 
@@ -195,7 +200,11 @@ public class LiveServiceImpl implements LiveService{
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             log.error(e.getMessage());
             log.warn("OpenVidu 서버에 동작중인 세션이 없음");
-            live.end();
+
+            Team prevTeam = live.getFunding().getTeam();
+            if(prevTeam.getId().equals(user.getId())) {
+                return initializeSession(request);
+            }
             throw new SessionNotFoundException();
         }
     }
