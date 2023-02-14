@@ -6,6 +6,7 @@ import userSlice from './slices/userSlice';
 import modalSlice from './slices/modalSlice';
 import fileModalSlice from './slices/fileModalSlice';
 import payModalSlice from './slices/payModalSlice';
+import donateModalSlice from './slices/donateModalSlice';
 
 const persistConfig = {
   key: 'root',
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   modalSlice,
   fileModalSlice,
   payModalSlice,
+  donateModalSlice,
 });
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

@@ -5,12 +5,14 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Viewer } from '@toast-ui/react-editor';
 import donationThumbnail from '../../assets/images/donation/donationImg.png';
 import styles from './DonationContainer.module.scss';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ListTable from '../../components/Table/ListTable';
 import { requestCurrentDonation } from '../../api/donation';
 import { requestUserProfile } from '../../api/user';
+import { openModal } from '../../store/slices/donateModalSlice';
 
 /**
  * * 유저가 현재 가진돈은 계산해놨음
@@ -20,6 +22,7 @@ import { requestUserProfile } from '../../api/user';
  */
 
 type ResponseInterface = {
+  id: number;
   title: string;
   content: string;
   file: string;
@@ -29,9 +32,11 @@ type ResponseInterface = {
 };
 
 function DonationContainer() {
+  const dispatch = useAppDispatch();
   const userId = useAppSelector((state) => state.userSlice.userId);
   const [userMoney, setUserMoney] = useState<number>(0);
   const [donBoard, setDonBoard] = useState<ResponseInterface>({
+    id: 0,
     title: '',
     content: '',
     file: '',
@@ -46,7 +51,7 @@ function DonationContainer() {
   }, []);
 
   const onClickDonation = async () => {
-    console.log('click');
+    dispatch(openModal({ isOpen: true, postId: donBoard.id, userId: parseInt(userId, 10), mileage: userMoney }));
   };
 
   const fetchData = async () => {
@@ -76,7 +81,7 @@ function DonationContainer() {
     <div className={styles.container}>
       <div className={styles.contents}>
         <div className={styles.contentsWrapper}>
-          <p className={styles.contentTitle}>진행중인 기부 이벤트</p>
+          <p className={styles.contentTitle}>진행중인 기부</p>
           <div className={styles['donation-box']}>
             <div className={styles.left}>
               <figure>
@@ -85,17 +90,18 @@ function DonationContainer() {
             </div>
             <div className={styles.right}>
               <p className={styles.title}>{donBoard.title}</p>
-              <div className={styles.text} dangerouslySetInnerHTML={{ __html: donBoard.content }} />
+              {/* <div className={styles.text} dangerouslySetInnerHTML={{ __html: donBoard.content }} /> */}
+              <p className={styles.text2}>{donBoard.content && <Viewer initialValue={donBoard.content || ''} />}</p>
               <Button className={styles.donButton} onClick={onClickDonation} type="button">
                 기부 참여
               </Button>
             </div>
           </div>
           <div className={styles['amount-box']}>
-            <p>총 적립금 {donBoard.currentAmount}원</p>
+            <p>총 적립금 {parseInt(donBoard.currentAmount, 10).toLocaleString('ko-KR')}원</p>
           </div>
           <div className={styles.finishedTable}>
-            <Accordion sx={{ border: '2px solid rgb(175, 175, 175, 0.5)' }}>
+            <Accordion sx={{ border: '2px solid rgb(175, 175, 175, 0.5)', marginBottom: '5rem' }}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content">
                 <Typography ml={65} sx={{ fontWeight: '600', fontSize: '20px', opacity: 0.7 }}>
                   이미 종료된 기부 이벤트
