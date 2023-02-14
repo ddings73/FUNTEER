@@ -165,18 +165,6 @@ const router = createBrowserRouter([
         element: <MyFollows />,
       },
       {
-        path: 'team/:teamId',
-        element: <TeamProfile />,
-      },
-      {
-        path: 'teamedit/:teamId',
-        element: <TeamEdit />,
-      },
-      {
-        path: 'teamdonation/:teamId',
-        element: <TeamDonation />,
-      },
-      {
         path: 'live',
         element: <LiveList />,
       },
@@ -276,6 +264,18 @@ const router = createBrowserRouter([
       {
         path: '/qna/:qnaId',
         element: <QuestionDetail />,
+      },
+      {
+        path: 'team/:teamId',
+        element: <TeamProfile />,
+      },
+      {
+        path: 'teamedit/:teamId',
+        element: <TeamEdit />,
+      },
+      {
+        path: 'teamdonation/:teamId',
+        element: <TeamDonation />,
       },
     ],
   },

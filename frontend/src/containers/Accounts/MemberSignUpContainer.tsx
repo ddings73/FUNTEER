@@ -141,7 +141,7 @@ function MemberSignUpContainer() {
     }
 
     try {
-      const response = await requestPhoneDuplConfirm(memberSignUpInfo.email);
+      const response = await requestPhoneDuplConfirm(memberSignUpInfo.phone);
       customAlert(s1000, '휴대폰 번호 중복 체크 완료');
       setPhoneDuplConfirmed(true);
       console.log(response);
@@ -258,6 +258,7 @@ function MemberSignUpContainer() {
             <div id="form-div-inner">
               <p>이름</p>
               <TextField
+                color="warning"
                 name="name"
                 margin="dense"
                 placeholder="이름을 입력해주세요."
@@ -278,6 +279,7 @@ function MemberSignUpContainer() {
               {!checkEmailAuth && (
                 <div className={styles['not-shadow']}>
                   <TextField
+                    color="warning"
                     name="email"
                     margin="dense"
                     placeholder="이메일을 입력해주세요."
@@ -309,6 +311,7 @@ function MemberSignUpContainer() {
               <p>비밀번호</p>
               <div className={styles['pw-div']}>
                 <TextField
+                  color="warning"
                   name="password"
                   type={!passwordVisibility ? 'password' : ''}
                   margin="dense"
@@ -340,6 +343,7 @@ function MemberSignUpContainer() {
               <p>비밀번호 확인</p>
               <div className={styles['pw-div']}>
                 <TextField
+                  color="warning"
                   name="passwordCheck"
                   type={!passwordCheckVisibility ? 'password' : ''}
                   margin="dense"
@@ -376,6 +380,7 @@ function MemberSignUpContainer() {
                 )}
               </p>
               <TextField
+                color="warning"
                 sx={{ background: 'white' }}
                 name="nickname"
                 margin="dense"
@@ -394,6 +399,7 @@ function MemberSignUpContainer() {
                 )}
               </p>
               <TextField
+                color="warning"
                 sx={{ background: 'white' }}
                 name="phone"
                 margin="dense"
