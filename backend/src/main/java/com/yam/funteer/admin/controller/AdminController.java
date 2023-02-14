@@ -140,7 +140,7 @@ public class AdminController {
 		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
 		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
 		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
-		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword, pageRequest));
+		return ResponseEntity.ok(fundingService.findFundingByKeywordByAdmin(keyword, pageRequest));
 	}
 
 }
