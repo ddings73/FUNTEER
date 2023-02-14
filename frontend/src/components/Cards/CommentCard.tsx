@@ -5,10 +5,11 @@ import styles from './CommentCard.module.scss';
 import profileTemp from '../../assets/images/default-profile-img.svg';
 import { commentType } from '../../containers/Funding/FundingDetailContainer';
 import { displayedAt } from '../../utils/day';
-import { requestTeamAccountInfo } from '../../api/team';
+import { requestTeamAccountInfo, requestTeamProfileInfo } from '../../api/team';
 import { useAppSelector } from '../../store/hooks';
 import { requestUserInfo, requestUserProfile } from '../../api/user';
 import { userProfileInterface } from '../../types/user';
+import { teamProfileType } from '../../types/user';
 import { requestDeleteComment } from '../../api/funding';
 
 // 본인이면 삭제
@@ -16,6 +17,7 @@ import { requestDeleteComment } from '../../api/funding';
 
 export function CommentCard({ memberNickName, content, memberProfileImg, regDate, commentId }: commentType) {
   const userId = useAppSelector((state) => state.userSlice.userId);
+  const userType = useAppSelector((state) => state.userSlice.userType);
   const [userProfile, setUserProfile] = useState<userProfileInterface>({
     nickname: '',
     profileImgUrl: '',
@@ -23,6 +25,40 @@ export function CommentCard({ memberNickName, content, memberProfileImg, regDate
     wishCnt: 0,
     followingCnt: 0,
   });
+  const [teamProfile, setTeamProfile] = useState<teamProfileType>({
+    profileImgUrl: '',
+    name: '',
+    email: '',
+    phone: '',
+    money: 0,
+    description: '',
+    fundingList: [
+      {
+        id: 0,
+        thumbnail: '',
+        title: '',
+        fundingDescription: '',
+        targetAmount: 0,
+        currentFundingAmount: 0,
+        startDate: '',
+        endDate: '',
+        postType: '',
+        postDate: '',
+      },
+    ],
+    totalFundingAmount: 0,
+  });
+
+  const getRequestTeamProfileInfo = async () => {
+    try {
+      const response = await requestTeamProfileInfo(userId);
+      console.log(response.data);
+      setTeamProfile({ ...response.data });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const getRequestUserInfo = async () => {
     try {
       const response = await requestUserProfile(userId);
@@ -45,7 +81,11 @@ export function CommentCard({ memberNickName, content, memberProfileImg, regDate
   }
 
   useEffect(() => {
-    getRequestUserInfo();
+    if (userType === 'TEAM') {
+      getRequestTeamProfileInfo();
+    } else {
+      getRequestUserInfo();
+    }
   }, []);
 
   return (
@@ -59,7 +99,12 @@ export function CommentCard({ memberNickName, content, memberProfileImg, regDate
           <div className={styles.commentBox}>{content}</div>
         </div>
       </div>
-      {userProfile.nickname === memberNickName && (
+      {userType === 'NORMAL' && userProfile.nickname === memberNickName && (
+        <button className={styles.deleteBtn} onClick={handleDeleteBtn} type="button" style={{ cursor: 'pointer', border: 'none', background: 'transparent' }}>
+          <DeleteOutlineIcon />
+        </button>
+      )}
+      {userType === 'TEAM' && teamProfile.name === memberNickName && (
         <button className={styles.deleteBtn} onClick={handleDeleteBtn} type="button" style={{ cursor: 'pointer', border: 'none', background: 'transparent' }}>
           <DeleteOutlineIcon />
         </button>

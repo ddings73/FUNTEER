@@ -23,3 +23,8 @@ export type donateModalType = {
   userId: number;
   mileage: number;
 };
+
+export type reportModalType = {
+  isOpen: boolean;
+  fundingId: string;
+};

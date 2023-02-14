@@ -36,7 +36,6 @@ export function MyPageContainer() {
     try {
       const response = await requestUserProfile(userId);
       console.log(response.data);
-
       setDisplay(response.data.display);
       setUserProfile({ ...response.data });
     } catch (error) {
@@ -77,6 +76,7 @@ export function MyPageContainer() {
     try {
       const response = await requestModifyUserProfileImage(profileImage, userId);
       getRequestUserInfo();
+      const imgMod = useAppSelector((state) => state.userSlice.profileImgUrl);
     } catch (error) {
       console.log(error);
     }
