@@ -35,7 +35,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import java.io.File;
@@ -54,12 +53,15 @@ public class LiveServiceImpl implements LiveService{
     private String OPENVIDU_SECRET;
     private OpenVidu openVidu;
     private final AwsS3Uploader awsS3Uploader;
+
     private final UserRepository userRepository;
+    private final TeamRepository teamRepository;
+    private final MemberRepository memberRepository;
     private final LiveRepository liveRepository;
     private final GiftRepository giftRepository;
     private final FundingRepository fundingRepository;
     private final AttachRepository attachRepository;
-    private final EntityManager entityManager;
+    private final TeamAttachRepository teamAttachRepository;
 
     @PostConstruct
     public void init(){
@@ -164,12 +166,6 @@ public class LiveServiceImpl implements LiveService{
             if(session == null){
                 log.warn("OpenVidu 서버에 동작중인 세션이 없음");
                 live.end();
-                entityManager.flush();
-
-                Team prevTeam = live.getFunding().getTeam();
-                if(prevTeam.getId().equals(user.getId())) {
-                    return initializeSession(request);
-                }
                 throw new SessionNotFoundException();
             }
 
@@ -200,12 +196,6 @@ public class LiveServiceImpl implements LiveService{
             log.error(e.getMessage());
             log.warn("OpenVidu 서버에 동작중인 세션이 없음");
             live.end();
-            entityManager.flush();
-
-            Team prevTeam = live.getFunding().getTeam();
-            if(prevTeam.getId().equals(user.getId())) {
-                return initializeSession(request);
-            }
             throw new SessionNotFoundException();
         }
     }
