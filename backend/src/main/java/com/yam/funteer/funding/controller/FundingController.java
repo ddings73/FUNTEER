@@ -137,6 +137,7 @@ public class FundingController {
 		if(bindingResult.hasErrors()){
 			log.warn(bindingResult.toString());
 		}
+		log.info(data.toString());
 		FundingReportResponse fundingReport = fundingService.createFundingReport(fundingId, data);
 		return ResponseEntity.ok(fundingReport);
 	}
@@ -153,6 +154,7 @@ public class FundingController {
 		if(bindingResult.hasErrors()){
 			log.warn(bindingResult.toString());
 		}
+		log.info(data.toString());
 		return ResponseEntity.ok(fundingService.updateFundingReport(fundingId, data));
 	}
 
