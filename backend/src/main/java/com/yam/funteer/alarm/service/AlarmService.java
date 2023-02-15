@@ -213,7 +213,7 @@ public class AlarmService {
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);
 		String email=user.getEmail();
 		PageRequest pagerequest=PageRequest.of(0,5);
-		List<AlarmEntity>alarmList=alarmEntityRepository.findAllByUserEmailOrderByDesc(email,pagerequest);
+		List<AlarmEntity>alarmList=alarmEntityRepository.findAllByUserEmailOrderByIdDesc(email,pagerequest);
 		List<PastAlarmListRes>pastAlarmList=alarmList.stream().map(alarmEntity ->new PastAlarmListRes(alarmEntity)).collect(
 			Collectors.toList());
 		return pastAlarmList;

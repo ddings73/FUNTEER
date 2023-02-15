@@ -11,6 +11,6 @@ import com.yam.funteer.alarm.entity.AlarmEntity;
 
 @Transactional
 public interface AlarmEntityRepository extends JpaRepository<AlarmEntity,Long> {
-	List<AlarmEntity> findAllByUserEmailOrderByDesc(String userEmail,PageRequest pagerequest);
+	List<AlarmEntity> findAllByUserEmailOrderByIdDesc(String userEmail,PageRequest pagerequest);
 	void deleteAllByUserEmail(String userEmail);
 }
