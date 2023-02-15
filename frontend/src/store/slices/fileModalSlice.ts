@@ -7,6 +7,7 @@ const initialState: FileModalType = {
   vmsFileUrl: '',
   performFileUrl: '',
   deniedNum: '',
+  teamState: '',
 };
 
 export const fileModalSlice = createSlice({
@@ -19,6 +20,7 @@ export const fileModalSlice = createSlice({
       state.vmsFileUrl = action.payload.vmsFileUrl;
       state.performFileUrl = action.payload.performFileUrl;
       state.deniedNum = action.payload.deniedNum;
+      state.teamState = action.payload.teamState;
     },
     closeModal: (state) => {
       state.isOpen = false;
@@ -26,6 +28,7 @@ export const fileModalSlice = createSlice({
       state.vmsFileUrl = '';
       state.performFileUrl = '';
       state.deniedNum = '';
+      state.teamState = '';
     },
     denyTeam: (state, action: PayloadAction<FileModalType>) => {
       state.isOpen = action.payload.isOpen;
@@ -33,6 +36,7 @@ export const fileModalSlice = createSlice({
       state.vmsFileUrl = action.payload.vmsFileUrl;
       state.performFileUrl = action.payload.performFileUrl;
       state.deniedNum = action.payload.deniedNum;
+      state.teamState = action.payload.teamState;
     },
   },
 });

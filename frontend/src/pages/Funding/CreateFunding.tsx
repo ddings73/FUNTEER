@@ -10,19 +10,16 @@ function CreateFunding() {
   const isLogin = useAppSelector((state) => state.userSlice.isLogin);
   const navigate = useNavigate();
 
-  const handleModal = ()=>{
-    dispatch(closeModal())
-
-  }
+  const handleModal = () => {
+    dispatch(closeModal());
+  };
   useEffect(() => {
-    if(!isLogin)
-    {
-      navigate("/login",{replace:true})
+    if (!isLogin) {
+      navigate('/login', { replace: true });
+    } else if (userType !== 'TEAM') {
+      navigate('/', { replace: true });
+      dispatch(openModal({ isOpen: true, title: '권한 없음', content: '펀딩생성은 인증된 단체 회원만 가능합니다.', handleModal }));
     }
-    else if(userType !== "TEAM"){
-      navigate("/",{replace:true})
-        dispatch(openModal({isOpen:true,title:"권한 없음", content:"펀딩생성은 단체 회원만 가능합니다.",handleModal}))
-      }
   }, []);
   return <CreateFundingContainer />;
 }

@@ -16,7 +16,7 @@ import styles from './FileModal.module.scss';
 import { requestAcceptTeam } from '../../api/admin';
 import { customAlert, s1000 } from '../../utils/customAlert';
 
-function FileModal({ isOpen, userId, vmsFileUrl, performFileUrl }: FileModalType) {
+function FileModal({ isOpen, userId, vmsFileUrl, performFileUrl, teamState }: FileModalType) {
   const dispatch = useAppDispatch();
 
   const onClickCloseBtnHandler = () => {
@@ -37,7 +37,7 @@ function FileModal({ isOpen, userId, vmsFileUrl, performFileUrl }: FileModalType
 
   const onClickDenyBtnHandler = () => {
     console.log('단체 가입 승인 거부');
-    dispatch(denyTeam({ isOpen: false, userId, vmsFileUrl, performFileUrl, deniedNum: userId.toString() }));
+    dispatch(denyTeam({ isOpen: false, userId, vmsFileUrl, performFileUrl, deniedNum: userId.toString(), teamState }));
   };
 
   return (
@@ -55,12 +55,16 @@ function FileModal({ isOpen, userId, vmsFileUrl, performFileUrl }: FileModalType
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button variant="contained" onClick={onClickApproveBtnHandler} className={styles['approve-btn']}>
-          승인
-        </Button>
-        <Button variant="contained" onClick={onClickDenyBtnHandler} className={styles['deny-btn']}>
-          거부
-        </Button>
+        {(teamState === 'TEAM_EXPIRED' || teamState === 'TEAM_WAIT') && (
+          <>
+            <Button variant="contained" onClick={onClickApproveBtnHandler} className={styles['approve-btn']}>
+              승인
+            </Button>
+            <Button variant="contained" onClick={onClickDenyBtnHandler} className={styles['deny-btn']}>
+              거부
+            </Button>
+          </>
+        )}
       </DialogActions>
     </Dialog>
   );
