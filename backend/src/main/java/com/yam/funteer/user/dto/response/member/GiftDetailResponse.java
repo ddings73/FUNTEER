@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GiftDetailResponse {
 
-    private List<GiftInfo> giftInfoList;
+    private List<GiftInfo> list;
 
     public static GiftDetailResponse of(Page<Gift> giftpage){
         List<GiftInfo> giftInfos = giftpage.stream().map(GiftInfo::of).collect(Collectors.toList());
