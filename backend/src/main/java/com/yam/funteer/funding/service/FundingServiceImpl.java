@@ -648,7 +648,7 @@ public class FundingServiceImpl implements FundingService{
 
 		for (Funding funding : allByEndDate) {
 
-			List<String> allByFundingId = wishRepository.findAllByFundingId(funding.getId())
+			List<String> allByFundingId = wishRepository.findAllByFundingAndChecked(funding, true)
 				.stream()
 				.map(m -> m.getMember().getEmail())
 				.collect(Collectors.toList());
