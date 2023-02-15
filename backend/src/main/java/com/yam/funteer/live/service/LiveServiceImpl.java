@@ -1,5 +1,6 @@
 package com.yam.funteer.live.service;
 
+import com.yam.funteer.alarm.service.AlarmService;
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.FileUtil;
 import com.yam.funteer.attach.entity.Attach;
@@ -53,6 +54,7 @@ public class LiveServiceImpl implements LiveService{
     private String OPENVIDU_SECRET;
     private OpenVidu openVidu;
     private final AwsS3Uploader awsS3Uploader;
+    private final AlarmService alarmService;
 
     private final UserRepository userRepository;
     private final LiveRepository liveRepository;
@@ -147,6 +149,8 @@ public class LiveServiceImpl implements LiveService{
             Live live = Live.of(session.getSessionId(), funding);
             liveRepository.save(live);
 
+
+            // alarmService.sendList(null, sessionName + " 단체의 라이브 방송이 시작되었습니다.", "/subscribeLiveRoom/" + sessionName);
             return new CreateConnectionResponse(token);
         } catch (Exception e) {
             log.error(e.getMessage());
