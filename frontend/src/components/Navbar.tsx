@@ -21,7 +21,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import { Link, Outlet, NavLink, useNavigate, Navigate } from 'react-router-dom';
 import styles from './Navbar.module.scss';
 /* 이미지 import */
-import logoImg from '../assets/images/FunteerLogo.png';
+import logoImg from '../assets/images/headerlogo.png';
 /*로그인 Import */
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import userSlice, { isLoginState, resetLoginState, setUserLoginState } from '../store/slices/userSlice';
@@ -149,7 +149,7 @@ function ResponsiveAppBar() {
 
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
-    console.log(scrollPosition);
+    // console.log(scrollPosition);
     return () => {
       window.removeEventListener('scroll', updateScroll);
     };
@@ -235,7 +235,6 @@ function ResponsiveAppBar() {
   };
 
   const eventAllRead = async () => {
-    console.log('asdasd');
     try {
       const response = await await http.delete('subscribe/alarm');
       console.log('다 읽음 요청', response);
