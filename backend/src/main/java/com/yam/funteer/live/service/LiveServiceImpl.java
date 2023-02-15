@@ -5,7 +5,6 @@ import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.FileUtil;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
-import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
@@ -21,9 +20,10 @@ import com.yam.funteer.live.repository.LiveRepository;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 
-import com.yam.funteer.user.repository.MemberRepository;
-import com.yam.funteer.user.repository.TeamRepository;
+import com.yam.funteer.user.entity.Wish;
 import com.yam.funteer.user.repository.UserRepository;
+import com.yam.funteer.user.repository.WishRepository;
+
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service @Slf4j
 @Transactional
@@ -61,6 +62,7 @@ public class LiveServiceImpl implements LiveService{
     private final GiftRepository giftRepository;
     private final FundingRepository fundingRepository;
     private final AttachRepository attachRepository;
+    private final WishRepository wishRepository;
 
     @PostConstruct
     public void init(){
@@ -149,8 +151,13 @@ public class LiveServiceImpl implements LiveService{
             Live live = Live.of(session.getSessionId(), funding);
             liveRepository.save(live);
 
+            List<Wish> wishList = wishRepository.findAllByFundingAndChecked(funding, true);
+            List<String> emailList = wishList.stream()
+                .map(wish -> wish.getMember().getEmail())
+                .collect(Collectors.toList());
 
-            // alarmService.sendList(null, sessionName + " 단체의 라이브 방송이 시작되었습니다.", "/subscribeLiveRoom/" + sessionName);
+            log.info("이메일 리스트 => {}", emailList);
+            alarmService.sendList(emailList, sessionName + " 단체의 라이브 방송이 시작되었습니다.", "/subscribeLiveRoom/" + sessionName);
             return new CreateConnectionResponse(token);
         } catch (Exception e) {
             log.error(e.getMessage());

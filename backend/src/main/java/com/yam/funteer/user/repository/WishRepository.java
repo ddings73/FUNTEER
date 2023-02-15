@@ -16,5 +16,5 @@ public interface WishRepository extends JpaRepository<Wish, Long> {
 
 	long countAllByFundingIdAndChecked(Long fundingId, boolean b);
 
-	List<Wish> findAllByFundingId(Long fundingId);
+	List<Wish> findAllByFundingAndChecked(Funding funding, Boolean checked);
 }
