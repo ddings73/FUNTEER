@@ -16,7 +16,7 @@
     min-height: 100vh;
     height: 100%;
     padding: 0 5rem;
-    background-color: #fcfcfc;
+    background-color: rgb(255, 253, 250);
 
     .title-div {
       margin-top: 5rem;
@@ -43,15 +43,24 @@
       opacity: 0.3;
     }
 
-    .faq-content {
-      line-height: 2rem;
+    .text-div {
+      width: 100%;
+      display: flex;
+      justify-content: center;
       margin-bottom: 2rem;
+
+      .faq-content {
+        width: 95%;
+        line-height: 2rem;
+      }
     }
 
     .file {
+      width: 95%;
+      height: 1.5rem;
       display: flex;
       text-align: center;
-      height: 1.5rem;
+      margin-left: 5%;
       margin-top: 1rem;
       text-decoration: none;
       color: rgba(0, 0, 0, 0.8);
@@ -91,8 +100,16 @@
       font-size: 1.125rem;
     }
 
-    .reply-text {
-      line-height: 2rem;
+    .text-div {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin-bottom: 2rem;
+
+      .reply-text {
+        width: 95%;
+        line-height: 2rem;
+      }
     }
 
     .back {

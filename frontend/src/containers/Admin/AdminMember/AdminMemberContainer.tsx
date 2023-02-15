@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -8,6 +9,7 @@ import { AiOutlineClose, AiOutlineSearch, AiOutlineReload } from 'react-icons/ai
 import { requestMembers, requestWithdrawMember } from '../../../api/admin';
 import { AdminMemberInterface } from '../../../types/user';
 import styles from './AdminMemberContainer.module.scss';
+import { customAlert, s1000 } from '../../../utils/customAlert';
 
 export enum MemberState {
   All = '전체',
@@ -17,12 +19,18 @@ export enum MemberState {
 }
 
 export const memberStateMap = new Map<string, string>([
+  ['All', '전체'],
   ['NORMAL', '정상'],
   ['KAKAO', '정상(카카오)'],
   ['NORMAL_RESIGN', '탈퇴'],
+  ['전체', 'All'],
+  ['정상', 'NORMAL'],
+  ['정상(카카오)', 'KAKAO'],
+  ['탈퇴', 'NORMAL_RESIGN'],
 ]);
 
 function AdminMemberContainer() {
+  const size = 8;
   /** 현재 페이지 */
   const [page, setPage] = useState<number>(1);
   /** 최대 페이지 */
@@ -32,16 +40,12 @@ function AdminMemberContainer() {
   /** 검색창 */
   const [memberSearch, setMemberSearch] = useState<string>('');
   /** 필터 */
-  const [memberStateFilter, setMemberStateFilter] = useState<string>('전체');
+  const [memberStateFilter, setMemberStateFilter] = useState<string>('All');
+  const memberStateSet = Object.values(MemberState);
 
-  /** 페이지 변경 시 멤버 요청 */
   useEffect(() => {
-    if (!memberSearch) {
-      requestPageMembers();
-    } else {
-      requestPageMembersWithKeyword();
-    }
-  }, [page]);
+    requestPageMembers();
+  }, [page, memberStateFilter]);
 
   /** 페이지 교체 */
   const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
@@ -54,24 +58,28 @@ function AdminMemberContainer() {
   };
 
   /** 검색 */
-  const handleClickSearch = async (e: React.MouseEvent<SVGElement>) => {
-    setPage(1);
-    requestPageMembersWithKeyword();
+  const handleClickSearch = async () => {
+    if (page === 1) {
+      requestPageMembers();
+    } else {
+      setPage(1);
+    }
   };
 
   /** 엔터 검색 */
   const handleEnter = async (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
-      setPage(1);
-      requestPageMembersWithKeyword();
+      if (page === 1) {
+        requestPageMembers();
+      } else {
+        setPage(1);
+      }
     }
   };
 
   /** 검색 초기화 및 새로고침 */
   const handleClickInit = async () => {
-    setMemberSearch('');
-    setPage(1);
-    requestPageMembers();
+    window.location.reload();
   };
 
   /** 필터 변경 */
@@ -79,22 +87,27 @@ function AdminMemberContainer() {
     setMemberStateFilter(e.target.value);
   };
 
-  /** 필터 적용된 페이지 멤버 리스트 */
-  const filtedMembers = pageMembers.filter((member) => {
-    let filter;
-    if (memberStateFilter === '전체') {
-      filter = true;
-    } else {
-      filter = memberStateMap.get(member.userType) === memberStateFilter;
-    }
-    return filter;
-  });
-
-  const memberStateSet = Object.values(MemberState);
-
   /** 회원 탈퇴 버튼 클릭 */
   const handleWithdrawBtn = (e: React.MouseEvent<SVGElement>, id: number) => {
     withdrawMember(id);
+  };
+
+  /** 멤버 요청 */
+  const requestPageMembers = async () => {
+    setPageMembers([]);
+    try {
+      let response;
+      if (memberStateFilter === 'All') {
+        response = await requestMembers(page - 1, size, memberSearch);
+      } else {
+        response = await requestMembers(page - 1, size, memberSearch, memberStateFilter);
+      }
+      console.log('관리자 개인 회원 리스트 요청', response);
+      setMaxPage(response.data.totalPages);
+      setPageMembers(response.data.userList);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   /** 회원 탈퇴 요청 */
@@ -102,34 +115,13 @@ function AdminMemberContainer() {
     try {
       const response = await requestWithdrawMember(id);
       console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  /** 일반 페이지 멤버 요청 */
-  const requestPageMembers = async () => {
-    setPageMembers([]);
-    try {
-      const response = await requestMembers(page - 1, 8);
-      console.log(response);
-      setMaxPage(response.data.totalPages);
-      setPageMembers(response.data.userList);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  /** 검색어 있는 상태에서 페이지 멤버 요청 */
-  const requestPageMembersWithKeyword = async () => {
-    setPageMembers([]);
-    try {
-      const response = await requestMembers(page - 1, 8, memberSearch);
-      console.log(response);
-      setMaxPage(response.data.totalPages);
-      setPageMembers(response.data.userList);
-    } catch (error) {
-      console.error(error);
+      customAlert(s1000, '회원 탈퇴 처리가 완료되었습니다.');
+      requestPageMembers();
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message);
+        console.error(error);
+      }
     }
   };
 
@@ -140,6 +132,7 @@ function AdminMemberContainer() {
         <div className={styles['filter-div']}>
           <div className={styles['search-div']}>
             <TextField
+              size="small"
               color="warning"
               label="회원 검색"
               variant="outlined"
@@ -153,7 +146,7 @@ function AdminMemberContainer() {
           </div>
           <Select value={memberStateFilter} onChange={handleChangeFilter} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
             {memberStateSet.map((state) => (
-              <MenuItem key={state} value={state} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
+              <MenuItem key={state} value={memberStateMap.get(state)} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
                 {state}
               </MenuItem>
             ))}
@@ -171,7 +164,7 @@ function AdminMemberContainer() {
           <li>상태</li>
           <li> </li>
         </ul>
-        {filtedMembers.map((data) => (
+        {pageMembers.map((data) => (
           <ul key={data.id} className={styles['list-line']}>
             <li>{data.id}</li>
             <li>

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
+import { EventListener, EventSourcePolyfill } from 'event-source-polyfill';
 // Material UI Imports
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -30,11 +31,39 @@ import { requestLogout } from '../api/user';
 import { openModal } from '../store/slices/modalSlice';
 import { Chip } from '@mui/material';
 import { requestTeamAccountInfo } from '../api/team';
+import { http } from '../api/axios';
+import { off } from 'process';
+import { type } from 'os';
+import { string } from 'yargs';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
 
 function ResponsiveAppBar() {
+  type eventListType={
+    url:string,
+    content:string,
+    alarmId:number,
+    userEmail:string,
+  }
+  const token = localStorage.getItem('accessToken');
+  const [listening, setListening] = useState(false);
+  const [sseData, setSseData] = useState({});
+  const [respon, setRespon] = useState(false);
+  const [eventList, setEventList] = useState<eventListType[]>([]);
+  let eventSource: EventSourcePolyfill | undefined;
+  const [eventListsize,setEventListsize]=useState(0);
+
+
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const navigateTo = useNavigate();
   const dispatch = useDispatch();
   function clickNavigate(address: string) {
@@ -118,6 +147,109 @@ function ResponsiveAppBar() {
     }
   }, [userType]);
 
+
+  useEffect(() => {
+    window.addEventListener('scroll', updateScroll);
+    console.log(scrollPosition);
+    return () => {
+      window.removeEventListener('scroll', updateScroll);
+    };
+  });
+
+
+  const requestGetAlarms = async () => {
+    setEventList([]);
+    try {
+      const response = await http.get('subscribe/alarm');
+      console.log(response);
+      setEventList(response.data);
+      setEventListsize(response.data.length);
+      
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(()=>{
+    requestGetAlarms();
+  },[token])
+
+  // sse
+  useEffect(() => {
+    if (!listening && token && !eventSource) {
+      // sse 연결
+      // http://localhost:8080/api/v1/subscribe
+      // https://i8e204.p.ssafy.io/api/v1/subscribe
+      eventSource = new EventSourcePolyfill('https://i8e204.p.ssafy.io/api/v1/subscribe', {
+        headers: {
+          'Content-Type': 'text/event-stream',
+          'Access-Control-Allow-Origin': '*',
+          Authorization: `Bearer ${token}`,
+          'Cache-Control': 'no-cache',
+        },
+        heartbeatTimeout: 86400000,
+        withCredentials: true,
+      });
+
+      console.log(eventSource);
+
+      // 최초 연결
+      eventSource.onopen = (event) => {
+        setListening(true);
+      };
+
+      // 서버에서 메시지 날릴 때
+      eventSource.onmessage = (event) => {
+        setSseData(event.data);
+        setRespon(true);
+        console.log(event.data);
+        console.log('onmessage');
+        if (event.data !== undefined) alert(event.data);
+      };
+
+      eventSource.addEventListener('sse', ((event: MessageEvent) => {
+        console.log(event.data);
+        if(!event.data.includes('EventStream')){
+          requestGetAlarms();
+        }
+      }) as EventListener);
+    } else {
+      console.log('logout');
+      eventSource?.close();
+    }
+    return () => {
+      if (!token && eventSource !== undefined) {
+        eventSource.close();
+        setListening(false);
+      }
+    };
+  }, [token]);
+
+
+  // 상세보기 및 삭제
+  // 혹시 실시간으로 보게 되도 이거 쓰셈요...
+  const eventRead = async (alarmId:number,url:string) => {
+    
+    try {
+      await http.put(`subscribe/alarm/${alarmId}`);
+      await http.delete(`subscribe/alarm/${alarmId}`);
+      requestGetAlarms();
+      clickNavigate(url);
+    }  
+     catch (error) {
+      console.error(error);
+    }
+
+  };
+
+  const eventAllRead=async()=>{
+    try{
+      await http.delete('subscribe/alarm');
+      requestGetAlarms();
+    }catch(error){
+      console.error(error);
+    }
+  }
+
   return (
     <div>
       <AppBar className={styles.appBar} position="fixed" sx={{ backgroundColor: scrollPosition < 10000 ? 'transparent' : 'rgb(255,255,255)' }}>
@@ -182,11 +314,21 @@ function ResponsiveAppBar() {
                 <p style={{ color: 'black' }}>
                   <span style={{ fontWeight: '800' }}>{userName}</span>님 환영합니다
                 </p>
-                <IconButton aria-label="notifi" className={styles.noti}>
-                  <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
-                    <NotificationsNoneIcon fontSize="large" />
-                  </StyledBadge>
-                </IconButton>
+                <div>
+                  <IconButton aria-label="notifi" className={styles.noti}  onClick={handleClick}>
+                    <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
+                      <NotificationsNoneIcon fontSize="large" />
+                    </StyledBadge>
+                  </IconButton>
+                  <Menu open={open} onClose={handleClose}>
+                    {
+                      eventList.map((event)=>(
+                        <MenuItem onClick={()=>eventRead(event.alarmId,event.url)}>{event.content}</MenuItem>
+                      ))
+                    }
+                  </Menu>
+                </div>
+               
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, border: '3px solid orange' }}>
                     <Avatar alt="profileImg" src={profileImgUrl} />
@@ -208,17 +350,32 @@ function ResponsiveAppBar() {
                   open={Boolean(anchorElUser)}
                   onClose={handleCloseUserMenu}
                 >
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      textAlign="center"
-                      onClick={() => {
-                        navigateTo(userType === 'NORMAL' ? '/myPage' : userType === 'TEAM' ? `/team/${teamInfo.id}` : '/admin');
-                      }}
-                      sx={{ width: '100%' }}
-                    >
-                      마이페이지
-                    </Typography>
-                  </MenuItem>
+                  {userType === 'ADMIN' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo('/admin');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        관리자 페이지
+                      </Typography>
+                    </MenuItem>
+                  )}
+                  {userType !== 'ADMIN' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo(userType === 'NORMAL' ? '/myPage' : userType === 'TEAM' ? `/team/${teamInfo.id}` : '/admin');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        마이페이지
+                      </Typography>
+                    </MenuItem>
+                  )}
                   {userType === 'NORMAL' && (
                     <MenuItem onClick={handleCloseUserMenu}>
                       <Typography
@@ -245,28 +402,32 @@ function ResponsiveAppBar() {
                       </Typography>
                     </MenuItem>
                   )}
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      textAlign="center"
-                      onClick={() => {
-                        navigateTo('/myBadges');
-                      }}
-                      sx={{ width: '100%' }}
-                    >
-                      1:1 문의 내역
-                    </Typography>
-                  </MenuItem>
-                  <MenuItem onClick={handleCloseUserMenu}>
-                    <Typography
-                      textAlign="center"
-                      onClick={() => {
-                        navigateTo('/charge');
-                      }}
-                      sx={{ width: '100%' }}
-                    >
-                      마일리지 충전
-                    </Typography>
-                  </MenuItem>
+                  {userType === 'NORMAL' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo('/myBadges');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        1:1 문의 내역
+                      </Typography>
+                    </MenuItem>
+                  )}
+                  {userType === 'NORMAL' && (
+                    <MenuItem onClick={handleCloseUserMenu}>
+                      <Typography
+                        textAlign="center"
+                        onClick={() => {
+                          navigateTo('/charge');
+                        }}
+                        sx={{ width: '100%' }}
+                      >
+                        마일리지 충전
+                      </Typography>
+                    </MenuItem>
+                  )}
                   <MenuItem onClick={handleCloseUserMenu}>
                     <Typography textAlign="center" sx={{ color: 'red', width: '100%' }} onClick={logout}>
                       로그아웃

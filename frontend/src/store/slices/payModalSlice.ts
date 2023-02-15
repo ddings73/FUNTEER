@@ -5,7 +5,7 @@ const initialState: payModalType = {
   isOpen: false,
 };
 
-export const modalSlice = createSlice({
+export const payModalSlice = createSlice({
   name: 'payModalSlice',
   initialState,
   reducers: {
@@ -18,6 +18,6 @@ export const modalSlice = createSlice({
   },
 });
 
-export const { openModal, closeModal } = modalSlice.actions;
+export const { openModal, closeModal } = payModalSlice.actions;
 
-export default modalSlice.reducer;
+export default payModalSlice.reducer;

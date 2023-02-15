@@ -4,9 +4,10 @@ import { useParams } from 'react-router-dom';
 import SendIcon from '@mui/icons-material/Send';
 import styles from './CommentCardSubmit.module.scss';
 import profileTemp from '../../assets/images/default-profile-img.svg';
-import { postFundingComment } from '../../api/funding';
+import { postFundingComment, requestCommentList } from '../../api/funding';
+import { commentType } from '../../containers/Funding/FundingDetailContainer';
 
-export function CommentCardSubmit(props: any) {
+export function CommentCardSubmit(props: any, commentCount: number) {
   const { fundIdx } = useParams();
 
   const [comment, setComment] = useState('');
@@ -21,9 +22,9 @@ export function CommentCardSubmit(props: any) {
       console.log(error);
     }
   };
-  const onSubmit = (e: any) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
-    fetchData();
+    await fetchData();
     alert('댓글 등록 완료!');
     setComment('');
     /* eslint-disable */
@@ -41,9 +42,9 @@ export function CommentCardSubmit(props: any) {
       }
     }
   };
+
   return (
     <div className={styles.cardContainer}>
-      <div className={styles.commentHead}>응원 댓글 등록</div>
       <form onKeyUp={handleKeyPress} onSubmit={onSubmit} style={{ width: '80%', marginTop: '20px', display: 'flex' }}>
         <div className={styles.commentMid}>
           <img className={styles.commentImg} alt="프로필" src={profileTemp} />

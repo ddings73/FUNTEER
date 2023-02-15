@@ -2,43 +2,45 @@ import { NoticeInterface } from '../types/notice';
 import { http } from './axios';
 
 /** 개인 회원 목록 조회 */
-export const requestMembers = async (page: number, size: number, keyword?: string) => {
+export const requestMembers = async (page: number, size: number, keyword?: string, userType?: string) => {
   const params = {
     page,
     size,
     keyword,
-    sort: 'id,ASC',
+    userType,
+    sort: 'id,DESC',
   };
 
-  const response = http.get('admin/members', { params });
+  const response = await http.get('admin/members', { params });
 
   return response;
 };
 
 /** 개인 회원 탈퇴 처리 */
 export const requestWithdrawMember = async (userId: number) => {
-  const response = http.delete(`admin/member/${userId}`);
+  const response = await http.delete(`admin/member/${userId}`);
 
   return response;
 };
 
 /** 단체 회원 목록 조회 */
-export const requestTeams = async (page: number, size: number, keyword?: string) => {
+export const requestTeams = async (page: number, size: number, keyword?: string, userType?: string) => {
   const params = {
     page,
     size,
     keyword,
-    sort: 'id,ASC',
+    userType,
+    sort: 'userType,DESC',
   };
 
-  const response = http.get('admin/team', { params });
+  const response = await http.get('admin/team', { params });
 
   return response;
 };
 
 /** 단체 회원 탈퇴 처리 */
 export const requestWithdrawTeam = async (userId: number) => {
-  const response = http.delete(`admin/team/${userId}`);
+  const response = await http.delete(`admin/team/${userId}`);
 
   return response;
 };
@@ -49,39 +51,29 @@ export const requestDenyTeam = async (userId: number, rejectComment: string) => 
     rejectComment,
   };
 
-  const response = http.put(`admin/team/${userId}/reject`, data);
+  const response = await http.put(`admin/team/${userId}/reject`, data);
 
   return response;
 };
 
 /** 단체 회원 가입 승인 */
 export const requestAcceptTeam = async (userId: number) => {
-  const response = http.post(`admin/team/${userId}/accept`);
+  const response = await http.post(`admin/team/${userId}/accept`);
 
   return response;
 };
 
 /** 펀딩 리스트 */
-export const requestAdminFundingList = async (page: number, size: number) => {
+export const requestAdminFundingList = async (page: number, size: number, keyword?: string, postType?: string) => {
   const params = {
     page,
     size,
-  };
-
-  const response = http.get('funding', { params });
-
-  return response;
-};
-
-/** 펀딩 검색 리스트 */
-export const requestAdminSearchedFundingList = async (page: number, size: number, keyword: string) => {
-  const params = {
     keyword,
-    page,
-    size,
+    postType,
+    sort: 'postType,DESC',
   };
 
-  const response = http.get('funding/search', { params });
+  const response = await http.get('admin/funding', { params });
 
   return response;
 };
@@ -91,9 +83,9 @@ export const requestFundingAccept = async (id: number, isReport: boolean) => {
   let response;
 
   if (!isReport) {
-    response = http.put(`admin/funding/${id}/accept`);
+    response = await http.put(`admin/funding/${id}/accept`);
   } else {
-    response = http.put(`admin/funding/${id}/report/accept`);
+    response = await http.put(`admin/funding/${id}/report/accept`);
   }
 
   return response;
@@ -108,9 +100,9 @@ export const requestRejectFunding = async (id: number, isReport: boolean, reject
   let response;
 
   if (!isReport) {
-    response = http.put(`admin/funding/${id}/reject`, data);
+    response = await http.put(`admin/funding/${id}/reject`, data);
   } else {
-    response = http.put(`admin/funding/${id}/report/reject`, data);
+    response = await http.put(`admin/funding/${id}/report/reject`, data);
   }
 
   return response;
