@@ -457,7 +457,7 @@ function ResponsiveAppBar() {
                       <Typography
                         textAlign="center"
                         onClick={() => {
-                          navigateTo('/myBadges');
+                          navigateTo('/qna');
                         }}
                         sx={{ width: '100%' }}
                       >

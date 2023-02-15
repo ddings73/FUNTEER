@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Fade, Tooltip } from '@mui/material';
 import styles from './MainPageContainer.module.scss';
 import InfoCard from '../../components/Main/InfoCard';
@@ -13,9 +13,14 @@ import wave2 from '../../assets/images/mainPage/wave2.svg';
 import { http } from '../../api/axios';
 
 export function MainPageContainer() {
+  const navigate = useNavigate();
   const [scrollPosition, setScrollPosition] = useState(0);
   const updateScroll = () => {
     setScrollPosition(window.scrollY || document.documentElement.scrollTop);
+  };
+
+  const goServiceDetail = () => {
+    navigate('/service');
   };
 
   // 우주인에 손을 올려보세요
@@ -48,7 +53,7 @@ export function MainPageContainer() {
             당신의 착한 마음을 <br /> <span className={styles.logoStrong}>FUNTEER</span>가 응원합니다{' '}
           </p>
           <p className={styles.subLogoTypo}>펀딩을 통해 접하는 새로운 봉사</p>
-          <button className={styles.serviceBtn} type="button">
+          <button className={styles.serviceBtn} type="button" onClick={goServiceDetail}>
             서비스 상세보기
           </button>
         </div>

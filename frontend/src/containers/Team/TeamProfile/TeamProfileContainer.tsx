@@ -111,11 +111,11 @@ function TeamProfileContainer() {
               <div className={styles['profile-card-info-content']}>
                 <div className={styles['profile-card-info-left']}>
                   <div className={styles['profile-card-info-item']}>
-                    {userId === teamId && (
+                    {userId.toString() === teamId && (
                       <div style={{ display: 'flex', alignItems: 'center' }}>
                         <BsPiggyBankFill color="rgba(236, 153, 75, 1)" />
                         <p className={styles.money}>
-                          저금통: <span>{teamProfileInfo.money.toLocaleString('ko-KR')}</span> 원
+                          마일리지: <span>{teamProfileInfo.money.toLocaleString('ko-KR')}</span> 원
                         </p>
                       </div>
                     )}

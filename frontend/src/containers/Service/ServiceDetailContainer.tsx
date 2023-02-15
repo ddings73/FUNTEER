@@ -9,7 +9,7 @@ function ServiceDetailContainer() {
     // eslint-disable-next-line
     interval = setInterval(() => {
       setShowP((prev) => prev + 1);
-    }, 1000);
+    }, 600);
 
     return () => clearInterval(interval);
   }, []);
