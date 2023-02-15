@@ -10,7 +10,7 @@ import { Button } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import styles from './AdminFundingContainer.module.scss';
 import { requestAdminFundingList, requestFundingAccept } from '../../../api/admin';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 enum FundingState {
   All = '전체',
@@ -160,7 +160,7 @@ function AdminFundingContainer() {
         try {
           const response = await requestFundingAccept(id, false);
           console.log(response);
-          customAlert(s1000, '펀딩 상태 변경 완료');
+          customTextOnlyAlert(noTimeSuccess, '펀딩 상태 변경 완료');
           setPage(1);
           requestPageFundings();
         } catch (error: unknown) {
@@ -173,7 +173,7 @@ function AdminFundingContainer() {
         try {
           const response = await requestFundingAccept(id, true);
           console.log(response);
-          customAlert(s1000, '펀딩 상태 변경 완료');
+          customTextOnlyAlert(noTimeSuccess, '펀딩 상태 변경 완료');
           setPage(1);
           requestPageFundings();
         } catch (error: unknown) {

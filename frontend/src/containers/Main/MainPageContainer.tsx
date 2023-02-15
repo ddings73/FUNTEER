@@ -74,13 +74,10 @@ export function MainPageContainer() {
       <div className={styles.infoBanner}>
         <InfoCard />
       </div>
-      <div className={styles.fundLists}>
+      {/* <div className={styles.fundLists}>
         <FunList />
-      </div>
-      <div className={styles.volunLists}>
-        <LiveList />
-      </div>
-      <div className={styles.donate}>123</div>
+      </div> */}
+      <div className={styles.donate}> </div>
     </div>
   );
 }

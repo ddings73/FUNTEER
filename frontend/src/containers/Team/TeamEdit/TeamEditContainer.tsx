@@ -8,7 +8,7 @@ import TeamSideBarList from '../../../components/TeamPageSideBar/TeamSideBarList
 import styles from './TeamEditContainer.module.scss';
 import defaultImage from '../../../assets/images/default-profile-img.svg';
 import { requestChangeDescription, requestChangePassword, requestChangePerform, requestChangeProfileImg, requestChangeVms } from '../../../api/team';
-import { customAlert, s1000, w1500 } from '../../../utils/customAlert';
+import { customTextOnlyAlert, noTimeSuccess, noTimeWarn } from '../../../utils/customAlert';
 
 function TeamEditContainer() {
   const navigate = useNavigate();
@@ -53,10 +53,10 @@ function TeamEditContainer() {
       /** 이미지 수정 요청 */
       try {
         const response = await requestChangeProfileImg(teamEditInfo.teamId, e.target.files[0]);
-        customAlert(s1000, '프로필 이미지가 변경되었습니다.');
+        customTextOnlyAlert(noTimeSuccess, '프로필 이미지가 변경되었습니다.');
         console.log(response);
       } catch (error) {
-        customAlert(w1500, '잘못된 요청입니다.');
+        customTextOnlyAlert(noTimeWarn, '잘못된 요청입니다.');
         console.error(error);
       }
     }
@@ -72,10 +72,10 @@ function TeamEditContainer() {
   const onClickDescriptionChange = async () => {
     try {
       const response = await requestChangeDescription(teamEditInfo.teamId, teamEditInfo.description);
-      customAlert(s1000, '단체 설명이 변경되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '단체 설명이 변경되었습니다.');
       console.log(response);
     } catch (error) {
-      customAlert(w1500, '잘못된 요청입니다.');
+      customTextOnlyAlert(noTimeWarn, '잘못된 요청입니다.');
       console.error(error);
     }
   };
@@ -94,24 +94,24 @@ function TeamEditContainer() {
   /** 비밀번호 변경 요청 */
   const onClickPasswordChange = async () => {
     if (passwordInfo.newPassword !== passwordInfo.newPasswordCheck) {
-      customAlert(w1500, '비밀번호와 비밀번호 확인 값이 다릅니다.');
+      customTextOnlyAlert(noTimeWarn, '비밀번호와 비밀번호 확인 값이 다릅니다.');
       return;
     }
 
     /** 비밀번호 정규식: 8 ~ 15자, 하나 이상의 문자와 숫자 */
     const validPW = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z]).*$/;
     if (!validPW.test(passwordInfo.newPassword)) {
-      customAlert(w1500, '적합하지 않은 비밀번호입니다.');
+      customTextOnlyAlert(noTimeWarn, '적합하지 않은 비밀번호입니다.');
       // eslint-disable-next-line
       return;
     }
 
     try {
       const response = await requestChangePassword(teamEditInfo.teamId, passwordInfo.password, passwordInfo.newPassword);
-      customAlert(s1000, '비밀번호가 변경되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '비밀번호가 변경되었습니다.');
       console.log(response);
     } catch (error) {
-      customAlert(w1500, '잘못된 요청입니다.');
+      customTextOnlyAlert(noTimeWarn, '잘못된 요청입니다.');
       console.error(error);
     }
   };
@@ -138,10 +138,10 @@ function TeamEditContainer() {
   const onClickVmsChange = async () => {
     try {
       const response = await requestChangeVms(teamEditInfo.teamId, vmsPassword, vmsFile);
-      customAlert(s1000, 'VMS 파일이 변경되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, 'VMS 파일이 변경되었습니다.');
       console.log(response);
     } catch (error) {
-      customAlert(w1500, '이미 인증된 단체입니다.');
+      customTextOnlyAlert(noTimeWarn, '이미 인증된 단체입니다.');
       console.error(error);
     }
   };
@@ -168,10 +168,10 @@ function TeamEditContainer() {
   const onClickPerformChange = async () => {
     try {
       const response = await requestChangePerform(teamEditInfo.teamId, performPassword, performFile);
-      customAlert(s1000, '실적 파일이 변경되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '실적 파일이 변경되었습니다.');
       console.log(response);
     } catch (error) {
-      customAlert(w1500, '1년 이내의 실적이 이미 존재합니다.');
+      customTextOnlyAlert(noTimeWarn, '1년 이내의 실적이 이미 존재합니다.');
       console.error(error);
     }
   };

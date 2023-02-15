@@ -6,6 +6,7 @@ import styles from './CommentCardSubmit.module.scss';
 import profileTemp from '../../assets/images/default-profile-img.svg';
 import { postFundingComment, requestCommentList } from '../../api/funding';
 import { commentType } from '../../containers/Funding/FundingDetailContainer';
+import { customTextOnlyAlert, noTimeSuccess } from '../../utils/customAlert';
 
 export function CommentCardSubmit(props: any, commentCount: number) {
   const { fundIdx } = useParams();
@@ -25,7 +26,7 @@ export function CommentCardSubmit(props: any, commentCount: number) {
   const onSubmit = async (e: any) => {
     e.preventDefault();
     await fetchData();
-    alert('댓글 등록 완료!');
+    customTextOnlyAlert(noTimeSuccess, '댓글 등록 완료!');
     setComment('');
     /* eslint-disable */
     props.initCommentList();
@@ -37,7 +38,7 @@ export function CommentCardSubmit(props: any, commentCount: number) {
       } else {
         e.preventDefault();
         fetchData();
-        alert('댓글 등록 완료!');
+        customTextOnlyAlert(noTimeSuccess, '댓글 등록 완료!');
         setComment('');
       }
     }

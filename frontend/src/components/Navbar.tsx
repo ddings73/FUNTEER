@@ -36,6 +36,7 @@ import { off } from 'process';
 import { type } from 'os';
 import { string } from 'yargs';
 import { BsFillBellFill } from 'react-icons/bs';
+import { customTextOnlyAlert, DefaultAlert } from '../utils/customAlert';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
@@ -101,7 +102,8 @@ function ResponsiveAppBar() {
       dispatch(resetLoginState());
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      alert('로그아웃 되었습니다.');
+      // alert('로그아웃 되었습니다.');
+      customTextOnlyAlert(DefaultAlert, '로그아웃 되었습니다.');
       navigateTo('/');
     } catch (error) {
       console.log(error);

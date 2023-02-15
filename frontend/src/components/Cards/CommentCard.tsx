@@ -11,6 +11,7 @@ import { requestUserInfo, requestUserProfile } from '../../api/user';
 import { userProfileInterface } from '../../types/user';
 import { teamProfileType } from '../../types/user';
 import { requestDeleteComment } from '../../api/funding';
+import { customTextOnlyAlert, DefaultAlert, noTimeSuccess } from '../../utils/customAlert';
 
 // 본인이면 삭제
 // const [isSameUser, setIsSameUser] = useState(false);
@@ -74,7 +75,7 @@ export function CommentCard({ memberNickName, content, memberProfileImg, regDate
     console.log('clicked');
     try {
       await requestDeleteComment(commentId);
-      alert('댓글이 삭제되었습니다!');
+      customTextOnlyAlert(DefaultAlert, '댓글이 삭제되었습니다!');
     } catch (e) {
       console.log(e);
     }

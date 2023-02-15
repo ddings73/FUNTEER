@@ -12,7 +12,7 @@ import { RootState } from '../../../store/store';
 import { requestTeams, requestWithdrawTeam } from '../../../api/admin';
 import { AdminTeamInterface } from '../../../types/user';
 import styles from './AdminTeamContainer.module.scss';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 export enum TeamState {
   All = '전체',
@@ -145,7 +145,7 @@ function AdminTeamContainer() {
     try {
       const response = await requestWithdrawTeam(id);
       console.log(response);
-      customAlert(s1000, '단체 탈퇴 처리가 완료되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '단체 탈퇴 처리가 완료되었습니다.');
       requestPageTeams();
     } catch (error) {
       console.error(error);
