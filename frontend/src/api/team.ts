@@ -1,6 +1,5 @@
 import { http } from './axios';
 import { teamSignUpType } from '../types/user';
-import { customAlert, w1500 } from '../utils/customAlert';
 import logo from '../assets/images/logo.png';
 
 /** 단체 회원가입 */
