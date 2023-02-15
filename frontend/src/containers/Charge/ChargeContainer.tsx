@@ -10,7 +10,7 @@ import { openModal } from '../../store/slices/payModalSlice';
 import { requestUserProfile } from '../../api/user';
 import { requestVerifyPayment, requestPayment, requestChargeList } from '../../api/payment';
 import { CallBackParams, PayParams } from '../../types/payment';
-import { customAlert, customTextAlert, s2000, w2000 } from '../../utils/customAlert';
+import { customAlert, customTextAlert, customTextOnlyAlert, noTimeSuccess, noTimeWarn, s2000, w2000 } from '../../utils/customAlert';
 import { YYYYMMDDHHMMSS } from '../../utils/day';
 
 /** 결제 콜백 함수 */
@@ -27,22 +27,22 @@ const callback: (response: CallBackParams) => void = async (response) => {
         const paymentResponse = await requestPayment(response.paid_amount, response.imp_uid);
         console.log('결제 요청 정보', paymentResponse);
         /** 결제 request 성공시 알림 */
-        customAlert(s2000, '결제 성공');
+        customTextOnlyAlert(noTimeSuccess, '결제 성공');
       } catch (error) {
         /** 결제 모달 닫기 */
         console.log('결제 요청 실패', error);
-        customTextAlert(w2000, '결제 실패', '알 수 없는 에러입니다. 고객센터에 문의해주세요.');
+        customTextOnlyAlert(noTimeWarn, '알 수 없는 에러입니다. 고객센터에 문의해주세요.');
       }
       /** 결제 검증 실패 */
     } catch (error) {
       /** 결제 모달 닫기 */
       console.error('결제 검증 에러', error);
-      customTextAlert(w2000, '결제 실패', '알 수 없는 에러입니다. 고객센터에 문의해주세요.');
+      customTextOnlyAlert(noTimeWarn, '알 수 없는 에러입니다. 고객센터에 문의해주세요.');
     }
     /** 결제 실패 */
   } else {
     /** 결제 실패 알림 */
-    customTextAlert(w2000, '결제 실패', `${response.error_msg}`);
+    customTextOnlyAlert(noTimeWarn, `${response.error_msg}`);
   }
 };
 

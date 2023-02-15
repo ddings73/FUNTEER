@@ -5,7 +5,7 @@ import { Button, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { s1000, s1500, w1500, customAlert } from '../../utils/customAlert';
+import { noTimeSuccess, noTimeWarn, customTextOnlyAlert } from '../../utils/customAlert';
 import { teamSignUpType } from '../../types/user';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
 import { requestCheckEmailAuthCode, requestEmailDuplConfirm, requestNameDuplConfirm, requestSendEmailAuthCode, requestSignIn } from '../../api/user';
@@ -120,17 +120,17 @@ function TeamSignUpContainer() {
     e.preventDefault();
 
     if (!teamSignUpInfo.name) {
-      customAlert(w1500, '단체명을 입력해주세요.');
+      customTextOnlyAlert(noTimeWarn, '단체명을 입력해주세요.');
       return;
     }
 
     try {
       const response = await requestNameDuplConfirm(teamSignUpInfo.name);
-      customAlert(s1000, '단체명 중복 체크 완료');
+      customTextOnlyAlert(noTimeSuccess, '단체명 중복 체크 완료');
       setNameDuplConfirmed(true);
       console.log(response);
     } catch (error) {
-      customAlert(w1500, '이미 가입된 단체명입니다.');
+      customTextOnlyAlert(noTimeWarn, '이미 가입된 단체명입니다.');
       console.log(error);
     }
   };
@@ -140,7 +140,7 @@ function TeamSignUpContainer() {
     e.preventDefault();
 
     if (!teamSignUpInfo.email) {
-      customAlert(w1500, '이메일을 입력해주세요.');
+      customTextOnlyAlert(noTimeWarn, '이메일을 입력해주세요.');
       return;
     }
 
@@ -148,17 +148,17 @@ function TeamSignUpContainer() {
     const validEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]+/; // (알파벳, 숫자)@(알파벳).(알파벳)
 
     if (validEmail.test(teamSignUpInfo.email) === false) {
-      customAlert(w1500, '이메일 주소가 올바르지 않습니다.');
+      customTextOnlyAlert(noTimeWarn, '이메일 주소가 올바르지 않습니다.');
       return;
     }
 
     try {
       const response = await requestEmailDuplConfirm(teamSignUpInfo.email);
-      customAlert(s1000, '이메일 중복 체크 완료');
+      customTextOnlyAlert(noTimeSuccess, '이메일 중복 체크 완료');
       setEmailDuplConfirmed(true);
       console.log(response);
     } catch (error) {
-      customAlert(w1500, '이미 가입된 이메일입니다.');
+      customTextOnlyAlert(noTimeWarn, '이미 가입된 이메일입니다.');
       console.log(error);
     }
   };
@@ -166,7 +166,7 @@ function TeamSignUpContainer() {
   /** 이메일 인증하기 버튼 */
   const handleClickAuthEmail = async () => {
     if (!emailDuplConfirmed) {
-      customAlert(w1500, '먼저 이메일 중복 체크를 완료해주세요.');
+      customTextOnlyAlert(noTimeWarn, '먼저 이메일 중복 체크를 완료해주세요.');
       return;
     }
 
@@ -195,7 +195,7 @@ function TeamSignUpContainer() {
       setButtonText(`${minute}분 ${second}초`);
 
       if (time === 0) {
-        customAlert(w1500, '인증 번호 입력 시간이 초과되었습니다.');
+        customTextOnlyAlert(noTimeWarn, '인증 번호 입력 시간이 초과되었습니다.');
         setButtonText('이메일 인증하기');
         setEmailAuthButtonPushed(false);
         setTime(initTime);
@@ -215,12 +215,12 @@ function TeamSignUpContainer() {
     try {
       const response = await requestCheckEmailAuthCode(authNumber, teamSignUpInfo.email);
       console.log('이메일 인증 요청', response);
-      customAlert(s1500, '이메일 인증이 완료되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '이메일 인증이 완료되었습니다.');
       setCheckEmailAuth(true);
       setEmailAuthButtonPushed(false);
     } catch (err) {
       console.error(err);
-      customAlert(w1500, '인증 번호가 일치하지 않습니다.');
+      customTextOnlyAlert(noTimeWarn, '인증 번호가 일치하지 않습니다.');
     }
   };
 
@@ -234,10 +234,10 @@ function TeamSignUpContainer() {
   /** 계좌 인증 알림, 구현 패스 */
   const onClickAccountBtn = () => {
     if (teamSignUpInfo.accountNumber.length <= 5) {
-      customAlert(w1500, '올바른 계좌 번호를 입력해주세요.');
+      customTextOnlyAlert(noTimeWarn, '올바른 계좌 번호를 입력해주세요.');
       return;
     }
-    customAlert(s1000, '계좌 인증이 완료되었습니다.');
+    customTextOnlyAlert(noTimeSuccess, '계좌 인증이 완료되었습니다.');
   };
 
   /** vms 파일 업로드 */
@@ -259,34 +259,34 @@ function TeamSignUpContainer() {
     // ========================== 유효성 검사 ==============================
     /** 중복 검사 했는지 */
     if (!nameDuplConfirmed || !emailDuplConfirmed) {
-      customAlert(w1500, '모든 중복 체크를 완료해주세요.');
+      customTextOnlyAlert(noTimeWarn, '모든 중복 체크를 완료해주세요.');
       return;
     }
     /** 비밀번호와 비밀번호 확인 값이 같은지 */
     if (teamSignUpInfo.password !== teamSignUpInfo.passwordCheck) {
-      customAlert(w1500, '비밀번호와 비밀번호 확인 값이 다릅니다.');
+      customTextOnlyAlert(noTimeWarn, '비밀번호와 비밀번호 확인 값이 다릅니다.');
       return;
     }
     /** 비밀번호 정규식: 8 ~ 15자, 하나 이상의 문자와 숫자 */
     const validPW = /^.*(?=^.{8,15}$)(?=.*\d)(?=.*[a-zA-Z]).*$/;
     if (!validPW.test(teamSignUpInfo.password)) {
-      customAlert(w1500, '적합하지 않은 비밀번호입니다.');
+      customTextOnlyAlert(noTimeWarn, '적합하지 않은 비밀번호입니다.');
       return;
     }
     /** 이메일 인증 여부 */
     if (!checkEmailAuth) {
-      customAlert(w1500, '이메일 인증을 완료해주세요.');
+      customTextOnlyAlert(noTimeWarn, '이메일 인증을 완료해주세요.');
       return;
     }
     /** 모든 정보를 입력 했는지 */
     const isEmpty = Object.values(teamSignUpInfo).some((value) => value === '' || value === null);
     if (isEmpty) {
-      customAlert(w1500, '모든 정보를 입력해주세요.');
+      customTextOnlyAlert(noTimeWarn, '모든 정보를 입력해주세요.');
       return;
     }
     /** 필수 파일들을 업로드 했는지 */
     if (!vmsFile || !performFile) {
-      customAlert(w1500, '필수 파일을 첨부해주세요.');
+      customTextOnlyAlert(noTimeWarn, '필수 파일을 첨부해주세요.');
       return;
     }
 

@@ -12,6 +12,7 @@ import { useAppSelector } from '../../store/hooks';
 import { closeModal } from '../../store/slices/reportModalSlice';
 import { responseListType } from '../../types/funding';
 import { fundingReportPost } from '../../api/funding';
+import { customTextOnlyAlert, noTimeSuccess, noTimeWarn } from '../../utils/customAlert';
 
 const style = {
   position: 'absolute',
@@ -86,7 +87,7 @@ export function ReportModal() {
         },
       ]);
     } else {
-      alert('빈칸이 있습니다. 양식을 모두 채워주세요');
+      customTextOnlyAlert(noTimeWarn, '빈칸이 있습니다. 양식을 모두 채워주세요');
     }
     setAmount('');
     setDescription('');
@@ -98,7 +99,7 @@ export function ReportModal() {
 
   async function closeReportModal() {
     if (responseList.length < 2) {
-      alert('설명과 금액 보고를 작성해주세요');
+      customTextOnlyAlert(noTimeWarn, '설명과 금액 보고를 작성해주세요');
       return;
     }
     responseList.shift(); // 맨 앞 빈 객체 제거
@@ -108,7 +109,7 @@ export function ReportModal() {
         content: contentText,
         reportDetailResponseList: responseList,
       });
-      alert('보고서가 성공적으로 등록되었습니다. 등록창이 닫힙니다.');
+      customTextOnlyAlert(noTimeSuccess, '보고서가 성공적으로 등록되었습니다. 등록창이 닫힙니다.');
       dispatch(closeModal());
     } catch (e) {
       console.log(e);
