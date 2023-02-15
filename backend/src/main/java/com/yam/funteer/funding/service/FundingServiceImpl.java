@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.alarm.service.AlarmService;
@@ -126,49 +127,37 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingListPageResponse findAllFunding(Pageable pageable, PostType postType, Long categoryId, String keyword) {
-		List<Funding> fundings = new ArrayList<>();
-
-		if (postType == null && categoryId == null) {
-			for (Funding funding : fundingRepository.findAllByTitleContainingOrContentContaining(
-				keyword, keyword)) {
-				fundings.add(funding);
-			}
-
-		} else if (postType == null) {
+		Page<Funding> fundings = null;
+		List<PostType> postTypes = null;
+		if(postType != null) {
+			postTypes = PostType.collectPostType(postType);
+		}
+		if(categoryId == null){
+			fundings = postType == null
+					? fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword, pageable)
+					: fundingRepository.findAllByPostTypeInAndTitleContainingOrPostTypeInAndContentContaining(postTypes, keyword, postTypes, keyword, pageable);
+		}else{
 			Category category = categoryRepository.findById(categoryId).orElseThrow();
-			for (Funding funding : fundingRepository.findAllByCategoryAndTitleContainingOrCategoryAndContentContaining(
-				category, keyword, category, keyword)) {
-				fundings.add(funding);
-			}
-
-		} else if (categoryId == null) {
-			for (Funding funding : fundingRepository.findAllByPostTypeAndTitleContainingOrPostTypeAndContentContaining(
-				postType, keyword, postType, keyword)) {
-				fundings.add(funding);
-			}
-
-		} else {
-			Category category = categoryRepository.findById(categoryId).orElseThrow();
-			for (Funding funding : fundingRepository.findAllByCategoryAndPostTypeAndTitleContainingOrCategoryAndPostTypeAndContentContaining(
-				category, postType, keyword, category, postType, keyword)) {
-				fundings.add(funding);
-			}
+			fundings = postType == null
+					? fundingRepository.findAllByCategoryAndTitleContainingOrCategoryAndContentContaining(category, keyword, category, keyword, pageable)
+					: fundingRepository.findAllByCategoryAndPostTypeInAndTitleContainingOrCategoryAndPostTypeInAndContentContaining(category, postTypes, keyword, category, postTypes, keyword, pageable);
 		}
 
-		Page<FundingListResponse> fundingListResponses = getFundingListResponses(pageable, fundings);
+//		Page<FundingListResponse> fundingListResponses = getFundingListResponses(pageable, fundings);
+//
+//		List<Funding> successFundingList = fundingRepository.findAllByPostType(PostType.REPORT_ACCEPT);
+//
+//		Long inProgressFundingAmount = fundingRepository.findAllByPostType(PostType.FUNDING_IN_PROGRESS).stream().count();
+//		inProgressFundingAmount += fundingRepository.findAllByPostType(PostType.FUNDING_EXTEND).stream().count();
+//		int successFundingCount = successFundingList.size();
+//
+//		Long totalFundingAmount = 0L;
+//		for (Funding funding : successFundingList) {
+//			totalFundingAmount += funding.getCurrentFundingAmount();
+//		}
 
-		List<Funding> successFundingList = fundingRepository.findAllByPostType(PostType.REPORT_ACCEPT);
-
-		Long inProgressFundingAmount = fundingRepository.findAllByPostType(PostType.FUNDING_IN_PROGRESS).stream().count();
-		inProgressFundingAmount += fundingRepository.findAllByPostType(PostType.FUNDING_EXTEND).stream().count();
-		int successFundingCount = successFundingList.size();
-
-		Long totalFundingAmount = 0L;
-		for (Funding funding : successFundingList) {
-			totalFundingAmount += funding.getCurrentFundingAmount();
-		}
-
-		return new FundingListPageResponse(fundingListResponses, inProgressFundingAmount, successFundingCount, totalFundingAmount);
+		return FundingListPageResponse.of(fundings);
+//		return new FundingListPageResponse(fundingListResponses, inProgressFundingAmount, successFundingCount, totalFundingAmount);
 	}
 	@Override
 	public Page<FundingListResponse> findAllFundingByAdmin(String keyword, PostType postType, Pageable pageable) {
