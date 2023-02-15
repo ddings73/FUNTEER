@@ -19,7 +19,7 @@ public class FundingReportRequest {
 
 	private String content;
 
-	private String receiptFile;
+	private MultipartFile receiptFile;
 
 	private List<FundingReportDetailRequest> fundingDetailRequests;
 
