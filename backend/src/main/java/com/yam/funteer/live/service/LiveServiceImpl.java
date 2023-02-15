@@ -1,9 +1,9 @@
 package com.yam.funteer.live.service;
 
+import com.yam.funteer.alarm.service.AlarmService;
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.FileUtil;
 import com.yam.funteer.attach.entity.Attach;
-import com.yam.funteer.attach.entity.TeamAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
 import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
@@ -33,9 +33,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
+import javax.persistence.EntityManager;
 
 import java.io.File;
 import java.util.List;
@@ -53,15 +54,13 @@ public class LiveServiceImpl implements LiveService{
     private String OPENVIDU_SECRET;
     private OpenVidu openVidu;
     private final AwsS3Uploader awsS3Uploader;
+    private final AlarmService alarmService;
 
     private final UserRepository userRepository;
-    private final TeamRepository teamRepository;
-    private final MemberRepository memberRepository;
     private final LiveRepository liveRepository;
     private final GiftRepository giftRepository;
     private final FundingRepository fundingRepository;
     private final AttachRepository attachRepository;
-    private final TeamAttachRepository teamAttachRepository;
 
     @PostConstruct
     public void init(){
@@ -69,6 +68,7 @@ public class LiveServiceImpl implements LiveService{
     }
 
     @Override
+    @Transactional(noRollbackFor= SessionNotFoundException.class)
     public CreateConnectionResponse initializeSession(CreateConnectionRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
         User user = userRepository.findById(userId)
@@ -149,6 +149,8 @@ public class LiveServiceImpl implements LiveService{
             Live live = Live.of(session.getSessionId(), funding);
             liveRepository.save(live);
 
+
+            // alarmService.sendList(null, sessionName + " 단체의 라이브 방송이 시작되었습니다.", "/subscribeLiveRoom/" + sessionName);
             return new CreateConnectionResponse(token);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -156,7 +158,7 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
-    private CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, User user) {
+    protected CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, User user) {
 
         String sessionName = request.getSessionName();
         Live live = liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).orElseThrow(SessionNotFoundException::new);
@@ -164,9 +166,13 @@ public class LiveServiceImpl implements LiveService{
             openviduFetch();
             Session session = this.openVidu.getActiveSession(live.getSessionId());
             if(session == null){
-                log.info("OpenVidu 서버에 동작중인 세션이 없음");
+                log.warn("OpenVidu 서버에 동작중인 세션이 없음 in try");
                 live.end();
-                return initializeSession(request);
+                Team prevTeam = live.getFunding().getTeam();
+                if(prevTeam.getId().equals(user.getId())) {
+                    return initializeSession(request);
+                }
+                throw new SessionNotFoundException();
             }
 
             if(!session.isBeingRecorded()){
@@ -194,9 +200,14 @@ public class LiveServiceImpl implements LiveService{
             return new CreateConnectionResponse(token);
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             log.error(e.getMessage());
+            log.warn("OpenVidu 서버에 동작중인 세션이 없음 in catch");
+            live.end();
 
-            log.info("OpenVidu 서버에 동작중인 세션이 없음");
-            return initializeSession(request);
+            Team prevTeam = live.getFunding().getTeam();
+            if(prevTeam.getId().equals(user.getId())) {
+                return initializeSession(request);
+            }
+            throw new SessionNotFoundException();
         }
     }
 
