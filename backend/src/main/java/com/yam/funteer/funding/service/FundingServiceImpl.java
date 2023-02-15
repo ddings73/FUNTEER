@@ -629,7 +629,7 @@ public class FundingServiceImpl implements FundingService{
 	}
 
 	// 자정이 되면 StartDate 가 당일인 펀딩들 중 승인 안료된 펀딩을 진행중으로 변경, 펀딩 금액에 따라 완료/실패 여부 판단
-	@Scheduled(cron = "0 0 10 * * *", zone = "Asia/Seoul")
+	@Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
 	public void changeStatusFunding() {
 		List<Funding> all = fundingRepository.findAllByStartDate(LocalDate.now());
 		for (Funding funding : all) {
