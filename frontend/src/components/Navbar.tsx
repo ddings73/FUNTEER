@@ -175,7 +175,7 @@ function ResponsiveAppBar() {
       // sse 연결
       // http://localhost:8080/api/v1/subscribe
       // https://i8e204.p.ssafy.io/api/v1/subscribe
-      eventSource = new EventSourcePolyfill('https://i8e204.p.ssafy.io/api/v1/subscribe', {
+      eventSource = new EventSourcePolyfill('https://funteer.site/api/v1/subscribe', {
         headers: {
           'Content-Type': 'text/event-stream',
           'Access-Control-Allow-Origin': '*',
