@@ -103,7 +103,7 @@ function DonateModal({ isOpen, postId, userId, mileage }: donateModalType) {
         <DialogContentText className={styles['text-content']}>{mileage.toLocaleString('ko-KR')} 원</DialogContentText>
         <DialogContentText className={styles['text-label']}>기부 금액</DialogContentText>
         <input type="number" placeholder="1000원 이상, 100원 단위로 입력해주세요." onChange={onChangeAmount} />
-        {amount >= 0 && (
+        {amount >= 0 && !less1000 && !lessMileage && (
           <p className={styles.alarm}>
             {amount.toLocaleString('ko-KR')} 원 <span>차감 예정</span>
           </p>
