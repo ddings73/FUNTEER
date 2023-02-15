@@ -72,7 +72,12 @@ public class TeamServiceImpl implements TeamService{
 
 		request.encryptPassword(passwordEncoder);
 
-		Team team = request.toTeam();
+		MultipartFile profileImg = request.getProfileImg();
+		String profilePath = awsS3Uploader.upload(profileImg, "user");
+		Attach profile = request.getProfile(profilePath);
+		Team team = request.toTeam(profile);
+
+		attachRepository.save(profile);
 		teamRepository.save(team);
 		badgeService.initBadges(team);
 
@@ -143,6 +148,7 @@ public class TeamServiceImpl implements TeamService{
 				attachRepository.save(profile);
 				team.updateProfile(profile);
 			}else{
+				awsS3Uploader.delete(profile.getPath(), "user");
 				profile.update(profileImgFile.getOriginalFilename(), profilePath);
 			}
 		}

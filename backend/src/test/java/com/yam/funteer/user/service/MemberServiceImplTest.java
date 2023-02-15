@@ -40,11 +40,12 @@ class MemberServiceImplTest {
                 .email("kim@ssafy.com")
                 .name("김싸피")
                 .nickname("SSAFY")
+                .profileImg(null)
                 .password("qwer1234")
                 .phone("010-1234-5678")
                 .build();
 
-        Member member = requestDto.toMember();
+        Member member = requestDto.toMember(null);
         assertNotNull(member);
         assertEquals(UserType.NORMAL, member.getUserType());
         assertEquals(0L, member.getMoney());
@@ -57,11 +58,12 @@ class MemberServiceImplTest {
                 .email("kim@ssafy.com")
                 .name("김싸피")
                 .nickname("SSAFY")
+                .profileImg(null)
                 .password("qwer1234")
                 .phone("010-1234-5678")
                 .build();
 
-        Member member = requestDto.toMember();
+        Member member = requestDto.toMember(null);
 
         Optional<Member> byEmail = memberRepository.findByEmail(requestDto.getEmail());
         assertTrue(byEmail.isEmpty());
@@ -104,9 +106,9 @@ class MemberServiceImplTest {
         Follow follow = findFollow.get();
         assertEquals(newFollow, follow);
 
-        assertTrue(follow.isFollow());
+        assertTrue(follow.getChecked());
 
         follow.toggle();
-        assertFalse(follow.isFollow());
+        assertFalse(follow.getChecked());
     }
 }
