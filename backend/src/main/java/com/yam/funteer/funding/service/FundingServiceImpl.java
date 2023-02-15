@@ -498,7 +498,7 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public FundingReportResponse createFundingReport(Long fundingId, FundingReportRequest data) {
 		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
-		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
+		// String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
 
 		Report report = new Report(funding, data.getContent(), LocalDateTime.now());
 		reportRepository.save(report);
@@ -506,7 +506,7 @@ public class FundingServiceImpl implements FundingService{
 		Attach attach = Attach.builder()
 			.name(fundingId + "-receiptFIle")
 			.fileType(FileType.RECEIPT)
-			.path(receiptUrl)
+			.path(data.getReceiptFile())
 			.regDate(LocalDateTime.now())
 			.build();
 
@@ -554,12 +554,12 @@ public class FundingServiceImpl implements FundingService{
 
 		awsS3Uploader.delete("reports/" + fundingId + "/", report.getReceipts().getPath());
 		attachRepository.delete(report.getReceipts());
-		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
+		// String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
 
 		Attach attach = Attach.builder()
 			.name(fundingId + "-receiptFile")
 			.fileType(FileType.RECEIPT)
-			.path(receiptUrl)
+			.path(data.getReceiptFile())
 			.regDate(LocalDateTime.now())
 			.build();
 
