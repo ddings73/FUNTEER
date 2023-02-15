@@ -40,20 +40,19 @@ const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
 
 function ResponsiveAppBar() {
-  type eventListType={
-    url:string,
-    content:string,
-    alarmId:number,
-    userEmail:string,
-  }
+  type eventListType = {
+    url: string;
+    content: string;
+    alarmId: number;
+    userEmail: string;
+  };
   const token = localStorage.getItem('accessToken');
   const [listening, setListening] = useState(false);
   const [sseData, setSseData] = useState({});
   const [respon, setRespon] = useState(false);
   const [eventList, setEventList] = useState<eventListType[]>([]);
   let eventSource: EventSourcePolyfill | undefined;
-  const [eventListsize,setEventListsize]=useState(0);
-
+  const [eventListsize, setEventListsize] = useState(0);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -147,7 +146,6 @@ function ResponsiveAppBar() {
     }
   }, [userType]);
 
-
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
     console.log(scrollPosition);
@@ -156,7 +154,6 @@ function ResponsiveAppBar() {
     };
   });
 
-
   const requestGetAlarms = async () => {
     setEventList([]);
     try {
@@ -164,14 +161,13 @@ function ResponsiveAppBar() {
       console.log(response);
       setEventList(response.data);
       setEventListsize(response.data.length);
-      
     } catch (error) {
       console.error(error);
     }
   };
-  useEffect(()=>{
+  useEffect(() => {
     requestGetAlarms();
-  },[token])
+  }, [token]);
 
   // sse
   useEffect(() => {
@@ -224,7 +220,6 @@ function ResponsiveAppBar() {
     };
   }, [token]);
 
-
   // 상세보기 및 삭제
   // 혹시 실시간으로 보게 되도 이거 쓰셈요...
   const eventRead = async (alarmId:number,url:string) => {
@@ -234,8 +229,7 @@ function ResponsiveAppBar() {
       await http.delete(`subscribe/alarm/${alarmId}`);
       requestGetAlarms();
       clickNavigate(url);
-    }  
-     catch (error) {
+    } catch (error) {
       console.error(error);
     }
 
@@ -315,20 +309,18 @@ function ResponsiveAppBar() {
                   <span style={{ fontWeight: '800' }}>{userName}</span>님 환영합니다
                 </p>
                 <div>
-                  <IconButton aria-label="notifi" className={styles.noti}  onClick={handleClick}>
+                  <IconButton aria-label="notifi" className={styles.noti} onClick={handleClick}>
                     <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
                       <NotificationsNoneIcon fontSize="large" />
                     </StyledBadge>
                   </IconButton>
                   <Menu open={open} onClose={handleClose}>
-                    {
-                      eventList.map((event)=>(
-                        <MenuItem onClick={()=>eventRead(event.alarmId,event.url)}>{event.content}</MenuItem>
-                      ))
-                    }
+                    {eventList.map((event) => (
+                      <MenuItem onClick={() => eventRead(event.alarmId, event.url)}>{event.content}</MenuItem>
+                    ))}
                   </Menu>
                 </div>
-               
+
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0, border: '3px solid orange' }}>
                     <Avatar alt="profileImg" src={profileImgUrl} />
@@ -368,7 +360,8 @@ function ResponsiveAppBar() {
                       <Typography
                         textAlign="center"
                         onClick={() => {
-                          navigateTo(userType === 'NORMAL' ? '/myPage' : userType === 'TEAM' ? `/team/${teamInfo.id}` : '/admin');
+                          console.log(userType);
+                          navigateTo(userType === 'NORMAL' || userType === 'KAKAO' ? '/myPage' : userType === 'TEAM' ? `/team/${teamInfo.id}` : '/admin');
                         }}
                         sx={{ width: '100%' }}
                       >
