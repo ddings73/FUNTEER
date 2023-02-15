@@ -6,27 +6,31 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.convert.converter.Converter;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
 
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
+@Component
 public class StringToFundingReportDetailRequestConverter implements Converter<String, List<FundingReportDetailRequest>> {
 	@Override
 	public List<FundingReportDetailRequest> convert(String value)  {
 		ObjectMapper objectMapper = new ObjectMapper();
-		Map<String, String> map = null;
+		List<Map<String, String>> mapList = null;
 
 		try {
-			map = objectMapper.readValue(value, Map.class);
+			mapList = objectMapper.readValue(value, List.class);
 		} catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 
 		List<FundingReportDetailRequest> list = new ArrayList<>();
-		map.forEach((k, v) ->{
-			list.add(new FundingReportDetailRequest(k, v));
+		mapList.forEach(map -> {
+			list.add(new FundingReportDetailRequest(map.get("amount"), map.get("description")));
 		});
 
 		return list;
