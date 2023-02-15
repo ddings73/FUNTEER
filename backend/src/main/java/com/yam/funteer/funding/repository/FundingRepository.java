@@ -24,7 +24,7 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 	// 카테고리만
 	Page<Funding> findAllByCategoryAndTitleContainingOrCategoryAndContentContaining(Category category, String keyword, Category category2, String keyword2, Pageable pageable);
 
-//	List<Funding> findAllByPostType(PostType postType);
+	List<Funding> findAllByPostTypeIn(List<PostType> postTypes);
 
 	List<Funding> findAllByCategory(Category category);
 
