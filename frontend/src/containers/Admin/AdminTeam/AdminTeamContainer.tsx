@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
+import Swal from 'sweetalert2';
 import MenuItem from '@mui/material/MenuItem';
 import { AiOutlineSearch, AiOutlineClose, AiOutlineReload } from 'react-icons/ai';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -104,7 +105,19 @@ function AdminTeamContainer() {
   const teamStateSet = Object.values(TeamState);
 
   const handleWithdrawBtn = (e: React.MouseEvent<SVGElement>, id: number) => {
-    withdrawTeam(id);
+    Swal.fire({
+      text: '해당 단체를 탈퇴 처리 하시겠습니까?',
+      showConfirmButton: false,
+      showDenyButton: true,
+      showCancelButton: true,
+      denyButtonText: `확인`,
+      denyButtonColor: 'rgba(211, 79, 4, 1)',
+      cancelButtonText: '취소',
+    }).then((result) => {
+      if (result.isDenied) {
+        withdrawTeam(id);
+      }
+    });
   };
 
   const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
