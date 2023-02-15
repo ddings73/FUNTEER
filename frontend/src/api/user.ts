@@ -1,5 +1,6 @@
 import { http } from './axios';
-import { changeUserInfoInterface, memberSignUpType, teamSignUpType, UserSignInType } from '../types/user';
+import { changeUserInfoInterface, memberSignUpType, UserSignInType } from '../types/user';
+import logo from '../assets/images/logo.png';
 
 /**
  * 이메일 로그인 요청
@@ -56,16 +57,25 @@ export const requestPhoneDuplConfirm = async (phone: string) => {
   return res;
 };
 
+/** 개인 회원가입 */
 export const requestMemberSignUp = async (memberSignUpInfo: memberSignUpType) => {
-  const data = {
-    name: memberSignUpInfo.name,
-    email: memberSignUpInfo.email,
-    password: memberSignUpInfo.password,
-    nickname: memberSignUpInfo.nickname,
-    phone: memberSignUpInfo.phone,
-  };
+  const formData = new FormData();
+  const entries = Object.entries(memberSignUpInfo);
 
-  const res = await http.post('/member', data);
+  entries.forEach((data) => {
+    const key = data[0];
+    if (key !== 'passwordCheck') {
+      const value = data[1];
+
+      formData.append(`${key}`, value);
+    }
+  });
+
+  /** 기본 프사 */
+  const defaultProfileBlob = await fetch(logo).then((res) => res.blob());
+  formData.append('profileImg', defaultProfileBlob, 'default-profile.png');
+
+  const res = await http.post('/member', formData);
 
   return res;
 };
