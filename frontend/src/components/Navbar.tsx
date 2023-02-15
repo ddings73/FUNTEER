@@ -209,6 +209,7 @@ function ResponsiveAppBar() {
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
         console.log(event.data);
         if(!event.data.includes('EventStream')){
+          console.log(event.data);
           requestGetAlarms();
         }
       }) as EventListener);
