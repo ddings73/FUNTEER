@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class GiftDetailResponse {
 
-    private List<GiftInfo> giftInfoList;
+    private List<GiftInfo> list;
 
     public static GiftDetailResponse of(Page<Gift> giftpage){
         List<GiftInfo> giftInfos = giftpage.stream().map(GiftInfo::of).collect(Collectors.toList());
@@ -29,13 +29,14 @@ public class GiftDetailResponse {
     private static class GiftInfo{
         private String teamName;
         private Long amount;
-        private LocalDateTime giftDate;
+        private LocalDate giftDate;
 
         public static GiftInfo of(Gift gift){
             return GiftInfo.builder()
-                    .amount(gift.getAmount())
-                    .giftDate(gift.getGiftDate())
-                    .build();
+                .teamName(gift.getLive().getTeam().getName())
+                .amount(gift.getAmount())
+                .giftDate(gift.getGiftDate().toLocalDate())
+                .build();
         }
     }
 }

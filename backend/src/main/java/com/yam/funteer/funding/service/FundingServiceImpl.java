@@ -21,6 +21,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import com.yam.funteer.alarm.service.AlarmService;
@@ -124,6 +125,39 @@ public class FundingServiceImpl implements FundingService{
 	private final BadgeService badgeService;
 	private final AlarmService alarmService;
 
+	@Override
+	public FundingListPageResponse findAllFunding(Pageable pageable, PostType postType, Long categoryId, String keyword) {
+		Page<Funding> fundings = null;
+		List<PostType> postTypes = null;
+		if(postType != null) {
+			postTypes = PostType.collectPostType(postType);
+		}
+		if(categoryId == null){
+			fundings = postType == null
+					? fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword, pageable)
+					: fundingRepository.findAllByPostTypeInAndTitleContainingOrPostTypeInAndContentContaining(postTypes, keyword, postTypes, keyword, pageable);
+		}else{
+			Category category = categoryRepository.findById(categoryId).orElseThrow();
+			fundings = postType == null
+					? fundingRepository.findAllByCategoryAndTitleContainingOrCategoryAndContentContaining(category, keyword, category, keyword, pageable)
+					: fundingRepository.findAllByCategoryAndPostTypeInAndTitleContainingOrCategoryAndPostTypeInAndContentContaining(category, postTypes, keyword, category, postTypes, keyword, pageable);
+		}
+
+//		Page<FundingListResponse> fundingListResponses = getFundingListResponses(pageable, fundings);
+//
+		List<Funding> successFundingList = fundingRepository.findAllByPostTypeIn(PostType.collectPostType(PostType.FUNDING_COMPLETE));
+
+		List<Funding> inProgressFundingList = fundingRepository.findAllByPostTypeIn(PostType.collectPostType(PostType.FUNDING_IN_PROGRESS));
+		int successFundingCount = successFundingList.size();
+
+		Long inProgressFundingAmount = 0L;
+		for (Funding funding : inProgressFundingList) {
+			inProgressFundingAmount += funding.getCurrentFundingAmount();
+		}
+
+		return FundingListPageResponse.of(fundings, successFundingCount, inProgressFundingAmount);
+//		return new FundingListPageResponse(fundingListResponses, inProgressFundingAmount, successFundingCount, totalFundingAmount);
+	}
 	@Override
 	public Page<FundingListResponse> findAllFundingByAdmin(String keyword, PostType postType, Pageable pageable) {
 		return postType == null
@@ -238,26 +272,6 @@ public class FundingServiceImpl implements FundingService{
 		return fundingListResponses;
 	}
 
-	@Override
-	public FundingListPageResponse findAllFunding(Pageable pageable) {
-		List<Funding> collect = fundingRepository.findAll();
-
-		Page<FundingListResponse> fundingListResponses = getFundingListResponses(
-			pageable, collect);
-
-		List<Funding> successFundingList = fundingRepository.findAllByPostType(PostType.REPORT_ACCEPT);
-
-		Long inProgressFundingAmount = fundingRepository.findAllByPostType(PostType.FUNDING_IN_PROGRESS).stream().count();
-		inProgressFundingAmount += fundingRepository.findAllByPostType(PostType.FUNDING_EXTEND).stream().count();
-		int successFundingCount = successFundingList.size();
-
-		Long totalFundingAmount = 0L;
-		for (Funding funding : successFundingList) {
-			totalFundingAmount += funding.getCurrentFundingAmount();
-		}
-
-		return new FundingListPageResponse(fundingListResponses, inProgressFundingAmount, successFundingCount, totalFundingAmount);
-	}
 
 
 	@Override

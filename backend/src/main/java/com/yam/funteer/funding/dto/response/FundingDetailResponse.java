@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Page;
 
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.post.entity.PostHashtag;
 import com.yam.funteer.post.repository.CommentRepository;
@@ -63,6 +64,8 @@ public class FundingDetailResponse {
 
 	private Long participatedCount;
 
+	private PostType postType;
+
 	public static FundingDetailResponse from(Funding funding) {
 
 		DecimalFormat decFormat = new DecimalFormat("###,###");
@@ -83,6 +86,7 @@ public class FundingDetailResponse {
 			.thumbnail(funding.getThumbnail())
 			.currentFundingAmount(str)
 			.fundingDescription(funding.getFundingDescription())
+			.postType(funding.getPostType())
 			.hit(funding.getHit())
 			.build();
 

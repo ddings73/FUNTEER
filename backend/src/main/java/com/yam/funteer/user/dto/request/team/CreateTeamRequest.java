@@ -34,13 +34,15 @@ public class CreateTeamRequest extends CreateAccountRequest {
     @NotNull
     private MultipartFile performFile;
 
-    public Team toTeam(){
+
+    public Team toTeam(Attach profileImg){
         return Team.builder()
             .email(email)
             .password(password)
             .name(name)
             .phone(phone)
             .userType(UserType.TEAM_WAIT)
+            .profileImg(profileImg)
             .money(0L)
             .totalFundingAmount(0L)
             .regDate(LocalDateTime.now())

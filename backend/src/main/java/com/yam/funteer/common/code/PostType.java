@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 
+import java.util.List;
+
 @Getter @ToString
 @RequiredArgsConstructor
 public enum PostType implements TypeModel {
@@ -31,6 +33,15 @@ public enum PostType implements TypeModel {
 	@Override
 	public String getKey() {
 		return name();
+	}
+
+	public static List<PostType> collectPostType(PostType postType){
+		switch(postType){
+			case FUNDING_ACCEPT: return List.of(FUNDING_ACCEPT);
+			case FUNDING_IN_PROGRESS: return List.of(FUNDING_IN_PROGRESS, FUNDING_EXTEND);
+			case FUNDING_COMPLETE: return List.of(FUNDING_COMPLETE, REPORT_WAIT, REPORT_ACCEPT);
+			default: return List.of(FUNDING_FAIL);
+		}
 	}
 
 }
