@@ -41,5 +41,5 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 	int updateHit(@Param(value = "fundingId") Long fundingId);
 
 
-	Page<Funding> findAllByPostTypeAndTitleContainingOrContentContaining(PostType postType, String keyword, String keyword2, Pageable pageable);
+	Page<Funding> findAllByPostTypeAndTitleContainingOrPostTypeAndContentContaining(PostType postType, String keyword, PostType postType1, String keyword2, Pageable pageable);
 }
