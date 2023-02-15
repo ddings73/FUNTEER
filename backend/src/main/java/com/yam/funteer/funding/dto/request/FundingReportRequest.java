@@ -22,7 +22,7 @@ public class FundingReportRequest {
 
 	private MultipartFile receiptFile;
 
-	private ArrayList<FundingReportDetailRequest> fundingDetailRequests;
+	private List<FundingReportDetailRequest> fundingDetailRequests;
 
 
 }
