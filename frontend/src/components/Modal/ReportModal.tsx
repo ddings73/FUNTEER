@@ -100,7 +100,7 @@ export function ReportModal() {
   }
 
   useEffect(() => {
-    console.log(responseList);
+    console.log('사실 접니다 ㅎㅎ', responseList);
   }, [responseList]);
 
   function deleteHandler(delIdx: number) {
@@ -109,16 +109,21 @@ export function ReportModal() {
 
   const createNotice = async () => {
     console.log('내용 텍스트', typeof contentText);
-    console.log(reportData);
+    console.log('위에', responseList);
+    responseList.shift();
+    setResponseList(responseList);
     console.log('밑에', responseList);
     setReportData({ ...reportData, content: contentText, fundingDetailRequests: responseList });
-    console.log(reportData);
+  };
+
+  const test = async () => {
+    await createNotice();
 
     try {
       const response = await fundingReportPost(fundingId, reportData);
-      console.log(response);
+      console.log('나다이새갸', response);
       dispatch(closeModal());
-      console.log(response);
+      console.log('그게 난가요 ?', response);
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         alert(error.response?.data.message);
@@ -154,12 +159,13 @@ export function ReportModal() {
   // };
 
   useEffect(() => {
-    console.log(reportData);
+    console.log('ㅋㅋ나임 ㅗ', reportData);
   }, [reportData]);
 
   useEffect(() => {
     console.log(contentText);
   }, [contentText]);
+
   return (
     <Modal open={reportModalState.isOpen} onClose={() => initModalClose()} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
       <Box sx={style}>
@@ -229,7 +235,7 @@ export function ReportModal() {
           </form>
 
           <div style={{ marginTop: '5%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Button variant="contained" size="large" color="warning" onClick={() => createNotice()}>
+            <Button variant="contained" size="large" color="warning" onClick={() => test()}>
               등록하기
             </Button>
             <Button variant="outlined" size="large" color="warning" onClick={() => initModalClose()} sx={{ ml: 3 }}>

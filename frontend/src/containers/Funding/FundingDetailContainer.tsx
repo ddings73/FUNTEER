@@ -10,6 +10,7 @@ import TextField from '@mui/material/TextField';
 import BeenhereIcon from '@mui/icons-material/Beenhere';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import { useDispatch } from 'react-redux';
+import { Viewer } from '@toast-ui/react-editor';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
 import { fundingJoin, requestCommentList, requestFundingDetail, requestFundingReport, requestNextCommentList, requestWish } from '../../api/funding';
@@ -17,6 +18,7 @@ import TeamInfo from '../../components/Cards/TeamInfoCard';
 import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
 import CommentCard from '../../components/Cards/CommentCard';
+import '@toast-ui/editor/dist/toastui-editor.css';
 import CommentSkeleton from '../../components/Skeleton/CommentSkeleton';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { requestUserProfile } from '../../api/user';
@@ -415,6 +417,7 @@ export function FundingDetailContainer() {
                 </div>
               </div>
               <div dangerouslySetInnerHTML={{ __html: board.content }} className={styles.mainContentInner} />
+              <Viewer initialValue={board.content || ''} />
             </div>
           ) : (
             <div className={styles.mainContentInner}>
