@@ -8,7 +8,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import { FaHandHoldingHeart } from 'react-icons/fa';
 import { useAppDispatch } from '../../store/hooks';
 import { donateModalType } from '../../types/modal';
-import { customAlert, s1000 } from '../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../utils/customAlert';
 import { closeModal } from '../../store/slices/donateModalSlice';
 import styles from './DonateModal.module.scss';
 import { requestPayDonation } from '../../api/donation';
@@ -81,7 +81,7 @@ function DonateModal({ isOpen, postId, userId, mileage }: donateModalType) {
       const response = await requestPayDonation(postId, amount.toString());
       console.log('자체 기부 참여 요청', response);
       dispatch(closeModal());
-      customAlert(s1000, '기부 참여가 완료되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '기부 참여가 완료되었습니다.');
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -103,7 +103,7 @@ function DonateModal({ isOpen, postId, userId, mileage }: donateModalType) {
         <DialogContentText className={styles['text-content']}>{mileage.toLocaleString('ko-KR')} 원</DialogContentText>
         <DialogContentText className={styles['text-label']}>기부 금액</DialogContentText>
         <input type="number" placeholder="1000원 이상, 100원 단위로 입력해주세요." onChange={onChangeAmount} />
-        {amount >= 0 && !less1000 && !lessMileage && (
+        {amount > 0 && !less1000 && !lessMileage && (
           <p className={styles.alarm}>
             {amount.toLocaleString('ko-KR')} 원 <span>차감 예정</span>
           </p>

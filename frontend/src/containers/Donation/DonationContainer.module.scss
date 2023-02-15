@@ -14,6 +14,7 @@
   @include mobile {
     margin-top: 90px;
   }
+
   .contents {
     max-width: 1280px;
     width: 100%;
@@ -24,10 +25,32 @@
     padding: 0 15px;
 
     & .contentTitle {
-      margin: 0 0 1rem 5rem;
+      display: flex;
+      align-items: center;
+      margin: 0 0 2rem 5rem;
       font-family: 'nanumsquare';
       font-size: 2rem;
       font-weight: bold;
+      color: rgb(89, 40, 0);
+      animation: slide-in 3s forwards;
+
+      @keyframes slide-in {
+        from {
+          margin: 0 0 4rem 5rem;
+          opacity: 0;
+          transform: translateX(-50px);
+        }
+        to {
+          opacity: 1;
+          margin: 0 0 2rem 5rem;
+          transform: translateX(0);
+        }
+      }
+
+      & img {
+        width: 4rem;
+        margin-right: 1rem;
+      }
     }
 
     .donation-box {
@@ -40,6 +63,8 @@
       .left {
         margin-top: 70px;
         width: 40%;
+        animation: fade-in 3s forwards;
+
         & img {
           margin-left: 50px;
           width: 400px;
@@ -47,11 +72,11 @@
           object-fit: contain;
           rotate: -12deg;
           transition: 1s;
-          border: 5px solid rgba(189, 189, 189, 0.479);
+          // border: 5px solid rgba(255, 176, 123, 0.479);
           border-radius: 5px;
-          box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+          box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 20px, rgba(0, 0, 0, 0.1) 8px 6px 6px;
           &:hover {
-            scale: 1.4;
+            scale: 1.3;
             rotate: 0deg;
             opacity: 0.9;
           }
@@ -65,17 +90,21 @@
           display: none;
         }
       }
+
       .right {
         position: relative;
-        padding: 50px;
+        padding: 40px 40px 20px 40px;
         width: 40%;
         height: auto;
         border: 7px solid $primary;
         border-radius: 18px;
         background-color: rgb(255, 255, 255);
+        animation: fade-in 3s forwards;
+
         @include tablet {
           width: 80%;
         }
+
         @include mobile {
           width: 70%;
         }
@@ -83,16 +112,18 @@
         & .title {
           font-size: 2.5rem;
           font-weight: bold;
-          background: linear-gradient(259.55deg, #ff9900 51.3%, #ff6b00 92.74%);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
+          // background: linear-gradient(259.55deg, #ff9900 51.3%, #ff6b00 92.74%);
+          // -webkit-background-clip: text;
+          // -webkit-text-fill-color: transparent;
+          // background-clip: text;
+          color: $primary;
           // text-fill-color: transparent;
 
           @include mobile {
             font-size: 1.5rem;
           }
         }
+
         & .text {
           overflow: hidden;
           margin-top: 40px;
@@ -112,11 +143,10 @@
         }
 
         & .text2 {
-          margin-top: 2rem;
+          margin: 3rem 0 1rem 0;
         }
 
         & .donButton {
-          position: absolute;
           font-weight: bold;
           font-size: 20px;
           width: 40%;
@@ -124,7 +154,7 @@
           border-radius: 15px;
           color: #ffff;
           background-color: $primary;
-          border: 2px solid white;
+          margin: 5rem 0 0 0;
           bottom: 20px;
           left: 30%;
           cursor: pointer;
@@ -138,10 +168,11 @@
         }
       }
     }
+
     .amount-box {
       margin: 50px auto 0 auto;
       width: 100%;
-      background: linear-gradient(249.43deg, #ed9e54 -13.04%, #eb5500 122.25%);
+      background: linear-gradient(249.43deg, #ed9e54a8 -13.04%, #eb5600b1 122.25%);
       border-radius: 50px 0px;
       height: 120px;
       text-align: center;
@@ -149,12 +180,14 @@
       @include tablet {
         width: 80%;
       }
+
       @include mobile {
         height: 100px;
         width: 80%;
       }
+
       & p {
-        font-size: 3.5rem;
+        font-size: 3rem;
         font-weight: bold;
         line-height: 120px;
         background: linear-gradient(180deg, #ffffff 50%, #cac2c2 30%, #ffffff 50%);
@@ -173,6 +206,7 @@
       }
     }
   }
+
   & .finishedTable {
     margin-top: 40px;
   }
@@ -180,4 +214,42 @@
 
 .contentsWrapper {
   margin-top: 150px;
+}
+
+.inspire {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+
+  & p {
+    font-size: 2.2rem;
+    font-weight: 600;
+    color: rgb(59, 59, 59);
+    animation: shine infinite 3s ease-in-out;
+
+    & span {
+      color: $primary !important;
+    }
+  }
+
+  @keyframes shine {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }

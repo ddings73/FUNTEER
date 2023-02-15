@@ -14,13 +14,7 @@ import { requestCurrentDonation } from '../../api/donation';
 import { requestUserProfile } from '../../api/user';
 import { openModal } from '../../store/slices/donateModalSlice';
 import { requestTeamProfileInfo } from '../../api/team';
-
-/**
- * * 유저가 현재 가진돈은 계산해놨음
- * * 기부하기 클릭 시 모달같은거 띄워서 얼마 기부할 지 체크
- *  * 돈이 부족할때 처리
- *
- */
+import logo from '../../assets/images/logo.png';
 
 type ResponseInterface = {
   id: number;
@@ -46,6 +40,8 @@ function DonationContainer() {
     currentAmount: '',
     startDate: '',
   });
+  const target = parseInt(donBoard.targetAmount, 10).toLocaleString('ko-KR');
+  const diff = (parseInt(donBoard.targetAmount, 10) - parseInt(donBoard.currentAmount, 10)).toLocaleString('ko-KR');
 
   useEffect(() => {
     fetchData();
@@ -89,7 +85,10 @@ function DonationContainer() {
     <div className={styles.container}>
       <div className={styles.contents}>
         <div className={styles.contentsWrapper}>
-          <p className={styles.contentTitle}>진행중인 기부</p>
+          <p className={styles.contentTitle}>
+            <img src={logo} alt="logo" />
+            에서 진행중인 기부 행사입니다.
+          </p>
           <div className={styles['donation-box']}>
             <div className={styles.left}>
               <figure>
@@ -105,8 +104,13 @@ function DonationContainer() {
               </Button>
             </div>
           </div>
+          <div className={styles.inspire}>
+            <p>
+              목표 금액 <span>{target}</span>원까지 <span>{diff}</span>원 남았습니다.
+            </p>
+          </div>
           <div className={styles['amount-box']}>
-            <p>총 적립금 {parseInt(donBoard.currentAmount, 10).toLocaleString('ko-KR')}원</p>
+            <p>총 후원금 {parseInt(donBoard.currentAmount, 10).toLocaleString('ko-KR')}원</p>
           </div>
           <div className={styles.finishedTable}>
             <Accordion sx={{ border: '2px solid rgb(175, 175, 175, 0.5)', marginBottom: '5rem' }}>

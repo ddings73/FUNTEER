@@ -1,7 +1,16 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import styles from './Footer.module.scss';
 
 function Footer() {
+  const navigate = useNavigate();
+
+  const goService = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    navigate('service');
+  };
+
   return (
     <div style={{ display: 'block', width: '100%' }}>
       <footer className={styles.footer}>
@@ -9,9 +18,15 @@ function Footer() {
           <div className={styles.left}>
             <h1>FUNTEER</h1>
             <nav>
-              <a href="https://helpcenter.wadiz.kr/hc/ko?_ga=2.182115239.1053366649.1675304785-1518736862.1675212581">도움말</a>
-              <a href="https://www.wadiz.kr/web/wterms/signup">이용약관</a>
-              <a href="https://www.wadiz.kr/web/wterms/privacy">개인정보처리방침</a>
+              <a href="." onClick={goService}>
+                도움말
+              </a>
+              <a href="." onClick={goService}>
+                이용약관
+              </a>
+              <a href="." onClick={goService}>
+                개인정보처리방침
+              </a>
             </nav>
             <p>Copyrightⓒ2023 funteer All rights reserved.</p>
           </div>
