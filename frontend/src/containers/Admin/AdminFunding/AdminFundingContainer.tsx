@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
+import Swal from 'sweetalert2';
 import { AxiosError } from 'axios';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -137,7 +138,19 @@ function AdminFundingContainer() {
   };
 
   const handleStateChange = (id: number, state: string, e: SelectChangeEvent) => {
-    requestChangeState(id, e.target.value, state);
+    Swal.fire({
+      text: '펀딩 상태를 변경 하시겠습니까?',
+      showConfirmButton: false,
+      showDenyButton: true,
+      showCancelButton: true,
+      denyButtonText: `확인`,
+      denyButtonColor: 'rgba(211, 79, 4, 1)',
+      cancelButtonText: '취소',
+    }).then((result) => {
+      if (result.isDenied) {
+        requestChangeState(id, e.target.value, state);
+      }
+    });
   };
 
   /** 상태 변경 요청 */
