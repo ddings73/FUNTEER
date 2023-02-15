@@ -70,6 +70,21 @@ export const requestChangePassword = async (teamId: string, password: string, ne
   return res;
 };
 
+/** 단체 vms 파일 수정 */
+export const requestChangeVms = async (teamId: string, password: string, vmsFile: File | null) => {
+  const formData = new FormData();
+
+  formData.append('userId', teamId);
+  formData.append('password', password);
+  if (vmsFile) {
+    formData.append('performFile', vmsFile);
+  }
+
+  const res = await http.put('team/account', formData);
+
+  return res;
+};
+
 /** 단체 실적 파일 수정 */
 export const requestChangePerform = async (teamId: string, password: string, performFile: File | null) => {
   const formData = new FormData();
@@ -81,6 +96,19 @@ export const requestChangePerform = async (teamId: string, password: string, per
   }
 
   const res = await http.put('team/account', formData);
+
+  return res;
+};
+
+/** 단체 도네이션 내역 */
+export const requestTeamDonationList = async (page?: number, size?: number, sort?: string) => {
+  const params = {
+    page,
+    size,
+    sort,
+  };
+
+  const res = await http.get('team/account/gift', { params });
 
   return res;
 };

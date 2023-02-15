@@ -30,7 +30,7 @@ function FundingListElement(funding: FundingElementType) {
   }, [currentFundingAmount, targetAmount]);
 
   const moveFundingDetail = () => {
-    navigate(`${pathname}/detail/${id}`);
+    navigate(`/funding/detail/${id}`);
   };
 
   return (

@@ -3,9 +3,9 @@ import MainPageContainer from '../containers/Main/MainPageContainer';
 
 function MainPage() {
   return (
-    <>
-      <MainPageContainer />;
-    </>
+    <div>
+      <MainPageContainer />
+    </div>
   );
 }
 

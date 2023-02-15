@@ -1,41 +1,34 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Editor as ToastEditor } from '@toast-ui/react-editor';
 import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
+import { Editor as ToastEditor } from '@toast-ui/react-editor';
+import { AiOutlineClose } from 'react-icons/ai';
 import Button from '@mui/material/Button';
-import { requestUploadImage } from '../../../api/funding';
-import styles from './AdminNoticeCreateContainer.module.scss';
-import requiredIcon from '../../../assets/images/funding/required.svg';
 import { requestCreateNotice } from '../../../api/admin';
 import { NoticeInterface } from '../../../types/notice';
+import styles from './AdminNoticeCreateContainer.module.scss';
+import requiredIcon from '../../../assets/images/funding/required.svg';
 
 function AdminNoticeCreateContainer() {
   const navigate = useNavigate();
-
-  const [files, setFiles] = useState<File[]>([]);
-
   const [noticeData, setNoticeData] = useState<NoticeInterface>({
     files: [],
     title: '',
     content: '',
   });
+  const editorRef = useRef<ToastEditor>(null);
+
+  useEffect(() => {
+    console.log(noticeData);
+  }, [noticeData]);
 
   const onChangeTextHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setNoticeData({ ...noticeData, title: e.target.value });
   };
 
-  const editorRef = useRef<ToastEditor>(null);
-
   const editorChangeHandler = (e: any) => {
     const text = editorRef.current?.getInstance().getHTML();
     setNoticeData({ ...noticeData, content: text });
-  };
-
-  const onUploadImage = async (blob: Blob, callback: any) => {
-    console.log(blob);
-
-    const url = await requestUploadImage(blob);
-
-    callback(url, 'NoticeContents 이미지');
   };
 
   const onChangeFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,19 +44,22 @@ function AdminNoticeCreateContainer() {
     }
   };
 
+  const onClickDeleteFile = (index: number) => {
+    setNoticeData({ ...noticeData, files: noticeData.files.filter((_, i) => i !== index) });
+  };
+
   const createNotice = async () => {
     try {
       const response = await requestCreateNotice(noticeData);
       navigate(-1);
       console.log(response);
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message);
+        console.error(error);
+      }
     }
   };
-
-  useEffect(() => {
-    console.log(noticeData);
-  }, [noticeData]);
 
   return (
     <div className={styles.container}>
@@ -84,21 +80,31 @@ function AdminNoticeCreateContainer() {
             useCommandShortcut
             initialEditType="wysiwyg"
             onChange={editorChangeHandler}
-            hooks={{ addImageBlobHook: onUploadImage }}
             language="ko-KR"
             hideModeSwitch
           />
         </div>
-        <div className={styles['label-div']} style={{ marginTop: '1.5rem' }}>
+        <div className={styles['label-div']} style={{ marginTop: '3rem' }}>
           <p>파일첨부</p> <img style={{ marginRight: '1rem' }} src={requiredIcon} alt="required icon" />
           <input type="file" multiple onChange={onChangeFiles} />
         </div>
         <div className={styles['file-list']}>
-          {noticeData.files.map((file) => (
-            <p>{file.name}</p>
+          {noticeData.files.map((file, index) => (
+            <p>
+              {file.name} <AiOutlineClose className={styles['withdraw-btn']} onClick={() => onClickDeleteFile(index)} />
+            </p>
           ))}
         </div>
         <div className={styles['btn-div']}>
+          <Button
+            variant="contained"
+            className={styles.submit}
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
+            취소
+          </Button>
           <Button variant="contained" className={styles.submit} onClick={createNotice}>
             등록
           </Button>

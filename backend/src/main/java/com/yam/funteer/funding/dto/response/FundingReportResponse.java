@@ -17,6 +17,7 @@ import lombok.Data;
 public class FundingReportResponse {
 	private String content;
 	private LocalDateTime regDate;
+	private String liveUrl;
 
 	private List<ReportDetailResponse> reportDetailResponseList;
 

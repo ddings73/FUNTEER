@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { Box, CircularProgress, Fab, Tab, Tabs } from '@mui/material';
 import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
@@ -9,6 +9,7 @@ import { styled } from '@material-ui/styles';
 import TextField from '@mui/material/TextField';
 import BeenhereIcon from '@mui/icons-material/Beenhere';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import { useDispatch } from 'react-redux';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
 import { fundingJoin, requestCommentList, requestFundingDetail, requestFundingReport, requestNextCommentList, requestWish } from '../../api/funding';
@@ -17,8 +18,13 @@ import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
 import CommentCard from '../../components/Cards/CommentCard';
 import CommentSkeleton from '../../components/Skeleton/CommentSkeleton';
-import { useAppSelector } from '../../store/hooks';
+import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { requestUserProfile } from '../../api/user';
+import { requestTeamAccountInfo } from '../../api/team';
+import { requestCreateSession } from '../../api/live';
+import { reportModalType } from '../../types/modal';
+import ReportModal from '../../components/Modal/ReportModal';
+import { openModal } from '../../store/slices/reportModalSlice';
 
 export interface ResponseInterface {
   title: string;
@@ -37,8 +43,11 @@ export interface ResponseInterface {
   comments: commentType[];
   team: teamType;
   fundingId: string;
+  hit: number;
+  participatedCount: number;
 }
 export type commentType = {
+  commentId: number;
   memberNickName: string;
   content: string;
   memberProfileImg: string;
@@ -73,17 +82,13 @@ type responseListType = {
 };
 
 export function FundingDetailContainer() {
+  // 보고서 모달
+  const reportModalState = useAppSelector((state) => state.reportModalSlice);
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [commentList, setCommentList] = useState([
-    {
-      memberNickName: '',
-      content: '',
-      memberProfileImg: '',
-      regDate: '',
-    },
-  ]);
-  const [users, setUsers] = useState(null);
-  const { fundIdx } = useParams();
+  const [commentList, setCommentList] = useState<commentType[]>([]);
+  const userType = useAppSelector((state) => state.userSlice.userType);
+  const { fundIdx } = useParams<string>();
   const [board, setBoard] = useState<ResponseInterface>({
     title: '',
     startDate: '',
@@ -107,29 +112,9 @@ export function FundingDetailContainer() {
       profileImgUrl: '',
     },
     fundingId: '',
+    hit: 0,
+    participatedCount: 0,
   });
-  // 게시물 좋아요
-  const [isLiked, setIsLiked] = useState<boolean>(false);
-
-  const handleLikeClick = async () => {
-    if (isLiked === true) {
-      try {
-        const response = await requestWish(fundIdx);
-        console.log('Liked res: ', response);
-        setIsLiked(false);
-      } catch (error) {
-        console.log(error);
-      }
-    } else {
-      try {
-        const response = await requestWish(fundIdx);
-        console.log('Liked 취소 res: ', response);
-        setIsLiked(true);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
 
   // 펀딩 상세 게시물 로드
   const fetchData = async () => {
@@ -143,7 +128,7 @@ export function FundingDetailContainer() {
     }
   };
 
-  // 게시물 댓글 로드
+  // 게시물 로드
   useEffect(() => {
     fetchData();
   }, []);
@@ -156,15 +141,19 @@ export function FundingDetailContainer() {
 
   // 무한 스크롤
   // 항목 리스트 초기화
+
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [currentPage, setCurrentPage] = useState<number>(0);
   const [isLastPage, setIsLastPage] = useState<boolean>(false);
+  const [commentCount, setCommentCount] = useState<number>(0);
 
   const initCommentList = async () => {
     try {
-      setIsLoading(true);
+      // setIsLoading(true);
       const { data } = await requestCommentList(fundIdx, 'regDate,DESC');
       setCommentList([...data.comments.content]);
+      setCommentCount(data.comments.totalElements);
+      console.log('댓글 개수: ', data.comments.totalElements);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
       setIsLoading(false);
@@ -172,13 +161,14 @@ export function FundingDetailContainer() {
       console.log(error);
     }
   };
+
   const [nextLoading, setNextLoading] = useState<boolean>(false);
   // 한번에 불러올 게시글 수
   const nextCommentList = async () => {
     try {
-      console.log('here comes');
       setNextLoading(true);
       const { data } = await requestNextCommentList(currentPage, fundIdx, 'regDate,DESC');
+      console.log(data.comments);
       setCommentList([...commentList, ...data.comments.content]);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
@@ -200,16 +190,13 @@ export function FundingDetailContainer() {
   // 엔터키 input 완성
 
   function handleKeyUp(event: React.KeyboardEvent<HTMLImageElement>) {
-    console.log('누름');
     if (event.key === 'Enter') {
       (document.activeElement as HTMLElement).blur();
     }
   }
-
   useEffect(() => {
     initCommentList();
   }, []);
-
   useEffect(() => {
     if (inView && !isLastPage) {
       nextCommentList();
@@ -244,8 +231,7 @@ export function FundingDetailContainer() {
   async function fundingHandler() {
     console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불');
     try {
-      const response = await fundingJoin(paying, fundIdx);
-      console.log('Fund paying Response: ', response);
+      await fundingJoin(paying, fundIdx);
       alert(`${paying}원으로 펀딩을 완료했습니다!`);
     } catch (error) {
       console.log(error);
@@ -307,29 +293,77 @@ export function FundingDetailContainer() {
       `}
     </p>
   );
+  // 백분율 계산
+  function calc(tar: string, cur: string) {
+    const newTar = Number(tar?.replaceAll(',', ''));
+    const newCur = Number(cur?.replaceAll(',', ''));
+
+    return Math.round((newCur / newTar) * 100);
+  }
+
+  // 단체 정보 GET
+  const isLogin = useAppSelector((state) => state.userSlice.isLogin);
+  const [teamInfo, setTeamInfo] = useState<TeamInfoType>({
+    email: '',
+    id: 0,
+    name: '',
+  });
+  type TeamInfoType = {
+    email: string;
+    id: number;
+    name: string;
+  };
+  async function getTeamInfo() {
+    const res = await requestTeamAccountInfo();
+    setTeamInfo(res.data);
+    console.log('팀정보', res);
+  }
+  useEffect(() => {
+    if (isLogin && userType === 'TEAM') {
+      getTeamInfo();
+    }
+  }, [userType]);
+
+  // 라이브 방송
+  const [CheckRoom, setCheckRoom] = useState<boolean>(false);
+
+  const createSession = async () => {
+    try {
+      const response = await requestCreateSession(teamInfo.name, Number(fundIdx));
+      localStorage.setItem('liveToken', response.data.token);
+      navigate(`../publisherLiveRoom/${teamInfo.name}`);
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   return (
     <div className={styles.bodyContainer}>
       <div className={styles.banner}>
         <div className={styles.bannerContent}>
           <h1 className={styles.bannerTitle}>{board.title}</h1>
-          <div className={styles.bannerButtonGroup}>
-            <button className={styles.bannerGrpBtn} type="button">
-              보고서 제출
-            </button>
-            <button
-              className={styles.bannerGrpBtn}
-              type="button"
-              onClick={() => {
-                navigate('../../createLive', { replace: true });
-              }}
-            >
-              라이브 시작
-            </button>
-            <button className={styles.bannerGrpBtn} type="button">
-              펀딩 수정하기
-            </button>
-          </div>
+          <p className={styles.bannerSeen}> 조회수 {board.hit}회</p>
+          {userType === 'TEAM' && teamInfo.id === board.team.id && (
+            <div className={styles.bannerButtonGroup}>
+              <button className={styles.bannerGrpBtn} type="button" onClick={() => dispatch(openModal({ isOpen: true, fundingId: fundIdx as string }))}>
+                보고서 제출
+              </button>
+              <button
+                className={styles.bannerGrpBtn}
+                type="button"
+                onClick={() => {
+                  createSession();
+                }}
+              >
+                라이브 시작
+              </button>
+              <NavLink to={`/funding/modify/${fundIdx}`} style={{ textDecoration: 'none', margin: '0 3%' }}>
+                <button className={styles.bannerGrpBtn} type="button">
+                  펀딩 수정하기
+                </button>
+              </NavLink>
+            </div>
+          )}
         </div>
       </div>
       <div className={styles.mainContainer}>
@@ -371,8 +405,10 @@ export function FundingDetailContainer() {
                   </Tooltip>
                 </div>
                 <div className={styles.progressBar}>
-                  <div className={styles.status} style={{ width: `30%` }}>
-                    <p className={styles.statusNum}>40%</p>
+                  <div className={styles.status} style={{ width: `${calc(board.targetMoneyListLevelThree.amount as string, board.currentFundingAmount)}%` }}>
+                    <Tooltip title={`현재 모금 금액: ${board.currentFundingAmount}원`} placement="bottom">
+                      <p className={styles.statusNum}>{calc(board.targetMoneyListLevelThree.amount as string, board.currentFundingAmount)}%</p>
+                    </Tooltip>
                   </div>
                 </div>
               </div>
@@ -400,24 +436,9 @@ export function FundingDetailContainer() {
           <TeamInfo {...board.team} />
         </div>
         <DetailArcodian />
-
-        <div className={styles.mainFooterAttatch}>
-          <p className={styles.attachTitle}>첨부파일</p>
-          <p className={styles.attachItem}>인증서.hwp</p>
-          <p className={styles.attachItem}>증명서.pdf</p>
-        </div>
-        <div className={styles.mainFooterLikeWrapper}>
-          <button className={isLiked ? styles.mainFooterLikeButtonDone : styles.mainFooterLikeButtonNone} onClick={handleLikeClick} type="button">
-            <FavoriteIcon className={styles.mainFooterLike} />
-          </button>
-          <div className={styles.Likebox}>
-            <div className={styles.mainFooterLikeTest}> 펀딩 찜</div>
-            <div className={styles.mainFooterLikeTestSub}> 찜 수 {board.wishCount}</div>
-          </div>
-        </div>
-        <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.mainCommentSubmit}>
-          <CommentCardSubmit />
+          <p className={styles.commentHead}>응원 댓글 등록({commentCount})</p>
+          <CommentCardSubmit initCommentList={initCommentList} />
         </div>
         <div className={styles.mainComments}>
           {isLoading ? (
@@ -426,11 +447,12 @@ export function FundingDetailContainer() {
             commentList.map((comment) => {
               return (
                 <CommentCard
+                  commentId={comment.commentId}
                   memberNickName={comment.memberNickName}
                   content={comment.content}
                   memberProfileImg={comment.memberProfileImg}
                   regDate={comment.regDate}
-                  key={comment.regDate}
+                  key={comment.commentId}
                 />
               );
             })
@@ -461,7 +483,7 @@ export function FundingDetailContainer() {
       >
         <div className={styles.payBar}>
           <p>
-            <span>{board.team.name}</span>님의 펀딩에 총 <span>123,456</span>명이 참여했어요
+            <span>{board.team.name}</span>님의 펀딩에 총 <span>{board.participatedCount}</span>명이 참여했어요
           </p>
           <div>
             <TextField
@@ -490,6 +512,7 @@ export function FundingDetailContainer() {
           </div>
         </div>
       </Box>
+      <ReportModal />
     </div>
   );
 }

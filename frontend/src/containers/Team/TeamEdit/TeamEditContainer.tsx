@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { BsCameraFill } from 'react-icons/bs';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import TextField from '@mui/material/TextField';
@@ -7,10 +7,11 @@ import Button from '@mui/material/Button';
 import TeamSideBarList from '../../../components/TeamPageSideBar/TeamSideBarList';
 import styles from './TeamEditContainer.module.scss';
 import defaultImage from '../../../assets/images/default-profile-img.svg';
-import { requestChangeDescription, requestChangePassword, requestChangePerform, requestChangeProfileImg } from '../../../api/team';
+import { requestChangeDescription, requestChangePassword, requestChangePerform, requestChangeProfileImg, requestChangeVms } from '../../../api/team';
 import { customAlert, s1000, w1500 } from '../../../utils/customAlert';
 
 function TeamEditContainer() {
+  const navigate = useNavigate();
   const location = useLocation();
 
   /** 프로필 정보 */
@@ -29,6 +30,12 @@ function TeamEditContainer() {
   };
   /** 비밀번호 정보 */
   const [passwordInfo, setPasswordInfo] = useState(initialPasswordInfo);
+  /** vms 파일 변경 펼치기 */
+  const [changeVms, setChangeVms] = useState<boolean>(false);
+  /** vms 파일 비밀번호 */
+  const [vmsPassword, setVmsPassword] = useState('');
+  /** vms 파일 */
+  const [vmsFile, setVmsFile] = useState<File | null>(null);
   /** 실적 파일 변경 펼치기 */
   const [changePerform, setChangePerform] = useState<boolean>(false);
   /** 실적 파일 비밀번호 */
@@ -109,6 +116,36 @@ function TeamEditContainer() {
     }
   };
 
+  /** VMS 파일용 비밀번호 변경 */
+  const onChangeVmsPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setVmsPassword(e.target.value);
+  };
+
+  /** VMS 파일 변경 */
+  const onChangeVms = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setVmsFile(e.target.files[0]);
+    }
+  };
+
+  /** VMS 파일 변경 취소 */
+  const onCancelChangeVms = () => {
+    setChangeVms(false);
+    setVmsFile(null);
+  };
+
+  /** VMS 파일 변경 요청 */
+  const onClickVmsChange = async () => {
+    try {
+      const response = await requestChangeVms(teamEditInfo.teamId, vmsPassword, vmsFile);
+      customAlert(s1000, 'VMS 파일이 변경되었습니다.');
+      console.log(response);
+    } catch (error) {
+      customAlert(w1500, '이미 인증된 단체입니다.');
+      console.error(error);
+    }
+  };
+
   /** 실적 파일용 비밀번호 변경 */
   const onChangePerformPassword = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPerformPassword(e.target.value);
@@ -134,7 +171,7 @@ function TeamEditContainer() {
       customAlert(s1000, '실적 파일이 변경되었습니다.');
       console.log(response);
     } catch (error) {
-      customAlert(w1500, '잘못된 요청입니다.');
+      customAlert(w1500, '1년 이내의 실적이 이미 존재합니다.');
       console.error(error);
     }
   };
@@ -228,6 +265,39 @@ function TeamEditContainer() {
             <div className={styles.hr2}> </div>
             <div className={styles.item}>
               <div className={styles['perform-label']}>
+                <p>VMS 파일 변경</p>
+              </div>
+              {!changeVms && (
+                <Button color="warning" variant="outlined" className={styles['change-btn']} onClick={() => setChangeVms(true)}>
+                  변경
+                </Button>
+              )}
+              {changeVms && (
+                <div>
+                  <input
+                    name="password"
+                    type="password"
+                    placeholder="비밀번호 입력"
+                    style={{ marginTop: '0.5rem' }}
+                    className={styles['pw-input']}
+                    onChange={onChangeVmsPassword}
+                  />
+                  <label htmlFor="file">
+                    <input type="file" onChange={onChangeVms} />
+                  </label>
+                  <br />
+                  <button type="button" style={{ color: 'rgba(0, 0, 0, 0.8)' }} className={styles['perform-btn']} onClick={onCancelChangeVms}>
+                    취소
+                  </button>
+                  <button type="button" style={{ color: 'rgb(236, 153, 75)' }} className={styles['perform-btn']} onClick={onClickVmsChange}>
+                    변경
+                  </button>
+                </div>
+              )}
+            </div>
+            <div className={styles.hr2}> </div>
+            <div className={styles.item}>
+              <div className={styles['perform-label']}>
                 <p>봉사 실적 파일 변경</p>
               </div>
               {!changePerform && (
@@ -258,6 +328,9 @@ function TeamEditContainer() {
                 </div>
               )}
             </div>
+            <button type="button" className={styles.back} onClick={() => navigate(-1)}>
+              {'< 프로필 페이지'}
+            </button>
           </div>
         </div>
       </div>

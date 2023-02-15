@@ -6,11 +6,11 @@
   min-height: 100vh;
   display: flex;
   margin: 0 auto;
-  font-family: NanumSquare !important;
   justify-content: center;
+  font-family: NanumSquare !important;
 
   .contents {
-    margin-top: 77.594px;
+    margin: 77px 0;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -41,14 +41,18 @@
     }
 
     .form-div {
+      width: 90%;
       display: flex;
       flex-direction: column;
       align-items: center;
       margin: 0 1rem;
       padding: 0.5rem;
       min-width: 250px;
-      width: 50%;
-      width: 60%;
+
+      .form-div-inner {
+        max-width: 500px;
+        width: 70%;
+      }
 
       & input {
         font-size: 1rem;
@@ -88,7 +92,7 @@
       }
 
       .signup-button {
-        max-width: 450px;
+        max-width: 500px;
         width: 100%;
         height: 60px;
         margin: 3rem 0 5rem 0;
@@ -99,7 +103,7 @@
       }
 
       & div div {
-        max-width: 450px;
+        max-width: 500px;
         width: 100%;
         box-shadow: 1.5px 1.5px 2px rgba(1, 1, 1, 0.1);
       }
@@ -149,13 +153,14 @@
       }
 
       .comment {
-        max-width: 450px;
+        max-width: 500px;
         margin: 0.7rem 0 2rem 0;
         color: grey;
       }
     }
   }
 }
+
 .area {
   background: linear-gradient(to left, #ff88008f, #ff48007c);
   width: 100%;

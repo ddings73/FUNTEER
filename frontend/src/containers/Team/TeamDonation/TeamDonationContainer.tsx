@@ -1,22 +1,41 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { requestTeamAccountInfo } from '../../../api/team';
+import Pagination from '@mui/material/Pagination';
+import Stack from '@mui/material/Stack';
+import { requestTeamAccountInfo, requestTeamDonationList } from '../../../api/team';
 import TeamSideBarList from '../../../components/TeamPageSideBar/TeamSideBarList';
 import styles from './TeamDonationContainer.module.scss';
 
 export type teamDonationType = {
-  donateId: number;
-  fundingTitle: string;
+  giftId: number;
+  fundTitle: string;
   username: string;
   amount: number;
-  date: string;
+  giftDate: string;
 };
 
 function TeamDonationContainer() {
   const { teamId } = useParams();
   const [name, setName] = useState<string>('');
+  const size = 8;
+  const [page, setPage] = useState<number>(1);
+  const [maxPage, setMaxPage] = useState<number>(1);
   const [donationList, setDonationList] = useState<teamDonationType[]>([]);
 
+  useEffect(() => {
+    requestTeamName();
+  }, []);
+
+  useEffect(() => {
+    requestPageDonationList();
+  }, [page]);
+
+  /** 페이지 교체 */
+  const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
+    setPage(selectedPage);
+  };
+
+  /** 팀 이름 요청 */
   const requestTeamName = async () => {
     try {
       const response = await requestTeamAccountInfo();
@@ -26,50 +45,17 @@ function TeamDonationContainer() {
     }
   };
 
-  const requestDonationList = () => {
-    setDonationList([
-      {
-        donateId: 1,
-        fundingTitle: '잠시만두에게 키보드를 사주세요.',
-        username: '방봉빔',
-        amount: 100000,
-        date: '2023-02-03',
-      },
-      {
-        donateId: 2,
-        fundingTitle: '잠시만두에게 키보드를 사주세요.',
-        username: '방봉빔',
-        amount: 100000,
-        date: '2023-02-03',
-      },
-      {
-        donateId: 3,
-        fundingTitle: '잠시만두에게 키보드를 사주세요.',
-        username: '방봉빔',
-        amount: 100000,
-        date: '2023-02-03',
-      },
-      {
-        donateId: 4,
-        fundingTitle: '잠시만두에게 키보드를 사주세요.',
-        username: '방봉빔',
-        amount: 100000,
-        date: '2023-02-03',
-      },
-      {
-        donateId: 5,
-        fundingTitle: '잠시만두에게 키보드를 사주세요.',
-        username: '방봉빔',
-        amount: 100000,
-        date: '2023-02-03',
-      },
-    ]);
+  /** 도네이션 리스트 요청 */
+  const requestPageDonationList = async () => {
+    try {
+      const response = await requestTeamDonationList(page - 1, size, 'giftDate,DESC');
+      console.log('단체 도네이션 내역 요청', response);
+      setMaxPage(response.data.totalPages);
+      setDonationList(response.data.giftList);
+    } catch (err) {
+      console.error(err);
+    }
   };
-
-  useEffect(() => {
-    requestTeamName();
-    requestDonationList();
-  }, []);
 
   return (
     <div className={styles.container}>
@@ -87,14 +73,19 @@ function TeamDonationContainer() {
             <li>날짜</li>
           </ul>
           {donationList.map((data) => (
-            <ul key={data.donateId} className={styles['content-line']}>
-              <li className={styles['text-center']}>{data.donateId}</li>
-              <li className={styles['mobile-none']}>{data.fundingTitle}</li>
+            <ul key={data.giftId} className={styles['content-line']}>
+              <li className={styles['text-center']}>{data.giftId}</li>
+              <li className={styles['mobile-none']}>{data.fundTitle}</li>
               <li className={styles['mobile-none']}>{data.username}</li>
               <li>{data.amount.toLocaleString('ko-KR')}</li>
-              <li>{data.date}</li>
+              <li>{data.giftDate}</li>
             </ul>
           ))}
+          <div className={styles['page-bar']}>
+            <Stack spacing={2}>
+              <Pagination showFirstButton showLastButton count={maxPage} variant="outlined" page={page} onChange={handleChangePage} />
+            </Stack>
+          </div>
         </div>
       </div>
     </div>

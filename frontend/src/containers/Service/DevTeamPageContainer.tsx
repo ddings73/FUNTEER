@@ -54,14 +54,6 @@ export function TeamPageContainer() {
       <div className={styles.totalWrapper}>
         <div className={styles.typoWrapper}>
           <div className={styles.typoHead}>개발팀 소개</div>
-          <div className={styles.typoContent}>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam non tellus non enim semper mollis. Nullam et rhoncus metus. Etiam at eros ut lectus maximus
-              egestas. Nam suscipit turpis vel magna consequat, lacinia dapibus justo congue. Ut rutrum interdum enim, vitae laoreet nisi. Pellentesque pretium leo vitae
-              tempor vehicula. Etiam dui eros, eleifend ut eros vel, mollis viverra metus. Nunc in feugiat nisl, vitae finibus purus. Nunc eget congue nisl. Ut porta
-              aliquet metus et tristique. Donec quis dolor vel augue luctus efficitur id ut orci. Vivamus et mauris et est placerat consequat vitae eget tortor.
-            </p>
-          </div>
         </div>
 
         <div className={styles.cardWrapper}>
