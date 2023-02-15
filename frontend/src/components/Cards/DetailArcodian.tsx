@@ -4,25 +4,25 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
+import BeenhereIcon from '@mui/icons-material/Beenhere';
 import styles from './DetailArcodian.module.scss';
 
 export function DetailArcodian() {
   return (
-    <Accordion className={styles.cardContainer}>
-      <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-        <Typography sx={{ marginLeft: '43%' }}>모금액, 이렇게 사용됩니다.</Typography>
-      </AccordionSummary>
-      <AccordionDetails>
-        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.</Typography>
-        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.</Typography>
-        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.</Typography>
-        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.</Typography>
-        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.</Typography>
-        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.</Typography>
-        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.</Typography>
-        <Typography>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo lobortis eget.</Typography>
-      </AccordionDetails>
-    </Accordion>
+    <div className={styles.fundingPlanner}>
+      <p className={styles.planTitle}>펀딩 금액에 따른 봉사계획</p>
+      <p className={styles.planSubTitle}>마우스를 올려 단계별 계획을 확인하세요!</p>
+      <div className={styles.planTag}>
+        <BeenhereIcon className={styles.iconTag} sx={{ visibility: 'hidden' }} />
+        <BeenhereIcon className={styles.iconTag} />
+        <BeenhereIcon className={styles.iconTag} />
+        <BeenhereIcon className={styles.iconTag} />
+      </div>
+      <div className={styles.progressBar}>
+        <div className={styles.status} style={{ width: `50%` }} />
+      </div>
+    </div>
   );
 }
 

@@ -4,10 +4,8 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { Box, CircularProgress, Fab, Tab, Tabs } from '@mui/material';
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@material-ui/styles';
 import TextField from '@mui/material/TextField';
-import BeenhereIcon from '@mui/icons-material/Beenhere';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import { useDispatch } from 'react-redux';
 import { Viewer } from '@toast-ui/react-editor';
@@ -18,7 +16,6 @@ import TeamInfo from '../../components/Cards/TeamInfoCard';
 import DetailArcodian from '../../components/Cards/DetailArcodian';
 import CommentCardSubmit from '../../components/Cards/CommentCardSubmit';
 import CommentCard from '../../components/Cards/CommentCard';
-import '@toast-ui/editor/dist/toastui-editor.css';
 import CommentSkeleton from '../../components/Skeleton/CommentSkeleton';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { requestUserProfile } from '../../api/user';
@@ -75,6 +72,7 @@ type descriptionType = {
 
 interface reportInterface {
   content?: string;
+  liveUrl?: string;
   regDate?: string;
   reportDetailResponseList: responseListType[];
 }
@@ -123,7 +121,6 @@ export function FundingDetailContainer() {
     try {
       const response = await requestFundingDetail(fundIdx);
       console.log('res: ', response);
-      console.log('data res: ', response.data);
       setBoard(response.data);
     } catch (error) {
       console.log(error);
@@ -155,7 +152,6 @@ export function FundingDetailContainer() {
       const { data } = await requestCommentList(fundIdx, 'regDate,DESC');
       setCommentList([...data.comments.content]);
       setCommentCount(data.comments.totalElements);
-      console.log('댓글 개수: ', data.comments.totalElements);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
       setIsLoading(false);
@@ -170,7 +166,6 @@ export function FundingDetailContainer() {
     try {
       setNextLoading(true);
       const { data } = await requestNextCommentList(currentPage, fundIdx, 'regDate,DESC');
-      console.log(data.comments);
       setCommentList([...commentList, ...data.comments.content]);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
@@ -251,6 +246,7 @@ export function FundingDetailContainer() {
   // 보고서 탭
   const [report, setReport] = useState<reportInterface>({
     content: '',
+    liveUrl: '',
     regDate: '',
     reportDetailResponseList: [
       {
@@ -264,7 +260,6 @@ export function FundingDetailContainer() {
     try {
       const response = await requestFundingReport(fundIdx);
       console.log('Report res: ', response);
-      console.log('Report data res: ', response.data);
       setReport(response.data);
     } catch (error) {
       console.log(error);
@@ -341,6 +336,7 @@ export function FundingDetailContainer() {
     }
   };
 
+  console.log('Video URL', report.liveUrl);
   return (
     <div className={styles.bodyContainer}>
       <div className={styles.banner}>
@@ -387,54 +383,35 @@ export function FundingDetailContainer() {
             }}
           >
             <Tab value="one" label="프로젝트 상세 계획" />
-            <Tab value="two" label="프로젝트 보고" />
+            {report.reportDetailResponseList.length > 1 && <Tab value="two" label="프로젝트 보고" />}
           </Tabs>
         </Box>
         <div className={styles.mainContent}>
-          {value === 'one' ? (
-            <div>
-              <div className={styles.fundingPlanner}>
-                <p className={styles.planTitle}>펀딩 금액에 따른 봉사계획</p>
-                <p className={styles.planSubTitle}>마우스를 올려 단계별 계획을 확인하세요!</p>
-                <div className={styles.planTag}>
-                  <BeenhereIcon className={styles.iconTag} sx={{ visibility: 'hidden' }} />
-                  <Tooltip title={levelOneData()} placement="top">
-                    <BeenhereIcon className={styles.iconTag} />
-                  </Tooltip>
-                  <Tooltip title={levelTwoData()} placement="top">
-                    <BeenhereIcon className={styles.iconTag} />
-                  </Tooltip>
-                  <Tooltip title={levelThreeData()} placement="top">
-                    <BeenhereIcon className={styles.iconTag} />
-                  </Tooltip>
-                </div>
-                <div className={styles.progressBar}>
-                  <div className={styles.status} style={{ width: `${calc(board.targetMoneyListLevelThree.amount as string, board.currentFundingAmount)}%` }}>
-                    <Tooltip title={`현재 모금 금액: ${board.currentFundingAmount}원`} placement="bottom">
-                      <p className={styles.statusNum}>{calc(board.targetMoneyListLevelThree.amount as string, board.currentFundingAmount)}%</p>
-                    </Tooltip>
-                  </div>
-                </div>
-              </div>
-              <div dangerouslySetInnerHTML={{ __html: board.content }} className={styles.mainContentInner} />
-              <Viewer initialValue={board.content || ''} />
-            </div>
-          ) : (
+          {/* {value === 'one' ? (
             <div className={styles.mainContentInner}>
-              <p>{report.content}</p>
-              <p>{report.regDate}</p>
-              <div className={styles.reslists}>
-                {report.reportDetailResponseList.map((resList, i) => (
-                  <div key={resList.description}>
-                    <h1>{i + 1}번째 보고서 총액</h1>
-                    <p>{resList.amount}원</p>
-                    <p>보고서 설명</p>
-                    <p>{resList.description}</p>
-                  </div>
-                ))}
-              </div>
+              <Viewer initialValue={board.content} />
             </div>
-          )}
+          ) : ( */}
+          <div className={styles.mainContentInner}>
+            <p>{report.content}</p>
+            <p>{report.regDate}</p>
+            <video className={styles.video} controls autoPlay loop>
+              <source src={report.liveUrl} type="video/webm" />
+              <source src={report.liveUrl} type="video/mp4" />
+              <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
+            </video>
+            <div className={styles.reslists}>
+              {report.reportDetailResponseList.map((resList, i) => (
+                <div key={resList.description}>
+                  <h1>{i + 1}번째 보고서 총액</h1>
+                  <p>{resList.amount}원</p>
+                  <p>보고서 설명</p>
+                  <p>{resList.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* )} */}
         </div>
         <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard} style={{ width: '90%', marginLeft: '6%' }}>
@@ -466,14 +443,17 @@ export function FundingDetailContainer() {
         </div>
         {currentPage >= 0 ? <div ref={ref} /> : ''}
       </div>
-      <Fab
-        aria-label="add"
-        sx={{ color: 'white', backgroundColor: 'orange !important', position: 'fixed', bottom: '3%', right: '3%', width: '60px', height: '60px' }}
-        onClick={() => handleDrawer()}
-        className={styles.fabToggle}
-      >
-        <LocalAtmIcon />
-      </Fab>
+      {isLogin && userType === 'NORMAL' && (
+        <Fab
+          aria-label="add"
+          sx={{ color: 'white', backgroundColor: 'orange !important', position: 'fixed', bottom: '3%', right: '3%', width: '60px', height: '60px' }}
+          onClick={() => handleDrawer()}
+          className={styles.fabToggle}
+        >
+          <LocalAtmIcon />
+        </Fab>
+      )}
+
       <Box
         sx={{
           position: 'fixed',

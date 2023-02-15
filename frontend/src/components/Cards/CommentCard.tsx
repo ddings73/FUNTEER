@@ -18,6 +18,7 @@ import { requestDeleteComment } from '../../api/funding';
 export function CommentCard({ memberNickName, content, memberProfileImg, regDate, commentId }: commentType) {
   const userId = useAppSelector((state) => state.userSlice.userId);
   const userType = useAppSelector((state) => state.userSlice.userType);
+  const isLogin = useAppSelector((state) => state.userSlice.isLogin);
   const [userProfile, setUserProfile] = useState<userProfileInterface>({
     nickname: '',
     profileImgUrl: '',
@@ -81,10 +82,12 @@ export function CommentCard({ memberNickName, content, memberProfileImg, regDate
   }
 
   useEffect(() => {
-    if (userType === 'TEAM') {
-      getRequestTeamProfileInfo();
-    } else {
-      getRequestUserInfo();
+    if (isLogin) {
+      if (userType === 'TEAM') {
+        getRequestTeamProfileInfo();
+      } else {
+        getRequestUserInfo();
+      }
     }
   }, []);
 

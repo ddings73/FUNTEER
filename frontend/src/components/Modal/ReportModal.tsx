@@ -99,20 +99,13 @@ export function ReportModal() {
     setDescription('');
   }
 
-  useEffect(() => {
-    console.log('사실 접니다 ㅎㅎ', responseList);
-  }, [responseList]);
-
   function deleteHandler(delIdx: number) {
     setResponseList(responseList.filter((data, idx) => idx !== delIdx));
   }
 
   const createNotice = async () => {
-    console.log('내용 텍스트', typeof contentText);
-    console.log('위에', responseList);
     responseList.shift();
     setResponseList(responseList);
-    console.log('밑에', responseList);
     setReportData({ ...reportData, content: contentText, fundingDetailRequests: responseList });
   };
 
@@ -121,9 +114,7 @@ export function ReportModal() {
 
     try {
       const response = await fundingReportPost(fundingId, reportData);
-      console.log('나다이새갸', response);
       dispatch(closeModal());
-      console.log('그게 난가요 ?', response);
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         alert(error.response?.data.message);
@@ -150,21 +141,12 @@ export function ReportModal() {
       const file = e.target.files[0];
       // setReportData({ ...reportData, content: contentText, fundingDetailRequests: responseList, receiptFile: [...prev, ...temp] });
       setReportData({ ...reportData, receiptFile: file });
-      console.log('contentTExt', reportData);
     }
   };
 
   // const onClickDeleteFile = (index: number) => {
   //   setReportData({ ...reportData, receiptFile: reportData.receiptFile.filter((_, i) => i !== index) });
   // };
-
-  useEffect(() => {
-    console.log('ㅋㅋ나임 ㅗ', reportData);
-  }, [reportData]);
-
-  useEffect(() => {
-    console.log(contentText);
-  }, [contentText]);
 
   return (
     <Modal open={reportModalState.isOpen} onClose={() => initModalClose()} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
