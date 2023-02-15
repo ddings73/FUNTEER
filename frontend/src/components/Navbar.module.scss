@@ -17,6 +17,10 @@ $Desktop-max-size: 1001px;
   position: relative;
   z-index: 999;
   & .noti {
+    &:hover {
+      background-color: inherit;
+    }
+
     @media (max-width: $Desktop-max-size) {
       display: none;
     }
@@ -195,4 +199,50 @@ $Desktop-max-size: 1001px;
   -webkit-backdrop-filter: blur(10.5px);
   transition: 1s;
   z-index: 998;
+}
+
+.alarm-title {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: 600;
+
+  & svg {
+    margin-left: 0.5rem;
+    font-size: 1.2rem;
+    color: $primary;
+    animation: shake 1s infinite;
+  }
+
+  @keyframes shake {
+    0% {
+      transform: rotate(0deg);
+    }
+    5% {
+      transform: rotate(20deg);
+    }
+    10% {
+      transform: rotate(0deg);
+    }
+    15% {
+      transform: rotate(-20deg);
+    }
+    20% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(0deg);
+    }
+  }
+}
+
+.all-read {
+  border: none;
+  background-color: inherit;
+  text-decoration: none;
+  color: rgba(0, 0, 0, 0.7);
+
+  &:hover {
+    color: $primary;
+  }
 }

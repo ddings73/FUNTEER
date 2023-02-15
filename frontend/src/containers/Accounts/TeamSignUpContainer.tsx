@@ -8,9 +8,11 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { s1000, s1500, w1500, customAlert } from '../../utils/customAlert';
 import { teamSignUpType } from '../../types/user';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
-import { requestCheckEmailAuthCode, requestEmailDuplConfirm, requestNameDuplConfirm, requestSendEmailAuthCode } from '../../api/user';
+import { requestCheckEmailAuthCode, requestEmailDuplConfirm, requestNameDuplConfirm, requestSendEmailAuthCode, requestSignIn } from '../../api/user';
 import { requestTeamSignUp } from '../../api/team';
 import styles from './TeamSignUpContainer.module.scss';
+import { useAppDispatch } from '../../store/hooks';
+import { setUserLoginState } from '../../store/slices/userSlice';
 
 const bankKind = [
   '카카오뱅크',
@@ -46,6 +48,7 @@ const bankKind = [
 
 function TeamSignUpContainer() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   /** 회원가입 정보 */
   const [teamSignUpInfo, setTeamSignUpInfo] = useState({
@@ -294,9 +297,27 @@ function TeamSignUpContainer() {
 
     try {
       const response = await requestTeamSignUp(newTeamSignUpInfo);
-      console.log(response);
-      customAlert(s1500, '단체 회원가입이 완료되었습니다.');
-      navigate('/');
+      console.log('단체 회원가입 요청 response', response);
+      requestEmailLogin();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const requestEmailLogin = async () => {
+    const userInfo = { email: teamSignUpInfo.email, password: teamSignUpInfo.password };
+    try {
+      const response = await requestSignIn(userInfo);
+      if (response.status === 200) {
+        const { data } = response;
+        console.log(data);
+
+        localStorage.setItem('accessToken', data.token.accessToken);
+        localStorage.setItem('refreshToken', data.token.refreshToken);
+
+        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId, username: data.username, profileImgUrl: data.profileImgUrl }));
+        navigate('/', { replace: true });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -445,11 +466,11 @@ function TeamSignUpContainer() {
                 color="warning"
                 name="accountNumber"
                 margin="dense"
+                type="number"
                 placeholder="계좌 번호를 입력해주세요."
                 variant="outlined"
-                sx={{ background: 'white' }}
-                value={inputValue}
                 onChange={onChangeHandler}
+                sx={{ background: 'white' }}
               />
               <Button className={styles['auth-btn']} variant="contained" onClick={onClickAccountBtn}>
                 계좌 인증하기

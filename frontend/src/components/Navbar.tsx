@@ -35,6 +35,7 @@ import { http } from '../api/axios';
 import { off } from 'process';
 import { type } from 'os';
 import { string } from 'yargs';
+import { BsFillBellFill } from 'react-icons/bs';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
@@ -204,7 +205,7 @@ function ResponsiveAppBar() {
 
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
         console.log(event.data);
-        if(!event.data.includes('EventStream')){
+        if (!event.data.includes('EventStream')) {
           requestGetAlarms();
         }
       }) as EventListener);
@@ -222,8 +223,7 @@ function ResponsiveAppBar() {
 
   // 상세보기 및 삭제
   // 혹시 실시간으로 보게 되도 이거 쓰셈요...
-  const eventRead = async (alarmId:number,url:string) => {
-    
+  const eventRead = async (alarmId: number, url: string) => {
     try {
       await http.put(`subscribe/alarm/${alarmId}`);
       await http.delete(`subscribe/alarm/${alarmId}`);
@@ -232,17 +232,18 @@ function ResponsiveAppBar() {
     } catch (error) {
       console.error(error);
     }
-
   };
 
-  const eventAllRead=async()=>{
-    try{
-      await http.delete('subscribe/alarm');
+  const eventAllRead = async () => {
+    console.log('asdasd');
+    try {
+      const response = await await http.delete('subscribe/alarm');
+      console.log('다 읽음 요청', response);
       requestGetAlarms();
-    }catch(error){
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   return (
     <div>
@@ -310,13 +311,70 @@ function ResponsiveAppBar() {
                 </p>
                 <div>
                   <IconButton aria-label="notifi" className={styles.noti} onClick={handleClick}>
-                    <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
+                    <StyledBadge badgeContent={eventListsize} color="warning" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
                       <NotificationsNoneIcon fontSize="large" />
                     </StyledBadge>
                   </IconButton>
-                  <Menu open={open} onClose={handleClose}>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    PaperProps={{
+                      sx: {
+                        minWidth: '30%',
+                        padding: '2rem',
+                        borderRadius: '5px',
+                        maxHeight: '200px',
+                        overflowY: 'auto',
+                        '&::-webkit-scrollbar': {
+                          width: '5px',
+                        },
+                        '&::-webkit-scrollbar-track': {
+                          background: 'transparent',
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                          backgroundColor: 'rgba(236, 153, 75, 0.5)',
+                          borderRadius: '6px',
+                        },
+                      },
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: '2rem',
+                        margin: '0 0 0.7rem 0',
+                        padding: '0 1rem 1rem 1rem',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        borderBottom: '1px solid rgba(236, 153, 75, 0.5)',
+                      }}
+                    >
+                      <p className={styles['alarm-title']}>
+                        알림 <span style={{ marginLeft: '0.4rem', fontSize: '1.2rem', color: 'rgba(0, 0, 0, 0.5)' }}>({eventListsize})</span> <BsFillBellFill />
+                      </p>
+                      <a href="." onClick={eventAllRead} className={styles['all-read']}>
+                        모두 읽기
+                      </a>
+                    </div>
                     {eventList.map((event) => (
-                      <MenuItem onClick={() => eventRead(event.alarmId, event.url)}>{event.content}</MenuItem>
+                      <MenuItem
+                        onClick={() => eventRead(event.alarmId, event.url)}
+                        sx={{
+                          borderRadius: '5px',
+                          ':hover': {
+                            backgroundColor: 'rgba(255, 123, 0, 0.05)',
+                            fontWeight: '600',
+                          },
+                        }}
+                        className={styles['menu-item']}
+                      >
+                        {event.content}
+                      </MenuItem>
                     ))}
                   </Menu>
                 </div>

@@ -65,13 +65,13 @@ function QuestionCreateContainer() {
         <h1 className={styles.title}>1:1 문의 작성</h1>
         <div className={styles['label-div']}>
           <p>
-            질문 <img src={requiredIcon} alt="required icon" />
+            제목 <img src={requiredIcon} alt="required icon" />
           </p>
         </div>
         <input type="text" name="title" value={QNAInfo.title} className={styles['content-title']} onChange={onChange} />
         <div className={styles['label-div']}>
           <p>
-            답변 <img src={requiredIcon} alt="required icon" />
+            내용 <img src={requiredIcon} alt="required icon" />
           </p>
         </div>
         <textarea rows={10} name="content" value={QNAInfo.content} onChange={onChange} />
