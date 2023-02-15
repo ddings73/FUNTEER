@@ -67,10 +67,9 @@ function AdminNoticeContainer() {
   };
 
   /** 공지사항 삭제 버튼 */
-  const onClickDeletebtn = (title: string, id: number) => {
+  const onClickDeletebtn = (id: number) => {
     Swal.fire({
-      title: '공지사항을 삭제하시겠습니까?',
-      text: `${id}.${title}`,
+      text: '공지사항을 삭제하시겠습니까?',
       showConfirmButton: false,
       showDenyButton: true,
       showCancelButton: true,
@@ -133,7 +132,7 @@ function AdminNoticeContainer() {
               <p>{data.localDate}</p>
             </li>
             <li>
-              <AiOutlineClose onClick={() => onClickDeletebtn(data.title, data.id)} className={styles['withdraw-btn']} />
+              <AiOutlineClose onClick={() => onClickDeletebtn(data.id)} className={styles['withdraw-btn']} />
             </li>
           </ul>
         ))}

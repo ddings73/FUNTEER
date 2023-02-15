@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import Swal from 'sweetalert2';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -89,7 +90,19 @@ function AdminMemberContainer() {
 
   /** 회원 탈퇴 버튼 클릭 */
   const handleWithdrawBtn = (e: React.MouseEvent<SVGElement>, id: number) => {
-    withdrawMember(id);
+    Swal.fire({
+      text: '해당 회원을 탈퇴 처리 하시겠습니까?',
+      showConfirmButton: false,
+      showDenyButton: true,
+      showCancelButton: true,
+      denyButtonText: `확인`,
+      denyButtonColor: 'rgba(211, 79, 4, 1)',
+      cancelButtonText: '취소',
+    }).then((result) => {
+      if (result.isDenied) {
+        withdrawMember(id);
+      }
+    });
   };
 
   /** 멤버 요청 */
