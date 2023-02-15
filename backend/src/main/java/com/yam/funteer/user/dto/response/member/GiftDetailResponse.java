@@ -29,13 +29,14 @@ public class GiftDetailResponse {
     private static class GiftInfo{
         private String teamName;
         private Long amount;
-        private LocalDateTime giftDate;
+        private LocalDate giftDate;
 
         public static GiftInfo of(Gift gift){
             return GiftInfo.builder()
-                    .amount(gift.getAmount())
-                    .giftDate(gift.getGiftDate())
-                    .build();
+                .teamName(gift.getLive().getTeam().getName())
+                .amount(gift.getAmount())
+                .giftDate(gift.getGiftDate().toLocalDate())
+                .build();
         }
     }
 }
