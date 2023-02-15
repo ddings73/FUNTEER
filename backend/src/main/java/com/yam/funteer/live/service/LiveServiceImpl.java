@@ -151,7 +151,7 @@ public class LiveServiceImpl implements LiveService{
             Live live = Live.of(session.getSessionId(), funding);
             liveRepository.save(live);
 
-            List<Wish> wishList = wishRepository.findAllByFunding(funding, true);
+            List<Wish> wishList = wishRepository.findAllByFundingAndChecked(funding, true);
             List<String> emailList = wishList.stream()
                 .map(wish -> wish.getMember().getEmail())
                 .collect(Collectors.toList());
