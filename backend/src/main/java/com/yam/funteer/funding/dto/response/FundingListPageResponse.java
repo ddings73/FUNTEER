@@ -16,15 +16,19 @@ public class FundingListPageResponse {
 	private List<FundingListResponse> fundingListResponses;
 	private long totalElements;
 	private int totalPages;
-//	private Long totalFundingCount;
+	private int number;
+	private int successFundingCount;
 
-//	private int successFundingCount;
+	private Long inProgressFundingAmount;
 
-//	private Long inProgressFundingAmount;
-
-	public static FundingListPageResponse of(Page<Funding> fundingPage){
+	public static FundingListPageResponse of(Page<Funding> fundingPage, int successFundingCount, Long inProgressFundingAmount){
 		List<FundingListResponse> responseList = fundingPage.stream().map(FundingListResponse::from).collect(Collectors.toList());
-		return new FundingListPageResponse(responseList, fundingPage.getTotalElements(), fundingPage.getTotalPages());
+		return new FundingListPageResponse(responseList,
+				fundingPage.getTotalElements(),
+				fundingPage.getTotalPages(),
+				fundingPage.getNumber(),
+				successFundingCount,
+				inProgressFundingAmount);
 	}
 
 }
