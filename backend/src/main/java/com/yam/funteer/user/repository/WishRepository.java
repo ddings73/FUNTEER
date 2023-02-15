@@ -1,5 +1,6 @@
 package com.yam.funteer.user.repository;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -14,4 +15,6 @@ public interface WishRepository extends JpaRepository<Wish, Long> {
 	long countAllByMemberAndChecked(Member member, Boolean checked);
 
 	long countAllByFundingIdAndChecked(Long fundingId, boolean b);
+
+	List<Wish> findAllByFundingId(Long fundingId);
 }
