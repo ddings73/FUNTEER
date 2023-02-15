@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.dto.request;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -21,7 +22,7 @@ public class FundingReportRequest {
 
 	private MultipartFile receiptFile;
 
-	private List<FundingReportDetailRequest> fundingDetailRequests;
+	private List<FundingReportDetailRequest> fundingDetailRequests = new ArrayList<>();
 
 
 }
