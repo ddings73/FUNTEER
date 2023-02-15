@@ -1,5 +1,6 @@
 package com.yam.funteer.funding.dto.request;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;

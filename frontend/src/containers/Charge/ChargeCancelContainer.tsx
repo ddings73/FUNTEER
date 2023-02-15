@@ -5,7 +5,7 @@ import requireIcon from '../../assets/images/funding/required.svg';
 import { YYYYMMDDHHMMSS } from '../../utils/day';
 import styles from './ChargeCancelContainer.module.scss';
 import { requestCancelIamport } from '../../api/payment';
-import { customAlert, s1000, w1500 } from '../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, noTimeWarn, s1000, w1500 } from '../../utils/customAlert';
 
 function ChargeCancelContainer() {
   const location = useLocation();
@@ -27,7 +27,7 @@ function ChargeCancelContainer() {
 
   const onClickDecideBtn = () => {
     if (reason.length > 100) {
-      customAlert(w1500, '환불 사유가 너무 길어요.');
+      customTextOnlyAlert(noTimeWarn, '환불 사유가 100자를 초과했습니다.');
       return;
     }
 
@@ -38,11 +38,11 @@ function ChargeCancelContainer() {
     try {
       const response = await requestCancelIamport(amount, impUid, reason);
       console.log('충전 취소 요청 응답', response);
-      customAlert(s1000, '충전 취소 완료');
+      customTextOnlyAlert(noTimeSuccess, '충전 취소 완료');
       navigate(-1);
     } catch (err) {
       console.error('충전 취소 요청 에러', err);
-      customAlert(w1500, '충전 취소 실패');
+      customTextOnlyAlert(noTimeWarn, '충전 취소 실패');
     }
   };
 

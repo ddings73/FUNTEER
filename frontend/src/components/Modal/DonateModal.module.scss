@@ -27,17 +27,23 @@
 
   .title {
     display: flex;
-    margin: 1.5rem 0 2rem 0;
+    margin: 1rem 0 2rem 0;
     justify-content: center;
     align-items: center;
     font-size: 1.5rem;
     font-weight: 700;
 
-    & svg {
-      font-size: 1rem;
+    & img {
+      width: 3rem;
       margin-right: 0.7rem;
-      color: rgb(0, 0, 0);
+      border-radius: 100%;
     }
+
+    // & svg {
+    //   font-size: 1rem;
+    //   margin-right: 0.7rem;
+    //   color: rgb(0, 0, 0);
+    // }
   }
 
   .text-label {
@@ -77,7 +83,7 @@
 
   .warn {
     margin: 1rem 0 0 6%;
-    font-size: 0.75rem;
+    font-size: 0.9rem;
     color: red;
     opacity: 0;
     animation: fadein 0.5s ease-in-out forwards;
@@ -95,7 +101,7 @@
   }
 
   .charge {
-    margin: 2.5rem 0 2.5rem 0;
+    margin: 2.5rem 0 1.5rem 0;
     text-align: center;
     text-decoration: none;
     color: rgb(108, 108, 108);

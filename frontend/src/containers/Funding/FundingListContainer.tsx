@@ -32,11 +32,11 @@ import FundingElementSkeleton from '../../components/Skeleton/FundingElementSkel
 // 한번에 불러올 게시글 수
 const size = 12;
 const categoryList = [
-  { id: 4, url: disable, caption: '장애인' },
-  { id: 1, url: child, caption: '아동' },
-  { id: 3, url: animal, caption: '동물' },
-  { id: 2, url: oldman, caption: '노인' },
-  { id: 5, url: planet, caption: '환경' },
+  { id: '4', url: disable, caption: '장애인' },
+  { id: '1', url: child, caption: '아동' },
+  { id: '3', url: animal, caption: '동물' },
+  { id: '2', url: oldman, caption: '노인' },
+  { id: '5', url: planet, caption: '환경' },
 ];
 function FundingListContainer() {
   const [fundingList, setFundingList] = useState<FundingElementType[]>([]);
@@ -45,165 +45,111 @@ function FundingListContainer() {
   const [totalFundingCount, setTotalFundingCount] = useState<number>(0);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [nextLoading, setNextLoading] = useState<boolean>(false);
-  const [currentPage, setCurrentPage] = useState<number>(-1);
-  const [isLastPage, setIsLastPAge] = useState<boolean>(false);
+  const [currentPage, setCurrentPage] = useState<number>(0);
+  const [totalPage, setTotalPage] = useState<number>(0);
   const [ref, inView] = useInView();
-  const [selectCategory, setSelectCategory] = useState<number>(-1);
-  const [fundingStateFilter, setFundingStateFilter] = useState<string>('All');
   const [selectIdx, setSelectIdx] = useState<number>(1);
+  const [fundingStateFilter, setFundingStateFilter] = useState<string>('FUNDING_IN_PROGRESS');
+  const [categoryId, setCategoryId] = useState<string>('');
+  const [searchText,setSearchText] = useState<string>("")
 
   // 펀딩개수 계싼
   const fundingCount = useMemo(() => {
     return totalFundingCount;
   }, [totalFundingCount]);
 
-  const search = async (text: string) => {
-    try {
-      setIsLoading(true);
-      const response = await requestFundingSearch(text);
-      setFundingList([...response.data.content]);
-      setTotalFundingCount(response.data.numberOfElements);
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    search(value);
+    setSearchText(value)
   };
 
   const hanlderFilter = (id: string, idx: number) => {
+    // 버튼 색 변경
     setSelectIdx(idx);
-    getPostTypeList(id);
+
+    // 필터 타입 변경
+    setFundingStateFilter(id)
   };
 
-  const getPostTypeList = async (filterdType: string) => {
-    console.log(filterdType);
-    try {
+  const getFundingList =async()=>{
+    try{
       setIsLoading(true);
-      const { data } = await requestFundingList(size);
-      const temp = data.fundingListResponses.content;
-      let next;
-      if (filterdType === 'FUNDING_IN_PROGRESS') {
-        next = temp.filter((el: { postType: string }) => el.postType === 'FUNDING_IN_PROGRESS' || el.postType === 'FUNDING_EXTEND');
-        setFundingList([...next]);
-      } else if (filterdType === 'FUNDING_ACCEPT') {
-        next = temp.filter((el: { postType: string }) => el.postType === 'FUNDING_ACCEPT');
-        setFundingList([...next]);
-      } else if (filterdType === 'FUNDING_COMPLETE') {
-        next = temp.filter(
-          (el: { postType: string }) =>
-            el.postType === 'FUNDING_COMPLETE' || el.postType === 'REPORT_WAIT' || el.postType === 'REPORT_REJECT' || el.postType === 'REPORT_ACCEPT',
-        );
-        setFundingList([...next]);
-      } else {
-        setFundingList([...temp]);
-      }
+      const {data} = await requestFundingList(categoryId,searchText,fundingStateFilter,0,size)
+      console.log(data)
+      setFundingList([...data.fundingListResponses]);
+      setSuccessFundingCount(data.inProgressFundingAmount);
+      setTotalFundingAmount(data.successFundingCount);
+      setTotalFundingCount(data.totalElements );
+      setCurrentPage(data.number);
+      setTotalPage(data.totalPages);
+      console.log(data)
       setIsLoading(false);
-    } catch (error) {
-      console.log(error);
     }
-  };
-
-  const initFundingList = async () => {
-    try {
-      setIsLoading(true);
-      const { data } = await requestFundingList(size);
-
-      // 처음 렌더링 될 때 진행중인 펀딩리스트만 필터링해서 보여줌
-      const progressList: FundingElementType[] = data.fundingListResponses.content.filter((list: FundingElementType) => list.postType === 'FUNDING_IN_PROGRESS');
-
-      setFundingList([...progressList]);
-      setSuccessFundingCount(data.successFundingCount);
-      setTotalFundingAmount(data.totalFundingAmount);
-      setTotalFundingCount(data.totalFundingCount);
-      setCurrentPage(data.fundingListResponses.number);
-      setIsLastPAge(data.fundingListResponses.last);
-      setIsLoading(false);
-    } catch (error) {
-      console.log(error);
+    catch(error){
+      console.log(error)
     }
-  };
+
+  }
 
   const nextFundingList = async () => {
     try {
       setNextLoading(true);
-      const { data } = await requestNextFundingList(currentPage, size);
-      setFundingList([...fundingList, ...data.fundingListResponses.content]);
-      setCurrentPage(data.fundingListResponses.number);
-      setIsLastPAge(data.fundingListResponses.last);
+      const {data} = await requestFundingList(categoryId,searchText,fundingStateFilter,currentPage+1,size)
+      console.log(data)
+      setFundingList([...fundingList, ...data.fundingListResponses]);
+      setCurrentPage(data.number);
+      setTotalPage(data.totalPages);
       setNextLoading(false);
     } catch (error) {
       console.error(error);
     }
   };
-  const onToggleCategory = async (categoryId: number) => {
-    try {
-      if (categoryId === selectCategory) {
-        setSelectCategory(-1);
-        setIsLoading(true);
-        const { data } = await requestFundingList(size);
-        setFundingList([...data.fundingListResponses.content]);
-        setSuccessFundingCount(data.successFundingCount);
-        setTotalFundingAmount(data.totalFundingAmount);
-        setTotalFundingCount(data.totalFundingCount);
-        setCurrentPage(data.fundingListResponses.number);
-        setIsLastPAge(data.fundingListResponses.last);
-        setIsLoading(false);
-      } else {
-        setSelectCategory(categoryId);
-        console.log(categoryId);
-        setIsLoading(true);
-        const response = await requestCategoryFundingList(categoryId);
-        setFundingList([...response.data.content]);
-        setTotalFundingCount(response.data.numberOfElements);
-        setIsLoading(false);
-        console.log(response);
-      }
-    } catch (error) {
-      console.log(error);
+  const onToggleCategory = async (id: string) => {
+    if(categoryId === id){
+      setCategoryId("")
+    }
+    else{
+      setCategoryId(id)
     }
   };
 
-  useEffect(() => {
-    initFundingList();
-  }, []);
+
+  useEffect(()=>{
+    getFundingList()
+  },[searchText,fundingStateFilter,categoryId])
 
   useEffect(() => {
-    if (inView && !isLastPage) {
+    if (inView) {
       nextFundingList();
     }
+
   }, [inView]);
 
-  useEffect(() => {
-    console.log(selectCategory);
-  }, [selectCategory]);
+
 
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
         <div className={styles['title-box']}>
           <div className={styles['description-box']}>
-            <p>당신의 착한 마음을 Funteer가 응원합니다.</p>
+            <p>당신의 착한 마음을 <br/> Funteer가 응원합니다.</p>
           </div>
           <div className={styles['statistic-box']}>
             <div>
               <p>
-                <CountUp start={0} end={successFundingCount} separator="," duration={4} />건 <br /> 봉사 펀딩에 성공했어요.
+                <CountUp start={0} end={154} separator="," duration={4} />건 <br /> 봉사 펀딩에 성공했어요.
               </p>
             </div>
             <div>
               <p>
-                <CountUp start={0} end={totalFundingAmount} separator="," duration={4} />원 <br /> 기부에 성공했어요.
+                <CountUp start={0} end={3568745} separator="," duration={4} />원 <br /> 기부에 성공했어요.
               </p>
             </div>
           </div>
         </div>
         <div className={styles['category-box']}>
           {categoryList.map((item) => (
-            <div aria-hidden="true" onClick={() => onToggleCategory(item.id)} className={cn(styles.link, item.id === selectCategory ? styles.toggle : '')} key={item.id}>
+            <div aria-hidden="true" onClick={() => onToggleCategory(item.id)} className={cn(styles.link, item.id === categoryId ? styles.toggle : '')} key={item.id}>
               <img src={item.url} className={styles.icon} alt={item.caption} />
               <span>{item.caption} </span>
             </div>
@@ -235,7 +181,7 @@ function FundingListContainer() {
                 sx={{ color: 'black', fontWeight: 'bold' }}
                 className={cn(selectIdx === 0 ? styles.selected : '')}
                 type="button"
-                onClick={() => hanlderFilter('All', 0)}
+                onClick={() => hanlderFilter('', 0)}
               >
                 전체
               </Button>
@@ -283,8 +229,8 @@ function FundingListContainer() {
             </div>
           )}
         </div>
-        {currentPage >= 0 ? <div ref={ref} /> : ''}
       </div>
+      {currentPage < totalPage  ? <div ref={ref} /> : ''}
     </div>
   );
 }

@@ -19,12 +19,21 @@
 
   @include mobile() {
     width: 50%;
+    padding: 5px;
   }
   & img {
     width: 100%;
     min-height: 230px;
     max-height: 230px;
     height: 100%;
+
+    @include mobile(){
+      width: 100%;
+      min-height: 150px;
+      max-height: 150px;
+      height: 100%;
+  
+    }
   }
   .funding-info-box {
     height: 100%;

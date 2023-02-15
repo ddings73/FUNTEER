@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Fade, Tooltip } from '@mui/material';
+import Lottie from 'lottie-react';
 import styles from './MainPageContainer.module.scss';
 import InfoCard from '../../components/Main/InfoCard';
 import FunList from '../../components/Main/funList';
@@ -11,12 +12,22 @@ import background from '../../assets/images/mainPage/background.png';
 import wave from '../../assets/images/mainPage/wave.svg';
 import wave2 from '../../assets/images/mainPage/wave2.svg';
 import { http } from '../../api/axios';
+import spaceLottie from '../../lotties/107693-space.json'
+import rocket from '../../lotties/127125-space-rocket.json'
 
 export function MainPageContainer() {
-  
+  const navigate = useNavigate();
   const [scrollPosition, setScrollPosition] = useState(0);
   const updateScroll = () => {
     setScrollPosition(window.scrollY || document.documentElement.scrollTop);
+  };
+
+  useEffect(() => {
+    updateScroll();
+  }, [scrollPosition]);
+  
+  const goServiceDetail = () => {
+    navigate('/service');
   };
 
   // 우주인에 손을 올려보세요
@@ -30,6 +41,9 @@ export function MainPageContainer() {
       `}
     </p>
   );
+  useEffect(() => {
+    updateScroll();
+  }, [scrollPosition]);
 
   return (
     <div className={styles.container}>
@@ -46,7 +60,7 @@ export function MainPageContainer() {
             당신의 착한 마음을 <br /> <span className={styles.logoStrong}>FUNTEER</span>가 응원합니다{' '}
           </p>
           <p className={styles.subLogoTypo}>펀딩을 통해 접하는 새로운 봉사</p>
-          <button className={styles.serviceBtn} type="button">
+          <button className={styles.serviceBtn} type="button" onClick={goServiceDetail}>
             서비스 상세보기
           </button>
         </div>
@@ -65,18 +79,15 @@ export function MainPageContainer() {
         <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 500 ? '1' : '0' }} alt="back" />
       </div>
       <div className={styles.infoBanner}>
+       <Lottie className={styles.lottieSpace} animationData={spaceLottie} /> 
         <InfoCard />
       </div>
-      <div className={styles.fundLists}>
+      {/* <div className={styles.fundLists}>
         <FunList />
-      </div>
-      <div className={styles.volunLists}>
-        <LiveList />
-      </div>
-      <div className={styles.donate}>123</div>
+      </div> */}
+      <div className={styles.donate}> </div>
     </div>
   );
 }
 
 export default MainPageContainer;
-

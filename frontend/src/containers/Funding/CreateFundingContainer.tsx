@@ -52,7 +52,7 @@ function CreateFundingContainer() {
   const navigate = useNavigate();
   const editorRef = useRef<ToastEditor>(null);
   const [fundingData, setFundingData] = useState<FundingInterface>({
-    thumbnail: "",
+    thumbnail: '',
     title: '',
     fundingDescription: '',
     categoryId: 0,
@@ -113,16 +113,14 @@ function CreateFundingContainer() {
   };
 
   // 썸네일 S3등록
-  const uploadS3Thumbnail = async(file:Blob)=>{
-    try{
-      const {data} = await requestRegisterThumbnail(file)
-      setFundingData({...fundingData,thumbnail:data})
+  const uploadS3Thumbnail = async (file: Blob) => {
+    try {
+      const { data } = await requestRegisterThumbnail(file);
+      setFundingData({ ...fundingData, thumbnail: data });
+    } catch (error) {
+      console.log(error);
     }
-    catch(error){
-      console.log(error)
-    }
-
-  }
+  };
 
   // 썸네일 파일 핸들링
   const onFileHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -131,7 +129,7 @@ function CreateFundingContainer() {
     }
     const file = e.target.files[0];
 
-    uploadS3Thumbnail(file)
+    uploadS3Thumbnail(file);
     // setFundingData({ ...fundingData, thumbnail: file });
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -474,7 +472,7 @@ function CreateFundingContainer() {
 
             <TabPanel value={1} index={tabIdx}>
               <TabContent
-                minAmount={(fundingData.targetMoneyLevelOne.amount)}
+                minAmount={fundingData.targetMoneyLevelOne.amount}
                 data={fundingData.targetMoneyLevelTwo}
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
@@ -483,13 +481,12 @@ function CreateFundingContainer() {
                 level="LEVEL_TWO"
                 todoText={todoText}
                 removeTodo={removeTodo}
-
               />
             </TabPanel>
 
             <TabPanel value={2} index={tabIdx}>
               <TabContent
-                minAmount = {(fundingData.targetMoneyLevelTwo.amount)}
+                minAmount={fundingData.targetMoneyLevelTwo.amount}
                 data={fundingData.targetMoneyLevelThree}
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
@@ -498,7 +495,6 @@ function CreateFundingContainer() {
                 level="LEVEL_THREE"
                 todoText={todoText}
                 removeTodo={removeTodo}
-
               />
             </TabPanel>
             <div className={styles['stage-button-box']}>
@@ -511,64 +507,53 @@ function CreateFundingContainer() {
               </Button>
             </div>
             <div className={styles['funding-preview']}>
-            <Accordion className={styles.accordion}>
-             <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-               id="panel1a-header"
-                >
-        <Typography className={styles['accordion-title']}>최소 달성조건</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography className={styles['funding-target-amount']}>목표 금액 :{fundingData.targetMoneyLevelOne.amount}</Typography>
-          <ul>
-           {fundingData.targetMoneyLevelOne.descriptions.map((list,index)=>(
-            <li className={styles['target-todo']}>{index+1}. {list.description}</li>
-           ))}
-          </ul>
-        </AccordionDetails>
-      </Accordion>
-      
+              <Accordion className={styles.accordion}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                  <Typography className={styles['accordion-title']}>최소 달성조건</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography className={styles['funding-target-amount']}>목표 금액 :{fundingData.targetMoneyLevelOne.amount}</Typography>
+                  <ul>
+                    {fundingData.targetMoneyLevelOne.descriptions.map((list, index) => (
+                      <li className={styles['target-todo']}>
+                        {index + 1}. {list.description}
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionDetails>
+              </Accordion>
 
-      <Accordion className={styles.accordion}>
-             <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-               id="panel1a-header"
-                >
-        <Typography className={styles['accordion-title']}>1단계 초과달성</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography className={styles['funding-target-amount']}>목표 금액 :{fundingData.targetMoneyLevelTwo.amount}</Typography>
-          <ul>
-           {fundingData.targetMoneyLevelTwo.descriptions.map((list,index)=>(
-            <li className={styles['target-todo']}>{index+1}. {list.description}</li>
-           ))}
-          </ul>
-        </AccordionDetails>
-      </Accordion>
-      
+              <Accordion className={styles.accordion}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                  <Typography className={styles['accordion-title']}>1단계 초과달성</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography className={styles['funding-target-amount']}>목표 금액 :{fundingData.targetMoneyLevelTwo.amount}</Typography>
+                  <ul>
+                    {fundingData.targetMoneyLevelTwo.descriptions.map((list, index) => (
+                      <li className={styles['target-todo']}>
+                        {index + 1}. {list.description}
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionDetails>
+              </Accordion>
 
-      <Accordion className={styles.accordion}>
-             <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1a-content"
-               id="panel1a-header"
-                >
-        <Typography className={styles['accordion-title']}>2단계 초과달성</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <Typography className={styles['funding-target-amount']}>목표 금액 :{fundingData.targetMoneyLevelThree.amount}</Typography>
-          <ul>
-           {fundingData.targetMoneyLevelThree.descriptions.map((list,index)=>(
-            <li className={styles['target-todo']}>{index+1}. {list.description}</li>
-           ))}
-          </ul>
-        </AccordionDetails>
-      </Accordion>
-      
-
-      
+              <Accordion className={styles.accordion}>
+                <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
+                  <Typography className={styles['accordion-title']}>2단계 초과달성</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Typography className={styles['funding-target-amount']}>목표 금액 :{fundingData.targetMoneyLevelThree.amount}</Typography>
+                  <ul>
+                    {fundingData.targetMoneyLevelThree.descriptions.map((list, index) => (
+                      <li className={styles['target-todo']}>
+                        {index + 1}. {list.description}
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionDetails>
+              </Accordion>
             </div>
           </div>
           <Button variant="contained" type="button" className={styles['submit-button']} color="warning" onClick={onCreateFunding}>

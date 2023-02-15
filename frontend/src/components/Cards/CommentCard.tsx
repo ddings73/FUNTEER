@@ -11,6 +11,7 @@ import { requestUserInfo, requestUserProfile } from '../../api/user';
 import { userProfileInterface } from '../../types/user';
 import { teamProfileType } from '../../types/user';
 import { requestDeleteComment } from '../../api/funding';
+import { customTextOnlyAlert, DefaultAlert, noTimeSuccess } from '../../utils/customAlert';
 
 // 본인이면 삭제
 // const [isSameUser, setIsSameUser] = useState(false);
@@ -18,6 +19,7 @@ import { requestDeleteComment } from '../../api/funding';
 export function CommentCard({ memberNickName, content, memberProfileImg, regDate, commentId }: commentType) {
   const userId = useAppSelector((state) => state.userSlice.userId);
   const userType = useAppSelector((state) => state.userSlice.userType);
+  const isLogin = useAppSelector((state) => state.userSlice.isLogin);
   const [userProfile, setUserProfile] = useState<userProfileInterface>({
     nickname: '',
     profileImgUrl: '',
@@ -74,17 +76,19 @@ export function CommentCard({ memberNickName, content, memberProfileImg, regDate
     console.log('clicked');
     try {
       await requestDeleteComment(commentId);
-      alert('댓글이 삭제되었습니다!');
+      customTextOnlyAlert(DefaultAlert, '댓글이 삭제되었습니다!');
     } catch (e) {
       console.log(e);
     }
   }
 
   useEffect(() => {
-    if (userType === 'TEAM') {
-      getRequestTeamProfileInfo();
-    } else {
-      getRequestUserInfo();
+    if (isLogin) {
+      if (userType === 'TEAM') {
+        getRequestTeamProfileInfo();
+      } else {
+        getRequestUserInfo();
+      }
     }
   }, []);
 

@@ -10,7 +10,7 @@ import { AiOutlineClose, AiOutlineSearch, AiOutlineReload } from 'react-icons/ai
 import { requestMembers, requestWithdrawMember } from '../../../api/admin';
 import { AdminMemberInterface } from '../../../types/user';
 import styles from './AdminMemberContainer.module.scss';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 export enum MemberState {
   All = '전체',
@@ -128,7 +128,7 @@ function AdminMemberContainer() {
     try {
       const response = await requestWithdrawMember(id);
       console.log(response);
-      customAlert(s1000, '회원 탈퇴 처리가 완료되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '회원 탈퇴 처리가 완료되었습니다.');
       requestPageMembers();
     } catch (error: unknown) {
       if (error instanceof AxiosError) {

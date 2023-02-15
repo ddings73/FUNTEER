@@ -5,7 +5,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 import Swal from 'sweetalert2';
 import { requestNoticeList, requestDeleteNotice } from '../../../api/admin';
 import styles from './AdminNoticeContainer.module.scss';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 export type AdminNoticeContainerItemType = {
   id: number;
@@ -87,7 +87,7 @@ function AdminNoticeContainer() {
     try {
       const response = await requestDeleteNotice(id.toString());
       console.log(response);
-      customAlert(s1000, '공지사항이 삭제되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '공지사항이 삭제되었습니다.');
       setPage(1);
       requestNotice();
     } catch (err) {

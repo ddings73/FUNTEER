@@ -13,10 +13,12 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
 import com.yam.funteer.funding.dto.response.FundingListPageResponse;
@@ -35,11 +37,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/funding")
-@Api(tags ={"펀딩"})
+@Api(tags ={"펀딩"}) @Slf4j
 public class FundingController {
 
 	private final FundingService fundingService;
@@ -49,20 +52,21 @@ public class FundingController {
 	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
 	@GetMapping("")
 	public ResponseEntity<FundingListPageResponse> findAllFunding(
-		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
-		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
-		return ResponseEntity.ok(fundingService.findAllFunding(pageRequest));
+		@PageableDefault(size = 12, sort = "id",  direction = Sort.Direction.DESC) Pageable pageable,
+		@RequestParam(required = false, defaultValue = "") String keyword,
+		@RequestParam(required = false) PostType postType,
+		@RequestParam(required = false) Long categoryId) {
+		return ResponseEntity.ok(fundingService.findAllFunding(pageable, postType, categoryId, keyword));
 	}
 
-	@ApiOperation(value = "펀딩 검색 조회", notes = "검색을 통해 제목과 내용에 키워드가 포함된 펀딩을 조회한다.")
-	@GetMapping("/search")
-	public ResponseEntity<Page<FundingListResponse>> findFundingByKeyword(@RequestParam String keyword,
-		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
-		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
-		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword, pageRequest));
-	}
+//	@ApiOperation(value = "펀딩 검색 조회", notes = "검색을 통해 제목과 내용에 키워드가 포함된 펀딩을 조회한다.")
+//	@GetMapping("/search")
+//	public ResponseEntity<Page<FundingListResponse>> findFundingByKeyword(@RequestParam String keyword,
+//		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+//		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
+//		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+//		return ResponseEntity.ok(fundingService.findFundingByKeyword(keyword, pageRequest));
+//	}
 
 	@ApiOperation(value = "해시태그별 펀딩 조회", notes = "해시태그별 펀딩 목록을 조회한다.")
 	@GetMapping("/hasgtag")
@@ -73,14 +77,14 @@ public class FundingController {
 		return ResponseEntity.ok(fundingService.findFundingByHashtag(hashtag, pageRequest));
 	}
 
-	@ApiOperation(value = "카테고리별 펀딩 리스트 조회", notes = "카테고리별 펀딩 리스트를 조회한다.")
-	@GetMapping("/category/{categoryId}")
-	public ResponseEntity<Page<FundingListResponse>> findFundingByCategory(@PathVariable Long categoryId,
-		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
-		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
-		return ResponseEntity.ok(fundingService.findFundingByCategory(categoryId, pageRequest));
-	}
+//	@ApiOperation(value = "카테고리별 펀딩 리스트 조회", notes = "카테고리별 펀딩 리스트를 조회한다.")
+//	@GetMapping("/category/{categoryId}")
+//	public ResponseEntity<Page<FundingListResponse>> findFundingByCategory(@PathVariable Long categoryId,
+//		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
+//		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
+//		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
+//		return ResponseEntity.ok(fundingService.findFundingByCategory(categoryId, pageRequest));
+//	}
 
 	@ApiOperation(value = "펀딩 생성 시 s3에 파일업로드", notes = "펀딩 생성 시 s3에 파일을 업로드 한다.")
 	@PostMapping("/upload")
@@ -130,8 +134,12 @@ public class FundingController {
 	}
 
 	@ApiOperation(value = "펀딩 게시글 보고서 작성", notes = "펀딩 게시글 보고서를 작성한다.")
-	@PostMapping("/{fundingId}/report")
-	public ResponseEntity<FundingReportResponse> createFundingReport(@PathVariable Long fundingId, FundingReportRequest data) {
+	@PostMapping(value = "/{fundingId}/report", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+	public ResponseEntity<FundingReportResponse> createFundingReport(@PathVariable Long fundingId, FundingReportRequest data, BindingResult bindingResult) {
+		if(bindingResult.hasErrors()){
+			log.warn(bindingResult.toString());
+		}
+		log.info(data.toString());
 		FundingReportResponse fundingReport = fundingService.createFundingReport(fundingId, data);
 		return ResponseEntity.ok(fundingReport);
 	}
@@ -143,8 +151,12 @@ public class FundingController {
 	}
 
 	@ApiOperation(value = "펀딩 게시글 보고서 수정", notes = "펀딩 게시글 보고서를 수정한다.")
-	@PutMapping("/{fundingId}/report")
-	public ResponseEntity<FundingReportResponse> updateFundingReport(@PathVariable Long fundingId, FundingReportRequest data) {
+	@PutMapping(value = "/{fundingId}/report", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
+	public ResponseEntity<FundingReportResponse> updateFundingReport(@PathVariable Long fundingId, FundingReportRequest data, BindingResult bindingResult) {
+		if(bindingResult.hasErrors()){
+			log.warn(bindingResult.toString());
+		}
+		log.info(data.toString());
 		return ResponseEntity.ok(fundingService.updateFundingReport(fundingId, data));
 	}
 
