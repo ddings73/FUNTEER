@@ -418,7 +418,8 @@ function ResponsiveAppBar() {
                       <Typography
                         textAlign="center"
                         onClick={() => {
-                          navigateTo(userType === 'NORMAL' ? '/myPage' : userType === 'TEAM' ? `/team/${teamInfo.id}` : '/admin');
+                          console.log(userType);
+                          navigateTo(userType === 'NORMAL' || userType === 'KAKAO' ? '/myPage' : userType === 'TEAM' ? `/team/${teamInfo.id}` : '/admin');
                         }}
                         sx={{ width: '100%' }}
                       >
