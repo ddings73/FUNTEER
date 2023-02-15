@@ -252,7 +252,7 @@ function ResponsiveAppBar() {
         <Container className={styles.appContainer} maxWidth="xl">
           <Toolbar disableGutters>
             {/* Desktop 구조 */}
-            <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ cursor: 'pointer', padding: '0' }} />
+            <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ cursor: 'pointer', scale: '0.8' }} />
             <Box
               sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}
               className={styles.pageBox}

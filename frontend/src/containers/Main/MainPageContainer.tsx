@@ -22,6 +22,10 @@ export function MainPageContainer() {
     setScrollPosition(window.scrollY || document.documentElement.scrollTop);
   };
 
+  useEffect(() => {
+    updateScroll();
+  }, [scrollPosition]);
+  
   const goServiceDetail = () => {
     navigate('/service');
   };
