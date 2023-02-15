@@ -13,11 +13,16 @@ import {
   requestNicknameDuplConfirm,
   requestPhoneDuplConfirm,
   requestSendEmailAuthCode,
+  requestSignIn,
 } from '../../api/user';
 import styles from './MemberSignUpContainer.module.scss';
+import { useAppDispatch } from '../../store/hooks';
+import { setUserLoginState } from '../../store/slices/userSlice';
+import { openModal } from '../../store/slices/modalSlice';
 
 function MemberSignUpContainer() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   /** 회원가입 정보 */
   const [memberSignUpInfo, setMemberSignUpInfo] = useState<memberSignUpType>({
@@ -242,8 +247,27 @@ function MemberSignUpContainer() {
 
     try {
       const response = await requestMemberSignUp(memberSignUpInfo);
-      console.log(response);
-      navigate('/');
+      console.log('개인 회원가입 요청 response', response);
+      requestEmailLogin();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const requestEmailLogin = async () => {
+    const userInfo = { email: memberSignUpInfo.email, password: memberSignUpInfo.password };
+    try {
+      const response = await requestSignIn(userInfo);
+      if (response.status === 200) {
+        const { data } = response;
+        console.log(data);
+
+        localStorage.setItem('accessToken', data.token.accessToken);
+        localStorage.setItem('refreshToken', data.token.refreshToken);
+
+        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId, username: data.username, profileImgUrl: data.profileImgUrl }));
+        navigate('/', { replace: true });
+      }
     } catch (error) {
       console.error(error);
     }
