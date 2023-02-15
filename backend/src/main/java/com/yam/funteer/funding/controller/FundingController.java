@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.yam.funteer.common.aws.AwsS3Uploader;
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
 import com.yam.funteer.funding.dto.response.FundingListPageResponse;
@@ -51,10 +52,11 @@ public class FundingController {
 	@ApiOperation(value = "펀딩 리스트 조회", notes = "펀딩 리스트를 조회한다.")
 	@GetMapping("")
 	public ResponseEntity<FundingListPageResponse> findAllFunding(
-		@ApiParam(value = "PAGE 번호 (0부터)") @RequestParam(defaultValue = "0") int page,
-		@ApiParam(value = "PAGE 크기") @RequestParam(defaultValue = "12") int size) {
-		PageRequest pageRequest = PageRequest.of(page, size, Sort.by("regDate").descending());
-		return ResponseEntity.ok(fundingService.findAllFunding(pageRequest));
+		@PageableDefault(size = 12, sort = "id",  direction = Sort.Direction.DESC) Pageable pageable,
+		@RequestParam(required = false, defaultValue = "") String keyword,
+		@RequestParam(required = false) PostType postType,
+		@RequestParam(required = false) Long categoryId) {
+		return ResponseEntity.ok(fundingService.findAllFunding(pageable, postType, categoryId, keyword));
 	}
 
 	@ApiOperation(value = "펀딩 검색 조회", notes = "검색을 통해 제목과 내용에 키워드가 포함된 펀딩을 조회한다.")

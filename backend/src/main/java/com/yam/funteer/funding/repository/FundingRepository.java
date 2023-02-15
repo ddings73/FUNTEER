@@ -18,6 +18,12 @@ import com.yam.funteer.user.entity.Team;
 
 public interface FundingRepository extends JpaRepository<Funding, Long> {
 
+	// 카테고리, 펀딩상태, 검색
+	List<Funding> findAllByCategoryAndPostTypeAndTitleContainingOrCategoryAndPostTypeAndContentContaining(Category category, PostType postType, String keyword, Category category2, PostType postType2, String keyword2);
+
+	// 카테고리만
+	List<Funding> findAllByCategoryAndTitleContainingOrCategoryAndContentContaining(Category category, String keyword, Category category2, String keyword2);
+
 	List<Funding> findAllByPostType(PostType postType);
 
 	List<Funding> findAllByCategory(Category category);
@@ -40,6 +46,8 @@ public interface FundingRepository extends JpaRepository<Funding, Long> {
 	@Query("update Funding set hit = hit + 1 where fundingId = :fundingId")
 	int updateHit(@Param(value = "fundingId") Long fundingId);
 
-
+	// 펀딩 상태만
 	Page<Funding> findAllByPostTypeAndTitleContainingOrPostTypeAndContentContaining(PostType postType, String keyword, PostType postType1, String keyword2, Pageable pageable);
+
+	List<Funding> findAllByPostTypeAndTitleContainingOrPostTypeAndContentContaining(PostType postType, String keyword, PostType postType1, String keyword1);
 }
