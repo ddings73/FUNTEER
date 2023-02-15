@@ -29,6 +29,7 @@ function FileModal({ isOpen, userId, vmsFileUrl, performFileUrl, teamState }: Fi
       console.log(response);
       customAlert(s1000, '단체 승인 완료');
       dispatch(closeModal());
+      window.location.reload();
     } catch (error) {
       console.error(error);
     }

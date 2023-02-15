@@ -13,6 +13,7 @@ import ListTable from '../../components/Table/ListTable';
 import { requestCurrentDonation } from '../../api/donation';
 import { requestUserProfile } from '../../api/user';
 import { openModal } from '../../store/slices/donateModalSlice';
+import { requestTeamProfileInfo } from '../../api/team';
 
 /**
  * * 유저가 현재 가진돈은 계산해놨음
@@ -34,6 +35,7 @@ type ResponseInterface = {
 function DonationContainer() {
   const dispatch = useAppDispatch();
   const userId = useAppSelector((state) => state.userSlice.userId);
+  const userType = useAppSelector((state) => state.userSlice.userType);
   const [userMoney, setUserMoney] = useState<number>(0);
   const [donBoard, setDonBoard] = useState<ResponseInterface>({
     id: 0,
@@ -68,10 +70,16 @@ function DonationContainer() {
   // 회원 마일리지 초기 설정
   const setInitUserMoney = async () => {
     try {
-      const response = await requestUserProfile(userId);
-      console.log(response.data.money);
-
-      setUserMoney(response.data.money);
+      let response;
+      if (userType === 'NORMAL' || userType === 'KAKAO') {
+        response = await requestUserProfile(userId);
+        console.log(response.data.money);
+        setUserMoney(response.data.money);
+      } else if (userType === 'TEAM') {
+        response = await requestTeamProfileInfo(userId);
+        console.log(response.data.money);
+        setUserMoney(response.data.money);
+      }
     } catch (error) {
       console.log(error);
     }
