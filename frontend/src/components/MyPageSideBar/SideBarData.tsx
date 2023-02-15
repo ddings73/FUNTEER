@@ -42,16 +42,6 @@ export const SideBarData: SideBarDataType[] = [
     path: '/myBadges',
     icon: <SlIcons.SlBadge />,
   },
-  {
-    title: '찜 목록',
-    path: '/myFavors',
-    icon: <AiIcons.AiOutlineStar />,
-  },
-  {
-    title: '팔로우 목록',
-    path: '/myFollow',
-    icon: <AiIcons.AiOutlineHeart />,
-  },
 ];
 
 export default SideBarData;

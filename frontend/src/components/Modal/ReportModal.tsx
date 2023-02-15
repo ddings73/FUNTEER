@@ -1,17 +1,22 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { AxiosError } from 'axios';
 import { Editor as ToastEditor } from '@toast-ui/react-editor';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { IconButton, TextField } from '@mui/material';
+import { UploadFile } from '@mui/icons-material';
 import HighlightOffIcon from '@mui/icons-material/HighlightOff';
 import Modal from '@mui/material/Modal';
+import { AiOutlineClose } from 'react-icons/ai';
 import AddBoxIcon from '@mui/icons-material/AddBox';
 import { useDispatch } from 'react-redux';
 import { useAppSelector } from '../../store/hooks';
 import { closeModal } from '../../store/slices/reportModalSlice';
-import { responseListType } from '../../types/funding';
+import { FundingReportInterface, responseListType } from '../../types/funding';
 import { fundingReportPost } from '../../api/funding';
+import requiredIcon from '../../assets/images/funding/required.svg';
+import styles from './ReportModal.module.scss';
 
 const style = {
   position: 'absolute',
@@ -26,6 +31,8 @@ const style = {
   p: 4,
   overflow: 'scroll',
 };
+const ALLOW_FILE_EXTENSION = 'jpg,jpeg,png';
+const FILE_SIZE_MAX_LIMIT = 5 * 1024 * 1024;
 
 export function ReportModal() {
   // Hook, tools 선언
@@ -35,34 +42,34 @@ export function ReportModal() {
   const editorRef = useRef<ToastEditor>(null);
 
   // 컴포넌트 state 관리
-  const [reportContent, setReportContent] = useState({
-    content: '',
-    reportDetailResponseList: [
-      {
-        amount: '',
-        description: '',
-      },
-    ],
-  });
   const [responseList, setResponseList] = useState<responseListType[]>([
     {
       amount: '',
       description: '',
     },
   ]);
+  const [reportData, setReportData] = useState<FundingReportInterface>({
+    content: '',
+    fundingDetailRequests: [
+      {
+        amount: '',
+        description: '',
+      },
+    ],
+    receiptFile: new Blob(),
+  });
   const [amountText, setAmount] = useState('');
   const [descriptionText, setDescription] = useState('');
   const [contentText, setContentText] = useState('');
-
   // 컴포넌트 function 관리
 
-  const editorChangeHandler = useCallback(() => {
+  const editorChangeHandler = () => {
     if (!editorRef.current) {
       return;
     }
     setContentText(editorRef.current.getInstance().getHTML());
-  }, [editorRef, setContentText]);
-
+    setReportData({ ...reportData, content: editorRef.current.getInstance().getHTML() });
+  };
   const onChangeAmount = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
       setAmount(e.target.value);
@@ -92,41 +99,37 @@ export function ReportModal() {
     setDescription('');
   }
 
+  useEffect(() => {
+    console.log(responseList);
+  }, [responseList]);
+
   function deleteHandler(delIdx: number) {
     setResponseList(responseList.filter((data, idx) => idx !== delIdx));
   }
 
-  async function closeReportModal() {
-    if (responseList.length < 2) {
-      alert('설명과 금액 보고를 작성해주세요');
-      return;
-    }
-    responseList.shift(); // 맨 앞 빈 객체 제거
+  const createNotice = async () => {
+    console.log('내용 텍스트', typeof contentText);
+    console.log(reportData);
+    console.log('밑에', responseList);
+    setReportData({ ...reportData, content: contentText, fundingDetailRequests: responseList });
+    console.log(reportData);
+
     try {
-      await fundingReportPost(fundingId, reportContent);
-      setReportContent({
-        content: contentText,
-        reportDetailResponseList: responseList,
-      });
-      alert('보고서가 성공적으로 등록되었습니다. 등록창이 닫힙니다.');
+      const response = await fundingReportPost(fundingId, reportData);
+      console.log(response);
       dispatch(closeModal());
-    } catch (e) {
-      console.log(e);
+      console.log(response);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message);
+        console.error(error);
+      }
     }
-  }
+  };
 
   function initModalClose() {
     setAmount('');
     setDescription('');
-    // setReportContent({
-    //   content: '',
-    //   reportDetailResponseList: [
-    //     {
-    //       amount: '',
-    //       description: '',
-    //     },
-    //   ],
-    // });
     setResponseList([
       {
         amount: '',
@@ -137,6 +140,26 @@ export function ReportModal() {
     dispatch(closeModal());
   }
 
+  const onChangeFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      // setReportData({ ...reportData, content: contentText, fundingDetailRequests: responseList, receiptFile: [...prev, ...temp] });
+      setReportData({ ...reportData, receiptFile: file });
+      console.log('contentTExt', reportData);
+    }
+  };
+
+  // const onClickDeleteFile = (index: number) => {
+  //   setReportData({ ...reportData, receiptFile: reportData.receiptFile.filter((_, i) => i !== index) });
+  // };
+
+  useEffect(() => {
+    console.log(reportData);
+  }, [reportData]);
+
+  useEffect(() => {
+    console.log(contentText);
+  }, [contentText]);
   return (
     <Modal open={reportModalState.isOpen} onClose={() => initModalClose()} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
       <Box sx={style}>
@@ -154,6 +177,18 @@ export function ReportModal() {
             language="ko-KR"
             hideModeSwitch // 하단의 타입 선택 탭 숨기기
           />
+          <div className={styles.labelDiv} style={{ marginTop: '3rem' }}>
+            <p>파일첨부</p> <img style={{ marginRight: '1rem' }} src={requiredIcon} alt="required icon" />
+            <input type="file" multiple onChange={onChangeFiles} />
+          </div>
+          {/* <div className={styles.fileList}>
+            {reportData.receiptFile.map((file, index) => (
+              // eslint-disable-next-line
+              <p key={index}>
+                {file.name} <AiOutlineClose className={styles.withdrawBtn} onClick={() => onClickDeleteFile(index)} />
+              </p>
+            ))}
+          </div> */}
           {responseList.map((data, idx) => {
             return responseList.length > 1 && idx > 0 ? (
               // eslint-disable-next-line
@@ -194,7 +229,7 @@ export function ReportModal() {
           </form>
 
           <div style={{ marginTop: '5%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Button variant="contained" size="large" color="warning" onClick={() => closeReportModal()}>
+            <Button variant="contained" size="large" color="warning" onClick={() => createNotice()}>
               등록하기
             </Button>
             <Button variant="outlined" size="large" color="warning" onClick={() => initModalClose()} sx={{ ml: 3 }}>

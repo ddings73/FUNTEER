@@ -230,9 +230,11 @@ export function FundingDetailContainer() {
 
   async function fundingHandler() {
     console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불');
+
     try {
       await fundingJoin(paying, fundIdx);
       alert(`${paying}원으로 펀딩을 완료했습니다!`);
+      requestMoneyInfo();
     } catch (error) {
       console.log(error);
     }

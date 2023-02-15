@@ -34,8 +34,9 @@ export interface FundingInterface {
 }
 
 export interface FundingReportInterface {
-  content: string;
-  reportDetailResponseList: responseListType[];
+  content: string | undefined;
+  fundingDetailRequests: responseListType[];
+  receiptFile: Blob;
 }
 
 export type responseListType = {
