@@ -145,7 +145,6 @@ export const requestModifyUserDisplay = async (display: boolean, userId: string)
  */
 
 export const requestModifyUserProfileImage = async (profileImage: Blob, userId: string) => {
-  
   const formDate = new FormData();
   formDate.append('profileImg', profileImage);
   formDate.append('userId', userId);
@@ -205,5 +204,14 @@ export const requestResetPassword = async (email: string, name: string, password
   };
 
   const response = http.put('forget/pw', data);
+  return response;
+};
+
+/**
+ * @name 기프트내역
+ * @method GET
+ */
+export const requestGiftList = async () => {
+  const response = await http.get(`member/gift?page=0&size=10&sort=DESC`);
   return response;
 };

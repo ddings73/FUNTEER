@@ -13,7 +13,6 @@ import wave2 from '../../assets/images/mainPage/wave2.svg';
 import { http } from '../../api/axios';
 
 export function MainPageContainer() {
-  
   const [scrollPosition, setScrollPosition] = useState(0);
   const updateScroll = () => {
     setScrollPosition(window.scrollY || document.documentElement.scrollTop);
@@ -30,6 +29,9 @@ export function MainPageContainer() {
       `}
     </p>
   );
+  useEffect(() => {
+    updateScroll();
+  }, [scrollPosition]);
 
   return (
     <div className={styles.container}>
@@ -79,4 +81,3 @@ export function MainPageContainer() {
 }
 
 export default MainPageContainer;
-
