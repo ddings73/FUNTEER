@@ -191,7 +191,7 @@ public class AlarmService {
 
 
 
-			// db에서 알림 전체 삭제
+	// db에서 알림 전체 삭제
 	@Transactional
 	public void alarmAllDelete(){
 		User user=userRepository.findById(SecurityUtil.getCurrentUserId()).orElseThrow(UserNotFoundException::new);

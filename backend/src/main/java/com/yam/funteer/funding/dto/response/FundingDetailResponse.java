@@ -61,6 +61,8 @@ public class FundingDetailResponse {
 
 	private int hit;
 
+	private Long participatedCount;
+
 	public static FundingDetailResponse from(Funding funding) {
 
 		DecimalFormat decFormat = new DecimalFormat("###,###");

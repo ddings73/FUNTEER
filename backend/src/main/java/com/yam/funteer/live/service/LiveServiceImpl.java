@@ -1,11 +1,10 @@
 package com.yam.funteer.live.service;
 
+import com.yam.funteer.alarm.service.AlarmService;
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.FileUtil;
 import com.yam.funteer.attach.entity.Attach;
-import com.yam.funteer.attach.entity.TeamAttach;
 import com.yam.funteer.attach.repository.AttachRepository;
-import com.yam.funteer.attach.repository.TeamAttachRepository;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.security.SecurityUtil;
 import com.yam.funteer.exception.DuplicateInfoException;
@@ -21,9 +20,10 @@ import com.yam.funteer.live.repository.LiveRepository;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 
-import com.yam.funteer.user.repository.MemberRepository;
-import com.yam.funteer.user.repository.TeamRepository;
+import com.yam.funteer.user.entity.Wish;
 import com.yam.funteer.user.repository.UserRepository;
+import com.yam.funteer.user.repository.WishRepository;
+
 import io.openvidu.java.client.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,15 +33,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
+import javax.persistence.EntityManager;
 
 import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @Service @Slf4j
 @Transactional
@@ -53,15 +55,14 @@ public class LiveServiceImpl implements LiveService{
     private String OPENVIDU_SECRET;
     private OpenVidu openVidu;
     private final AwsS3Uploader awsS3Uploader;
+    private final AlarmService alarmService;
 
     private final UserRepository userRepository;
-    private final TeamRepository teamRepository;
-    private final MemberRepository memberRepository;
     private final LiveRepository liveRepository;
     private final GiftRepository giftRepository;
     private final FundingRepository fundingRepository;
     private final AttachRepository attachRepository;
-    private final TeamAttachRepository teamAttachRepository;
+    private final WishRepository wishRepository;
 
     @PostConstruct
     public void init(){
@@ -69,6 +70,7 @@ public class LiveServiceImpl implements LiveService{
     }
 
     @Override
+    @Transactional(noRollbackFor= SessionNotFoundException.class)
     public CreateConnectionResponse initializeSession(CreateConnectionRequest request) {
         Long userId = SecurityUtil.getCurrentUserId();
         User user = userRepository.findById(userId)
@@ -116,7 +118,8 @@ public class LiveServiceImpl implements LiveService{
 
                     // 녹화 종료
                     if(session.isBeingRecorded()) {
-                        recordSaveThisSession(live.getTeam(), sessionId);
+                        Attach attach = recordSaveThisSession(live.getTeam(), sessionId);
+                        live.saveFile(attach);
                     }
                 }
 
@@ -148,6 +151,13 @@ public class LiveServiceImpl implements LiveService{
             Live live = Live.of(session.getSessionId(), funding);
             liveRepository.save(live);
 
+            List<Wish> wishList = wishRepository.findAllByFundingAndChecked(funding, true);
+            List<String> emailList = wishList.stream()
+                .map(wish -> wish.getMember().getEmail())
+                .collect(Collectors.toList());
+
+            log.info("이메일 리스트 => {}", emailList);
+            alarmService.sendList(emailList, sessionName + " 단체의 라이브 방송이 시작되었습니다.", "/subscribeLiveRoom/" + sessionName);
             return new CreateConnectionResponse(token);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -155,7 +165,7 @@ public class LiveServiceImpl implements LiveService{
         }
     }
 
-    private CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, User user) {
+    protected CreateConnectionResponse joinExistingSession(CreateConnectionRequest request, User user) {
 
         String sessionName = request.getSessionName();
         Live live = liveRepository.findByFundingTeamNameAndEndTimeIsNull(sessionName).orElseThrow(SessionNotFoundException::new);
@@ -163,9 +173,13 @@ public class LiveServiceImpl implements LiveService{
             openviduFetch();
             Session session = this.openVidu.getActiveSession(live.getSessionId());
             if(session == null){
-                log.info("OpenVidu 서버에 동작중인 세션이 없음");
+                log.warn("OpenVidu 서버에 동작중인 세션이 없음 in try");
                 live.end();
-                return initializeSession(request);
+                Team prevTeam = live.getFunding().getTeam();
+                if(prevTeam.getId().equals(user.getId())) {
+                    return initializeSession(request);
+                }
+                throw new SessionNotFoundException();
             }
 
             if(!session.isBeingRecorded()){
@@ -193,9 +207,14 @@ public class LiveServiceImpl implements LiveService{
             return new CreateConnectionResponse(token);
         } catch (OpenViduJavaClientException | OpenViduHttpException e) {
             log.error(e.getMessage());
+            log.warn("OpenVidu 서버에 동작중인 세션이 없음 in catch");
+            live.end();
 
-            log.info("OpenVidu 서버에 동작중인 세션이 없음");
-            return initializeSession(request);
+            Team prevTeam = live.getFunding().getTeam();
+            if(prevTeam.getId().equals(user.getId())) {
+                return initializeSession(request);
+            }
+            throw new SessionNotFoundException();
         }
     }
 
@@ -207,7 +226,7 @@ public class LiveServiceImpl implements LiveService{
             throw new RuntimeException(e);
         }
     }
-    private void recordSaveThisSession(Team team, String sessionId){
+    private Attach recordSaveThisSession(Team team, String sessionId){
         log.info("녹화 저장 시작");
 
         log.info("sessionId => {}", sessionId);
@@ -222,11 +241,10 @@ public class LiveServiceImpl implements LiveService{
         Attach attach = Attach.of(file.getName(), path, FileType.LIVE);
         attachRepository.save(attach);
 
-        TeamAttach teamAttach = TeamAttach.of(team, attach);
-        teamAttachRepository.save(teamAttach);
 
         removeRecordingInServer(recording);
 
+        return attach;
     }
 
     private void removeRecordingInServer(Recording recording) {
@@ -260,8 +278,6 @@ public class LiveServiceImpl implements LiveService{
             Long userId = SecurityUtil.getCurrentUserId();
             User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
             Long amount = request.getAmount();
-
-            if(amount <= 0) throw new IllegalArgumentException("음수나 0은 입력하시면 안돼요");
 
             user.checkMoney(amount);
 
