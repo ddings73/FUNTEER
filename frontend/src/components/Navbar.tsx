@@ -204,8 +204,7 @@ function ResponsiveAppBar() {
 
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
         console.log(event.data);
-        if (!event.data.includes('EventStream')) {
-          alert(event.data);
+        if(!event.data.includes('EventStream')){
           requestGetAlarms();
         }
       }) as EventListener);
@@ -222,7 +221,9 @@ function ResponsiveAppBar() {
   }, [token]);
 
   // 상세보기 및 삭제
-  const eventRead = async (alarmId: number, url: string) => {
+  // 혹시 실시간으로 보게 되도 이거 쓰셈요...
+  const eventRead = async (alarmId:number,url:string) => {
+    
     try {
       await http.put(`subscribe/alarm/${alarmId}`);
       await http.delete(`subscribe/alarm/${alarmId}`);
@@ -231,7 +232,17 @@ function ResponsiveAppBar() {
     } catch (error) {
       console.error(error);
     }
+
   };
+
+  const eventAllRead=async()=>{
+    try{
+      await http.delete('subscribe/alarm');
+      requestGetAlarms();
+    }catch(error){
+      console.error(error);
+    }
+  }
 
   return (
     <div>
