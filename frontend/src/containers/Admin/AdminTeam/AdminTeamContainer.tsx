@@ -89,8 +89,8 @@ function AdminTeamContainer() {
   };
 
   /** 필수 파일 확인 버튼 */
-  const handleFileBtn = (teamId: number, vf: string, pf: string) => {
-    dispatch(openModal({ isOpen: true, userId: teamId.toString(), vmsFileUrl: vf, performFileUrl: pf, deniedNum: '' }));
+  const handleFileBtn = (teamId: number, vf: string, pf: string, st: string) => {
+    dispatch(openModal({ isOpen: true, userId: teamId.toString(), vmsFileUrl: vf, performFileUrl: pf, deniedNum: '', teamState: st }));
   };
 
   /** 거부 페이지 이동 함수 */
@@ -202,12 +202,12 @@ function AdminTeamContainer() {
               <p>{data.phone}</p>
             </li>
             <li>
-              {data.userType === 'TEAM_WAIT' && (
+              {data.userType !== 'TEAM_RESIGN' && (
                 <button
                   type="button"
                   className={styles['file-btn']}
                   onClick={(e) => {
-                    handleFileBtn(data.id, data.vmsFileUrl, data.performFileUrl);
+                    handleFileBtn(data.id, data.vmsFileUrl, data.performFileUrl, data.userType);
                   }}
                 >
                   확인
