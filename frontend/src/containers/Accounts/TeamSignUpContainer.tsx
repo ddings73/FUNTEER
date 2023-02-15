@@ -445,11 +445,11 @@ function TeamSignUpContainer() {
                 color="warning"
                 name="accountNumber"
                 margin="dense"
+                type="number"
                 placeholder="계좌 번호를 입력해주세요."
                 variant="outlined"
-                sx={{ background: 'white' }}
-                value={inputValue}
                 onChange={onChangeHandler}
+                sx={{ background: 'white' }}
               />
               <Button className={styles['auth-btn']} variant="contained" onClick={onClickAccountBtn}>
                 계좌 인증하기
