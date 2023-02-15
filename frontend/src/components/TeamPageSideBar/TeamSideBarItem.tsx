@@ -16,7 +16,7 @@ export const SideBarData: SideBarDataType[] = [
     icon: <AiIcons.AiFillHome />,
   },
   {
-    title: '도네이션 내역',
+    title: '기프트 내역',
     path: '/teamdonation',
     icon: <BiIcons.BiDonateHeart />,
   },

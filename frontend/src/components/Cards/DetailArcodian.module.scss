@@ -2,5 +2,65 @@
 @import '../../styles/variable.scss';
 @import url('https://cdn.rawgit.com/moonspam/NanumSquare/master/nanumsquare.css');
 
-.cardContainer {
+.fundingPlanner {
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 5% 0;
+  margin-top: 20px;
+  background-image: linear-gradient(to bottom, #ffffff, #fffdff, #fffbfc, #fffaf5, #fffaf0);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 6px, rgba(0, 0, 0, 0.23) 0px 3px 6px;
+  & .planTitle {
+    font-size: 30px;
+    font-weight: 600;
+    margin-bottom: 20px;
+  }
+  & .planSubTitle {
+    font-size: 15px;
+    color: rgba(0, 0, 0, 0.555);
+    margin-bottom: 40px;
+  }
+  & .planTag {
+    width: 40%;
+    display: flex;
+    justify-content: space-between;
+    margin: 10px 0;
+  }
+  & .progressBar {
+    align-items: center;
+    width: 40%;
+    background: rgb(129, 129, 129);
+    background: linear-gradient(90deg, rgba(49, 49, 52, 1) 0%, rgb(82, 82, 82) 0%, rgb(143, 143, 143) 100%);
+    box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+    border-radius: 15px;
+    display: flex;
+    padding: 3px;
+    height: 10px;
+    & .status {
+      background: rgb(49, 49, 52);
+      background: linear-gradient(90deg, rgba(49, 49, 52, 1) 0%, rgba(255, 166, 0, 1) 0%, rgb(255, 136, 0) 100%);
+      color: rgb(0, 0, 0);
+      padding-top: 12px;
+      text-align: right;
+      font-size: 20px;
+      border-radius: 15px;
+      transition: 2s;
+      position: relative;
+      & .statusNum {
+        position: absolute;
+        top: 20px;
+        right: -10px;
+        color: white;
+        border-radius: 100%;
+        padding: 7px;
+        background-color: rgb(211, 127, 0);
+        font-size: 0.7em;
+        border: 2px solid white;
+        box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 2px 6px 2px;
+      }
+    }
+  }
 }

@@ -79,7 +79,10 @@
         -webkit-background-clip: text;
         // border: 1px solid rgb(255, 255, 255);
       }
+
+ 
     }
+
 
     & .subLogoTypo {
       /* 정해진 폰트 규격 - 아래는 임시 크기*/
@@ -115,10 +118,20 @@
   // 배너 우측 이미지 섹션
 }
 .infoBanner {
+  position: relative;
   height: 100vh;
   margin-top: 40%;
   min-width: 1300px;
   z-index: 100;
+
+  .lottieSpace{
+    position: absolute;
+    width: 400px;
+    top: -150px;
+    left: 340px;
+    transform: rotate(80deg);
+  }
+
 }
 .fundLists {
   width: 80%;

@@ -7,6 +7,7 @@
   height: 100%;
   display: flex;
   padding-top: 77.6px;
+  background-color: rgba(255, 223, 193, 0.05);
 
   .content {
     width: 100%;
@@ -23,7 +24,7 @@
       display: flex;
       flex-direction: column;
       padding: 1rem;
-      background-color: rgba(255, 223, 193, 0.1);
+      background-color: white;
 
       .info-div {
         width: 90%;
@@ -52,34 +53,34 @@
           }
 
           .profile-card-img-div {
-            width: 300px;
-            height: 300px;
+            width: 250px;
+            height: 250px;
             position: relative;
             display: flex;
             justify-content: center;
             align-items: center;
 
             .profile-card-img-inner {
-              width: 260px;
-              height: 260px;
+              width: 250px;
+              height: 250px;
               display: flex;
               justify-content: center;
               align-items: center;
               border: 1px solid $primary;
-              box-shadow: rgba(161, 91, 0, 0.2) 0px 2px 8px;
+              // box-shadow: rgba(161, 91, 0, 0.2) 0px 2px 8px;
               border-radius: 100%;
               overflow: hidden;
 
               & img {
-                width: 260px;
-                height: 260px;
+                width: 250px;
+                height: 250px;
                 border-radius: 100%;
               }
             }
 
             .camera-div {
-              width: 70px;
-              height: 70px;
+              width: 50px;
+              height: 50px;
               position: absolute;
               display: flex;
               justify-content: center;
@@ -88,8 +89,8 @@
               padding: 0rem;
               background-color: rgb(238, 179, 125);
               border: 5px solid #fcfcfc;
-              right: 11px;
-              bottom: 11px;
+              right: 2px;
+              bottom: 2px;
               color: white;
 
               &:hover {
@@ -98,8 +99,7 @@
               }
 
               .camera {
-                width: 40px;
-                height: 40px;
+                font-size: 30px;
               }
 
               .img-input {

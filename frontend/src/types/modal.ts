@@ -11,6 +11,7 @@ export type FileModalType = {
   vmsFileUrl: string;
   performFileUrl: string;
   deniedNum: string;
+  teamState: string;
 };
 
 export type payModalType = {

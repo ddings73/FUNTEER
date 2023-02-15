@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router';
 import { requestCreateReply, requestQNADetail, requestReply } from '../../../api/qna';
 import { useAppSelector } from '../../../store/hooks';
 import { QNADetailInterface } from '../../../types/qna';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 import styles from './QuestionDetailContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
 
@@ -79,7 +79,7 @@ function QuestionDetailContainer() {
     try {
       const response = await requestCreateReply(parseInt(qnaId as string, 10), reply);
       console.log('답변 작성 요청', response);
-      customAlert(s1000, '문의 답변 작성 완료');
+      customTextOnlyAlert(noTimeSuccess, '문의 답변 작성 완료');
       setOnReplyForm(false);
     } catch (err) {
       console.error(err);

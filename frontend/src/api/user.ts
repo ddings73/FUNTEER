@@ -1,5 +1,6 @@
 import { http } from './axios';
-import { changeUserInfoInterface, memberSignUpType, teamSignUpType, UserSignInType } from '../types/user';
+import { changeUserInfoInterface, memberSignUpType, UserSignInType } from '../types/user';
+import logo from '../assets/images/logo.png';
 
 /**
  * 이메일 로그인 요청
@@ -56,16 +57,25 @@ export const requestPhoneDuplConfirm = async (phone: string) => {
   return res;
 };
 
+/** 개인 회원가입 */
 export const requestMemberSignUp = async (memberSignUpInfo: memberSignUpType) => {
-  const data = {
-    name: memberSignUpInfo.name,
-    email: memberSignUpInfo.email,
-    password: memberSignUpInfo.password,
-    nickname: memberSignUpInfo.nickname,
-    phone: memberSignUpInfo.phone,
-  };
+  const formData = new FormData();
+  const entries = Object.entries(memberSignUpInfo);
 
-  const res = await http.post('/member', data);
+  entries.forEach((data) => {
+    const key = data[0];
+    if (key !== 'passwordCheck') {
+      const value = data[1];
+
+      formData.append(`${key}`, value);
+    }
+  });
+
+  /** 기본 프사 */
+  const defaultProfileBlob = await fetch(logo).then((res) => res.blob());
+  formData.append('profileImg', defaultProfileBlob, 'default-profile.png');
+
+  const res = await http.post('/member', formData);
 
   return res;
 };
@@ -145,7 +155,6 @@ export const requestModifyUserDisplay = async (display: boolean, userId: string)
  */
 
 export const requestModifyUserProfileImage = async (profileImage: Blob, userId: string) => {
-  
   const formDate = new FormData();
   formDate.append('profileImg', profileImage);
   formDate.append('userId', userId);
@@ -205,5 +214,14 @@ export const requestResetPassword = async (email: string, name: string, password
   };
 
   const response = http.put('forget/pw', data);
+  return response;
+};
+
+/**
+ * @name 기프트내역
+ * @method GET
+ */
+export const requestGiftList = async () => {
+  const response = await http.get(`member/gift?page=0&size=10&sort=DESC`);
   return response;
 };

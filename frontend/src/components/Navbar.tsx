@@ -21,7 +21,7 @@ import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import { Link, Outlet, NavLink, useNavigate, Navigate } from 'react-router-dom';
 import styles from './Navbar.module.scss';
 /* 이미지 import */
-import logoImg from '../assets/images/FunteerLogo.png';
+import logoImg from '../assets/images/headerlogo.png';
 /*로그인 Import */
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import userSlice, { isLoginState, resetLoginState, setUserLoginState } from '../store/slices/userSlice';
@@ -36,6 +36,7 @@ import { off } from 'process';
 import { type } from 'os';
 import { string } from 'yargs';
 import { BsFillBellFill } from 'react-icons/bs';
+import { customTextOnlyAlert, DefaultAlert } from '../utils/customAlert';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
@@ -101,7 +102,8 @@ function ResponsiveAppBar() {
       dispatch(resetLoginState());
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      alert('로그아웃 되었습니다.');
+      // alert('로그아웃 되었습니다.');
+      customTextOnlyAlert(DefaultAlert, '로그아웃 되었습니다.');
       navigateTo('/');
     } catch (error) {
       console.log(error);
@@ -149,7 +151,7 @@ function ResponsiveAppBar() {
 
   useEffect(() => {
     window.addEventListener('scroll', updateScroll);
-    console.log(scrollPosition);
+    // console.log(scrollPosition);
     return () => {
       window.removeEventListener('scroll', updateScroll);
     };
@@ -235,7 +237,6 @@ function ResponsiveAppBar() {
   };
 
   const eventAllRead = async () => {
-    console.log('asdasd');
     try {
       const response = await await http.delete('subscribe/alarm');
       console.log('다 읽음 요청', response);
@@ -251,7 +252,7 @@ function ResponsiveAppBar() {
         <Container className={styles.appContainer} maxWidth="xl">
           <Toolbar disableGutters>
             {/* Desktop 구조 */}
-            <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ cursor: 'pointer' }} />
+            <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ cursor: 'pointer', scale: '0.8' }} />
             <Box
               sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}
               className={styles.pageBox}
@@ -458,7 +459,7 @@ function ResponsiveAppBar() {
                       <Typography
                         textAlign="center"
                         onClick={() => {
-                          navigateTo('/myBadges');
+                          navigateTo('/qna');
                         }}
                         sx={{ width: '100%' }}
                       >

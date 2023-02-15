@@ -24,6 +24,7 @@ function AdminRoot() {
         vmsFileUrl={fileModalState.vmsFileUrl}
         performFileUrl={fileModalState.performFileUrl}
         deniedNum={fileModalState.deniedNum}
+        teamState={fileModalState.teamState}
       />
       <AdminSideBar />
       <Outlet />

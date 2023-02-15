@@ -3,7 +3,7 @@
 .container {
   width: 100%;
   min-height: 100vh;
-  background-image: url('../../assets/images/serviceImage2.jpg');
+  background-image: url('../../assets/images/serviceImage.jpg');
   background-size: cover;
   padding-top: 75px;
   opacity: 0.8;
@@ -62,7 +62,7 @@
         text-shadow: 0 0 50px rgba(236, 153, 75, 1);
         color: #ffff;
         opacity: 0;
-        animation: fadeIn 2s ease-in-out forwards;
+        animation: fadeIn 1.5s ease-in-out forwards;
 
         @keyframes fadeIn {
           0% {

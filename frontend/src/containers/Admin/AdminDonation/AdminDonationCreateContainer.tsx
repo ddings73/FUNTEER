@@ -105,7 +105,7 @@ function AdminDonationCreateContainer() {
         </div>
         <input type="text" name="amount" className={styles['email-title']} placeholder="목표금액을 입력해주세요." onChange={onChangeTextHandler} />
         <div className={styles['label-div']}>
-          <p>첨부파일</p>
+          <p>썸네일</p>
           <img src={requiredIcon} alt="required icon" />
         </div>
         <input name="file" type="file" style={{ width: '815px' }} accept="image/*" onChange={onFileHandler} required />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,8 +7,11 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
+import { Pagination } from '@mui/material';
 import styles from './MyDonatesContainer.module.scss';
 import SideBarList from '../../components/MyPageSideBar/SideBarList';
+import { requestGiftList } from '../../api/user';
+import { myGiftType } from '../../types/myPage';
 
 export function MyDonatesContainer() {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -27,17 +30,51 @@ export function MyDonatesContainer() {
     },
   }));
 
-  function createData(name: string, calories: number, fat: number) {
-    return { name, calories, fat };
-  }
+  const [giftDataList, setGiftDataList] = useState<myGiftType[]>([
+    {
+      amount: 0,
+      fundTitle: '',
+      giftDate: '',
+      giftId: 0,
+      username: '',
+    },
+  ]);
 
-  const rows = [
-    createData('Frozen yoghurt', 159, 6.0),
-    createData('Ice cream sandwich', 237, 9.0),
-    createData('Eclair', 262, 16.0),
-    createData('Cupcake', 305, 3.7),
-    createData('Gingerbread', 356, 16.0),
-  ];
+  const getGiftHistory = async () => {
+    const res = await requestGiftList();
+    setGiftDataList(res.data);
+    console.log('axios', res.data);
+  };
+
+  useEffect(() => {
+    getGiftHistory();
+  }, []);
+
+  // useEffect(() => {
+  //   if (!maxPage) {
+  //     getMaxPage();
+  //   } else {
+  //     getGiftHistory();
+  //   }
+  // }, [page, maxPage]);
+
+  /** 페이지 교체 */
+  // const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
+  //   setPage(selectedPage);
+  // };
+
+  /** 최대 페이지 */
+  // const getMaxPage = async () => {
+  //   try {
+  //     const response = await getGiftHistory(0, 10000);
+  //     const pageCalc = response.data.length % size ? Math.floor(response.data.length / size) + 1 : response.data.length / size;
+  //     console.log('최대 페이지 요청', response);
+  //     setMaxPage(pageCalc);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+
   return (
     <div className={styles.bodyContainer}>
       <SideBarList />
@@ -59,15 +96,16 @@ export function MyDonatesContainer() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
-                    <StyledTableRow key={row.name}>
+                  {/* {giftDataList.map((data, idx) => (
+                    // eslint-disable-next-line
+                    <StyledTableRow key={idx}>
                       <StyledTableCell component="th" scope="row">
-                        {row.name}
+                        {data.giftId}
                       </StyledTableCell>
-                      <StyledTableCell align="center">{row.calories}원</StyledTableCell>
-                      <StyledTableCell align="right">{row.fat}</StyledTableCell>
+                      <StyledTableCell align="center">{data.amount}원</StyledTableCell>
+                      <StyledTableCell align="right">{data.giftDate}</StyledTableCell>
                     </StyledTableRow>
-                  ))}
+                  ))} */}
                 </TableBody>
               </Table>
             </TableContainer>
