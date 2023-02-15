@@ -96,7 +96,7 @@ function QuestionDetailContainer() {
         <div className={styles['text-div']}>
           <p className={styles['faq-content']}>{QNAInfo.content}</p>
         </div>
-        <div className={styles['text-div']}>
+        <div className={styles['file-div']}>
           {QNAInfo.files?.map((file) => (
             <a key={Object.values(file)[0]} href={Object.values(file)[0]} className={styles.file}>
               {isImage(Object.values(file)[0]) && <BsFillImageFill style={{ marginRight: '0.5rem' }} />}

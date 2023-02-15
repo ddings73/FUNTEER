@@ -43,7 +43,7 @@ class VideoRoomComponent extends Component {
       allAmount: 0,
       checkLottie: false,
       amount: 0,
-      donationUser:""
+      donationUser: '',
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -128,15 +128,25 @@ class VideoRoomComponent extends Component {
         this.subscribeToSessionDisconnected();
         this.subscribeToLiveDonation();
         this.subscribeToUpdateAmount();
+        this.publisherToStreamDestroyed();
         await this.connectToSession();
       },
     );
   }
 
+  publisherToStreamDestroyed() {
+    this.state.session.on('streamDestroyed', (event) => {
+      event.preventDefault();
+
+      alert('종료된 라이브 방송입니다.');
+      window.location.href = '/';
+    });
+  }
+
   subscribeToLiveDonation() {
     this.state.session.on('signal:liveDonation', (event) => {
-      console.log("DONATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
-      console.log(this.props)
+      console.log('DONATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+      console.log(this.props);
       console.log(event);
       const data = JSON.parse(event.data);
       console.log(data);
@@ -149,10 +159,10 @@ class VideoRoomComponent extends Component {
       // eslint-disable-next-line react/no-access-state-in-setstate
       const prev = this.state.allAmount;
       console.log('UPDATE!!!!!!!!!!!!!!!!');
-      const data = JSON.parse(event.data)
+      const data = JSON.parse(event.data);
       // this.setState({ allAmount: prev + amount });
-      this.setState({donationUser:data.donationUser})
-      this.setState({ allAmount: prev + data.money, checkLottie: true, amount: data.money});
+      this.setState({ donationUser: data.donationUser });
+      this.setState({ allAmount: prev + data.money, checkLottie: true, amount: data.money });
     });
   }
 
@@ -213,8 +223,10 @@ class VideoRoomComponent extends Component {
             status: error.status,
           });
         }
-        alert('There was an error connecting to the session:', error.message);
-        console.log('There was an error connecting to the session:', error.code, error.message);
+        alert('라이브 방송에 오류가 있습니다.');
+        window.location.href = '/';
+        // alert('There was an error connecting to the session:', error.message);
+        // console.log('There was an error connecting to the session:', error.code, error.message);
       });
   }
 
@@ -294,12 +306,11 @@ class VideoRoomComponent extends Component {
     const mySession = this.state.session;
 
     if (mySession) {
+      console.log(mySession);
       mySession.disconnect();
       console.dir(mySession);
       this.leaveThisSession(this.state.mySessionId, mySession.token);
       console.log('세션 종료 성공띠!!!');
-      alert("라이브가 종료되었습니다")
-      window.location.href="/"
     }
 
     // Empty all properties...
@@ -317,6 +328,9 @@ class VideoRoomComponent extends Component {
 
     console.log('LEAVE_OV', this.OV);
     console.log('LEAVE_STATE', this.state);
+
+    alert('라이브가 종료되었습니다');
+    window.location.href = '/';
   }
 
   camStatusChanged() {

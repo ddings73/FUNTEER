@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
+import Swal from 'sweetalert2';
 import { AxiosError } from 'axios';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -39,7 +40,7 @@ const fundingStateMap = new Map<string, string>([
   ['승인 대기', 'FUNDING_WAIT'],
   ['승인', 'FUNDING_ACCEPT'],
   ['거절', 'FUNDING_REJECT'],
-  ['진행중', 'FUNDING_INPROGRESS'],
+  ['진행중', 'FUNDING_IN_PROGRESS'],
   ['펀딩 실패', 'FUNDING_FAIL'],
   ['연장', 'FUNDING_EXTEND'],
   ['펀딩 완료', 'FUNDING_COMPLETE'],
@@ -50,7 +51,7 @@ const fundingStateMap = new Map<string, string>([
   ['FUNDING_WAIT', '승인 대기'],
   ['FUNDING_ACCEPT', '승인'],
   ['FUNDING_REJECT', '거절'],
-  ['FUNDING_INPROGRESS', '진행중'],
+  ['FUNDING_IN_PROGRESS', '진행중'],
   ['FUNDING_FAIL', '펀딩 실패'],
   ['FUNDING_EXTEND', '연장'],
   ['FUNDING_COMPLETE', '펀딩 완료'],
@@ -137,7 +138,19 @@ function AdminFundingContainer() {
   };
 
   const handleStateChange = (id: number, state: string, e: SelectChangeEvent) => {
-    requestChangeState(id, e.target.value, state);
+    Swal.fire({
+      text: '펀딩 상태를 변경 하시겠습니까?',
+      showConfirmButton: false,
+      showDenyButton: true,
+      showCancelButton: true,
+      denyButtonText: `확인`,
+      denyButtonColor: 'rgba(211, 79, 4, 1)',
+      cancelButtonText: '취소',
+    }).then((result) => {
+      if (result.isDenied) {
+        requestChangeState(id, e.target.value, state);
+      }
+    });
   };
 
   /** 상태 변경 요청 */

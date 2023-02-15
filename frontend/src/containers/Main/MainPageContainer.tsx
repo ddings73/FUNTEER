@@ -33,6 +33,9 @@ export function MainPageContainer() {
       `}
     </p>
   );
+  useEffect(() => {
+    updateScroll();
+  }, [scrollPosition]);
 
   return (
     <div className={styles.container}>
