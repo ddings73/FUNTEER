@@ -17,6 +17,7 @@ import { FundingReportInterface, responseListType } from '../../types/funding';
 import { fundingReportPost } from '../../api/funding';
 import requiredIcon from '../../assets/images/funding/required.svg';
 import styles from './ReportModal.module.scss';
+import { customTextOnlyAlert, noTimeSuccess, noTimeWarn } from '../../utils/customAlert';
 
 const style = {
   position: 'absolute',
@@ -93,7 +94,7 @@ export function ReportModal() {
         },
       ]);
     } else {
-      alert('빈칸이 있습니다. 양식을 모두 채워주세요');
+      customTextOnlyAlert(noTimeWarn, '빈칸이 있습니다. 양식을 모두 채워주세요');
     }
     setAmount('');
     setDescription('');
@@ -103,6 +104,7 @@ export function ReportModal() {
     setResponseList(responseList.filter((data, idx) => idx !== delIdx));
   }
 
+<<<<<<< frontend/src/components/Modal/ReportModal.tsx
   const createNotice = async () => {
     responseList.shift();
     setResponseList(responseList);
@@ -114,6 +116,21 @@ export function ReportModal() {
 
     try {
       const response = await fundingReportPost(fundingId, reportData);
+=======
+  async function closeReportModal() {
+    if (responseList.length < 2) {
+      customTextOnlyAlert(noTimeWarn, '설명과 금액 보고를 작성해주세요');
+      return;
+    }
+    responseList.shift(); // 맨 앞 빈 객체 제거
+    try {
+      await fundingReportPost(fundingId, reportContent);
+      setReportContent({
+        content: contentText,
+        reportDetailResponseList: responseList,
+      });
+      customTextOnlyAlert(noTimeSuccess, '보고서가 성공적으로 등록되었습니다. 등록창이 닫힙니다.');
+>>>>>>> frontend/src/components/Modal/ReportModal.tsx
       dispatch(closeModal());
     } catch (error: unknown) {
       if (error instanceof AxiosError) {

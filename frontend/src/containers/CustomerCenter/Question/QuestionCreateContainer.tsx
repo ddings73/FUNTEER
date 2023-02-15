@@ -5,7 +5,7 @@ import { requestCreateFaq } from '../../../api/faq';
 import { FaqInterface } from '../../../types/faq';
 import styles from './QuestionCreateContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
-import { customAlert, s1000, w1500 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, noTimeWarn, s1000, w1500 } from '../../../utils/customAlert';
 import { QNACreateInterface } from '../../../types/qna';
 import { requestCreateQNA } from '../../../api/qna';
 
@@ -19,7 +19,7 @@ function QuestionCreateContainer() {
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (QNAInfo.title.length > 40) {
-      customAlert(w1500, '질문은 40자 이내로 적어주세요.');
+      customTextOnlyAlert(noTimeWarn, '질문은 40자 이내로 적어주세요.');
       setQNAInfo({ ...QNAInfo, title: e.target.value.slice(0, 40) });
       return;
     }
@@ -52,7 +52,7 @@ function QuestionCreateContainer() {
     try {
       const response = await requestCreateQNA(QNAInfo);
       console.log('FAQ 생성 요청', response);
-      customAlert(s1000, '1:1 문의가 등록되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '1:1 문의가 등록되었습니다.');
       navigate(-1);
     } catch (err) {
       console.error(err);

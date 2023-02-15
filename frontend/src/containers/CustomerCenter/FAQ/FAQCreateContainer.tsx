@@ -4,7 +4,7 @@ import { requestCreateFaq } from '../../../api/faq';
 import { FaqInterface } from '../../../types/faq';
 import styles from './FAQCreateContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
-import { customAlert, s1000, w1500 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, noTimeWarn, s1000, w1500 } from '../../../utils/customAlert';
 
 function FAQCreateContainer() {
   const navigate = useNavigate();
@@ -16,7 +16,7 @@ function FAQCreateContainer() {
 
   const onChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement>) => {
     if (FAQCreateInfo.title.length > 40) {
-      customAlert(w1500, '질문은 40자 이내로 적어주세요.');
+      customTextOnlyAlert(noTimeWarn, '질문은 40자 이내로 적어주세요.');
       setFAQCreateInfo({ ...FAQCreateInfo, title: e.target.value.slice(0, 40) });
       return;
     }
@@ -31,7 +31,7 @@ function FAQCreateContainer() {
     try {
       const response = await requestCreateFaq(FAQCreateInfo);
       console.log('FAQ 생성 요청', response);
-      customAlert(s1000, 'FAQ 등록이 완료되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, 'FAQ 등록이 완료되었습니다.');
       navigate(-1);
     } catch (err) {
       console.error(err);

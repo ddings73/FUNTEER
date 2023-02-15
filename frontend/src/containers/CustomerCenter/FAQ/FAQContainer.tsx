@@ -9,7 +9,7 @@ import styles from './FAQContainer.module.scss';
 import { useAppSelector } from '../../../store/hooks';
 import { FaqInterface } from '../../../types/faq';
 import { requestFaqDelete, requestFaqList } from '../../../api/faq';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 export default function FAQContainer() {
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function FAQContainer() {
     try {
       const response = await requestFaqDelete(postId);
       console.log('FAQ 삭제 요청', response);
-      customAlert(s1000, '해당 FAQ가 삭제되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '해당 FAQ가 삭제되었습니다.');
       requestAllFAQ();
     } catch (err) {
       console.error(err);

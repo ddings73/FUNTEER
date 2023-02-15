@@ -7,7 +7,7 @@ import styles from './AdminTeamDenyContainer.module.scss';
 import { useAppDispatch } from '../../../store/hooks';
 import { closeModal } from '../../../store/slices/fileModalSlice';
 import requiredIcon from '../../../assets/images/funding/required.svg';
-import { customAlert, s1000, w1500 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeWarn, s1000, w1500 } from '../../../utils/customAlert';
 import { requestDenyTeam } from '../../../api/admin';
 
 function AdminTeamDenyContainer() {
@@ -33,7 +33,7 @@ function AdminTeamDenyContainer() {
   /** 전송 버튼 클릭 */
   const onClickSubmitHandler = () => {
     if (content.length < 5) {
-      customAlert(w1500, '내용을 5자 이상 입력해주세요.');
+      customTextOnlyAlert(noTimeWarn, '내용을 5자 이상 입력해주세요.');
       return;
     }
 

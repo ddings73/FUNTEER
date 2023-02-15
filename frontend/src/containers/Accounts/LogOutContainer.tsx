@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router';
 import { useAppDispatch } from '../../store/hooks';
 import { resetLoginState, setUserLoginState } from '../../store/slices/userSlice';
+import { customTextOnlyAlert, DefaultAlert } from '../../utils/customAlert';
 import styles from './LogOutContainer.module.scss';
 
 export function LogOutContainer() {
@@ -14,7 +15,7 @@ export function LogOutContainer() {
   useEffect(() => {
     localStorage.removeItem('token');
     dispatch(resetLoginState());
-    alert('로그아웃 되었습니다.');
+    customTextOnlyAlert(DefaultAlert, '로그아웃 되었습니다.');
     navigate('/');
   }, [loginState]);
   return <div className={styles.bodyContainer}>로그아웃</div>;

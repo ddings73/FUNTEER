@@ -48,12 +48,21 @@ function Row({ title, amount, content, endDate, id, startDate }: DonationContent
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <Box sx={{ margin: 1, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-              <Typography variant="h6" gutterBottom component="div" sx={{ fontWeight: '600' }}>
+              <Typography variant="h6" gutterBottom component="div" sx={{ margin: '2rem 0', fontWeight: '600' }}>
                 종료 이벤트 요약
               </Typography>
               <Paper
                 elevation={3}
-                sx={{ width: '80%', height: 'auto', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', padding: '5%' }}
+                sx={{
+                  margin: '0 0 2rem 0',
+                  width: '50%',
+                  height: 'auto',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'flex-start',
+                  justifyContent: 'center',
+                  padding: '5%',
+                }}
               >
                 <p className={styles.tableHead}>내용</p>
                 <p className={styles.tableContent} dangerouslySetInnerHTML={{ __html: content }} />
