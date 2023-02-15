@@ -104,19 +104,18 @@ export function ReportModal() {
     setResponseList(responseList.filter((data, idx) => idx !== delIdx));
   }
 
-<<<<<<< frontend/src/components/Modal/ReportModal.tsx
-  const createNotice = async () => {
-    responseList.shift();
-    setResponseList(responseList);
-    setReportData({ ...reportData, content: contentText, fundingDetailRequests: responseList });
-  };
+  // const createNotice = async () => {
+  //   responseList.shift();
+  //   setResponseList(responseList);
+  //   setReportData({ ...reportData, content: contentText, fundingDetailRequests: responseList });
+  // };
 
-  const test = async () => {
-    await createNotice();
+  // const test = async () => {
+  //   await createNotice();
 
-    try {
-      const response = await fundingReportPost(fundingId, reportData);
-=======
+  //   try {
+  //     const response = await fundingReportPost(fundingId, reportData);
+
   async function closeReportModal() {
     if (responseList.length < 2) {
       customTextOnlyAlert(noTimeWarn, '설명과 금액 보고를 작성해주세요');
@@ -124,13 +123,12 @@ export function ReportModal() {
     }
     responseList.shift(); // 맨 앞 빈 객체 제거
     try {
-      await fundingReportPost(fundingId, reportContent);
-      setReportContent({
-        content: contentText,
-        reportDetailResponseList: responseList,
-      });
+      // await fundingReportPost(fundingId, reportContent);
+      // setReportContent({
+      //   content: contentText,
+      //   reportDetailResponseList: responseList,
+      // });
       customTextOnlyAlert(noTimeSuccess, '보고서가 성공적으로 등록되었습니다. 등록창이 닫힙니다.');
->>>>>>> frontend/src/components/Modal/ReportModal.tsx
       dispatch(closeModal());
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
@@ -138,7 +136,7 @@ export function ReportModal() {
         console.error(error);
       }
     }
-  };
+  }
 
   function initModalClose() {
     setAmount('');
