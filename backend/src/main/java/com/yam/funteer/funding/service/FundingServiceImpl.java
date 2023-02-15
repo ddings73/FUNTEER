@@ -23,9 +23,11 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.yam.funteer.alarm.service.AlarmService;
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.repository.AttachRepository;
+import com.yam.funteer.attach.repository.PostAttachRepository;
 import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
@@ -78,6 +80,7 @@ import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.entity.Wish;
+import com.yam.funteer.user.repository.FollowRepository;
 import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
 import com.yam.funteer.user.repository.UserBadgeRepository;
@@ -91,6 +94,8 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional
 @RequiredArgsConstructor
 public class FundingServiceImpl implements FundingService{
+	private final FollowRepository followRepository;
+	private final PostAttachRepository postAttachRepository;
 	private final UserBadgeRepository userBadgeRepository;
 	private static final String VIEWCOOKIENAME = "alreadyViewCookie";
 	private final UserRepository userRepository;
@@ -117,10 +122,13 @@ public class FundingServiceImpl implements FundingService{
 	private final TargetMoneyDetailRepository targetMoneyDetailRepository;
 
 	private final BadgeService badgeService;
+	private final AlarmService alarmService;
 
 	@Override
-	public Page<FundingListResponse> findAllFundingByAdmin(Pageable pageable) {
-		return fundingRepository.findAll(pageable).map(FundingListResponse::from);
+	public Page<FundingListResponse> findAllFundingByAdmin(String keyword, PostType postType, Pageable pageable) {
+		return postType == null
+				? fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword, pageable).map(FundingListResponse::from)
+				: fundingRepository.findAllByPostTypeAndTitleContainingOrPostTypeAndContentContaining(postType, keyword, postType, keyword, pageable).map(FundingListResponse::from);
 	}
 
 	@Override
@@ -384,7 +392,6 @@ public class FundingServiceImpl implements FundingService{
 		FundingDetailResponse fundingDetailResponse = FundingDetailResponse.from(funding);
 		long wishCount = wishRepository.countAllByFundingIdAndChecked(id, true);
 		fundingDetailResponse.setWishCount(wishCount);
-		Long tempId = funding.getId();
 
 
 		if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() == "anonymousUser") {
@@ -408,8 +415,11 @@ public class FundingServiceImpl implements FundingService{
 		fundingDetailResponse.setTargetMoneyListLevelThree(targetMoneyRepository.findByFundingFundingIdAndTargetMoneyType(
 			id, TargetMoneyType.LEVEL_THREE));
 
-		Page<CommentResponse> collect = commentRepository.findAllByFundingId(tempId, pageable).map(m -> CommentResponse.from(m));
+		Page<CommentResponse> collect = commentRepository.findAllByFundingId(funding.getId(), pageable).map(m -> CommentResponse.from(m));
 		fundingDetailResponse.setComments(Optional.of(collect));
+
+		Long participatedCount = paymentRepository.findByPostId(funding.getId()).stream().count();
+		fundingDetailResponse.setParticipatedCount(participatedCount);
 
 		return fundingDetailResponse;
 	}
@@ -455,6 +465,7 @@ public class FundingServiceImpl implements FundingService{
 			funding.setThumbnail(data.getThumbnail());
 			funding.setPostType(PostType.FUNDING_WAIT);
 			funding.setRegDate(LocalDateTime.now());
+			funding.setFundingDescription(data.getFundingDescription());
 
 		} else if (funding.getPostType() == PostType.FUNDING_IN_PROGRESS) {
 			funding.setEndDate(endDate);
@@ -527,7 +538,13 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public FundingReportResponse findFundingReportById(Long fundingId) {
 		Report byFundingId = reportRepository.findByFundingFundingId(fundingId).orElseThrow(NotFoundReportException::new);
-		return FundingReportResponse.from(byFundingId);
+		FundingReportResponse response = FundingReportResponse.from(byFundingId);
+
+		Funding byFundingId1 = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
+		String liveUrlPath = postAttachRepository.findByPostId(byFundingId1.getId()).getAttach().getPath();
+		response.setLiveUrl(liveUrlPath);
+
+		return response;
 	}
 
 	@Override
@@ -618,6 +635,12 @@ public class FundingServiceImpl implements FundingService{
 		for (Funding funding : all) {
 			if (funding.getPostType() == PostType.FUNDING_ACCEPT) {
 				funding.setPostType(PostType.FUNDING_IN_PROGRESS);
+				List<String> collect = followRepository.findAllByTeamId(funding.getTeam().getId())
+					.stream()
+					.map(m -> m.getMember().getEmail())
+					.collect(Collectors.toList());
+				String teamName = funding.getTeam().getName();
+				alarmService.sendList(collect, "팔로우 하신 단체" + teamName + "의 새로운 펀딩이 오픈되었습니다.", "/funding/detail/" + funding.getFundingId());
 			}
 		}
 
@@ -625,6 +648,15 @@ public class FundingServiceImpl implements FundingService{
 
 		for (Funding funding : allByEndDate) {
 
+			List<String> allByFundingId = wishRepository.findAllByFundingAndChecked(funding, true)
+				.stream()
+				.map(m -> m.getMember().getEmail())
+				.collect(Collectors.toList());
+
+			List<String> collect = followRepository.findAllByTeamId(funding.getTeam().getId())
+				.stream()
+				.map(m -> m.getMember().getEmail())
+				.collect(Collectors.toList());
 			Long targetAmount = 0L;
 
 			for (TargetMoney targetMoney : funding.getTargetMoneyList()) {
@@ -635,8 +667,13 @@ public class FundingServiceImpl implements FundingService{
 
 			if (funding.getCurrentFundingAmount() >= targetAmount) {
 				funding.setPostType(PostType.FUNDING_COMPLETE);
+				alarmService.sendList(allByFundingId, "찜한 펀딩이 성공했습니다.", "/funding/detail/" + funding.getFundingId());
+				alarmService.sendList(collect, "팔로우 한 단체의 펀딩이 성공했습니다.", "/funding/detail/" + funding.getFundingId());
 			} else {
 				funding.setPostType(PostType.FUNDING_FAIL);
+				alarmService.sendList(allByFundingId, "찜한 펀딩이 실패했습니다.", "/funding/detail/" + funding.getFundingId());
+				alarmService.sendList(collect, "팔로우 한 단체의 펀딩이 실패했습니다.", "/funding/detail/" + funding.getFundingId());
+
 			}
 		}
 	}

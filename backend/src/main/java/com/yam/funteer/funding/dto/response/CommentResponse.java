@@ -23,6 +23,12 @@ public class CommentResponse {
 	private LocalDateTime regDate;
 
 	public static CommentResponse from(Comment comment) {
-		return new CommentResponse(comment.getId(), comment.getMember().getProfileImg().get().getPath(), comment.getMember().getNickname(), comment.getContent(), comment.getRegDate());
+		CommentResponse response = new CommentResponse(comment.getId(), null, comment.getMember().getNickname(),
+			comment.getContent(), comment.getRegDate());
+
+		comment.getMember().getProfileImg().ifPresent(attach ->{
+			response.setMemberProfileImg(attach.getPath());
+		});
+		return response;
 	}
 }

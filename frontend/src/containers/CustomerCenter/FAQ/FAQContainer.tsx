@@ -94,9 +94,7 @@ export default function FAQContainer() {
             {memberFAQList.map((data) => (
               <Accordion key={data.id} sx={{ boxShadow: 'none' }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                  <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquare' }}>
-                    <p>{data.title}</p>
-                  </Typography>
+                  <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquare' }}>{data.title}</Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{ backgroundColor: 'rgb(255, 254, 252)', padding: '2rem', boxShadow: '0px 0px 20px rgba(255, 132, 0, 0.04) inset' }}>
                   <Typography sx={{ fontSize: '1rem', lineHeight: '2rem', fontFamily: 'NanumSquare' }}>{data.content}</Typography>

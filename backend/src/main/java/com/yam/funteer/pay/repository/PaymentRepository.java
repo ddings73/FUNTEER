@@ -13,9 +13,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PaymentRepository extends JpaRepository<Payment, Long> {
 	List<Payment> findAllByPost(Post post);
-	List<Payment> findAllByUserAndPostPostGroup(User user, PostGroup postGroup);
+	List<Payment> findAllByUserAndPostPostGroup(User user,PostGroup postGroup);
+	Page<Payment> findAllByUserAndPostPostGroup(User user, PostGroup postGroup, Pageable pageable);
 
 	List<Payment> findAllByUser(User user);
 
-	Page<Payment> findAllByPost(Post post, Pageable pageable);
+	List<Payment> findByPostId(Long id);
 }

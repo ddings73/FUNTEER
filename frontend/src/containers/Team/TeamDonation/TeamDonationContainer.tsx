@@ -7,11 +7,11 @@ import TeamSideBarList from '../../../components/TeamPageSideBar/TeamSideBarList
 import styles from './TeamDonationContainer.module.scss';
 
 export type teamDonationType = {
-  donateId: number;
-  fundingTitle: string;
+  giftId: number;
+  fundTitle: string;
   username: string;
   amount: number;
-  date: string;
+  giftDate: string;
 };
 
 function TeamDonationContainer() {
@@ -28,7 +28,7 @@ function TeamDonationContainer() {
 
   useEffect(() => {
     requestPageDonationList();
-  }, [maxPage, page]);
+  }, [page]);
 
   /** 페이지 교체 */
   const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
@@ -50,6 +50,7 @@ function TeamDonationContainer() {
     try {
       const response = await requestTeamDonationList(page - 1, size, 'giftDate,DESC');
       console.log('단체 도네이션 내역 요청', response);
+      setMaxPage(response.data.totalPages);
       setDonationList(response.data.giftList);
     } catch (err) {
       console.error(err);
@@ -72,12 +73,12 @@ function TeamDonationContainer() {
             <li>날짜</li>
           </ul>
           {donationList.map((data) => (
-            <ul key={data.donateId} className={styles['content-line']}>
-              <li className={styles['text-center']}>{data.donateId}</li>
-              <li className={styles['mobile-none']}>{data.fundingTitle}</li>
+            <ul key={data.giftId} className={styles['content-line']}>
+              <li className={styles['text-center']}>{data.giftId}</li>
+              <li className={styles['mobile-none']}>{data.fundTitle}</li>
               <li className={styles['mobile-none']}>{data.username}</li>
               <li>{data.amount.toLocaleString('ko-KR')}</li>
-              <li>{data.date}</li>
+              <li>{data.giftDate}</li>
             </ul>
           ))}
           <div className={styles['page-bar']}>

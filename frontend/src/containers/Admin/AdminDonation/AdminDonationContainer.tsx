@@ -101,7 +101,7 @@ function AdminDonationContainer() {
         </ul>
 
         {donationList.map((data) => (
-          <div className={styles['list-line']}>
+          <div key={data.donationId} className={styles['list-line']}>
             <li>
               <p>{data.donationId}</p>
             </li>

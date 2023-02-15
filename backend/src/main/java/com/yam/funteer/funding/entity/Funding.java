@@ -50,6 +50,10 @@ public class Funding extends Post {
 
 	private Long currentFundingAmount;
 
+	public void setFundingDescription(String fundingDescription) {
+		this.fundingDescription = fundingDescription;
+	}
+
 	private String fundingDescription;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

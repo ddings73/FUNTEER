@@ -11,6 +11,7 @@ import { RootState } from '../../../store/store';
 import { requestTeams, requestWithdrawTeam } from '../../../api/admin';
 import { AdminTeamInterface } from '../../../types/user';
 import styles from './AdminTeamContainer.module.scss';
+import { customAlert, s1000 } from '../../../utils/customAlert';
 
 export enum TeamState {
   All = '전체',
@@ -21,10 +22,16 @@ export enum TeamState {
 }
 
 export const teamStateMap = new Map<string, string>([
+  ['All', '전체'],
   ['TEAM', '정상'],
   ['TEAM_RESIGN', '탈퇴'],
   ['TEAM_WAIT', '가입 대기'],
   ['TEAM_EXPIRED', '갱신 필요'],
+  ['전체', 'All'],
+  ['정상', 'TEAM'],
+  ['탈퇴', 'TEAM_RESIGN'],
+  ['가입 대기', 'TEAM_WAIT'],
+  ['갱신 필요', 'TEAM_EXPIRED'],
 ]);
 
 function AdminTeamContainer() {
@@ -32,19 +39,16 @@ function AdminTeamContainer() {
   const navigate = useNavigate();
   /** dn: 가입 승인 거부된 팀의 유저 번호 */
   const dn = useAppSelector((state: RootState) => state.fileModalSlice.deniedNum);
+  const size = 8;
   const [page, setPage] = useState<number>(1);
   const [maxPage, setMaxPage] = useState<number>(0);
   const [pageTeams, setPageTeams] = useState<AdminTeamInterface[]>([]);
   const [teamSearch, setTeamSearch] = useState<string>('');
-  const [teamStateFilter, setTeamStateFilter] = useState<string>(TeamState.All);
+  const [teamStateFilter, setTeamStateFilter] = useState<string>('All');
 
   useEffect(() => {
-    if (!teamSearch) {
-      requestPageTeams();
-    } else {
-      requestPageTeamsWithKeyword();
-    }
-  }, [page]);
+    requestPageTeams();
+  }, [page, teamStateFilter]);
 
   /** dn이 변하면 해당 팀에게 사유를 안내하기 위한 페이지로 이동 */
   useEffect(() => {
@@ -53,48 +57,38 @@ function AdminTeamContainer() {
     }
   }, [dn]);
 
-  /** 검색창 입력 */
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setTeamSearch(e.target.value);
   };
 
-  /** 검색 */
-  const handleClickSearch = async (e: React.MouseEvent<SVGElement>) => {
-    setPage(1);
-    requestPageTeamsWithKeyword();
-  };
-
-  /** 엔터 검색 */
-  const handleEnter = async (e: React.KeyboardEvent<HTMLDivElement>) => {
-    if (e.key === 'Enter') {
+  const handleClickSearch = async () => {
+    if (page === 1) {
+      requestPageTeams();
+    } else {
       setPage(1);
-      requestPageTeamsWithKeyword();
     }
   };
 
-  /** 검색 초기화 및 새로고침 */
+  const handleEnter = async (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === 'Enter') {
+      if (page === 1) {
+        requestPageTeams();
+      } else {
+        setPage(1);
+      }
+    }
+  };
+
   const handleClickInit = async () => {
-    setTeamSearch('');
-    setPage(1);
-    requestPageTeams();
+    window.location.reload();
   };
 
   const handleChangeFilter = (e: SelectChangeEvent<string>) => {
     setTeamStateFilter(e.target.value);
   };
 
-  const filtedTeams = pageTeams.filter((team) => {
-    let filter;
-    if (teamStateFilter === '전체') {
-      filter = true;
-    } else {
-      filter = teamStateMap.get(team.userType) === teamStateFilter;
-    }
-    return filter;
-  });
-
   /** 필수 파일 확인 버튼 */
-  const handleFileBtn = (teamId: number, vf: string, pf: string, e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleFileBtn = (teamId: number, vf: string, pf: string) => {
     dispatch(openModal({ isOpen: true, userId: teamId.toString(), vmsFileUrl: vf, performFileUrl: pf, deniedNum: '' }));
   };
 
@@ -109,22 +103,24 @@ function AdminTeamContainer() {
 
   const teamStateSet = Object.values(TeamState);
 
-  /** 단체 탈퇴 버튼 클릭 */
   const handleWithdrawBtn = (e: React.MouseEvent<SVGElement>, id: number) => {
     withdrawTeam(id);
   };
 
-  /** 페이지 교체 */
   const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
     setPage(selectedPage);
   };
 
-  /** 페이지 팀 요청 */
   const requestPageTeams = async () => {
     setPageTeams([]);
     try {
-      const response = await requestTeams(page - 1, 8);
-      console.log(response);
+      let response;
+      if (teamStateFilter === 'All') {
+        response = await requestTeams(page - 1, size, teamSearch);
+      } else {
+        response = await requestTeams(page - 1, size, teamSearch, teamStateFilter);
+      }
+      console.log('관리자 팀 리스트 요청', response);
       setMaxPage(response.data.totalPages);
       setPageTeams(response.data.userList);
     } catch (error) {
@@ -132,32 +128,15 @@ function AdminTeamContainer() {
     }
   };
 
-  /** 검색어 + 페이지 팀 요청 */
-  const requestPageTeamsWithKeyword = async () => {
-    setPageTeams([]);
-    try {
-      const response = await requestTeams(page - 1, 1, teamSearch);
-      console.log(response);
-      setMaxPage(response.data.totalPages);
-      setPageTeams(response.data.userList);
-    } catch (error) {
-      console.error('검색어 팀 요청 에러', error);
-    }
-  };
-
-  /** 단체 회원 탈퇴 요청 */
   const withdrawTeam = async (id: number) => {
     try {
       const response = await requestWithdrawTeam(id);
       console.log(response);
+      customAlert(s1000, '단체 탈퇴 처리가 완료되었습니다.');
+      requestPageTeams();
     } catch (error) {
       console.error(error);
     }
-  };
-
-  const handleChangeTeamState = (e: SelectChangeEvent) => {
-    console.log('단체 회원 상태 변경 요청');
-    window.location.reload();
   };
 
   return (
@@ -167,6 +146,7 @@ function AdminTeamContainer() {
         <div className={styles['filter-div']}>
           <div className={styles['search-div']}>
             <TextField
+              size="small"
               color="warning"
               label="단체 검색"
               variant="outlined"
@@ -180,7 +160,7 @@ function AdminTeamContainer() {
           </div>
           <Select value={teamStateFilter} onChange={handleChangeFilter} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
             {teamStateSet.map((state) => (
-              <MenuItem key={state} value={state} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
+              <MenuItem key={state} value={teamStateMap.get(state)} sx={{ height: '30px', fontSize: '0.9rem', fontFamily: 'NanumSquare' }}>
                 {state}
               </MenuItem>
             ))}
@@ -196,7 +176,7 @@ function AdminTeamContainer() {
           <li>상태</li>
           <li> </li>
         </ul>
-        {filtedTeams.map((data) => (
+        {pageTeams.map((data) => (
           <ul key={data.id} className={styles['list-line']}>
             <li>{data.id}</li>
             <li>
@@ -214,7 +194,7 @@ function AdminTeamContainer() {
                   type="button"
                   className={styles['file-btn']}
                   onClick={(e) => {
-                    handleFileBtn(data.id, data.vmsFileUrl, data.performFileUrl, e);
+                    handleFileBtn(data.id, data.vmsFileUrl, data.performFileUrl);
                   }}
                 >
                   확인

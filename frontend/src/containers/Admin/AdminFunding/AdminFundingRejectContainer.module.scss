@@ -41,7 +41,7 @@
       margin-bottom: 1rem;
       padding: 1rem;
       border-radius: 5px;
-      font-family: NanumSquareRound;
+      font-family: NanumSquare;
     }
 
     .btn-div {
@@ -51,7 +51,21 @@
       .submit {
         background-color: $primary;
         margin: 0 0.5rem;
-        font-family: NanumSquareRound;
+        font-family: NanumSquare;
+
+        .loading {
+          font-size: 1.3rem;
+          animation: spin 1s infinite linear;
+        }
+
+        @keyframes spin {
+          from {
+            transform: rotate(0deg);
+          }
+          to {
+            transform: rotate(360deg);
+          }
+        }
       }
     }
   }

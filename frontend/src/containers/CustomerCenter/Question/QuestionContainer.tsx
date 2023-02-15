@@ -90,6 +90,7 @@ export default function QuestionContainer() {
 
         {QNAList.map((data) => (
           <button
+            key={data.id}
             type="button"
             className={styles.line}
             onClick={() => {

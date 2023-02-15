@@ -75,6 +75,7 @@ import {
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
+import ScrollToTop from './utils/ScrollToTop';
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
@@ -162,18 +163,6 @@ const router = createBrowserRouter([
       {
         path: 'myFollow',
         element: <MyFollows />,
-      },
-      {
-        path: 'team/:teamId',
-        element: <TeamProfile />,
-      },
-      {
-        path: 'teamedit/:teamId',
-        element: <TeamEdit />,
-      },
-      {
-        path: 'teamdonation/:teamId',
-        element: <TeamDonation />,
       },
       {
         path: 'live',
@@ -275,6 +264,18 @@ const router = createBrowserRouter([
       {
         path: '/qna/:qnaId',
         element: <QuestionDetail />,
+      },
+      {
+        path: 'team/:teamId',
+        element: <TeamProfile />,
+      },
+      {
+        path: 'teamedit/:teamId',
+        element: <TeamEdit />,
+      },
+      {
+        path: 'teamdonation/:teamId',
+        element: <TeamDonation />,
       },
     ],
   },

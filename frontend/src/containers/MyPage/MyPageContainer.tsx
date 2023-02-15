@@ -16,6 +16,7 @@ import { requestModifyUserDisplay, requestModifyUserProfileImage, requestUserInf
 import { useAppSelector } from '../../store/hooks';
 import { userProfileInterface } from '../../types/user';
 import { http } from '../../api/axios';
+import { stringToSeparator } from '../../utils/convert';
 
 export function MyPageContainer() {
   const fileRef = useRef<HTMLInputElement>(null);
@@ -35,7 +36,6 @@ export function MyPageContainer() {
     try {
       const response = await requestUserProfile(userId);
       console.log(response.data);
-
       setDisplay(response.data.display);
       setUserProfile({ ...response.data });
     } catch (error) {
@@ -50,6 +50,7 @@ export function MyPageContainer() {
   const modifyUserDisplay = async () => {
     try {
       const response = await requestModifyUserDisplay(display, userId);
+      console.log(response)
     } catch (error) {
       console.log(error);
     }
@@ -75,21 +76,25 @@ export function MyPageContainer() {
     try {
       const response = await requestModifyUserProfileImage(profileImage, userId);
       getRequestUserInfo();
+      const imgMod = useAppSelector((state) => state.userSlice.profileImgUrl);
     } catch (error) {
       console.log(error);
     }
   };
 
+  useEffect(()=>{
+    if(profileImage.size !== 0)
+     modifyThumbnail()
+  },[profileImage])
+
   useEffect(() => {
     modifyUserDisplay();
   }, [display]);
-  useEffect(() => {
-    modifyThumbnail();
-  }, [profileImage]);
 
   useEffect(() => {
     getRequestUserInfo();
   }, []);
+
 
   return (
     <div className={styles.bodyContainer}>
@@ -123,8 +128,8 @@ export function MyPageContainer() {
                     <span>{userProfile.followingCnt}</span>
                   </div>
                   <div className={styles.info}>
-                    <h3>총 기부</h3>
-                    <span>{userProfile.money}</span>
+                    <h3>마일리지 잔액</h3>
+                    <span>{stringToSeparator(String(userProfile.money)) }</span>
                   </div>
                 </div>
               </div>
