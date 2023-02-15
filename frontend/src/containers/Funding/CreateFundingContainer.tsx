@@ -8,7 +8,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import { LocalizationProvider } from '@mui/x-date-pickers';
-import { Button, FormControl, Icon, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
+import { Accordion, AccordionDetails, AccordionSummary, Button, FormControl, Icon, IconButton, InputLabel, MenuItem, Select, TextField, Typography } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import AddCircleOutlineOutlinedIcon from '@mui/icons-material/AddCircleOutlineOutlined';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
@@ -18,16 +18,17 @@ import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@mui/material/styles';
 import { fontWeight } from '@mui/system';
 import { log } from 'console';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import styles from './CreateFundingContainer.module.scss';
 import { requestCreateFunding, requestRegisterThumbnail, requestUploadImage } from '../../api/funding';
 import { FundingInterface, amountLevelType, descriptionType } from '../../types/funding';
-import defaultThumbnail from '../../assets/images/default-profile-img.svg';
+import defaultThumbnail from '../../assets/images/funding/createFunding-thumbnail.png';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { closeModal, openModal } from '../../store/slices/modalSlice';
 import requiredIcon from '../../assets/images/funding/required.svg';
 import uploadIcon from '../../assets/images/funding/upload.svg';
 import { diffDayStartToEnd } from '../../utils/day';
-import { stringToSeparator, stringToNumber } from '../../types/convert';
+import { stringToSeparator, stringToNumber } from '../../utils/convert';
 import TabPanel from '../../components/Funding/TabPanel';
 import TabContent from '../../components/Funding/TabContent';
 
@@ -459,6 +460,7 @@ function CreateFundingContainer() {
 
             <TabPanel value={0} index={tabIdx}>
               <TabContent
+                minAmount="0"
                 data={fundingData.targetMoneyLevelOne}
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
@@ -466,11 +468,13 @@ function CreateFundingContainer() {
                 addTodos={addTodos}
                 level="LEVEL_ONE"
                 todoText={todoText}
+                removeTodo={removeTodo}
               />
             </TabPanel>
 
             <TabPanel value={1} index={tabIdx}>
               <TabContent
+                minAmount={(fundingData.targetMoneyLevelOne.amount)}
                 data={fundingData.targetMoneyLevelTwo}
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
@@ -478,11 +482,14 @@ function CreateFundingContainer() {
                 addTodos={addTodos}
                 level="LEVEL_TWO"
                 todoText={todoText}
+                removeTodo={removeTodo}
+
               />
             </TabPanel>
 
             <TabPanel value={2} index={tabIdx}>
               <TabContent
+                minAmount = {(fundingData.targetMoneyLevelTwo.amount)}
                 data={fundingData.targetMoneyLevelThree}
                 onChangeTextHandler={onChangeTextHandler}
                 onChangeTodoHandler={onChangeTodoHandler}
@@ -490,6 +497,8 @@ function CreateFundingContainer() {
                 addTodos={addTodos}
                 level="LEVEL_THREE"
                 todoText={todoText}
+                removeTodo={removeTodo}
+
               />
             </TabPanel>
             <div className={styles['stage-button-box']}>
@@ -500,6 +509,66 @@ function CreateFundingContainer() {
               <Button className={styles['stage-button']} type="button" onClick={nextStageHandler} endIcon={<ArrowForwardOutlinedIcon />}>
                 다음 단계
               </Button>
+            </div>
+            <div className={styles['funding-preview']}>
+            <Accordion className={styles.accordion}>
+             <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+               id="panel1a-header"
+                >
+        <Typography className={styles['accordion-title']}>최소 달성조건</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography className={styles['funding-target-amount']}>목표 금액 :{fundingData.targetMoneyLevelOne.amount}</Typography>
+          <ul>
+           {fundingData.targetMoneyLevelOne.descriptions.map((list,index)=>(
+            <li className={styles['target-todo']}>{index+1}. {list.description}</li>
+           ))}
+          </ul>
+        </AccordionDetails>
+      </Accordion>
+      
+
+      <Accordion className={styles.accordion}>
+             <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+               id="panel1a-header"
+                >
+        <Typography className={styles['accordion-title']}>1단계 초과달성</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography className={styles['funding-target-amount']}>목표 금액 :{fundingData.targetMoneyLevelTwo.amount}</Typography>
+          <ul>
+           {fundingData.targetMoneyLevelTwo.descriptions.map((list,index)=>(
+            <li className={styles['target-todo']}>{index+1}. {list.description}</li>
+           ))}
+          </ul>
+        </AccordionDetails>
+      </Accordion>
+      
+
+      <Accordion className={styles.accordion}>
+             <AccordionSummary
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1a-content"
+               id="panel1a-header"
+                >
+        <Typography className={styles['accordion-title']}>2단계 초과달성</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <Typography className={styles['funding-target-amount']}>목표 금액 :{fundingData.targetMoneyLevelThree.amount}</Typography>
+          <ul>
+           {fundingData.targetMoneyLevelThree.descriptions.map((list,index)=>(
+            <li className={styles['target-todo']}>{index+1}. {list.description}</li>
+           ))}
+          </ul>
+        </AccordionDetails>
+      </Accordion>
+      
+
+      
             </div>
           </div>
           <Button variant="contained" type="button" className={styles['submit-button']} color="warning" onClick={onCreateFunding}>

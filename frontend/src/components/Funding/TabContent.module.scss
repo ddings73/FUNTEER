@@ -25,6 +25,10 @@
         font-size: 1.3rem;
         font-weight: bold;
         margin: 15px 0;
+        & span{
+          font-size: 0.8rem;
+          color: red;
+        }
       }
       .todo-list-box {
         margin-top: 30px;

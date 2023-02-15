@@ -16,6 +16,7 @@ import cn from 'classnames';
 import Skeleton from '@mui/material/Skeleton';
 import Typography, { TypographyProps } from '@mui/material/Typography';
 import { async } from 'q';
+import { Button } from '@mui/material';
 import styles from './FundingListContainer.module.scss';
 import FundingListElement from '../../components/Funding/FundingListElement';
 import { FundingElementType } from '../../types/funding';
@@ -49,7 +50,7 @@ function FundingListContainer() {
   const [ref, inView] = useInView();
   const [selectCategory, setSelectCategory] = useState<number>(-1);
   const [fundingStateFilter, setFundingStateFilter] = useState<string>('All');
-
+  const [selectIdx, setSelectIdx] = useState<number>(1);
 
   // 펀딩개수 계싼
   const fundingCount = useMemo(() => {
@@ -73,39 +74,48 @@ function FundingListContainer() {
     search(value);
   };
 
-  const hanlderFilter = (id:string) => {
+  const hanlderFilter = (id: string, idx: number) => {
+    setSelectIdx(idx);
     getPostTypeList(id);
-  }
+  };
 
   const getPostTypeList = async (filterdType: string) => {
-    console.log(filterdType)
+    console.log(filterdType);
     try {
       setIsLoading(true);
       const { data } = await requestFundingList(size);
       const temp = data.fundingListResponses.content;
-      let next
+      let next;
       if (filterdType === 'FUNDING_IN_PROGRESS') {
-        next = temp.filter((el: { postType: string; }) => el.postType === "FUNDING_IN_PROGRESS")
-        setFundingList([...next])
-      } 
-      else if(filterdType === 'FUNDING_ACCEPT'){
-         next = temp.filter((el: { postType: string; }) => el.postType === "FUNDING_ACCEPT")
-         setFundingList([...next])
-      } 
-      else {
-        setFundingList([...temp])
+        next = temp.filter((el: { postType: string }) => el.postType === 'FUNDING_IN_PROGRESS' || el.postType === 'FUNDING_EXTEND');
+        setFundingList([...next]);
+      } else if (filterdType === 'FUNDING_ACCEPT') {
+        next = temp.filter((el: { postType: string }) => el.postType === 'FUNDING_ACCEPT');
+        setFundingList([...next]);
+      } else if (filterdType === 'FUNDING_COMPLETE') {
+        next = temp.filter(
+          (el: { postType: string }) =>
+            el.postType === 'FUNDING_COMPLETE' || el.postType === 'REPORT_WAIT' || el.postType === 'REPORT_REJECT' || el.postType === 'REPORT_ACCEPT',
+        );
+        setFundingList([...next]);
+      } else {
+        setFundingList([...temp]);
       }
       setIsLoading(false);
     } catch (error) {
       console.log(error);
     }
-  }
+  };
 
   const initFundingList = async () => {
     try {
       setIsLoading(true);
       const { data } = await requestFundingList(size);
-      setFundingList([...data.fundingListResponses.content]);
+
+      // 처음 렌더링 될 때 진행중인 펀딩리스트만 필터링해서 보여줌
+      const progressList: FundingElementType[] = data.fundingListResponses.content.filter((list: FundingElementType) => list.postType === 'FUNDING_IN_PROGRESS');
+
+      setFundingList([...progressList]);
       setSuccessFundingCount(data.successFundingCount);
       setTotalFundingAmount(data.totalFundingAmount);
       setTotalFundingCount(data.totalFundingCount);
@@ -142,7 +152,6 @@ function FundingListContainer() {
         setCurrentPage(data.fundingListResponses.number);
         setIsLastPAge(data.fundingListResponses.last);
         setIsLoading(false);
-
       } else {
         setSelectCategory(categoryId);
         console.log(categoryId);
@@ -152,13 +161,11 @@ function FundingListContainer() {
         setTotalFundingCount(response.data.numberOfElements);
         setIsLoading(false);
         console.log(response);
-        
-      } 
+      }
     } catch (error) {
       console.log(error);
     }
   };
-
 
   useEffect(() => {
     initFundingList();
@@ -223,30 +230,58 @@ function FundingListContainer() {
             <p>
               <span>{fundingCount}</span>건의 프로젝트가 진행중에 있어요.
             </p>
-            <p>
-              <button type='button' onClick={()=>hanlderFilter('All')}>전체 |</button>
-              <button type='button' onClick={()=>hanlderFilter('FUNDING_IN_PROGRESS')}>진행중 |</button>
-              <button type='button' onClick={()=>hanlderFilter('FUNDING_ACCEPT')}>오픈 예정</button>
-            </p>
-
-            {isLoading ? (
-              <FundingElementSkeleton />
-            ) : (
-              <div className={styles['funding-list']}>
-                {fundingList?.map((funding) => (
-                  <FundingListElement {...funding} key={funding.id} />
-                ))}
-
-                {nextLoading ? (
-                  <div className={styles['nextLoading-box']}>
-                    <CircularProgress color="warning" />
-                  </div>
-                ) : (
-                  ''
-                )}
-              </div>
-            )}
+            <div className={styles['funding-button-box']}>
+              <Button
+                sx={{ color: 'black', fontWeight: 'bold' }}
+                className={cn(selectIdx === 0 ? styles.selected : '')}
+                type="button"
+                onClick={() => hanlderFilter('All', 0)}
+              >
+                전체
+              </Button>
+              <Button
+                sx={{ color: 'black', fontWeight: 'bold' }}
+                className={cn(selectIdx === 1 ? styles.selected : '')}
+                type="button"
+                onClick={() => hanlderFilter('FUNDING_IN_PROGRESS', 1)}
+              >
+                진행중
+              </Button>
+              <Button
+                sx={{ color: 'black', fontWeight: 'bold' }}
+                className={cn(selectIdx === 2 ? styles.selected : '')}
+                type="button"
+                onClick={() => hanlderFilter('FUNDING_ACCEPT', 2)}
+              >
+                오픈 예정
+              </Button>
+              <Button
+                sx={{ color: 'black', fontWeight: 'bold' }}
+                className={cn(selectIdx === 3 ? styles.selected : '')}
+                type="button"
+                onClick={() => hanlderFilter('FUNDING_COMPLETE', 3)}
+              >
+                종료된 펀딩
+              </Button>
+            </div>
           </div>
+          {isLoading ? (
+            <FundingElementSkeleton />
+          ) : (
+            <div className={styles['funding-list']}>
+              {fundingList?.map((funding) => (
+                <FundingListElement {...funding} key={funding.id} />
+              ))}
+
+              {nextLoading ? (
+                <div className={styles['nextLoading-box']}>
+                  <CircularProgress color="warning" />
+                </div>
+              ) : (
+                ''
+              )}
+            </div>
+          )}
         </div>
         {currentPage >= 0 ? <div ref={ref} /> : ''}
       </div>

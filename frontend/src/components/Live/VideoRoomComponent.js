@@ -135,6 +135,8 @@ class VideoRoomComponent extends Component {
 
   subscribeToLiveDonation() {
     this.state.session.on('signal:liveDonation', (event) => {
+      console.log("DONATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      console.log(this.props)
       console.log(event);
       const data = JSON.parse(event.data);
       console.log(data);
@@ -147,10 +149,10 @@ class VideoRoomComponent extends Component {
       // eslint-disable-next-line react/no-access-state-in-setstate
       const prev = this.state.allAmount;
       console.log('UPDATE!!!!!!!!!!!!!!!!');
-      console.log(this.state);
-      console.log(event.data)
+      const data = JSON.parse(event.data)
       // this.setState({ allAmount: prev + amount });
-      this.setState({ allAmount: prev + JSON.parse(event.data.money), checkLottie: true, amount: JSON.parse(event.data.money),donationUser:JSON.parse(event.data.donationUser) });
+      this.setState({donationUser:data.donationUser})
+      this.setState({ allAmount: prev + data.money, checkLottie: true, amount: data.money});
     });
   }
 
@@ -296,7 +298,8 @@ class VideoRoomComponent extends Component {
       console.dir(mySession);
       this.leaveThisSession(this.state.mySessionId, mySession.token);
       console.log('세션 종료 성공띠!!!');
-      // window.history.
+      alert("라이브가 종료되었습니다")
+      window.location.href="/"
     }
 
     // Empty all properties...
@@ -472,6 +475,7 @@ class VideoRoomComponent extends Component {
           leaveSession={this.leaveSession}
           userCount={this.state.userCount}
           amount={this.state.amount}
+          donationUser={this.state.donationUser}
         />
 
         <div id="layout" className="bounds">
@@ -485,6 +489,7 @@ class VideoRoomComponent extends Component {
                 checkLottie={this.state.checkLottie}
                 userName={this.state.myUserName}
                 amount={this.state.amount}
+                donationUser={this.state.donationUser}
               />
             </div>
           )}

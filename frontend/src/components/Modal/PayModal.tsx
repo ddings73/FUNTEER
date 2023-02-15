@@ -19,7 +19,6 @@ import { payment } from '../../containers/Charge/ChargeContainer';
 
 function PayModal({ isOpen }: payModalType) {
   const dispatch = useAppDispatch();
-
   /** 결제 정보 */
   const [payInfo, setPayInfo] = useState<PayParams>({
     pg: 'html5_inicis',
@@ -31,9 +30,15 @@ function PayModal({ isOpen }: payModalType) {
     buyer_tel: '',
     buyer_email: '',
   });
-
+  /** 결제 수단 변경 */
+  const [tab, setTab] = React.useState(0);
   /** 직접 입력란 여부 */
   const [onDirect, setOnDirect] = useState<boolean>(false);
+
+  useEffect(() => {
+    setTab(0);
+    setOnDirect(false);
+  }, []);
 
   /** 유저 정보 조회 */
   const requestUser = async () => {
@@ -46,8 +51,6 @@ function PayModal({ isOpen }: payModalType) {
     }
   };
 
-  /** 결제 수단 변경 */
-  const [tab, setTab] = React.useState(0);
   const changeTabHandler = (e: React.SyntheticEvent, newTab: number) => {
     setTab(newTab);
     setPayInfo({ ...payInfo, pay_method: newTab.toString() });
@@ -105,9 +108,6 @@ function PayModal({ isOpen }: payModalType) {
           </Box>
           {!onDirect && (
             <Select onChange={changeAmountHandler} sx={{ fontFamily: 'NanumSquare' }}>
-              <MenuItem value="10" sx={{ fontFamily: 'NanumSquare' }}>
-                10 원
-              </MenuItem>
               <MenuItem value="5000" sx={{ fontFamily: 'NanumSquare' }}>
                 5,000 원
               </MenuItem>
@@ -126,12 +126,12 @@ function PayModal({ isOpen }: payModalType) {
               <MenuItem value="100000" sx={{ fontFamily: 'NanumSquare' }}>
                 100,000 원
               </MenuItem>
-              <MenuItem value="direct" sx={{ fontFamily: 'NanumSquare' }}>
+              {/* <MenuItem value="direct" sx={{ fontFamily: 'NanumSquare' }}>
                 직접 입력
-              </MenuItem>
+              </MenuItem> */}
             </Select>
           )}
-          {onDirect && <TextField color="warning" variant="outlined" label="직접 입력" sx={{ marginTop: '1rem' }} onChange={changeDirectAmountHandler} />}
+          {/* {onDirect && <TextField color="warning" variant="outlined" label="직접 입력" sx={{ marginTop: '1rem' }} onChange={changeDirectAmountHandler} />} */}
         </FormControl>
       </DialogContent>
       <DialogActions>

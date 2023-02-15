@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
+import { AxiosError } from 'axios';
 import { useNavigate, useParams } from 'react-router';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import Button from '@mui/material/Button';
 import styles from './AdminTeamDenyContainer.module.scss';
 import { useAppDispatch } from '../../../store/hooks';
 import { closeModal } from '../../../store/slices/fileModalSlice';
 import requiredIcon from '../../../assets/images/funding/required.svg';
-import { customAlert, s1500, w1500 } from '../../../utils/customAlert';
+import { customAlert, s1000, w1500 } from '../../../utils/customAlert';
 import { requestDenyTeam } from '../../../api/admin';
 
 function AdminTeamDenyContainer() {
@@ -13,9 +15,9 @@ function AdminTeamDenyContainer() {
   const navigate = useNavigate();
   /** 거부 당한 팀 번호 (유저 번호) */
   const { dn } = useParams();
-
   /** 단체 거부 정보 */
   const [content, setContent] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
 
   /** 정보 입력 */
   const handleChangeContent = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -32,7 +34,10 @@ function AdminTeamDenyContainer() {
   const onClickSubmitHandler = () => {
     if (content.length < 5) {
       customAlert(w1500, '내용을 5자 이상 입력해주세요.');
+      return;
     }
+
+    setIsLoading(true);
 
     denyTeam();
   };
@@ -43,13 +48,17 @@ function AdminTeamDenyContainer() {
       try {
         const response = await requestDenyTeam(parseInt(dn, 10), content);
         console.log(response);
-        customAlert(s1500, '메일 전송 완료');
+        setIsLoading(false);
+        customAlert(s1000, '메일 전송 완료');
         setTimeout(() => {
           dispatch(closeModal());
           navigate(-1);
-        }, 1500);
-      } catch (error) {
-        console.error(error);
+        }, 1000);
+      } catch (error: unknown) {
+        if (error instanceof AxiosError) {
+          alert(error.response?.data.message);
+          console.error(error);
+        }
       }
     }
   };
@@ -67,7 +76,8 @@ function AdminTeamDenyContainer() {
             취소
           </Button>
           <Button variant="contained" className={styles.submit} onClick={onClickSubmitHandler}>
-            전송
+            {!isLoading && '전송'}
+            {isLoading && <AiOutlineLoading3Quarters className={styles.loading} />}
           </Button>
         </div>
       </div>

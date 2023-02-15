@@ -18,7 +18,7 @@
     display: flex;
     width: 100%;
     margin-top: 75px;
-    min-height: 350px;
+    min-height: 20vw;
     background-image: linear-gradient(rgba(0, 0, 0, 0.637), rgba(0, 0, 0, 0.692)), url('../../assets/images/funding/funds.jpg');
     background-size: cover;
     flex-direction: column;
@@ -37,6 +37,7 @@
         color: aliceblue;
         font-weight: 600;
         text-align: center;
+        margin-top: 2vw;
       }
       & .bannerSeen {
         font-size: 1.3rem;
@@ -48,7 +49,7 @@
       }
       & .bannerButtonGroup {
         width: 40%;
-        margin-top: 5%;
+        margin-top: 2%;
         margin-left: 55%;
         display: flex;
         align-items: flex-end;
@@ -82,6 +83,9 @@
 
           &:hover {
             box-shadow: rgba(253, 76, 0, 0.5) 0 3px 8px;
+          }
+          &:active {
+            background-image: linear-gradient(-180deg, #c94a00, #b85300);
           }
         }
       }
@@ -424,4 +428,11 @@
   justify-content: center;
   align-items: center;
   text-align: center;
+}
+.commentHead {
+  text-align: left;
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-top: 5%;
+  margin-left: 7%;
 }
