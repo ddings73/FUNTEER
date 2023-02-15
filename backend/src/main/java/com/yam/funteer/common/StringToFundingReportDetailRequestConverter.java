@@ -1,6 +1,8 @@
 package com.yam.funteer.common;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.core.convert.converter.Converter;
@@ -10,9 +12,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
 
 
-public class StringToFundingReportDetailRequestConverter implements Converter<String, FundingReportDetailRequest> {
+public class StringToFundingReportDetailRequestConverter implements Converter<String, List<FundingReportDetailRequest>> {
 	@Override
-	public FundingReportDetailRequest convert(String value)  {
+	public List<FundingReportDetailRequest> convert(String value)  {
 		ObjectMapper objectMapper = new ObjectMapper();
 		Map<String, String> map = null;
 
@@ -22,6 +24,11 @@ public class StringToFundingReportDetailRequestConverter implements Converter<St
 			throw new RuntimeException(e);
 		}
 
-		return new FundingReportDetailRequest(map.get("amount"), map.get("description"));
+		List<FundingReportDetailRequest> list = new ArrayList<>();
+		map.forEach((k, v) ->{
+			list.add(new FundingReportDetailRequest(k, v));
+		});
+
+		return list;
 	}
 }
