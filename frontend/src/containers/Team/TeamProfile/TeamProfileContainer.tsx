@@ -92,9 +92,11 @@ function TeamProfileContainer() {
         <div className={styles['content-inner']}>
           {/* 프로필 카드 */}
           <div className={styles['profile-card']}>
-            <div className={styles['profile-card-img-div']}>
-              <div className={styles['profile-card-img-inner']}>
-                <img src={teamProfileInfo.profileImgUrl ? teamProfileInfo.profileImgUrl : defaultImage} alt="프로필 이미지" className={styles['profile-img']} />
+            <div className={styles.banner}>
+              <div className={styles['profile-card-img-div']}>
+                <div className={styles['profile-card-img-inner']}>
+                  <img src={teamProfileInfo.profileImgUrl ? teamProfileInfo.profileImgUrl : defaultImage} alt="프로필 이미지" className={styles['profile-img']} />
+                </div>
               </div>
             </div>
             <div className={styles['profile-card-info-div']}>
@@ -148,7 +150,7 @@ function TeamProfileContainer() {
           </div>
           {/* 단체 소개 */}
           <div className={styles['description-div']}>
-            <p>단체 설명</p>
+            {/* <p>단체 소개</p> */}
             <pre>{teamProfileInfo.description}</pre>
           </div>
           {/* 진행한 펀딩 프로젝트 */}

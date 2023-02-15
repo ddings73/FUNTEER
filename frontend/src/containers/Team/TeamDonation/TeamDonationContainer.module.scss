@@ -46,12 +46,12 @@
 
       .title-line {
         width: 100%;
-        height: 2.5rem;
+        height: 3rem;
         display: grid;
         grid-template-columns: 3fr 2fr 2fr 2fr;
         margin: 4rem 0 0 0;
-        background-color: #fff7f1;
-        border-bottom: 1px solid #ffefe2;
+        background-color: #fff1e7;
+        border-bottom: 1px solid #ffd8b8;
 
         @include mobile {
           display: flex;
@@ -85,13 +85,13 @@
 
       .content-line {
         width: 100%;
-        height: 2.5rem;
+        height: 4rem;
         display: grid;
         grid-template-columns: 3fr 2fr 2fr 2fr;
         align-items: center;
         background-color: inherit;
         border: none;
-        border-bottom: 1px solid #fff5ea;
+        border-bottom: 1px solid #ffd8b8;
         color: rgb(73, 73, 73);
 
         &:hover {
