@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.live.entity.Gift;
 import org.springframework.data.domain.Page;
 
@@ -36,15 +37,18 @@ public class TeamGiftDetailResponse {
 	@AllArgsConstructor
 	private static class GiftInfo {
 		private Long giftId;
+		private Long fundingId;
 		private String fundTitle;
 		private String username;
 		private Long amount;
 		private LocalDate giftDate;
 
 		public static GiftInfo of(Gift gift){
+			Funding funding = gift.getLive().getFunding();
 			return GiftInfo.builder()
 				.giftId(gift.getId())
-				.fundTitle(gift.getLive().getFunding().getTitle())
+				.fundingId(funding.getFundingId())
+				.fundTitle(funding.getTitle())
 				.username(gift.getUser().getName())
 				.amount(gift.getAmount())
 				.giftDate(gift.getGiftDate().toLocalDate())
