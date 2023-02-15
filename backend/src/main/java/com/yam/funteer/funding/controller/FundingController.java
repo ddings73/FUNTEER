@@ -130,7 +130,7 @@ public class FundingController {
 	}
 
 	@ApiOperation(value = "펀딩 게시글 보고서 작성", notes = "펀딩 게시글 보고서를 작성한다.")
-	@PostMapping("/{fundingId}/report")
+	@PostMapping(value = "/{fundingId}/report")
 	public ResponseEntity<FundingReportResponse> createFundingReport(@PathVariable Long fundingId, FundingReportRequest data) {
 		FundingReportResponse fundingReport = fundingService.createFundingReport(fundingId, data);
 		return ResponseEntity.ok(fundingReport);
@@ -143,7 +143,7 @@ public class FundingController {
 	}
 
 	@ApiOperation(value = "펀딩 게시글 보고서 수정", notes = "펀딩 게시글 보고서를 수정한다.")
-	@PutMapping("/{fundingId}/report")
+	@PutMapping(value = "/{fundingId}/report")
 	public ResponseEntity<FundingReportResponse> updateFundingReport(@PathVariable Long fundingId, FundingReportRequest data) {
 		return ResponseEntity.ok(fundingService.updateFundingReport(fundingId, data));
 	}
