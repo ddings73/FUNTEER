@@ -45,7 +45,7 @@ export function CarouselCard() {
 
   const getRecentFundList = async () => {
     try {
-      const res = await requestFundingList(10);
+      const res = await requestFundingList('','','',10);
       console.log('캐러셀 데이터', res.data.fundingListResponses.content);
       setFundDataList(res.data.fundingListResponses.content);
       console.log('ㅇㅇ', fundDataList);

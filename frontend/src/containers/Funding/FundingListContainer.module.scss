@@ -12,6 +12,10 @@
     margin: 0 auto;
     padding: 0 15px;
 
+    @include mobile(){
+      padding:  0 5px;
+    }
+
     .title-box {
       margin-top: 80px;
       width: 100%;
