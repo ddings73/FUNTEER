@@ -21,15 +21,11 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { requestUserProfile } from '../../api/user';
 import { requestTeamAccountInfo } from '../../api/team';
 import { requestCreateSession } from '../../api/live';
-import { reportModalType } from '../../types/modal';
 import ReportModal from '../../components/Modal/ReportModal';
 import { openModal } from '../../store/slices/reportModalSlice';
-<<<<<<< HEAD
 import PdfViewer from '../../components/Funding/PdfViewer';
-=======
 import { stringToSeparator } from '../../utils/convert';
 import { customTextOnlyAlert, noTimeSuccess } from '../../utils/customAlert';
->>>>>>> fcd2eadf5f586fd3017ce34d26bc92a8843a4aba
 
 export interface ResponseInterface {
   title: string;
@@ -478,13 +474,11 @@ export function FundingDetailContainer() {
               label="금액 입력"
               id="custom-css-outlined-input"
               type="number"
-              type="text"
               size="small"
               sx={{ margin: '0 20px', backgroundColor: 'white' }}
               // eslint-disable-next-line
               onKeyUp={handleKeyUp}
               color="warning"
-              onChange={(e) => setPaying(e.target.value)}
               onChange={(e) => {
                 const { value } = e.target;
                 const regex = /[^0-9]/g;
