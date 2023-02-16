@@ -112,12 +112,7 @@
         & .title {
           font-size: 2.5rem;
           font-weight: bold;
-          // background: linear-gradient(259.55deg, #ff9900 51.3%, #ff6b00 92.74%);
-          // -webkit-background-clip: text;
-          // -webkit-text-fill-color: transparent;
-          // background-clip: text;
           color: $primary;
-          // text-fill-color: transparent;
 
           @include mobile {
             font-size: 1.5rem;
@@ -222,25 +217,12 @@
   justify-content: center;
 
   & p {
-    font-size: 2.2rem;
+    font-size: 2rem;
     font-weight: 600;
     color: rgb(59, 59, 59);
-    animation: shine infinite 3s ease-in-out;
 
     & span {
       color: $primary !important;
-    }
-  }
-
-  @keyframes shine {
-    0% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
     }
   }
 }
