@@ -530,8 +530,7 @@ public class FundingServiceImpl implements FundingService{
 		
 		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
 
-		// Report report = new Report(funding, data.getContent(), LocalDateTime.now());
-		Report report = new Report(funding, null, LocalDateTime.now());
+		Report report = new Report(funding, data.getContent(), LocalDateTime.now());
 		reportRepository.save(report);
 
 		Attach attach = Attach.builder()
@@ -554,16 +553,16 @@ public class FundingServiceImpl implements FundingService{
 		attachRepository.save(attach);
 
 		List<ReportDetail> reportDetails = new ArrayList<>();
-		// for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
-		//
-		// 	String[] split = fundingReportDetailRequest.getAmount().split(",");
-		// 	Long result = Long.parseLong(String.join("", split));
-		//
-		// 	ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
-		// 		result);
-		// 	reportDetailRepository.save(reportDetail);
-		// 	reportDetails.add(reportDetail);
-		// }
+		for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
+
+			String[] split = fundingReportDetailRequest.getAmount().split(",");
+			Long result = Long.parseLong(String.join("", split));
+
+			ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
+				result);
+			reportDetailRepository.save(reportDetail);
+			reportDetails.add(reportDetail);
+		}
 		return reportDetails;
 	}
 
@@ -603,7 +602,7 @@ public class FundingServiceImpl implements FundingService{
 		List<ReportDetail> reportDetails = getReportDetails(data, report, attach);
 
 		report.setReportReceipts(attach);
-		// report.setReportContent(data.getContent());
+		report.setReportContent(data.getContent());
 		report.setReportDetail(reportDetails);
 		report.setReportRegDate(LocalDateTime.now());
 		funding.setPostType(PostType.REPORT_WAIT);
