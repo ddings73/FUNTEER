@@ -63,7 +63,7 @@ public class MileageDetailResponse {
             Post post = payment.getPost();
 
             LocalDate payDate = payment.getPayDate().toLocalDate();
-            return new MileageDetail(post.getId(), post.getTitle(), payment.getAmount(), payDate);
+            return new MileageDetail(post.getThumbnail(), post.getId(), post.getTitle(), payment.getAmount(), payDate);
         }
     }
 }
