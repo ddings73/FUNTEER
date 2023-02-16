@@ -20,6 +20,7 @@ export function infoCard() {
           </p>
         </div>
       </div>
+
       <div className={styles.cardElement}>
         <div className={styles.cardCircle}>
           <img src={img2} className={styles.cardImg} alt="card" style={{ right: '-60px' }} />
