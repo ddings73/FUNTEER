@@ -114,7 +114,7 @@ public class LiveServiceImpl implements LiveService{
                     .filter(conn -> {
                         log.info("serverData => {}", conn.getServerData());
                         log.info("clientData => {}", conn.getClientData());
-                        conn.getServerData().equals(String.valueOf(userId));
+                        return conn.getServerData().equals(String.valueOf(userId));
                     }).findFirst();
             optConn.ifPresent(connection -> {
                 if(connection.getRole().equals(OpenViduRole.PUBLISHER)) {
