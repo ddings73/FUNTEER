@@ -473,7 +473,7 @@ export function FundingDetailContainer() {
             <TextField
               label="금액 입력"
               id="custom-css-outlined-input"
-              type="number"
+              type="text"
               size="small"
               sx={{ margin: '0 20px', backgroundColor: 'white' }}
               // eslint-disable-next-line
