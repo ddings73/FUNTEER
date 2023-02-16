@@ -229,7 +229,7 @@ export function FundingDetailContainer() {
   const [paying, setPaying] = useState('');
 
   async function fundingHandler() {
-    console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불');
+    console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불 시도');
 
     try {
       if (Number(paying) < 1000) {
@@ -244,8 +244,12 @@ export function FundingDetailContainer() {
         customTextOnlyAlert(noTimeSuccess, `펀딩 후원은 100원 단위로 가능합니다.`);
         return;
       }
+      const regex = /[^0-9]/g;
+      const separatorValue = stringToSeparator(paying.replaceAll(regex, ''));
+      await fundingJoin(separatorValue, fundIdx);
+      alert(`${separatorValue}원으로 펀딩을 완료했습니다!`);
+      customTextOnlyAlert(noTimeSuccess, `${separatorValue}원으로 펀딩을 완료했습니다!`);
       await fundingJoin(paying, fundIdx);
-      customTextOnlyAlert(noTimeSuccess, `${paying}원으로 펀딩을 완료했습니다!`);
       setToggled(!toggled);
       setPaying('');
       fetchData();
@@ -492,9 +496,8 @@ export function FundingDetailContainer() {
               color="warning"
               onChange={(e) => {
                 const { value } = e.target;
-                const regex = /[^0-9]/g;
-                const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
-                setPaying(separatorValue);
+                console.log('본래 value', value);
+                setPaying(value);
               }}
               value={paying}
             />
