@@ -393,6 +393,7 @@ function ResponsiveAppBar() {
                     </div>
                     {eventList.map((event) => (
                       <MenuItem
+                        key={event.alarmId}
                         onClick={() => eventRead(event.alarmId, event.url)}
                         sx={{
                           borderRadius: '5px',
