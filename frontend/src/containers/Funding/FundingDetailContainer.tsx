@@ -383,35 +383,35 @@ export function FundingDetailContainer() {
             }}
           >
             <Tab value="one" label="프로젝트 상세 계획" />
-            {report.reportDetailResponseList.length > 1 && <Tab value="two" label="프로젝트 보고" />}
+            <Tab value="two" label="프로젝트 보고" />
           </Tabs>
         </Box>
         <div className={styles.mainContent}>
-          {/* {value === 'one' ? (
+          {value === 'one' ? (
             <div className={styles.mainContentInner}>
               <Viewer initialValue={board.content} />
             </div>
-          ) : ( */}
-          <div className={styles.mainContentInner}>
-            <p>{report.content}</p>
-            <p>{report.regDate}</p>
-            <video className={styles.video} controls autoPlay loop>
-              <source src={report.liveUrl} type="video/webm" />
-              <source src={report.liveUrl} type="video/mp4" />
-              <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
-            </video>
-            <div className={styles.reslists}>
-              {report.reportDetailResponseList.map((resList, i) => (
-                <div key={resList.description}>
-                  <h1>{i + 1}번째 보고서 총액</h1>
-                  <p>{resList.amount}원</p>
-                  <p>보고서 설명</p>
-                  <p>{resList.description}</p>
-                </div>
-              ))}
+          ) : (
+            <div className={styles.mainContentInner}>
+              <p>{report.content}</p>
+              <p>{report.regDate}</p>
+              <video className={styles.video} controls autoPlay loop>
+                <source src={report.liveUrl} type="video/webm" />
+                <source src={report.liveUrl} type="video/mp4" />
+                <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
+              </video>
+              <div className={styles.reslists}>
+                {report.reportDetailResponseList.map((resList, i) => (
+                  <div key={resList.description}>
+                    <h1>{i + 1}번째 보고서 총액</h1>
+                    <p>{resList.amount}원</p>
+                    <p>보고서 설명</p>
+                    <p>{resList.description}</p>
+                  </div>
+                ))}
+              </div>
             </div>
-          </div>
-          {/* )} */}
+          )}
         </div>
         <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard} style={{ width: '90%', marginLeft: '6%' }}>

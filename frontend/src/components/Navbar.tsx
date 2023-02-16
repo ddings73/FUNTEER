@@ -189,8 +189,6 @@ function ResponsiveAppBar() {
         withCredentials: true,
       });
 
-      console.log(eventSource);
-
       // 최초 연결
       eventSource.onopen = (event) => {
         setListening(true);
@@ -200,13 +198,11 @@ function ResponsiveAppBar() {
       eventSource.onmessage = (event) => {
         setSseData(event.data);
         setRespon(true);
-        console.log(event.data);
         console.log('onmessage');
         if (event.data !== undefined) alert(event.data);
       };
 
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
-        console.log(event.data);
         if (!event.data.includes('EventStream')) {
           requestGetAlarms();
         }
@@ -239,7 +235,6 @@ function ResponsiveAppBar() {
   const eventAllRead = async () => {
     try {
       const response = await await http.delete('subscribe/alarm');
-      console.log('다 읽음 요청', response);
       requestGetAlarms();
     } catch (error) {
       console.error(error);
