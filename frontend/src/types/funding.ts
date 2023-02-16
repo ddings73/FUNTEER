@@ -33,17 +33,6 @@ export interface FundingInterface {
   targetMoneyLevelThree: targetMoneyLevelType;
 }
 
-export interface FundingReportInterface {
-  content: string | undefined;
-  fundingDetailRequests: responseListType[];
-  receiptFile: Blob;
-}
-
-export type responseListType = {
-  amount: string;
-  description: string;
-};
-
 export type targetMoneyLevelType = {
   amount: string;
   targetMoneyType: string;

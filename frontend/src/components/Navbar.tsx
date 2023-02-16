@@ -189,8 +189,6 @@ function ResponsiveAppBar() {
         withCredentials: true,
       });
 
-      console.log(eventSource);
-
       // 최초 연결
       eventSource.onopen = (event) => {
         setListening(true);
@@ -200,13 +198,11 @@ function ResponsiveAppBar() {
       eventSource.onmessage = (event) => {
         setSseData(event.data);
         setRespon(true);
-        console.log(event.data);
         console.log('onmessage');
         if (event.data !== undefined) alert(event.data);
       };
 
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
-        console.log(event.data);
         if (!event.data.includes('EventStream')) {
           requestGetAlarms();
         }
@@ -236,10 +232,12 @@ function ResponsiveAppBar() {
     }
   };
 
-  const eventAllRead = async () => {
+  const eventAllRead = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
     try {
-      const response = await await http.delete('subscribe/alarm');
-      console.log('다 읽음 요청', response);
+      const response = await http.delete('subscribe/alarm');
+      console.log('알림 모두 읽기', response);
       requestGetAlarms();
     } catch (error) {
       console.error(error);
@@ -252,7 +250,7 @@ function ResponsiveAppBar() {
         <Container className={styles.appContainer} maxWidth="xl">
           <Toolbar disableGutters>
             {/* Desktop 구조 */}
-            <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ cursor: 'pointer', scale: '0.8' }} />
+            <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ padding: '0', cursor: 'pointer', scale: '0.8' }} />
             <Box
               sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}
               className={styles.pageBox}

@@ -21,9 +21,11 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { requestUserProfile } from '../../api/user';
 import { requestTeamAccountInfo } from '../../api/team';
 import { requestCreateSession } from '../../api/live';
-import { reportModalType } from '../../types/modal';
 import ReportModal from '../../components/Modal/ReportModal';
 import { openModal } from '../../store/slices/reportModalSlice';
+import PdfViewer from '../../components/Funding/PdfViewer';
+import { stringToSeparator } from '../../utils/convert';
+import { customTextOnlyAlert, noTimeSuccess } from '../../utils/customAlert';
 
 export interface ResponseInterface {
   title: string;
@@ -182,6 +184,7 @@ export function FundingDetailContainer() {
   const [toggled, setToggled] = useState<boolean>(false);
   function handleDrawer() {
     setToggled(!toggled);
+    setPaying('');
   }
 
   // 엔터키 input 완성
@@ -231,6 +234,10 @@ export function FundingDetailContainer() {
     try {
       await fundingJoin(paying, fundIdx);
       alert(`${paying}원으로 펀딩을 완료했습니다!`);
+      customTextOnlyAlert(noTimeSuccess, `${paying}원으로 펀딩을 완료했습니다!`);
+      setToggled(!toggled);
+      setPaying('');
+      fetchData();
       requestMoneyInfo();
     } catch (error) {
       console.log(error);
@@ -336,7 +343,6 @@ export function FundingDetailContainer() {
     }
   };
 
-  console.log('Video URL', report.liveUrl);
   return (
     <div className={styles.bodyContainer}>
       <div className={styles.banner}>
@@ -381,42 +387,35 @@ export function FundingDetailContainer() {
             TabIndicatorProps={{
               sx: { backgroundColor: '#E6750A' },
             }}
+            sx={{ height: '50px' }}
           >
             <Tab value="one" label="프로젝트 상세 계획" />
-            {report.reportDetailResponseList.length > 1 && <Tab value="two" label="프로젝트 보고" />}
+            <Tab value="two" label="프로젝트 보고" />
           </Tabs>
         </Box>
         <div className={styles.mainContent}>
-          {/* {value === 'one' ? (
+          {value === 'one' ? (
+            <div className={styles.mainContentInner}>{board.content && <Viewer initialValue={board.content} />}</div>
+          ) : (
             <div className={styles.mainContentInner}>
-              <Viewer initialValue={board.content} />
+              <p>{report.content}</p>
+              <p>{report.regDate}</p>
+              <video className={styles.video} controls autoPlay loop>
+                <source src={report.liveUrl} type="video/webm" />
+                <source src={report.liveUrl} type="video/mp4" />
+                <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
+              </video>
+              <div className={styles.reslists}>123</div>
             </div>
-          ) : ( */}
-          <div className={styles.mainContentInner}>
-            <p>{report.content}</p>
-            <p>{report.regDate}</p>
-            <video className={styles.video} controls autoPlay loop>
-              <source src={report.liveUrl} type="video/webm" />
-              <source src={report.liveUrl} type="video/mp4" />
-              <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
-            </video>
-            <div className={styles.reslists}>
-              {report.reportDetailResponseList.map((resList, i) => (
-                <div key={resList.description}>
-                  <h1>{i + 1}번째 보고서 총액</h1>
-                  <p>{resList.amount}원</p>
-                  <p>보고서 설명</p>
-                  <p>{resList.description}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-          {/* )} */}
+          )}
         </div>
-        <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
+        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
+        <PdfViewer pdfUrl="https://koreascience.kr/article/JAKO200912651517978.pdf" />
+        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard} style={{ width: '90%', marginLeft: '6%' }}>
           <TeamInfo {...board.team} />
         </div>
+        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
         <DetailArcodian />
         <div className={styles.mainCommentSubmit}>
           <p className={styles.commentHead}>응원 댓글 등록({commentCount})</p>
@@ -480,7 +479,12 @@ export function FundingDetailContainer() {
               // eslint-disable-next-line
               onKeyUp={handleKeyUp}
               color="warning"
-              onChange={(e) => setPaying(e.target.value)}
+              onChange={(e) => {
+                const { value } = e.target;
+                const regex = /[^0-9]/g;
+                const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
+                setPaying(separatorValue);
+              }}
               value={paying}
             />
           </div>
@@ -491,6 +495,7 @@ export function FundingDetailContainer() {
           </button>
           <div className={styles.mileText}>
             <p>현재 잔액: {money}원</p>
+            <p>현재 잔액: {stringToSeparator(String(money))}원</p>
             <Link to="/charge" className={styles.milLink}>
               <p className={styles.milea}>마일리지 충전</p>
             </Link>

@@ -2,15 +2,15 @@
 @import '../../styles/variable.scss';
 
 /*==========삭제 필요!! 임시 리소스============*/
-@import url(//fonts.googleapis.com/earlyaccess/nanummyeongjo.css);
-@import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@800&display=swap');
+// @import url(//fonts.googleapis.com/earlyaccess/nanummyeongjo.css);
+// @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@800&display=swap');
 
-@font-face {
-  font-family: 'Arita-buri-SemiBold';
-  src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Arita-buri-SemiBold.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
+// @font-face {
+//   font-family: 'Arita-buri-SemiBold';
+//   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Arita-buri-SemiBold.woff') format('woff');
+//   font-weight: normal;
+//   font-style: normal;
+// }
 /*============================================*/
 .container::before {
   content: '';
@@ -79,10 +79,7 @@
         -webkit-background-clip: text;
         // border: 1px solid rgb(255, 255, 255);
       }
-
- 
     }
-
 
     & .subLogoTypo {
       /* 정해진 폰트 규격 - 아래는 임시 크기*/
@@ -119,23 +116,20 @@
 }
 .infoBanner {
   position: relative;
-  height: 100vh;
-  margin-top: 40%;
+  margin: 30% 0 10% 0;
   min-width: 1300px;
   z-index: 100;
 
-  .lottieSpace{
+  .lottieSpace {
     position: absolute;
     width: 400px;
     top: -150px;
     left: 340px;
     transform: rotate(80deg);
   }
-
 }
 .fundLists {
   width: 80%;
-  height: 100vh;
   z-index: 100;
   overflow: visible !important;
 }
@@ -214,7 +208,7 @@
 }
 
 .backgroundImg {
-  transition: opacity 0.5s;
+  transition: opacity 0.3s;
   width: 100%;
   height: auto;
   margin-top: 90px;
