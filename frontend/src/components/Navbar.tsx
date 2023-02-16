@@ -403,8 +403,6 @@ function ResponsiveAppBar() {
                           },
                         }}
                         className={styles['menu-item']}
-                        // eslint-disable-next-line
-                        key={i}
                       >
                         {event.content}
                       </MenuItem>

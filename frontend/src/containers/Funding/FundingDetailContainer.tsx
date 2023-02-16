@@ -246,9 +246,9 @@ export function FundingDetailContainer() {
       }
       const regex = /[^0-9]/g;
       const separatorValue = stringToSeparator(paying.replaceAll(regex, ''));
-      await fundingJoin(separatorValue, fundIdx);
-      customTextOnlyAlert(noTimeSuccess, `${separatorValue}원으로 펀딩을 완료했습니다!`);
+      // await fundingJoin(separatorValue, fundIdx);
       await fundingJoin(paying, fundIdx);
+      customTextOnlyAlert(noTimeSuccess, `${separatorValue}원으로 펀딩을 완료했습니다!`);
       setToggled(!toggled);
       setPaying('');
       fetchData();
