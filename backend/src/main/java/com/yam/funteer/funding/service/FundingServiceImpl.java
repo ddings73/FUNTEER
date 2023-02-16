@@ -90,6 +90,8 @@ import com.yam.funteer.user.repository.TeamRepository;
 import com.yam.funteer.user.repository.UserBadgeRepository;
 import com.yam.funteer.user.repository.UserRepository;
 import com.yam.funteer.user.repository.WishRepository;
+import com.yam.funteer.user.service.MemberService;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -634,6 +636,11 @@ public class FundingServiceImpl implements FundingService{
 
 		Long memberId = SecurityUtil.getCurrentUserId();
 		Member member = memberRepository.findById(memberId).orElseThrow(UserNotFoundException::new);
+		wishRepository.findByMemberAndFunding(member, funding).ifPresentOrElse(wish -> wish.doIt(), ()->{
+			Wish newWish = Wish.of(member, funding);
+			wishRepository.save(newWish);
+		});
+
 
 		String[] split = data.getAmount().split(",");
 		Long amount = Long.parseLong(String.join("", split));
