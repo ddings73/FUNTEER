@@ -47,7 +47,7 @@ function FundingListElement(funding: FundingElementType) {
           <span>{enoughMoney}%</span>&nbsp;
           <span>{stringToSeparator(String(currentFundingAmount))}원</span>
         </p>
-        <p className={styles.date}>{diffDay(endDate)}일남음</p>
+        <p className={styles.date}>{diffDay(endDate)<=0 ? "기간 내 미달성" : `${diffDay(endDate)}일남음`}</p>
       </div>
       <ProgressBar gage={enoughMoney>=100 ? 100 : enoughMoney} />
     </div>
