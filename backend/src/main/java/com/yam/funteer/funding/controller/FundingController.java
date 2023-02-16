@@ -135,10 +135,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 게시글 보고서 작성", notes = "펀딩 게시글 보고서를 작성한다.")
 	@PostMapping(value = "/{fundingId}/report", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<FundingReportResponse> createFundingReport(@PathVariable Long fundingId, FundingReportRequest data, BindingResult bindingResult) {
-		if(bindingResult.hasErrors()){
-			log.warn(bindingResult.toString());
-		}
+	public ResponseEntity<FundingReportResponse> createFundingReport(@PathVariable Long fundingId, FundingReportRequest data) {
 		log.info(data.toString());
 		FundingReportResponse fundingReport = fundingService.createFundingReport(fundingId, data);
 		return ResponseEntity.ok(fundingReport);
@@ -152,10 +149,7 @@ public class FundingController {
 
 	@ApiOperation(value = "펀딩 게시글 보고서 수정", notes = "펀딩 게시글 보고서를 수정한다.")
 	@PutMapping(value = "/{fundingId}/report", consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE})
-	public ResponseEntity<FundingReportResponse> updateFundingReport(@PathVariable Long fundingId, FundingReportRequest data, BindingResult bindingResult) {
-		if(bindingResult.hasErrors()){
-			log.warn(bindingResult.toString());
-		}
+	public ResponseEntity<FundingReportResponse> updateFundingReport(@PathVariable Long fundingId, FundingReportRequest data) {
 		log.info(data.toString());
 		return ResponseEntity.ok(fundingService.updateFundingReport(fundingId, data));
 	}
