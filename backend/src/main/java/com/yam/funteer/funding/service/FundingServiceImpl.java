@@ -537,6 +537,7 @@ public class FundingServiceImpl implements FundingService{
 			.build();
 
 		List<ReportDetail> reportDetails = getReportDetails(data, report, attach);
+		report.setReportReceipts(attach);
 
 		report.setReportDetail(reportDetails);
 		funding.setPostType(PostType.REPORT_WAIT);
@@ -563,10 +564,12 @@ public class FundingServiceImpl implements FundingService{
 
 	@Override
 	public FundingReportResponse findFundingReportById(Long fundingId) {
-		Report byFundingId = reportRepository.findByFundingFundingId(fundingId).orElseThrow(NotFoundReportException::new);
-		FundingReportResponse response = FundingReportResponse.from(byFundingId);
+		Report report = reportRepository.findByFundingFundingId(fundingId).orElseThrow(NotFoundReportException::new);
+		FundingReportResponse response = FundingReportResponse.from(report);
 
 		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
+		response.setFileUrl(report.getReceipts().getPath());
+
 		liveRepository.findByFunding(funding).ifPresent(live -> {
 			Attach attach = live.getAttach();
 			response.setLiveUrl(attach.getPath());
