@@ -5,7 +5,7 @@ import { AiOutlineClose } from 'react-icons/ai';
 import Swal from 'sweetalert2';
 import { requestNoticeList, requestDeleteNotice } from '../../../api/admin';
 import styles from './AdminNoticeContainer.module.scss';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 export type AdminNoticeContainerItemType = {
   id: number;
@@ -67,10 +67,9 @@ function AdminNoticeContainer() {
   };
 
   /** 공지사항 삭제 버튼 */
-  const onClickDeletebtn = (title: string, id: number) => {
+  const onClickDeletebtn = (id: number) => {
     Swal.fire({
-      title: '공지사항을 삭제하시겠습니까?',
-      text: `${id}.${title}`,
+      text: '공지사항을 삭제하시겠습니까?',
       showConfirmButton: false,
       showDenyButton: true,
       showCancelButton: true,
@@ -88,7 +87,7 @@ function AdminNoticeContainer() {
     try {
       const response = await requestDeleteNotice(id.toString());
       console.log(response);
-      customAlert(s1000, '공지사항이 삭제되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '공지사항이 삭제되었습니다.');
       setPage(1);
       requestNotice();
     } catch (err) {
@@ -133,7 +132,7 @@ function AdminNoticeContainer() {
               <p>{data.localDate}</p>
             </li>
             <li>
-              <AiOutlineClose onClick={() => onClickDeletebtn(data.title, data.id)} className={styles['withdraw-btn']} />
+              <AiOutlineClose onClick={() => onClickDeletebtn(data.id)} className={styles['withdraw-btn']} />
             </li>
           </ul>
         ))}

@@ -35,4 +35,8 @@ public class Payment {
 	private User user;
 	private Long amount;
 	private LocalDateTime payDate;
+
+	public String getUserEmail(){
+		return user.getEmail();
+	}
 }

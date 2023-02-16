@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-
+import com.yam.funteer.common.code.PostType;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.response.FundingDetailResponse;
 import com.yam.funteer.funding.dto.response.FundingListPageResponse;
@@ -15,10 +15,9 @@ import com.yam.funteer.funding.dto.request.FundingReportRequest;
 import com.yam.funteer.funding.dto.response.FundingReportResponse;
 import com.yam.funteer.funding.dto.request.FundingRequest;
 import com.yam.funteer.funding.dto.request.TakeFundingRequest;
-import com.yam.funteer.funding.entity.Funding;
 
 public interface FundingService {
-	Page<FundingListResponse> findAllFundingByAdmin(Pageable pageable);
+	Page<FundingListResponse> findAllFundingByAdmin(String keyword, PostType postType, Pageable pageable);
 
 	Page<FundingListResponse> findFundingByCategory(Long categoryId, Pageable pageable);
 
@@ -42,7 +41,7 @@ public interface FundingService {
 
 	void deleteFundingComment(Long commentId);
 
-	FundingListPageResponse findAllFunding(Pageable pageable);
+	FundingListPageResponse findAllFunding(Pageable pageable, PostType postType, Long categoryId, String keyword);
 
 	void takeFunding(Long fundingId, TakeFundingRequest data);
 

@@ -41,10 +41,42 @@ export const w2000 = {
   timerProgressBar: true,
 };
 
+export const noTimeSuccess = {
+  icon: 'success',
+  iconColor: 'rgba(236, 153, 75, 1)',
+  confirmButtonColor: 'rgba(236, 153, 75, 1)',
+};
+
+export const noTimeWarn = {
+  icon: 'warning',
+  iconColor: 'rgba(211, 79, 4, 1)',
+  confirmButtonColor: 'rgba(211, 79, 4, 1)',
+};
+
+export const DefaultAlert = {
+  confirmButtonColor: 'rgba(236, 153, 75, 1)',
+};
+
 export const customAlert = (alertType: object, title: string) => {
   swal.fire({ ...alertType, title });
 };
 
 export const customTextAlert = (alertType: object, title: string, text: string) => {
   swal.fire({ ...alertType, title, text });
+};
+
+export const customTextOnlyAlert = (alertType: object, text: string) => {
+  swal.fire({ ...alertType, text });
+};
+
+
+export const customTextOnlyAlertOvenVidu = (alertType: object, text: string) => {
+  swal.fire({ ...alertType, text }).then((result)=>{
+    if(result.isConfirmed){
+      setTimeout(()=>{
+        window.location.href="/"
+      },1500)
+    }
+    }
+  );
 };

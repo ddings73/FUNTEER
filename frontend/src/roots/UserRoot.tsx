@@ -3,22 +3,14 @@ import { Outlet, useLocation } from 'react-router-dom';
 import ConfirmModal from '../components/Modal/ConfirmModal';
 import NavBar from '../components/Navbar';
 import { useAppSelector } from '../store/hooks';
+import ScrollToTop from '../utils/ScrollToTop';
 
-function ScrollTop() {
-  const { pathname } = useLocation();
-  console.log(pathname);
-
-  useEffect(() => {
-    window.scrollTo(0, 0);
-  }, [pathname]);
-  return null;
-}
 function UserRoot() {
   const confirmModalState = useAppSelector((state) => state.modalSlice);
-
+  
   return (
     <>
-      <ScrollTop />
+      <ScrollToTop />
       <ConfirmModal isOpen={confirmModalState.isOpen} title={confirmModalState.title} content={confirmModalState.content} handleModal={confirmModalState.handleModal} />
       <NavBar />
       <Outlet />

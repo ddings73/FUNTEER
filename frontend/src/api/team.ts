@@ -1,6 +1,6 @@
 import { http } from './axios';
 import { teamSignUpType } from '../types/user';
-import { customAlert, w1500 } from '../utils/customAlert';
+import logo from '../assets/images/logo.png';
 
 /** 단체 회원가입 */
 export const requestTeamSignUp = async (teamSignUpInfo: teamSignUpType) => {
@@ -15,6 +15,10 @@ export const requestTeamSignUp = async (teamSignUpInfo: teamSignUpType) => {
       formData.append(`${key}`, value);
     }
   });
+
+  /** 기본 프사 */
+  const defaultProfileBlob = await fetch(logo).then((res) => res.blob());
+  formData.append('profileImg', defaultProfileBlob, 'default-profile.png');
 
   const res = await http.post('team', formData);
 
@@ -64,6 +68,21 @@ export const requestChangePassword = async (teamId: string, password: string, ne
   formData.append('userId', teamId);
   formData.append('password', password);
   formData.append('newPassword', newPassword);
+
+  const res = await http.put('team/account', formData);
+
+  return res;
+};
+
+/** 단체 vms 파일 수정 */
+export const requestChangeVms = async (teamId: string, password: string, vmsFile: File | null) => {
+  const formData = new FormData();
+
+  formData.append('userId', teamId);
+  formData.append('password', password);
+  if (vmsFile) {
+    formData.append('performFile', vmsFile);
+  }
 
   const res = await http.put('team/account', formData);
 

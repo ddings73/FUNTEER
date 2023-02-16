@@ -59,10 +59,12 @@ public class Team extends User{
     }
 
     public boolean expiredCheck() {
-        long between = ChronoUnit.YEARS.between(this.lastActivity, LocalDateTime.now());
-        if(between >= 1){
-            super.expire();
-            return true;
+        if(this.lastActivity != null) {
+            long between = ChronoUnit.YEARS.between(this.lastActivity, LocalDateTime.now());
+            if (between >= 1) {
+                super.expire();
+                return true;
+            }
         }
         return false;
     }

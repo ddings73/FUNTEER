@@ -112,3 +112,22 @@ export const requestDonationStatus = async (id: number, state: string) => {
 
   return res;
 };
+
+/** 도네이션 참여 */
+export const requestPayDonation = async (postId: number, paymentAmount: string) => {
+  const data = {
+    paymentAmount,
+  };
+
+  const response = http.post(`donation/${postId}/pay`, data);
+
+  return response;
+};
+
+/**
+ * @name 도네이팅참여내역
+ */
+export const requestDonationHistory = async (page: number, size: number) => {
+  const res = await http.get(`member/mileage?page=${page}&postGroup=DONATION&size=${size}&sort=DESC`);
+  return res;
+};

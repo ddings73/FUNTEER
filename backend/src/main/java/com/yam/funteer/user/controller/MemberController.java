@@ -34,7 +34,6 @@ import java.util.List;
 @RequiredArgsConstructor @Slf4j
 @Api(tags ={"일반회원"})
 public class MemberController {
-	private final ChargeRepository chargeRepository;
 	private final MemberService memberService;
 
 	@ApiOperation(value = "회원 가입", notes = "<strong>이메일, 패스워드, 이름, 닉네임, 전화번호</strong>은 필수입력 값이다.")
@@ -45,7 +44,7 @@ public class MemberController {
 			@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@PostMapping
-	public ResponseEntity signUpMember(@Validated @RequestBody CreateMemberRequest createMemberRequest, BindingResult bindingResult){
+	public ResponseEntity signUpMember(@Validated @ModelAttribute CreateMemberRequest createMemberRequest, BindingResult bindingResult){
 		validateBinding(bindingResult);
 
 		log.info("회원가입 시작 =>");
@@ -129,8 +128,8 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/mileage")
-	public ResponseEntity<MileageDetailResponse> getMileageDetails(PostGroup postGroup,
-								   @PageableDefault(direction = Sort.Direction.DESC) Pageable pageable){
+	public ResponseEntity<MileageDetailResponse> getMileageDetails(@RequestParam PostGroup postGroup,
+								   @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable){
 		MileageDetailResponse mileageDetailResponse = memberService.getMileageDetails(postGroup, pageable);
 		return ResponseEntity.ok(mileageDetailResponse);
 	}
@@ -156,7 +155,7 @@ public class MemberController {
 		@ApiResponse(code = 500, message = "서버 에러")
 	})
 	@GetMapping("/chargeList")
-	public ResponseEntity<Page<ChargeListResponse>> getChargeList(Pageable pageable) {
+	public ResponseEntity<Page<ChargeListResponse>> getChargeList(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
 		Page<ChargeListResponse> chargeList = memberService.getChargeList(pageable);
 		return ResponseEntity.ok(chargeList);
 	}

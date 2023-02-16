@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { BsPiggyBankFill, BsBookmarkHeartFill, BsFillHeartFill, BsBookmarkHeart, BsFillTelephoneFill } from 'react-icons/bs';
+import { BsPiggyBankFill, BsBookmarkHeartFill, BsFillHeartFill, BsBookmarkHeart, BsFillTelephoneFill, BsHeart } from 'react-icons/bs';
 import { FaMoneyBillWaveAlt } from 'react-icons/fa';
 import Button from '@mui/material/Button';
 import EmailIcon from '@mui/icons-material/Email';
@@ -15,6 +15,7 @@ import defaultImage from '../../../assets/images/default-profile-img.svg';
 import { useAppSelector } from '../../../store/hooks';
 import FundingListElement from '../../../components/Funding/FundingListElement';
 import { FundingElementType } from '../../../types/funding';
+import Footer from '../../../components/Footer/Footer';
 
 function TeamProfileContainer() {
   const navigate = useNavigate();
@@ -91,18 +92,20 @@ function TeamProfileContainer() {
         <div className={styles['content-inner']}>
           {/* 프로필 카드 */}
           <div className={styles['profile-card']}>
-            <div className={styles['profile-card-img-div']}>
-              <div className={styles['profile-card-img-inner']}>
-                <img src={teamProfileInfo.profileImgUrl ? teamProfileInfo.profileImgUrl : defaultImage} alt="프로필 이미지" className={styles['profile-img']} />
+            <div className={styles.banner}>
+              <div className={styles['profile-card-img-div']}>
+                <div className={styles['profile-card-img-inner']}>
+                  <img src={teamProfileInfo.profileImgUrl ? teamProfileInfo.profileImgUrl : defaultImage} alt="프로필 이미지" className={styles['profile-img']} />
+                </div>
               </div>
             </div>
             <div className={styles['profile-card-info-div']}>
               <h1 className={styles.name}>
                 {teamProfileInfo.name}
-                {userType === 'NORMAL' && (
+                {userType === ('NORMAL' || 'KAKAO') && (
                   <div className={styles['follow-btn-div']}>
-                    {isFollowing && <BsBookmarkHeartFill color="red" onClick={onClickFollowBtn} className={styles['follow-btn']} />}
-                    {!isFollowing && <BsBookmarkHeart color="red" onClick={onClickFollowBtn} className={styles['follow-btn']} />}
+                    {isFollowing && <BsFillHeartFill color="red" onClick={onClickFollowBtn} className={styles['follow-btn']} />}
+                    {!isFollowing && <BsHeart color="red" onClick={onClickFollowBtn} className={styles['follow-btn']} />}
                   </div>
                 )}
                 {userId.toString() === teamId && <SettingsIcon className={styles.setting} onClick={onClickSetting} />}
@@ -110,13 +113,13 @@ function TeamProfileContainer() {
               <div className={styles['profile-card-info-content']}>
                 <div className={styles['profile-card-info-left']}>
                   <div className={styles['profile-card-info-item']}>
-                    {userId === teamId && (
-                      <>
+                    {userId.toString() === teamId && (
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
                         <BsPiggyBankFill color="rgba(236, 153, 75, 1)" />
                         <p className={styles.money}>
-                          저금통: <span>{teamProfileInfo.money.toLocaleString('ko-KR')}</span> 원
+                          마일리지: <span>{teamProfileInfo.money.toLocaleString('ko-KR')}</span> 원
                         </p>
-                      </>
+                      </div>
                     )}
                   </div>
                   <div className={styles['profile-card-info-item']}>
@@ -147,7 +150,7 @@ function TeamProfileContainer() {
           </div>
           {/* 단체 소개 */}
           <div className={styles['description-div']}>
-            <p>단체 설명</p>
+            {/* <p>단체 소개</p> */}
             <pre>{teamProfileInfo.description}</pre>
           </div>
           {/* 진행한 펀딩 프로젝트 */}

@@ -9,7 +9,7 @@ import styles from './FAQContainer.module.scss';
 import { useAppSelector } from '../../../store/hooks';
 import { FaqInterface } from '../../../types/faq';
 import { requestFaqDelete, requestFaqList } from '../../../api/faq';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 export default function FAQContainer() {
   const navigate = useNavigate();
@@ -52,7 +52,7 @@ export default function FAQContainer() {
     try {
       const response = await requestFaqDelete(postId);
       console.log('FAQ 삭제 요청', response);
-      customAlert(s1000, '해당 FAQ가 삭제되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '해당 FAQ가 삭제되었습니다.');
       requestAllFAQ();
     } catch (err) {
       console.error(err);
@@ -94,9 +94,7 @@ export default function FAQContainer() {
             {memberFAQList.map((data) => (
               <Accordion key={data.id} sx={{ boxShadow: 'none' }}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />} aria-controls="panel1a-content" id="panel1a-header">
-                  <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquare' }}>
-                    <p>{data.title}</p>
-                  </Typography>
+                  <Typography sx={{ fontSize: '1.125rem', fontFamily: 'NanumSquare' }}>{data.title}</Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{ backgroundColor: 'rgb(255, 254, 252)', padding: '2rem', boxShadow: '0px 0px 20px rgba(255, 132, 0, 0.04) inset' }}>
                   <Typography sx={{ fontSize: '1rem', lineHeight: '2rem', fontFamily: 'NanumSquare' }}>{data.content}</Typography>

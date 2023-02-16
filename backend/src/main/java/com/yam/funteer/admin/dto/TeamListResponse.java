@@ -46,16 +46,19 @@ public class TeamListResponse {
 		private UserType userType;
 
 		public static TeamInfo of(Team team, String vmsFilePath, String perFormFilePath) {
-			return TeamInfo.builder()
-					.id(team.getId())
-					.email(team.getEmail())
-					.name(team.getName())
-					.phone(team.getPhone())
-					.vmsFileUrl(vmsFilePath)
-					.performFileUrl(perFormFilePath)
-					.lastActivity(team.getLastActivity().toLocalDate())
-					.userType(team.getUserType())
-					.build();
+			TeamInfo teamInfo = TeamInfo.builder()
+				.id(team.getId())
+				.email(team.getEmail())
+				.name(team.getName())
+				.phone(team.getPhone())
+				.vmsFileUrl(vmsFilePath)
+				.performFileUrl(perFormFilePath)
+				.userType(team.getUserType())
+				.build();
+			if(team.getLastActivity() != null){
+				teamInfo.setLastActivity(team.getLastActivity().toLocalDate());
+			}
+			return teamInfo;
 		}
 	}
 }

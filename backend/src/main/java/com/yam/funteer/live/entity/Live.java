@@ -1,6 +1,7 @@
 package com.yam.funteer.live.entity;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,13 +9,17 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.yam.funteer.attach.entity.Attach;
+import com.yam.funteer.exception.SessionNotFoundException;
 import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.user.entity.Member;
 
 import com.yam.funteer.user.entity.Team;
 import lombok.*;
+import org.springframework.transaction.annotation.Transactional;
 
 @Entity
 @Table(name = "live")
@@ -31,6 +36,10 @@ public class Live {
 	private LocalDateTime endTime;
 	private String sessionId;
 
+	@OneToOne
+	@JoinColumn(name = "attach_id")
+	private Attach attach;
+
 	public static Live of(String sessionId, Funding funding) {
 		return Live.builder()
 				.sessionId(sessionId)
@@ -45,5 +54,23 @@ public class Live {
 
 	public Team getTeam() {
 		return funding.getTeam();
+	}
+
+	public Optional<Attach> getAttach(){
+		return Optional.ofNullable(this.attach);
+	}
+
+	public void overwriteSession(String sessionId) {
+		this.sessionId = sessionId;
+		this.startTime = LocalDateTime.now();
+		this.endTime = null;
+	}
+
+	public void saveFile(Attach attach) {
+		this.attach = attach;
+	}
+
+	public void updateFile(String name, String path) {
+		attach.update(name, path);
 	}
 }

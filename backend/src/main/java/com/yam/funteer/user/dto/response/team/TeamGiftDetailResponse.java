@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.yam.funteer.funding.entity.Funding;
 import com.yam.funteer.live.entity.Gift;
 import org.springframework.data.domain.Page;
 
@@ -21,11 +22,13 @@ import lombok.Setter;
 @AllArgsConstructor
 public class TeamGiftDetailResponse {
 
+	private long totalElements;
+	private int totalPages;
 	private List<GiftInfo> giftList;
 
 	public static TeamGiftDetailResponse of(Page<Gift> giftPage) {
 		List<GiftInfo> collect = giftPage.stream().map(GiftInfo::of).collect(Collectors.toList());
-		return new TeamGiftDetailResponse(collect);
+		return new TeamGiftDetailResponse(giftPage.getTotalElements(), giftPage.getTotalPages(), collect);
 	}
 
 	@Builder
@@ -33,13 +36,20 @@ public class TeamGiftDetailResponse {
 	@NoArgsConstructor
 	@AllArgsConstructor
 	private static class GiftInfo {
-		private String userName;
+		private Long giftId;
+		private Long fundingId;
+		private String fundTitle;
+		private String username;
 		private Long amount;
 		private LocalDate giftDate;
 
 		public static GiftInfo of(Gift gift){
+			Funding funding = gift.getLive().getFunding();
 			return GiftInfo.builder()
-				.userName(gift.getUser().getName())
+				.giftId(gift.getId())
+				.fundingId(funding.getFundingId())
+				.fundTitle(funding.getTitle())
+				.username(gift.getUser().getName())
 				.amount(gift.getAmount())
 				.giftDate(gift.getGiftDate().toLocalDate())
 				.build();

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import '@toast-ui/editor/dist/toastui-editor.css';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Editor as ToastEditor } from '@toast-ui/react-editor';
@@ -68,8 +69,11 @@ function AdminDonationCreateContainer() {
       const response = await requestCreateDonation(donationData);
       console.log(response);
       navigate(-1);
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message);
+        console.error(error);
+      }
     }
   };
 
@@ -101,7 +105,7 @@ function AdminDonationCreateContainer() {
         </div>
         <input type="text" name="amount" className={styles['email-title']} placeholder="목표금액을 입력해주세요." onChange={onChangeTextHandler} />
         <div className={styles['label-div']}>
-          <p>첨부파일</p>
+          <p>썸네일</p>
           <img src={requiredIcon} alt="required icon" />
         </div>
         <input name="file" type="file" style={{ width: '815px' }} accept="image/*" onChange={onFileHandler} required />

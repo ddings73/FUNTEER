@@ -10,6 +10,7 @@ export { default as LogOut } from './Accounts/LogOut';
 export { default as Kakao } from './Accounts/Kakao';
 
 export { default as ErrorPage } from './AddOns/ErrorPage';
+export { default as NotFound } from './AddOns/NotFound';
 
 export { default as Charge } from './Charge/Charge';
 export { default as ChargeCancel } from './Charge/ChargeCancel';

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 import MenuItem from '@mui/material/MenuItem';
 import Pagination from '@mui/material/Pagination';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -31,6 +32,23 @@ function AdminDonationContainer() {
 
   /** 도네이션 종료 */
   const onStateChangeHandler = async (id: number, state: string) => {
+    Swal.fire({
+      text: '자체 기부를 종료 하시겠습니까?',
+      showConfirmButton: false,
+      showDenyButton: true,
+      showCancelButton: true,
+      denyButtonText: `확인`,
+      denyButtonColor: 'rgba(211, 79, 4, 1)',
+      cancelButtonText: '취소',
+    }).then((result) => {
+      if (result.isDenied) {
+        requestDonationQuit(id, state);
+      }
+    });
+  };
+
+  /** 도네이션 종료 요청 */
+  const requestDonationQuit = async (id: number, state: string) => {
     if (state === 'DONATION_ACTIVE') {
       try {
         const response = await requestDonationStatus(id, state);
@@ -39,7 +57,6 @@ function AdminDonationContainer() {
         console.log(error);
       }
     }
-    // window.location.reload();
   };
 
   /** 도네이션 상세 페이지로 */
@@ -86,9 +103,9 @@ function AdminDonationContainer() {
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
-        <h1 className={styles.title}>도네이션 관리</h1>
+        <h1 className={styles.title}>기부 관리</h1>
         <button type="button" onClick={onClickDonationRegister} className={styles.create}>
-          도네이션 작성
+          기부 작성
         </button>
 
         <ul className={styles['title-line']}>
@@ -101,7 +118,7 @@ function AdminDonationContainer() {
         </ul>
 
         {donationList.map((data) => (
-          <div className={styles['list-line']}>
+          <div key={data.donationId} className={styles['list-line']}>
             <li>
               <p>{data.donationId}</p>
             </li>

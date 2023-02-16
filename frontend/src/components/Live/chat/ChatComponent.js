@@ -12,7 +12,8 @@ import { Button, IconButton } from '@mui/material';
 import PaidOutlinedIcon from '@mui/icons-material/PaidOutlined';
 import cn from 'classnames';
 import defaultProfile from '../../../assets/images/default-profile-img.svg';
-import { stringToSeparator } from '../../../types/convert';
+import { stringToSeparator } from '../../../utils/convert';
+import { customTextOnlyAlert, noTimeWarn } from '../../../utils/customAlert';
 
 export default class ChatComponent extends Component {
   constructor(props) {
@@ -82,7 +83,7 @@ export default class ChatComponent extends Component {
     const money = Number(this.state.amount.replaceAll(',', ''));
 
     if (money > this.props.userCurrentMoney || money === 0) {
-      alert('잔고 부족함띠 ㅡㅡ');
+      customTextOnlyAlert(noTimeWarn, '마일리지 잔액이 부족합니다.');
     } else {
       this.props.user.getStreamManager().stream.session.signal({
         data: JSON.stringify(money),
@@ -91,8 +92,9 @@ export default class ChatComponent extends Component {
 
       const data = {
         money,
-        donationUser:this.props.user.getNickname()
-      }
+        donationUser: this.props.user.getNickname(),
+      };
+      console.log(data);
       this.props.user.getStreamManager().stream.session.signal({
         data: JSON.stringify(data),
         type: 'updateAmount',

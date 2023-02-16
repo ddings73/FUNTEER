@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { AxiosError } from 'axios';
 import { Editor as ToastEditor } from '@toast-ui/react-editor';
 import { AiOutlineClose } from 'react-icons/ai';
 import Button from '@mui/material/Button';
@@ -52,8 +53,11 @@ function AdminNoticeCreateContainer() {
       const response = await requestCreateNotice(noticeData);
       navigate(-1);
       console.log(response);
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        alert(error.response?.data.message);
+        console.error(error);
+      }
     }
   };
 

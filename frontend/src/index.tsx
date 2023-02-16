@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { BrowserRouter, createBrowserRouter, RouterProvider, useParams, useSearchParams } from 'react-router-dom';
@@ -71,17 +71,20 @@ import {
   FAQEdit,
   QuestionCreate,
   QuestionDetail,
+  NotFound,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
+import ScrollToTop from './utils/ScrollToTop';
+
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
   {
     path: '/',
     element: <UserRoot />,
-    errorElement: <ErrorPage />,
+    errorElement: <NotFound />,
     children: [
       {
         path: 'login',
@@ -164,18 +167,6 @@ const router = createBrowserRouter([
         element: <MyFollows />,
       },
       {
-        path: 'team/:teamId',
-        element: <TeamProfile />,
-      },
-      {
-        path: 'teamedit/:teamId',
-        element: <TeamEdit />,
-      },
-      {
-        path: 'teamdonation/:teamId',
-        element: <TeamDonation />,
-      },
-      {
         path: 'live',
         element: <LiveList />,
       },
@@ -202,7 +193,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <UserFooterRoot />,
-    errorElement: <ErrorPage />,
+    errorElement: <NotFound />,
     children: [
       {
         index: true,
@@ -276,13 +267,25 @@ const router = createBrowserRouter([
         path: '/qna/:qnaId',
         element: <QuestionDetail />,
       },
+      {
+        path: 'team/:teamId',
+        element: <TeamProfile />,
+      },
+      {
+        path: 'teamedit/:teamId',
+        element: <TeamEdit />,
+      },
+      {
+        path: 'teamdonation/:teamId',
+        element: <TeamDonation />,
+      },
     ],
   },
   /** 관리자 페이지 */
   {
     path: '/admin',
     element: <AdminRoot />,
-    errorElement: <ErrorPage />,
+    errorElement: <NotFound />,
     children: [
       {
         index: true,
@@ -338,7 +341,7 @@ const persistor = persistStore(store);
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <RouterProvider router={router} />
+        <RouterProvider router={router} />
     </PersistGate>
   </Provider>,
 );

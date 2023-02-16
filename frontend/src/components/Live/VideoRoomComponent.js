@@ -17,6 +17,7 @@ import UserModel from './models/user-model';
 import ToolbarComponent from './toolbar/ToolbarComponent';
 import ChatComponent from './chat/ChatComponent';
 import { http } from '../../api/axios';
+import { customTextOnlyAlert, customTextOnlyAlertOvenVidu, DefaultAlert, noTimeWarn } from '../../utils/customAlert';
 
 const localUser = new UserModel();
 
@@ -43,7 +44,7 @@ class VideoRoomComponent extends Component {
       allAmount: 0,
       checkLottie: false,
       amount: 0,
-      donationUser:""
+      donationUser: '',
     };
 
     this.joinSession = this.joinSession.bind(this);
@@ -104,7 +105,7 @@ class VideoRoomComponent extends Component {
     if (this.state.checkLottie) {
       setTimeout(() => {
         this.setState({ checkLottie: false });
-      }, 3000);
+      }, 5000);
     }
   }
 
@@ -128,13 +129,24 @@ class VideoRoomComponent extends Component {
         this.subscribeToSessionDisconnected();
         this.subscribeToLiveDonation();
         this.subscribeToUpdateAmount();
+        this.publisherToStreamDestroyed();
         await this.connectToSession();
       },
     );
   }
 
+  publisherToStreamDestroyed() {
+    this.state.session.on('streamDestroyed', (event) => {
+      event.preventDefault();
+
+      customTextOnlyAlertOvenVidu(DefaultAlert, '이미 종료된 라이브방송입니다.');
+    });
+  }
+
   subscribeToLiveDonation() {
     this.state.session.on('signal:liveDonation', (event) => {
+      console.log('DONATION!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+      console.log(this.props);
       console.log(event);
       const data = JSON.parse(event.data);
       console.log(data);
@@ -147,10 +159,10 @@ class VideoRoomComponent extends Component {
       // eslint-disable-next-line react/no-access-state-in-setstate
       const prev = this.state.allAmount;
       console.log('UPDATE!!!!!!!!!!!!!!!!');
-      console.log(this.state);
-      console.log(event.data)
+      const data = JSON.parse(event.data);
       // this.setState({ allAmount: prev + amount });
-      this.setState({ allAmount: prev + JSON.parse(event.data.money), checkLottie: true, amount: JSON.parse(event.data.money),donationUser:JSON.parse(event.data.donationUser) });
+      this.setState({ donationUser: data.donationUser });
+      this.setState({ allAmount: prev + data.money, checkLottie: true, amount: data.money });
     });
   }
 
@@ -210,9 +222,14 @@ class VideoRoomComponent extends Component {
             code: error.code,
             status: error.status,
           });
+
         }
-        alert('There was an error connecting to the session:', error.message);
-        console.log('There was an error connecting to the session:', error.code, error.message);
+        customTextOnlyAlertOvenVidu(DefaultAlert, '라이브 방송에 오류가 생겼습니다.');
+       
+      
+        // window.location.href = '/';
+        // alert('There was an error connecting to the session:', error.message);
+        // console.log('There was an error connecting to the session:', error.code, error.message);
       });
   }
 
@@ -292,11 +309,11 @@ class VideoRoomComponent extends Component {
     const mySession = this.state.session;
 
     if (mySession) {
+      console.log(mySession);
       mySession.disconnect();
       console.dir(mySession);
       this.leaveThisSession(this.state.mySessionId, mySession.token);
       console.log('세션 종료 성공띠!!!');
-      // window.history.
     }
 
     // Empty all properties...
@@ -314,6 +331,8 @@ class VideoRoomComponent extends Component {
 
     console.log('LEAVE_OV', this.OV);
     console.log('LEAVE_STATE', this.state);
+
+    customTextOnlyAlertOvenVidu(DefaultAlert, '라이브가 종료되었습니다');
   }
 
   camStatusChanged() {
@@ -472,6 +491,7 @@ class VideoRoomComponent extends Component {
           leaveSession={this.leaveSession}
           userCount={this.state.userCount}
           amount={this.state.amount}
+          donationUser={this.state.donationUser}
         />
 
         <div id="layout" className="bounds">
@@ -485,6 +505,7 @@ class VideoRoomComponent extends Component {
                 checkLottie={this.state.checkLottie}
                 userName={this.state.myUserName}
                 amount={this.state.amount}
+                donationUser={this.state.donationUser}
               />
             </div>
           )}

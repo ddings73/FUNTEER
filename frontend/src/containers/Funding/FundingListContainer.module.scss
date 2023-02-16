@@ -12,6 +12,10 @@
     margin: 0 auto;
     padding: 0 15px;
 
+    @include mobile(){
+      padding:  0 5px;
+    }
+
     .title-box {
       margin-top: 80px;
       width: 100%;
@@ -153,7 +157,26 @@
       margin-top: 50px;
       display: flex;
       flex-direction: column;
+      .funding-filter-box {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
 
+        @include mobile() {
+          justify-content: center;
+        }
+
+        & p {
+          @include mobile() {
+            display: none;
+          }
+        }
+
+        .selected {
+          color: $primary;
+        }
+      }
       .spinner-box {
         position: absolute;
         top: 50%;

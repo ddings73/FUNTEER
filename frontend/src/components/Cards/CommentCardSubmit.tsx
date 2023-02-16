@@ -4,11 +4,14 @@ import { useParams } from 'react-router-dom';
 import SendIcon from '@mui/icons-material/Send';
 import styles from './CommentCardSubmit.module.scss';
 import profileTemp from '../../assets/images/default-profile-img.svg';
-import { postFundingComment } from '../../api/funding';
+import { postFundingComment, requestCommentList } from '../../api/funding';
+import { commentType } from '../../containers/Funding/FundingDetailContainer';
+import { useAppSelector } from '../../store/hooks';
+import { customTextOnlyAlert, noTimeSuccess } from '../../utils/customAlert';
 
-export function CommentCardSubmit(props: any) {
+export function CommentCardSubmit(props: any, commentCount: number) {
   const { fundIdx } = useParams();
-
+  const isLogin = useAppSelector((state) => state.userSlice.isLogin);
   const [comment, setComment] = useState('');
   const commentOnChange = (e: any) => {
     setComment(e.target.value);
@@ -21,10 +24,10 @@ export function CommentCardSubmit(props: any) {
       console.log(error);
     }
   };
-  const onSubmit = (e: any) => {
+  const onSubmit = async (e: any) => {
     e.preventDefault();
-    fetchData();
-    alert('댓글 등록 완료!');
+    await fetchData();
+    customTextOnlyAlert(noTimeSuccess, '댓글 등록 완료!');
     setComment('');
     /* eslint-disable */
     props.initCommentList();
@@ -36,34 +39,43 @@ export function CommentCardSubmit(props: any) {
       } else {
         e.preventDefault();
         fetchData();
-        alert('댓글 등록 완료!');
+        customTextOnlyAlert(noTimeSuccess, '댓글 등록 완료!');
         setComment('');
       }
     }
   };
+
   return (
     <div className={styles.cardContainer}>
-      <div className={styles.commentHead}>응원 댓글 등록</div>
       <form onKeyUp={handleKeyPress} onSubmit={onSubmit} style={{ width: '80%', marginTop: '20px', display: 'flex' }}>
         <div className={styles.commentMid}>
           <img className={styles.commentImg} alt="프로필" src={profileTemp} />
           <TextField
             className={styles.tesxtField}
-            placeholder="댓글을 입력해주세요"
+            placeholder={isLogin ? '댓글을 입력해주세요' : '로그인 후 이용해주세요'}
             variant="filled"
-            sx={{ width: '80%' }}
+            sx={{
+              width: '80%',
+              '& .MuiInputBase-input': {
+                paddingTop: '2%',
+              },
+            }}
             value={comment}
             onChange={commentOnChange}
             size="small"
             color="warning"
           />
         </div>
-        <div className={styles.BtnGrop}>
-          <button className={styles.commentBtn} type="submit">
-            <SendIcon />
-            <p>댓글 등록</p>
-          </button>
-        </div>
+        {isLogin ? (
+          <div className={styles.BtnGrop}>
+            <button className={styles.commentBtn} type="submit">
+              <SendIcon />
+              <p>댓글 등록</p>
+            </button>
+          </div>
+        ) : (
+          ''
+        )}
       </form>
     </div>
   );

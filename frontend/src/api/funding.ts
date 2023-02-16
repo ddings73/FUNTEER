@@ -50,10 +50,8 @@ export const requestModifyFunding = async (fundIdx: string, fundingData: Funding
  * @method GET
  */
 
-export const requestFundingList = async (size: number) => {
-  const res = await http.get(`funding/?size=${size}`);
-  console.log(res);
-
+export const requestFundingList = async (categoryId?: string, keyword?: string, postType?: string, currentPage?: number, size?: number) => {
+  const res = await http.get(`funding/?categoryId=${categoryId}&keyword=${keyword}&postType=${postType}&page=${currentPage}&size=${size}`);
   return res;
 };
 
@@ -84,7 +82,6 @@ export const requestFundingDetail = async (fundIdx?: string) => {
  */
 export const requestNextFundingList = async (currentPage: number, size: number) => {
   console.log(currentPage, size);
-
   const response = await http.get(`funding/?page=${currentPage + 1}&size=${size}`);
   return response;
 };
@@ -133,7 +130,7 @@ export const postFundingComment = async (commentData: string, fundingId?: string
  * @method GET
  */
 export const requestCommentList = async (fundingId?: string, sort?: string) => {
-  const res = await http.get(`funding/${fundingId}/?sort=${sort}`);
+  const res = await http.get(`funding/${fundingId}/?page=0&sort=${sort}`);
   console.log('댓글호출', res);
 
   return res;
@@ -144,12 +141,12 @@ export const requestCommentList = async (fundingId?: string, sort?: string) => {
  * @method GET
  */
 export const requestNextCommentList = async (currentPage: number, fundingId?: string, sort?: string) => {
-  const response = await http.get(`funding/${fundingId}/?page=${currentPage + 1}&?sort=${sort}`);
+  const response = await http.get(`funding/${fundingId}/?page=${currentPage + 1}&sort=${sort}`);
   return response;
 };
 
 /**
- * @name 다음댓글리스트호출
+ * @name 댓글삭제호출
  * @method DELETE
  */
 export const requestDeleteComment = async (commentId?: number) => {
@@ -168,6 +165,16 @@ export const fundingJoin = async (amount?: string, fundingId?: string) => {
 };
 
 /**
+ * @name 펀딩참여조회
+ * @method GET
+ */
+
+export const requestFundingJoin = async (page: number, size: number, sort?: string) => {
+  const res = await http.get(`member/mileage?page=${page}&postGroup=FUNDING&size=${size}&sort=${sort}`);
+  return res;
+};
+
+/**
  * @name 펀딩보고서조회
  * @method GET
  */
@@ -175,5 +182,25 @@ export const fundingJoin = async (amount?: string, fundingId?: string) => {
 export const requestFundingReport = async (fundingId?: string) => {
   const res = await http.get(`funding/${fundingId}/report`);
   console.log('report res', res);
+  return res;
+};
+
+/**
+ * @name 펀딩보고서 작성
+ * @param fundingId
+ */
+export const fundingReportPost = async (fundingId: string, reportData: File) => {
+  // const formData = new FormData();
+
+  // formData.append('receiptFile', new Blob());
+
+  // const config = {
+  //   headers: {
+  //     'Content-Type': 'multipart/form-data',
+  //   },
+  // };
+
+  const res = await http.post(`funding/${fundingId}/report`, reportData);
+
   return res;
 };

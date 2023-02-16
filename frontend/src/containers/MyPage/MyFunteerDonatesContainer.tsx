@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Paper from '@mui/material/Paper';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -9,6 +9,8 @@ import TableRow from '@mui/material/TableRow';
 import { styled } from '@mui/material/styles';
 import styles from './MyFunteerDonatesContainer.module.scss';
 import SideBarList from '../../components/MyPageSideBar/SideBarList';
+import { requestDonationHistory } from '../../api/donation';
+import { myDonateListType, myDonateType } from '../../types/myPage';
 
 export function MyFunteerDonatesContainer() {
   const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -27,17 +29,31 @@ export function MyFunteerDonatesContainer() {
     },
   }));
 
-  function createData(name: string, calories: number, fat: number) {
-    return { name, calories, fat };
-  }
+  const size = 8;
+  const [DonateData, setDonateData] = useState<myDonateType>({
+    list: [
+      {
+        amount: 0,
+        payDate: '',
+        postId: 0,
+        postName: '',
+      },
+    ],
+    totalElements: 0,
+    totalPages: 0,
+  });
 
-  const rows = [
-    createData('Frozen yoghurt', 159, 6.0),
-    createData('Ice cream sandwich', 237, 9.0),
-    createData('Eclair', 262, 16.0),
-    createData('Cupcake', 305, 3.7),
-    createData('Gingerbread', 356, 16.0),
-  ];
+  const getGiftHistory = async () => {
+    const res = await requestDonationHistory(0, size);
+    console.log('doDa', res.data);
+    setDonateData(res.data);
+    console.log('데에에에에에이이이이이터터터터ㅓ', res.data);
+  };
+
+  useEffect(() => {
+    getGiftHistory();
+  }, []);
+
   return (
     <div className={styles.bodyContainer}>
       <SideBarList />
@@ -59,13 +75,14 @@ export function MyFunteerDonatesContainer() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.map((row) => (
-                    <StyledTableRow key={row.name}>
+                  {DonateData.list.map((data) => (
+                    // eslint-disable-next-line
+                    <StyledTableRow key={data.postId}>
                       <StyledTableCell component="th" scope="row">
-                        {row.name}
+                        {data.postName}
                       </StyledTableCell>
-                      <StyledTableCell align="center">{row.calories}원</StyledTableCell>
-                      <StyledTableCell align="right">{row.fat}</StyledTableCell>
+                      <StyledTableCell align="center">{data.amount}원</StyledTableCell>
+                      <StyledTableCell align="right">{data.payDate}</StyledTableCell>
                     </StyledTableRow>
                   ))}
                 </TableBody>

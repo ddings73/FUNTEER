@@ -10,4 +10,6 @@ import com.yam.funteer.post.entity.Post;
 public interface PostAttachRepository extends JpaRepository<PostAttach,Long> {
 	List<PostAttach> findAllByPost(Post post);
 	PostAttach findFirstByPost(Post post);
+
+	PostAttach findByPostId(Long id);
 }

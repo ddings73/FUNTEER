@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router';
 import { useInterval } from 'usehooks-ts';
 import { Button, TextField } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { s1000, s1500, w1500, customAlert } from '../../utils/customAlert';
+import { noTimeSuccess, noTimeWarn, customTextOnlyAlert } from '../../utils/customAlert';
 import { memberSignUpType } from '../../types/user';
 import { secondsToMinutes, secondsToSeconds } from '../../utils/timer';
 import {
@@ -13,11 +13,16 @@ import {
   requestNicknameDuplConfirm,
   requestPhoneDuplConfirm,
   requestSendEmailAuthCode,
+  requestSignIn,
 } from '../../api/user';
 import styles from './MemberSignUpContainer.module.scss';
+import { useAppDispatch } from '../../store/hooks';
+import { setUserLoginState } from '../../store/slices/userSlice';
+import { openModal } from '../../store/slices/modalSlice';
 
 function MemberSignUpContainer() {
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   /** 회원가입 정보 */
   const [memberSignUpInfo, setMemberSignUpInfo] = useState<memberSignUpType>({
@@ -88,17 +93,17 @@ function MemberSignUpContainer() {
     e.preventDefault();
 
     if (!memberSignUpInfo.nickname) {
-      customAlert(w1500, '닉네임을 입력해주세요.');
+      customTextOnlyAlert(noTimeWarn, '닉네임을 입력해주세요.');
       return;
     }
 
     try {
       const response = await requestNicknameDuplConfirm(memberSignUpInfo.nickname);
-      customAlert(s1000, '닉네임 중복 체크 완료');
+      customTextOnlyAlert(noTimeSuccess, '닉네임 중복 체크 완료');
       setNicknameDuplConfirmed(true);
       console.log(response);
     } catch (error) {
-      customAlert(w1500, '이미 가입된 닉네임입니다.');
+      customTextOnlyAlert(noTimeWarn, '이미 가입된 닉네임입니다.');
       console.log(error);
     }
   };
@@ -108,7 +113,7 @@ function MemberSignUpContainer() {
     e.preventDefault();
 
     if (!memberSignUpInfo.email) {
-      customAlert(w1500, '이메일을 입력해주세요.');
+      customTextOnlyAlert(noTimeWarn, '이메일을 입력해주세요.');
       return;
     }
 
@@ -116,17 +121,17 @@ function MemberSignUpContainer() {
     const validEmail = /^[A-Za-z0-9]+@[A-Za-z]+\.[A-Za-z]+/; // (알파벳, 숫자)@(알파벳).(알파벳)
 
     if (validEmail.test(memberSignUpInfo.email) === false) {
-      customAlert(w1500, '이메일 주소가 올바르지 않습니다.');
+      customTextOnlyAlert(noTimeWarn, '이메일 주소가 올바르지 않습니다.');
       return;
     }
 
     try {
       const response = await requestEmailDuplConfirm(memberSignUpInfo.email);
-      customAlert(s1000, '이메일 중복 체크 완료');
+      customTextOnlyAlert(noTimeSuccess, '이메일 중복 체크 완료');
       setEmailDuplConfirmed(true);
       console.log(response);
     } catch (error) {
-      customAlert(w1500, '이미 가입된 이메일입니다.');
+      customTextOnlyAlert(noTimeWarn, '이미 가입된 이메일입니다.');
       console.log(error);
     }
   };
@@ -136,17 +141,17 @@ function MemberSignUpContainer() {
     e.preventDefault();
 
     if (!memberSignUpInfo.phone) {
-      customAlert(w1500, '휴대폰 번호를 입력해주세요.');
+      customTextOnlyAlert(noTimeWarn, '휴대폰 번호를 입력해주세요.');
       return;
     }
 
     try {
-      const response = await requestPhoneDuplConfirm(memberSignUpInfo.email);
-      customAlert(s1000, '휴대폰 번호 중복 체크 완료');
+      const response = await requestPhoneDuplConfirm(memberSignUpInfo.phone);
+      customTextOnlyAlert(noTimeSuccess, '휴대폰 번호 중복 체크 완료');
       setPhoneDuplConfirmed(true);
       console.log(response);
     } catch (error) {
-      customAlert(w1500, '이미 가입된 휴대폰 번호입니다.');
+      customTextOnlyAlert(noTimeWarn, '이미 가입된 휴대폰 번호입니다.');
       console.log(error);
     }
   };
@@ -154,7 +159,7 @@ function MemberSignUpContainer() {
   /** 이메일 인증하기 버튼 */
   const handleClickAuthEmail = async () => {
     if (!emailDuplConfirmed) {
-      customAlert(w1500, '이메일 중복 체크를 먼저 완료해주세요.');
+      customTextOnlyAlert(noTimeWarn, '이메일 중복 체크를 먼저 완료해주세요.');
       return;
     }
 
@@ -183,7 +188,7 @@ function MemberSignUpContainer() {
       setButtonText(`${minute}분 ${second}초`);
 
       if (time === 0) {
-        customAlert(w1500, '인증 번호 입력 시간이 초과되었습니다.');
+        customTextOnlyAlert(noTimeWarn, '인증 번호 입력 시간이 초과되었습니다.');
         setButtonText('이메일 인증하기');
         setEmailAuthButtonPushed(false);
         setTime(initTime);
@@ -203,12 +208,12 @@ function MemberSignUpContainer() {
     try {
       const response = await requestCheckEmailAuthCode(authNumber, memberSignUpInfo.email);
       console.log('이메일 인증 요청', response);
-      customAlert(s1500, '이메일 인증이 완료되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '이메일 인증이 완료되었습니다.');
       setCheckEmailAuth(true);
       setEmailAuthButtonPushed(false);
     } catch (err) {
       console.error(err);
-      customAlert(w1500, '인증 번호가 일치하지 않습니다.');
+      customTextOnlyAlert(noTimeWarn, '인증 번호가 일치하지 않습니다.');
     }
   };
 
@@ -217,23 +222,23 @@ function MemberSignUpContainer() {
     // ========================== 유효성 검사 ==============================
     /** 중복 검사 했는지 */
     if (!nicknameDuplConfirmed || !emailDuplConfirmed || !phoneDuplConfirmed) {
-      customAlert(w1500, '모든 중복 체크를 완료해주세요.');
+      customTextOnlyAlert(noTimeWarn, '모든 중복 체크를 완료해주세요.');
       return;
     }
     /** 이메일 인증 여부 */
     if (!checkEmailAuth) {
-      customAlert(w1500, '이메일 인증을 완료해주세요.');
+      customTextOnlyAlert(noTimeWarn, '이메일 인증을 완료해주세요.');
       return;
     }
     /** 모든 정보를 입력 했는지 */
     const isEmpty = Object.values(memberSignUpInfo).some((value) => value === '' || value === null);
     if (isEmpty) {
-      customAlert(w1500, '모든 정보를 입력해주세요.');
+      customTextOnlyAlert(noTimeWarn, '모든 정보를 입력해주세요.');
       return;
     }
     /** 비밀번호와 비밀번호 확인 값이 같은지 */
     if (memberSignUpInfo.password !== memberSignUpInfo.passwordCheck) {
-      customAlert(w1500, '비밀번호와 비밀번호 확인 값이 다릅니다.');
+      customTextOnlyAlert(noTimeWarn, '비밀번호와 비밀번호 확인 값이 다릅니다.');
       return;
     }
     // ===================================================================
@@ -242,8 +247,27 @@ function MemberSignUpContainer() {
 
     try {
       const response = await requestMemberSignUp(memberSignUpInfo);
-      console.log(response);
-      navigate('/');
+      console.log('개인 회원가입 요청 response', response);
+      requestEmailLogin();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const requestEmailLogin = async () => {
+    const userInfo = { email: memberSignUpInfo.email, password: memberSignUpInfo.password };
+    try {
+      const response = await requestSignIn(userInfo);
+      if (response.status === 200) {
+        const { data } = response;
+        console.log(data);
+
+        localStorage.setItem('accessToken', data.token.accessToken);
+        localStorage.setItem('refreshToken', data.token.refreshToken);
+
+        dispatch(setUserLoginState({ isLogin: true, userType: data.userType, userId: data.userId, username: data.username, profileImgUrl: data.profileImgUrl }));
+        navigate('/', { replace: true });
+      }
     } catch (error) {
       console.error(error);
     }
@@ -255,14 +279,14 @@ function MemberSignUpContainer() {
         <div className={styles.contents}>
           <h1 className={styles.title}>개인 회원가입</h1>
           <div className={styles['form-div']}>
-            <div id="form-div-inner">
+            <div className={styles['form-div-inner']}>
               <p>이름</p>
               <TextField
+                color="warning"
                 name="name"
                 margin="dense"
                 placeholder="이름을 입력해주세요."
                 variant="outlined"
-                size="small"
                 sx={{ background: 'white' }}
                 onChange={onChangeHandler}
               />
@@ -278,11 +302,11 @@ function MemberSignUpContainer() {
               {!checkEmailAuth && (
                 <div className={styles['not-shadow']}>
                   <TextField
+                    color="warning"
                     name="email"
                     margin="dense"
                     placeholder="이메일을 입력해주세요."
                     variant="outlined"
-                    size="small"
                     sx={{ background: 'white' }}
                     onChange={onChangeHandler}
                   />
@@ -309,12 +333,12 @@ function MemberSignUpContainer() {
               <p>비밀번호</p>
               <div className={styles['pw-div']}>
                 <TextField
+                  color="warning"
                   name="password"
                   type={!passwordVisibility ? 'password' : ''}
                   margin="dense"
                   placeholder="비밀번호를 입력해주세요."
                   variant="outlined"
-                  size="small"
                   onChange={onChangeHandler}
                   sx={{ background: 'white' }}
                 />{' '}
@@ -340,12 +364,12 @@ function MemberSignUpContainer() {
               <p>비밀번호 확인</p>
               <div className={styles['pw-div']}>
                 <TextField
+                  color="warning"
                   name="passwordCheck"
                   type={!passwordCheckVisibility ? 'password' : ''}
                   margin="dense"
                   placeholder="비밀번호를 입력해주세요."
                   variant="outlined"
-                  size="small"
                   onChange={onChangeHandler}
                   sx={{ background: 'white' }}
                 />
@@ -376,12 +400,12 @@ function MemberSignUpContainer() {
                 )}
               </p>
               <TextField
+                color="warning"
                 sx={{ background: 'white' }}
                 name="nickname"
                 margin="dense"
                 placeholder="닉네임을 입력해주세요."
                 variant="outlined"
-                size="small"
                 onChange={onChangeHandler}
               />
 
@@ -394,12 +418,12 @@ function MemberSignUpContainer() {
                 )}
               </p>
               <TextField
+                color="warning"
                 sx={{ background: 'white' }}
                 name="phone"
                 margin="dense"
                 placeholder="휴대폰 번호를 입력해주세요."
                 variant="outlined"
-                size="small"
                 value={inputValue}
                 onChange={onChangeHandler}
               />
