@@ -54,7 +54,6 @@ public class MemberServiceImpl implements MemberService {
     private final AwsS3Uploader awsS3Uploader;
     private final FollowRepository followRepository;
     private final FundingRepository fundingRepository;
-    private final ReportRepository reportRepository;
     private final DonationRepository donationRepository;
     private final WishRepository wishRepository;
     private final PaymentRepository paymentRepository;
@@ -71,7 +70,14 @@ public class MemberServiceImpl implements MemberService {
         });
 
         request.encryptPassword(passwordEncoder);
-        Member member = request.toMember();
+
+        MultipartFile profileImg = request.getProfileImg();
+        String filePath = awsS3Uploader.upload(profileImg, "user");
+        Attach profile = request.getProfile(filePath);
+
+        Member member = request.toMember(profile);
+
+        attachRepository.save(profile);
         memberRepository.save(member);
         badgeService.initBadges(member);
     }
@@ -124,6 +130,7 @@ public class MemberServiceImpl implements MemberService {
                 member.updateProfile(profile);
             } else {
                 log.info("기존 프로필사진 업데이트 {} ==> {}", profile.getName(), fileName);
+                awsS3Uploader.delete(profile.getPath(), "user");
                 profile.update(fileName, filePath);
             }
         }

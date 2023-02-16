@@ -32,10 +32,9 @@
       @include mobile {
       }
 
-      & h1 {
-        font-size: 2.25rem;
-        font-weight: bold;
-        margin: 0 0 2rem 0;
+      & img {
+        width: 10rem;
+        margin: 0 0 0.5rem -1rem;
 
         @include mobile {
           margin: 1rem 0 2rem 0;
@@ -44,9 +43,11 @@
 
       & nav {
         margin-bottom: 2rem;
+
         & a {
           margin-right: 1rem;
           text-decoration: none;
+          color: rgb(76, 76, 76);
         }
       }
 
@@ -59,7 +60,8 @@
       & p {
         margin-bottom: 0.5rem;
         font-size: 1.4rem;
-        color: rgba(0, 0, 0, 0.6);
+        color: rgba(236, 153, 75, 0.8);
+        line-height: 2rem;
       }
 
       @include mobile {

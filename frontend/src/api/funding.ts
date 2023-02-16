@@ -1,6 +1,6 @@
 import { async } from 'q';
 // import { commentType } from '../components/Cards/CommentCardSubmit';
-import { FundingInterface, FundingReportInterface } from '../types/funding';
+import { FundingInterface } from '../types/funding';
 import { http } from './axios';
 
 /**
@@ -50,10 +50,8 @@ export const requestModifyFunding = async (fundIdx: string, fundingData: Funding
  * @method GET
  */
 
-export const requestFundingList = async (size: number) => {
-  const res = await http.get(`funding/?size=${size}`);
-  console.log(res);
-
+export const requestFundingList = async (categoryId?: string, keyword?: string, postType?: string, currentPage?: number, size?: number) => {
+  const res = await http.get(`funding/?categoryId=${categoryId}&keyword=${keyword}&postType=${postType}&page=${currentPage}&size=${size}`);
   return res;
 };
 
@@ -191,10 +189,18 @@ export const requestFundingReport = async (fundingId?: string) => {
  * @name 펀딩보고서 작성
  * @param fundingId
  */
-export const fundingReportPost = async (fundingId?: string, reportData?: FundingReportInterface) => {
-  const formData = new FormData();
-  formData.append('content', reportData?.content as string);
-  formData.append('reportDetailResponseList', new Blob([JSON.stringify(reportData?.reportDetailResponseList)]));
-  const res = await http.post(`funding/${fundingId}/report`, formData);
-  console.log('전송된 report res', res);
+export const fundingReportPost = async (fundingId: string, reportData: File) => {
+  // const formData = new FormData();
+
+  // formData.append('receiptFile', new Blob());
+
+  // const config = {
+  //   headers: {
+  //     'Content-Type': 'multipart/form-data',
+  //   },
+  // };
+
+  const res = await http.post(`funding/${fundingId}/report`, reportData);
+
+  return res;
 };

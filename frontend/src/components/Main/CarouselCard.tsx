@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import Slider from 'react-slick';
 import { NavLink } from 'react-router-dom';
 import 'slick-carousel/slick/slick.css';
@@ -6,13 +6,17 @@ import 'slick-carousel/slick/slick-theme.css';
 import styles from './CarouselCard.module.scss';
 import { requestFundingList } from '../../api/funding';
 
+interface Props {
+  setFundingLength: Dispatch<SetStateAction<number>>;
+}
+
 type fundCarouselType = {
   id: number;
   title: string;
   thumbnail: string;
 };
 
-export function CarouselCard() {
+export function CarouselCard({ setFundingLength }: Props) {
   const [fundDataList, setFundDataList] = useState<fundCarouselType[]>([
     {
       id: 0,
@@ -34,36 +38,57 @@ export function CarouselCard() {
     responsive: [
       // 반응형 옵션
       {
-        breakpoint: 480, // (숫자)px 이하일 경우
+        breakpoint: 1600, // (숫자)px 이하일 경우
         settings: {
-          slidesToShow: 1,
+          slidesToShow: 4,
           arrows: true,
         },
       },
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 3,
+          arrows: true,
+        },
+      },
+      {
+        breakpoint: 900,
+        settings: {
+          slidesToShow: 2,
+          arrows: true,
+        },
+      },
+      {
+        breakpoint: 550,
+        settings: {
+          slidesToShow: 1,
+          arrows: false,
+        },
+      },
     ],
-  };
-
-  const getRecentFundList = async () => {
-    try {
-      const res = await requestFundingList(10);
-      console.log('캐러셀 데이터', res.data.fundingListResponses.content);
-      setFundDataList(res.data.fundingListResponses.content);
-      console.log('ㅇㅇ', fundDataList);
-    } catch (err) {
-      console.log(err);
-    }
   };
 
   useEffect(() => {
     getRecentFundList();
   }, []);
 
+  const getRecentFundList = async () => {
+    try {
+      const res = await requestFundingList('', '', '', 0, 10);
+      console.log('캐러셀 용 펀딩 리스트 요청', res);
+      setFundingLength(res.data.totalElements);
+      setFundDataList([...res.data.fundingListResponses]);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
     <div>
       <Slider {...settings}>
-        {fundDataList.map((data, i) => (
+        {fundDataList.map((data) => (
           <NavLink to={`/funding/detail/${data.id}`} className={styles.box} key={data.id}>
-            <img className={styles.boxImg} src={data.thumbnail} alt="Img" />
+            <img className={styles.boxImg} src={data.thumbnail} alt="Funding Thumbnail" />
             <div className={styles.boxImgLabel}>{data.title.length > 15 ? `${data.title.substring(0, 15)}...` : data.title}</div>
           </NavLink>
         ))}

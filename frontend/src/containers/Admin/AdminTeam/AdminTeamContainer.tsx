@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
+import Swal from 'sweetalert2';
 import MenuItem from '@mui/material/MenuItem';
 import { AiOutlineSearch, AiOutlineClose, AiOutlineReload } from 'react-icons/ai';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -11,7 +12,7 @@ import { RootState } from '../../../store/store';
 import { requestTeams, requestWithdrawTeam } from '../../../api/admin';
 import { AdminTeamInterface } from '../../../types/user';
 import styles from './AdminTeamContainer.module.scss';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 export enum TeamState {
   All = '전체',
@@ -88,8 +89,8 @@ function AdminTeamContainer() {
   };
 
   /** 필수 파일 확인 버튼 */
-  const handleFileBtn = (teamId: number, vf: string, pf: string) => {
-    dispatch(openModal({ isOpen: true, userId: teamId.toString(), vmsFileUrl: vf, performFileUrl: pf, deniedNum: '' }));
+  const handleFileBtn = (teamId: number, vf: string, pf: string, st: string) => {
+    dispatch(openModal({ isOpen: true, userId: teamId.toString(), vmsFileUrl: vf, performFileUrl: pf, deniedNum: '', teamState: st }));
   };
 
   /** 거부 페이지 이동 함수 */
@@ -104,7 +105,19 @@ function AdminTeamContainer() {
   const teamStateSet = Object.values(TeamState);
 
   const handleWithdrawBtn = (e: React.MouseEvent<SVGElement>, id: number) => {
-    withdrawTeam(id);
+    Swal.fire({
+      text: '해당 단체를 탈퇴 처리 하시겠습니까?',
+      showConfirmButton: false,
+      showDenyButton: true,
+      showCancelButton: true,
+      denyButtonText: `확인`,
+      denyButtonColor: 'rgba(211, 79, 4, 1)',
+      cancelButtonText: '취소',
+    }).then((result) => {
+      if (result.isDenied) {
+        withdrawTeam(id);
+      }
+    });
   };
 
   const handleChangePage = (e: React.ChangeEvent<any>, selectedPage: number) => {
@@ -132,7 +145,7 @@ function AdminTeamContainer() {
     try {
       const response = await requestWithdrawTeam(id);
       console.log(response);
-      customAlert(s1000, '단체 탈퇴 처리가 완료되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '단체 탈퇴 처리가 완료되었습니다.');
       requestPageTeams();
     } catch (error) {
       console.error(error);
@@ -189,12 +202,12 @@ function AdminTeamContainer() {
               <p>{data.phone}</p>
             </li>
             <li>
-              {data.userType === 'TEAM_WAIT' && (
+              {data.userType !== 'TEAM_RESIGN' && (
                 <button
                   type="button"
                   className={styles['file-btn']}
                   onClick={(e) => {
-                    handleFileBtn(data.id, data.vmsFileUrl, data.performFileUrl);
+                    handleFileBtn(data.id, data.vmsFileUrl, data.performFileUrl, data.userType);
                   }}
                 >
                   확인

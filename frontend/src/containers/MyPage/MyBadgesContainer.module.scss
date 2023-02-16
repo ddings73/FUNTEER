@@ -49,16 +49,15 @@
               filter: grayscale(1);
             }
 
-            & .badge-description{
+            & .badge-description {
               font-family: 'establishRoomNo703OTF' !important;
               font-weight: bold;
               letter-spacing: 3px;
             }
           }
-       
 
           .achieve {
-            filter: grayscale(0);
+            filter: grayscale(0) !important;
             opacity: 1;
           }
         }

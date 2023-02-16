@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TextField from '@mui/material/TextField';
+import Swal from 'sweetalert2';
 import { AxiosError } from 'axios';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -9,7 +10,7 @@ import { Button } from '@mui/material';
 import Pagination from '@mui/material/Pagination';
 import styles from './AdminFundingContainer.module.scss';
 import { requestAdminFundingList, requestFundingAccept } from '../../../api/admin';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 enum FundingState {
   All = '전체',
@@ -137,7 +138,19 @@ function AdminFundingContainer() {
   };
 
   const handleStateChange = (id: number, state: string, e: SelectChangeEvent) => {
-    requestChangeState(id, e.target.value, state);
+    Swal.fire({
+      text: '펀딩 상태를 변경 하시겠습니까?',
+      showConfirmButton: false,
+      showDenyButton: true,
+      showCancelButton: true,
+      denyButtonText: `확인`,
+      denyButtonColor: 'rgba(211, 79, 4, 1)',
+      cancelButtonText: '취소',
+    }).then((result) => {
+      if (result.isDenied) {
+        requestChangeState(id, e.target.value, state);
+      }
+    });
   };
 
   /** 상태 변경 요청 */
@@ -147,7 +160,7 @@ function AdminFundingContainer() {
         try {
           const response = await requestFundingAccept(id, false);
           console.log(response);
-          customAlert(s1000, '펀딩 상태 변경 완료');
+          customTextOnlyAlert(noTimeSuccess, '펀딩 상태 변경 완료');
           setPage(1);
           requestPageFundings();
         } catch (error: unknown) {
@@ -160,7 +173,7 @@ function AdminFundingContainer() {
         try {
           const response = await requestFundingAccept(id, true);
           console.log(response);
-          customAlert(s1000, '펀딩 상태 변경 완료');
+          customTextOnlyAlert(noTimeSuccess, '펀딩 상태 변경 완료');
           setPage(1);
           requestPageFundings();
         } catch (error: unknown) {

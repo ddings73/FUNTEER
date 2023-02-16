@@ -4,12 +4,11 @@ import FavoriteIcon from '@mui/icons-material/Favorite';
 import { Link, NavLink, useNavigate, useParams } from 'react-router-dom';
 import { useInView } from 'react-intersection-observer';
 import { Box, CircularProgress, Fab, Tab, Tabs } from '@mui/material';
-import Tooltip, { TooltipProps, tooltipClasses } from '@mui/material/Tooltip';
 import { styled } from '@material-ui/styles';
 import TextField from '@mui/material/TextField';
-import BeenhereIcon from '@mui/icons-material/Beenhere';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import { useDispatch } from 'react-redux';
+import { Viewer } from '@toast-ui/react-editor';
 import FundSummary from '../../components/Cards/FundSummary';
 import styles from './FundingDetailContainer.module.scss';
 import { fundingJoin, requestCommentList, requestFundingDetail, requestFundingReport, requestNextCommentList, requestWish } from '../../api/funding';
@@ -22,9 +21,11 @@ import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import { requestUserProfile } from '../../api/user';
 import { requestTeamAccountInfo } from '../../api/team';
 import { requestCreateSession } from '../../api/live';
-import { reportModalType } from '../../types/modal';
 import ReportModal from '../../components/Modal/ReportModal';
 import { openModal } from '../../store/slices/reportModalSlice';
+import PdfViewer from '../../components/Funding/PdfViewer';
+import { stringToSeparator } from '../../utils/convert';
+import { customTextOnlyAlert, noTimeSuccess } from '../../utils/customAlert';
 
 export interface ResponseInterface {
   title: string;
@@ -73,6 +74,7 @@ type descriptionType = {
 
 interface reportInterface {
   content?: string;
+  liveUrl?: string;
   regDate?: string;
   reportDetailResponseList: responseListType[];
 }
@@ -121,7 +123,6 @@ export function FundingDetailContainer() {
     try {
       const response = await requestFundingDetail(fundIdx);
       console.log('res: ', response);
-      console.log('data res: ', response.data);
       setBoard(response.data);
     } catch (error) {
       console.log(error);
@@ -153,7 +154,6 @@ export function FundingDetailContainer() {
       const { data } = await requestCommentList(fundIdx, 'regDate,DESC');
       setCommentList([...data.comments.content]);
       setCommentCount(data.comments.totalElements);
-      console.log('댓글 개수: ', data.comments.totalElements);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
       setIsLoading(false);
@@ -168,7 +168,6 @@ export function FundingDetailContainer() {
     try {
       setNextLoading(true);
       const { data } = await requestNextCommentList(currentPage, fundIdx, 'regDate,DESC');
-      console.log(data.comments);
       setCommentList([...commentList, ...data.comments.content]);
       setCurrentPage(data.comments.number);
       setIsLastPage(data.comments.last);
@@ -185,6 +184,7 @@ export function FundingDetailContainer() {
   const [toggled, setToggled] = useState<boolean>(false);
   function handleDrawer() {
     setToggled(!toggled);
+    setPaying('');
   }
 
   // 엔터키 input 완성
@@ -230,9 +230,26 @@ export function FundingDetailContainer() {
 
   async function fundingHandler() {
     console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불');
+
     try {
+      if (Number(paying) < 1000) {
+        customTextOnlyAlert(noTimeSuccess, `최소펀딩 금액은 1000원부터 가능합니다.`);
+        return;
+      }
+      if (Number(paying) > Number(money)) {
+        customTextOnlyAlert(noTimeSuccess, `마일리지가 모자랍니다.`);
+        return;
+      }
+      if (Number(paying) % 100 !== 0) {
+        customTextOnlyAlert(noTimeSuccess, `펀딩 후원은 100원 단위로 가능합니다.`);
+        return;
+      }
       await fundingJoin(paying, fundIdx);
-      alert(`${paying}원으로 펀딩을 완료했습니다!`);
+      customTextOnlyAlert(noTimeSuccess, `${paying}원으로 펀딩을 완료했습니다!`);
+      setToggled(!toggled);
+      setPaying('');
+      fetchData();
+      requestMoneyInfo();
     } catch (error) {
       console.log(error);
     }
@@ -247,6 +264,7 @@ export function FundingDetailContainer() {
   // 보고서 탭
   const [report, setReport] = useState<reportInterface>({
     content: '',
+    liveUrl: '',
     regDate: '',
     reportDetailResponseList: [
       {
@@ -260,7 +278,6 @@ export function FundingDetailContainer() {
     try {
       const response = await requestFundingReport(fundIdx);
       console.log('Report res: ', response);
-      console.log('Report data res: ', response.data);
       setReport(response.data);
     } catch (error) {
       console.log(error);
@@ -381,6 +398,7 @@ export function FundingDetailContainer() {
             TabIndicatorProps={{
               sx: { backgroundColor: '#E6750A' },
             }}
+            sx={{ height: '50px' }}
           >
             <Tab value="one" label="프로젝트 상세 계획" />
             <Tab value="two" label="프로젝트 보고" />
@@ -388,53 +406,27 @@ export function FundingDetailContainer() {
         </Box>
         <div className={styles.mainContent}>
           {value === 'one' ? (
-            <div>
-              <div className={styles.fundingPlanner}>
-                <p className={styles.planTitle}>펀딩 금액에 따른 봉사계획</p>
-                <p className={styles.planSubTitle}>마우스를 올려 단계별 계획을 확인하세요!</p>
-                <div className={styles.planTag}>
-                  <BeenhereIcon className={styles.iconTag} sx={{ visibility: 'hidden' }} />
-                  <Tooltip title={levelOneData()} placement="top">
-                    <BeenhereIcon className={styles.iconTag} />
-                  </Tooltip>
-                  <Tooltip title={levelTwoData()} placement="top">
-                    <BeenhereIcon className={styles.iconTag} />
-                  </Tooltip>
-                  <Tooltip title={levelThreeData()} placement="top">
-                    <BeenhereIcon className={styles.iconTag} />
-                  </Tooltip>
-                </div>
-                <div className={styles.progressBar}>
-                  <div className={styles.status} style={{ width: `${calc(board.targetMoneyListLevelThree.amount as string, board.currentFundingAmount)}%` }}>
-                    <Tooltip title={`현재 모금 금액: ${board.currentFundingAmount}원`} placement="bottom">
-                      <p className={styles.statusNum}>{calc(board.targetMoneyListLevelThree.amount as string, board.currentFundingAmount)}%</p>
-                    </Tooltip>
-                  </div>
-                </div>
-              </div>
-              <div dangerouslySetInnerHTML={{ __html: board.content }} className={styles.mainContentInner} />
-            </div>
+            <div className={styles.mainContentInner}>{board.content && <Viewer initialValue={board.content} />}</div>
           ) : (
             <div className={styles.mainContentInner}>
               <p>{report.content}</p>
               <p>{report.regDate}</p>
-              <div className={styles.reslists}>
-                {report.reportDetailResponseList.map((resList, i) => (
-                  <div key={resList.description}>
-                    <h1>{i + 1}번째 보고서 총액</h1>
-                    <p>{resList.amount}원</p>
-                    <p>보고서 설명</p>
-                    <p>{resList.description}</p>
-                  </div>
-                ))}
-              </div>
+              <video className={styles.video} controls autoPlay loop>
+                <source src={report.liveUrl} type="video/webm" />
+                <source src={report.liveUrl} type="video/mp4" />
+                <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
+              </video>
+              <div className={styles.reslists}>123</div>
             </div>
           )}
         </div>
-        <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
+        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
+        <PdfViewer pdfUrl="http://www.example.com/myfile.pdf" />
+        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard} style={{ width: '90%', marginLeft: '6%' }}>
           <TeamInfo {...board.team} />
         </div>
+        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
         <DetailArcodian />
         <div className={styles.mainCommentSubmit}>
           <p className={styles.commentHead}>응원 댓글 등록({commentCount})</p>
@@ -461,14 +453,17 @@ export function FundingDetailContainer() {
         </div>
         {currentPage >= 0 ? <div ref={ref} /> : ''}
       </div>
-      <Fab
-        aria-label="add"
-        sx={{ color: 'white', backgroundColor: 'orange !important', position: 'fixed', bottom: '3%', right: '3%', width: '60px', height: '60px' }}
-        onClick={() => handleDrawer()}
-        className={styles.fabToggle}
-      >
-        <LocalAtmIcon />
-      </Fab>
+      {isLogin && userType === 'NORMAL' && (
+        <Fab
+          aria-label="add"
+          sx={{ color: 'white', backgroundColor: 'orange !important', position: 'fixed', bottom: '3%', right: '3%', width: '60px', height: '60px' }}
+          onClick={() => handleDrawer()}
+          className={styles.fabToggle}
+        >
+          <LocalAtmIcon />
+        </Fab>
+      )}
+
       <Box
         sx={{
           position: 'fixed',
@@ -489,13 +484,18 @@ export function FundingDetailContainer() {
             <TextField
               label="금액 입력"
               id="custom-css-outlined-input"
-              type="number"
+              type="text"
               size="small"
               sx={{ margin: '0 20px', backgroundColor: 'white' }}
               // eslint-disable-next-line
               onKeyUp={handleKeyUp}
               color="warning"
-              onChange={(e) => setPaying(e.target.value)}
+              onChange={(e) => {
+                const { value } = e.target;
+                const regex = /[^0-9]/g;
+                const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
+                setPaying(separatorValue);
+              }}
               value={paying}
             />
           </div>
@@ -505,7 +505,7 @@ export function FundingDetailContainer() {
             펀딩 참여하기
           </button>
           <div className={styles.mileText}>
-            <p>현재 잔액: {money}원</p>
+            <p>현재 잔액: {stringToSeparator(String(money))}원</p>
             <Link to="/charge" className={styles.milLink}>
               <p className={styles.milea}>마일리지 충전</p>
             </Link>

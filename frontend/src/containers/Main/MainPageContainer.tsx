@@ -1,33 +1,42 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Fade, Tooltip } from '@mui/material';
+import Lottie from 'lottie-react';
 import styles from './MainPageContainer.module.scss';
 import InfoCard from '../../components/Main/InfoCard';
 import FunList from '../../components/Main/funList';
-import LiveList from '../../components/Main/liveList';
-import ast from '../../assets/images/mainPage/ast.png';
-import planet from '../../assets/images/mainPage/planet_funteer.png';
-import background from '../../assets/images/mainPage/background.png';
-import wave from '../../assets/images/mainPage/wave.svg';
-import wave2 from '../../assets/images/mainPage/wave2.svg';
-import { http } from '../../api/axios';
+import ast from '../../assets/images/mainPage/ast.webp';
+import planet from '../../assets/images/mainPage/planet_funteer.webp';
+import background from '../../assets/images/mainPage/background.webp';
+import spaceLottie from '../../lotties/107693-space.json';
 
 export function MainPageContainer() {
-  
+  const navigate = useNavigate();
   const [scrollPosition, setScrollPosition] = useState(0);
   const updateScroll = () => {
     setScrollPosition(window.scrollY || document.documentElement.scrollTop);
+  };
+
+  useEffect(() => {
+    window.addEventListener('scroll', updateScroll);
+
+    return () => {
+      window.removeEventListener('scroll', updateScroll);
+    };
+  }, []);
+
+  const goServiceDetail = () => {
+    navigate('/service');
   };
 
   // 우주인에 손을 올려보세요
   const tooltipText = () => (
     <p style={{ lineHeight: '200%', fontSize: '1.1em', whiteSpace: 'pre-line', textAlign: 'center' }}>
       {`우주여행을 하는 우주선과 우주비행사들은 
-      모두를 대신해 그들의 염원과 희망을 품고 
-      우주로 떠납니다.
- 우리 Funteer도 여러분을 대신해 
- 나눔을 실천하는 봉사자분들을 돕고 응원합니다.      
-      `}
+        모두를 대신해 그들의 염원과 희망을 품고 
+        우주로 떠납니다.
+        우리 Funteer도 여러분을 대신해 
+        나눔을 실천하는 봉사자분들을 돕고 응원합니다.`}
     </p>
   );
 
@@ -46,7 +55,7 @@ export function MainPageContainer() {
             당신의 착한 마음을 <br /> <span className={styles.logoStrong}>FUNTEER</span>가 응원합니다{' '}
           </p>
           <p className={styles.subLogoTypo}>펀딩을 통해 접하는 새로운 봉사</p>
-          <button className={styles.serviceBtn} type="button">
+          <button className={styles.serviceBtn} type="button" onClick={goServiceDetail}>
             서비스 상세보기
           </button>
         </div>
@@ -62,21 +71,19 @@ export function MainPageContainer() {
             </Tooltip>
           </div>
         </div>
-        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 500 ? '1' : '0' }} alt="back" />
+        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 1000 ? '1' : '0' }} alt="back" />
       </div>
       <div className={styles.infoBanner}>
-        <InfoCard />
+        <Lottie className={styles.lottieSpace} animationData={spaceLottie} style={{ opacity: scrollPosition < 1000 ? '1' : '0' }} />
+        {/* eslint-disable-next-line */}
+        <InfoCard scrollPosition={scrollPosition} />
       </div>
       <div className={styles.fundLists}>
-        <FunList />
+        <FunList scrollPosition={scrollPosition} />
       </div>
-      <div className={styles.volunLists}>
-        <LiveList />
-      </div>
-      <div className={styles.donate}>123</div>
+      <div className={styles.donate}> </div>
     </div>
   );
 }
 
 export default MainPageContainer;
-

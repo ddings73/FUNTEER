@@ -33,16 +33,6 @@ export interface FundingInterface {
   targetMoneyLevelThree: targetMoneyLevelType;
 }
 
-export interface FundingReportInterface {
-  content: string;
-  reportDetailResponseList: responseListType[];
-}
-
-export type responseListType = {
-  amount: string;
-  description: string;
-};
-
 export type targetMoneyLevelType = {
   amount: string;
   targetMoneyType: string;

@@ -1,20 +1,34 @@
 package com.yam.funteer.funding.dto.response;
 
-import org.springframework.data.domain.Page;
 
+import com.yam.funteer.funding.entity.Funding;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor
 public class FundingListPageResponse {
 
-	private Page<FundingListResponse> fundingListResponses;
-
-	private Long totalFundingCount;
-
+	private List<FundingListResponse> fundingListResponses;
+	private long totalElements;
+	private int totalPages;
+	private int number;
 	private int successFundingCount;
 
 	private Long inProgressFundingAmount;
+
+	public static FundingListPageResponse of(Page<Funding> fundingPage, int successFundingCount, Long inProgressFundingAmount){
+		List<FundingListResponse> responseList = fundingPage.stream().map(FundingListResponse::from).collect(Collectors.toList());
+		return new FundingListPageResponse(responseList,
+				fundingPage.getTotalElements(),
+				fundingPage.getTotalPages(),
+				fundingPage.getNumber(),
+				successFundingCount,
+				inProgressFundingAmount);
+	}
 
 }

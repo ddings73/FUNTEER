@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import CountUp from 'react-countup';
 import { Button } from '@mui/material';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
@@ -6,20 +7,15 @@ import AccordionDetails from '@mui/material/AccordionDetails';
 import Typography from '@mui/material/Typography';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Viewer } from '@toast-ui/react-editor';
-import donationThumbnail from '../../assets/images/donation/donationImg.png';
 import styles from './DonationContainer.module.scss';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import ListTable from '../../components/Table/ListTable';
 import { requestCurrentDonation } from '../../api/donation';
 import { requestUserProfile } from '../../api/user';
 import { openModal } from '../../store/slices/donateModalSlice';
-
-/**
- * * 유저가 현재 가진돈은 계산해놨음
- * * 기부하기 클릭 시 모달같은거 띄워서 얼마 기부할 지 체크
- *  * 돈이 부족할때 처리
- *
- */
+import { requestTeamProfileInfo } from '../../api/team';
+import { customTextOnlyAlert, noTimeWarn } from '../../utils/customAlert';
+import logo from '../../assets/images/logo.png';
 
 type ResponseInterface = {
   id: number;
@@ -33,7 +29,9 @@ type ResponseInterface = {
 
 function DonationContainer() {
   const dispatch = useAppDispatch();
+  const isLogin = useAppSelector((state) => state.userSlice.isLogin);
   const userId = useAppSelector((state) => state.userSlice.userId);
+  const userType = useAppSelector((state) => state.userSlice.userType);
   const [userMoney, setUserMoney] = useState<number>(0);
   const [donBoard, setDonBoard] = useState<ResponseInterface>({
     id: 0,
@@ -44,6 +42,8 @@ function DonationContainer() {
     currentAmount: '',
     startDate: '',
   });
+  const target = parseInt(donBoard.targetAmount, 10).toLocaleString('ko-KR');
+  const diff = (parseInt(donBoard.targetAmount, 10) - parseInt(donBoard.currentAmount, 10)).toLocaleString('ko-KR');
 
   useEffect(() => {
     fetchData();
@@ -51,6 +51,10 @@ function DonationContainer() {
   }, []);
 
   const onClickDonation = async () => {
+    if (!isLogin) {
+      customTextOnlyAlert(noTimeWarn, '로그인이 필요한 서비스입니다.');
+      return;
+    }
     dispatch(openModal({ isOpen: true, postId: donBoard.id, userId: parseInt(userId, 10), mileage: userMoney }));
   };
 
@@ -68,10 +72,16 @@ function DonationContainer() {
   // 회원 마일리지 초기 설정
   const setInitUserMoney = async () => {
     try {
-      const response = await requestUserProfile(userId);
-      console.log(response.data.money);
-
-      setUserMoney(response.data.money);
+      let response;
+      if (userType === 'NORMAL' || userType === 'KAKAO') {
+        response = await requestUserProfile(userId);
+        console.log(response.data.money);
+        setUserMoney(response.data.money);
+      } else if (userType === 'TEAM') {
+        response = await requestTeamProfileInfo(userId);
+        console.log(response.data.money);
+        setUserMoney(response.data.money);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -81,7 +91,10 @@ function DonationContainer() {
     <div className={styles.container}>
       <div className={styles.contents}>
         <div className={styles.contentsWrapper}>
-          <p className={styles.contentTitle}>진행중인 기부</p>
+          <p className={styles.contentTitle}>
+            <img src={logo} alt="logo" />
+            에서 진행중인 기부 행사입니다.
+          </p>
           <div className={styles['donation-box']}>
             <div className={styles.left}>
               <figure>
@@ -97,8 +110,15 @@ function DonationContainer() {
               </Button>
             </div>
           </div>
+          <div className={styles.inspire}>
+            <p>
+              목표 금액 <span>{target}</span>원까지 <span>{diff}</span>원 남았습니다.
+            </p>
+          </div>
           <div className={styles['amount-box']}>
-            <p>총 적립금 {parseInt(donBoard.currentAmount, 10).toLocaleString('ko-KR')}원</p>
+            <p>
+              총 후원금 <CountUp start={0} end={parseInt(donBoard.currentAmount, 10)} separator="," duration={4} /> 원
+            </p>
           </div>
           <div className={styles.finishedTable}>
             <Accordion sx={{ border: '2px solid rgb(175, 175, 175, 0.5)', marginBottom: '5rem' }}>

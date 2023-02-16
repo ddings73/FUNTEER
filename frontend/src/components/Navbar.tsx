@@ -18,23 +18,21 @@ import { styled } from '@mui/material/styles';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 /*eslint-disable*/
 /*기타 Imports */
-import { Link, Outlet, NavLink, useNavigate, Navigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.scss';
 /* 이미지 import */
-import logoImg from '../assets/images/FunteerLogo.png';
+import logoImg from '../assets/images/headerlogo.webp';
 /*로그인 Import */
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import userSlice, { isLoginState, resetLoginState, setUserLoginState } from '../store/slices/userSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppSelector } from '../store/hooks';
+import { resetLoginState } from '../store/slices/userSlice';
+import { useDispatch } from 'react-redux';
 import NavbarMenuData from './NavbarMenuData';
 import { requestLogout } from '../api/user';
-import { openModal } from '../store/slices/modalSlice';
 import { Chip } from '@mui/material';
 import { requestTeamAccountInfo } from '../api/team';
 import { http } from '../api/axios';
-import { off } from 'process';
-import { type } from 'os';
-import { string } from 'yargs';
+import { BsFillBellFill } from 'react-icons/bs';
+import { customTextOnlyAlert, DefaultAlert } from '../utils/customAlert';
 
 const pages = NavbarMenuData;
 const settings = ['마이페이지', '나의 펀딩 내역', '도네이션 내역', '1:1 문의 내역', '로그아웃'];
@@ -63,6 +61,22 @@ function ResponsiveAppBar() {
     setAnchorEl(null);
   };
 
+  /** 작은 화면 네브바 ===================================== */
+  const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
+  const open2 = Boolean(anchorEl2);
+  const handleClick2 = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl2(event.currentTarget);
+  };
+  const handleClose2 = () => {
+    setAnchorEl2(null);
+  };
+
+  const onClickSmallMenuItem = (path: string) => {
+    handleClose2();
+    clickNavigate(path);
+  };
+  // ==========================================================
+
   const navigateTo = useNavigate();
   const dispatch = useDispatch();
   function clickNavigate(address: string) {
@@ -72,9 +86,6 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [ishovered, setIsHovered] = useState(false);
 
-  const updateScroll = () => {
-    setScrollPosition(window.scrollY || document.documentElement.scrollTop);
-  };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -100,7 +111,8 @@ function ResponsiveAppBar() {
       dispatch(resetLoginState());
       localStorage.removeItem('accessToken');
       localStorage.removeItem('refreshToken');
-      alert('로그아웃 되었습니다.');
+      // alert('로그아웃 되었습니다.');
+      customTextOnlyAlert(DefaultAlert, '로그아웃 되었습니다.');
       navigateTo('/');
     } catch (error) {
       console.log(error);
@@ -146,14 +158,6 @@ function ResponsiveAppBar() {
     }
   }, [userType]);
 
-  useEffect(() => {
-    window.addEventListener('scroll', updateScroll);
-    console.log(scrollPosition);
-    return () => {
-      window.removeEventListener('scroll', updateScroll);
-    };
-  });
-
   const requestGetAlarms = async () => {
     setEventList([]);
     try {
@@ -186,8 +190,6 @@ function ResponsiveAppBar() {
         withCredentials: true,
       });
 
-      console.log(eventSource);
-
       // 최초 연결
       eventSource.onopen = (event) => {
         setListening(true);
@@ -197,14 +199,12 @@ function ResponsiveAppBar() {
       eventSource.onmessage = (event) => {
         setSseData(event.data);
         setRespon(true);
-        console.log(event.data);
         console.log('onmessage');
         if (event.data !== undefined) alert(event.data);
       };
 
       eventSource.addEventListener('sse', ((event: MessageEvent) => {
-        console.log(event.data);
-        if(!event.data.includes('EventStream')){
+        if (!event.data.includes('EventStream')) {
           requestGetAlarms();
         }
       }) as EventListener);
@@ -222,8 +222,7 @@ function ResponsiveAppBar() {
 
   // 상세보기 및 삭제
   // 혹시 실시간으로 보게 되도 이거 쓰셈요...
-  const eventRead = async (alarmId:number,url:string) => {
-    
+  const eventRead = async (alarmId: number, url: string) => {
     try {
       await http.put(`subscribe/alarm/${alarmId}`);
       await http.delete(`subscribe/alarm/${alarmId}`);
@@ -232,27 +231,59 @@ function ResponsiveAppBar() {
     } catch (error) {
       console.error(error);
     }
-
   };
 
-  const eventAllRead=async()=>{
-    try{
-      await http.delete('subscribe/alarm');
+  const eventAllRead = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
+    try {
+      const response = await http.delete('subscribe/alarm');
+      console.log('알림 모두 읽기', response);
       requestGetAlarms();
-    }catch(error){
+    } catch (error) {
       console.error(error);
     }
-  }
+  };
 
   return (
     <div>
       <AppBar className={styles.appBar} position="fixed" sx={{ backgroundColor: scrollPosition < 10000 ? 'transparent' : 'rgb(255,255,255)' }}>
         <Container className={styles.appContainer} maxWidth="xl">
-          <Toolbar disableGutters>
+          <Toolbar disableGutters className={styles.toolbar}>
             {/* Desktop 구조 */}
-            <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ cursor: 'pointer' }} />
+            <div className={styles['small-left']}>
+              <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ padding: '0', cursor: 'pointer', scale: '0.8' }} />
+              <Button
+                id="basic-button"
+                aria-controls={open2 ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open2 ? 'true' : undefined}
+                onClick={handleClick2}
+                className={styles['small-menu-btn']}
+              >
+                메뉴
+              </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl2}
+                open={open2}
+                onClose={handleClose2}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                <MenuItem onClick={() => onClickSmallMenuItem('/')}>홈으로</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('funding')}>펀딩 목록</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('funding/create')}>펀딩 등록</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('donation')}>기부</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('live')}>라이브 목록</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('notice')}>공지사항</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('faq')}>FAQ</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('qna')}>1:1 문의</MenuItem>
+              </Menu>
+            </div>
             <Box
-              sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}
+              sx={{ flexGrow: 1 }}
               className={styles.pageBox}
               onMouseOut={() => {
                 setIsHovered(false);
@@ -310,13 +341,70 @@ function ResponsiveAppBar() {
                 </p>
                 <div>
                   <IconButton aria-label="notifi" className={styles.noti} onClick={handleClick}>
-                    <StyledBadge badgeContent={4} color="secondary" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
+                    <StyledBadge badgeContent={eventListsize} color="warning" anchorOrigin={{ horizontal: 'right', vertical: 'top' }} sx={{ mr: 2 }}>
                       <NotificationsNoneIcon fontSize="large" />
                     </StyledBadge>
                   </IconButton>
-                  <Menu open={open} onClose={handleClose}>
+                  <Menu
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    transformOrigin={{
+                      vertical: 'top',
+                      horizontal: 'right',
+                    }}
+                    PaperProps={{
+                      sx: {
+                        minWidth: '30%',
+                        padding: '2rem',
+                        borderRadius: '5px',
+                        maxHeight: '200px',
+                        overflowY: 'auto',
+                        '&::-webkit-scrollbar': {
+                          width: '5px',
+                        },
+                        '&::-webkit-scrollbar-track': {
+                          background: 'transparent',
+                        },
+                        '&::-webkit-scrollbar-thumb': {
+                          backgroundColor: 'rgba(236, 153, 75, 0.5)',
+                          borderRadius: '6px',
+                        },
+                      },
+                    }}
+                  >
+                    <div
+                      style={{
+                        height: '2rem',
+                        margin: '0 0 0.7rem 0',
+                        padding: '0 1rem 1rem 1rem',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center',
+                        borderBottom: '1px solid rgba(236, 153, 75, 0.5)',
+                      }}
+                    >
+                      <p className={styles['alarm-title']}>
+                        알림 <span style={{ marginLeft: '0.4rem', fontSize: '1.2rem', color: 'rgba(0, 0, 0, 0.5)' }}>({eventListsize})</span> <BsFillBellFill />
+                      </p>
+                      <a href="." onClick={eventAllRead} className={styles['all-read']}>
+                        모두 읽기
+                      </a>
+                    </div>
                     {eventList.map((event) => (
-                      <MenuItem onClick={() => eventRead(event.alarmId, event.url)}>{event.content}</MenuItem>
+                      <MenuItem
+                        onClick={() => eventRead(event.alarmId, event.url)}
+                        sx={{
+                          borderRadius: '5px',
+                          ':hover': {
+                            backgroundColor: 'rgba(255, 123, 0, 0.05)',
+                            fontWeight: '600',
+                          },
+                        }}
+                        className={styles['menu-item']}
+                      >
+                        {event.content}
+                      </MenuItem>
                     ))}
                   </Menu>
                 </div>
@@ -400,7 +488,7 @@ function ResponsiveAppBar() {
                       <Typography
                         textAlign="center"
                         onClick={() => {
-                          navigateTo('/myBadges');
+                          navigateTo('/qna');
                         }}
                         sx={{ width: '100%' }}
                       >

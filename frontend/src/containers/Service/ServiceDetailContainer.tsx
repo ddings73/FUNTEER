@@ -9,7 +9,7 @@ function ServiceDetailContainer() {
     // eslint-disable-next-line
     interval = setInterval(() => {
       setShowP((prev) => prev + 1);
-    }, 1000);
+    }, 600);
 
     return () => clearInterval(interval);
   }, []);
@@ -29,7 +29,7 @@ function ServiceDetailContainer() {
                 펀딩 참여자에게는 만족감을, 봉사 단체에게는 자금을 전달하여 기부와 봉사를 활성화합니다.
               </p>,
               <p className={styles.serviceContent} key={3}>
-                플랫폼을 통해 기부와 봉사에 대한 정보 제공과 접근성을 높입니다.
+                플랫폼을 통해 기부와 봉사에 대한 정보를 제공하고 접근성을 높입니다.
               </p>,
             ].slice(0, showP)}
           </div>

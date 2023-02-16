@@ -5,20 +5,29 @@ import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
-import DialogActions from '@mui/material/DialogActions';
 import { FaHandHoldingHeart } from 'react-icons/fa';
-import { useAppDispatch, useAppSelector } from '../../store/hooks';
+import { useAppDispatch } from '../../store/hooks';
 import { donateModalType } from '../../types/modal';
-import { customAlert, s1000, w1500 } from '../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../utils/customAlert';
 import { closeModal } from '../../store/slices/donateModalSlice';
 import styles from './DonateModal.module.scss';
 import { requestPayDonation } from '../../api/donation';
+import logo from '../../assets/images/logo.png';
 
 function DonateModal({ isOpen, postId, userId, mileage }: donateModalType) {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [amount, setAmount] = useState<number>(0);
-  const [less, setLess] = useState<boolean>(false);
+  const [less1000, setLess1000] = useState<boolean>(false);
+  const [lessMileage, setLessMileage] = useState<boolean>(false);
+
+  useEffect(() => {
+    return () => {
+      setAmount(0);
+      setLess1000(false);
+      setLessMileage(false);
+    };
+  }, []);
 
   /** 모달 닫기 */
   const onClickClose = () => {
@@ -26,15 +35,28 @@ function DonateModal({ isOpen, postId, userId, mileage }: donateModalType) {
   };
 
   /** 결제 금액 변경 */
-  const onChangeAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLess(false);
+  const onChangeAmount = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLess1000(false);
+    setLessMileage(false);
+
     const enteredAmount = parseInt(e.target.value, 10);
     const roundedAmount = Math.floor(enteredAmount / 100) * 100;
-    if (roundedAmount > mileage) {
-      setAmount(mileage);
-    } else {
-      setAmount(roundedAmount);
+
+    if (enteredAmount > mileage && roundedAmount < 1000) {
+      setLessMileage(true);
+      setLess1000(true);
+      return;
     }
+    if (enteredAmount > mileage) {
+      setLessMileage(true);
+      return;
+    }
+    if (roundedAmount < 1000) {
+      setLess1000(true);
+      return;
+    }
+
+    setAmount(roundedAmount);
   };
 
   /** 충전 버튼 클릭 */
@@ -46,10 +68,10 @@ function DonateModal({ isOpen, postId, userId, mileage }: donateModalType) {
 
   /** 결제 버튼 클릭 */
   const onClickPay = () => {
-    if (amount < 1000) {
-      setLess(true);
+    if (less1000 || lessMileage) {
       return;
     }
+
     requestPay();
   };
 
@@ -59,7 +81,7 @@ function DonateModal({ isOpen, postId, userId, mileage }: donateModalType) {
       const response = await requestPayDonation(postId, amount.toString());
       console.log('자체 기부 참여 요청', response);
       dispatch(closeModal());
-      customAlert(s1000, '기부 참여가 완료되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '기부 참여가 완료되었습니다.');
       setTimeout(() => {
         window.location.reload();
       }, 1000);
@@ -74,19 +96,20 @@ function DonateModal({ isOpen, postId, userId, mileage }: donateModalType) {
         X
       </button>
       <DialogTitle className={styles.title}>
-        <FaHandHoldingHeart /> FUNTEER 기부 참여
+        <img src={logo} alt="로고" className={styles.logo} /> FUNTEER 기부 참여
       </DialogTitle>
       <DialogContent>
         <DialogContentText className={styles['text-label']}>현재 마일리지</DialogContentText>
         <DialogContentText className={styles['text-content']}>{mileage.toLocaleString('ko-KR')} 원</DialogContentText>
         <DialogContentText className={styles['text-label']}>기부 금액</DialogContentText>
         <input type="number" placeholder="1000원 이상, 100원 단위로 입력해주세요." onChange={onChangeAmount} />
-        {amount > 0 && (
+        {amount > 0 && !less1000 && !lessMileage && (
           <p className={styles.alarm}>
-            {amount.toLocaleString('ko-KR')} 원 <span>충전 예정</span>
+            {amount.toLocaleString('ko-KR')} 원 <span>차감 예정</span>
           </p>
         )}
-        {less && <p className={styles.warn}>1000원 이상의 금액만 입력 가능합니다.</p>}
+        {lessMileage && <p className={styles.warn}>마일리지가 부족합니다.</p>}
+        {less1000 && <p className={styles.warn}>1000원 이상의 금액만 입력 가능합니다.</p>}
       </DialogContent>
       <a href="." onClick={onClickCharge} className={styles.charge}>
         마일리지 충전

@@ -14,6 +14,10 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+
+      @media screen and (max-width: 500px) {
+        font-size: 15px;
+      }
     }
     & .Title {
       font-family: 'NanumSquare';
@@ -24,6 +28,14 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
       margin-top: 20px;
+
+      @media screen and (max-width: 900px) {
+        font-size: 70px;
+      }
+
+      @media screen and (max-width: 500px) {
+        font-size: 40px;
+      }
     }
   }
   & .contentWrapper {
@@ -53,6 +65,7 @@
       & .linkTo {
         cursor: pointer;
         text-decoration: none;
+        color: black;
         &:hover {
           color: $primary;
           font-weight: 500;

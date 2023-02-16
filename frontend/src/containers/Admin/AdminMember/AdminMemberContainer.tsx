@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AxiosError } from 'axios';
+import Swal from 'sweetalert2';
 import TextField from '@mui/material/TextField';
 import MenuItem from '@mui/material/MenuItem';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
@@ -9,7 +10,7 @@ import { AiOutlineClose, AiOutlineSearch, AiOutlineReload } from 'react-icons/ai
 import { requestMembers, requestWithdrawMember } from '../../../api/admin';
 import { AdminMemberInterface } from '../../../types/user';
 import styles from './AdminMemberContainer.module.scss';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 export enum MemberState {
   All = '전체',
@@ -89,7 +90,19 @@ function AdminMemberContainer() {
 
   /** 회원 탈퇴 버튼 클릭 */
   const handleWithdrawBtn = (e: React.MouseEvent<SVGElement>, id: number) => {
-    withdrawMember(id);
+    Swal.fire({
+      text: '해당 회원을 탈퇴 처리 하시겠습니까?',
+      showConfirmButton: false,
+      showDenyButton: true,
+      showCancelButton: true,
+      denyButtonText: `확인`,
+      denyButtonColor: 'rgba(211, 79, 4, 1)',
+      cancelButtonText: '취소',
+    }).then((result) => {
+      if (result.isDenied) {
+        withdrawMember(id);
+      }
+    });
   };
 
   /** 멤버 요청 */
@@ -115,7 +128,7 @@ function AdminMemberContainer() {
     try {
       const response = await requestWithdrawMember(id);
       console.log(response);
-      customAlert(s1000, '회원 탈퇴 처리가 완료되었습니다.');
+      customTextOnlyAlert(noTimeSuccess, '회원 탈퇴 처리가 완료되었습니다.');
       requestPageMembers();
     } catch (error: unknown) {
       if (error instanceof AxiosError) {

@@ -17,6 +17,7 @@ import UserModel from './models/user-model';
 import ToolbarComponent from './toolbar/ToolbarComponent';
 import ChatComponent from './chat/ChatComponent';
 import { http } from '../../api/axios';
+import { customTextOnlyAlert, customTextOnlyAlertOvenVidu, DefaultAlert, noTimeWarn } from '../../utils/customAlert';
 
 const localUser = new UserModel();
 
@@ -104,7 +105,7 @@ class VideoRoomComponent extends Component {
     if (this.state.checkLottie) {
       setTimeout(() => {
         this.setState({ checkLottie: false });
-      }, 3000);
+      }, 5000);
     }
   }
 
@@ -138,8 +139,7 @@ class VideoRoomComponent extends Component {
     this.state.session.on('streamDestroyed', (event) => {
       event.preventDefault();
 
-      alert('종료된 라이브 방송입니다.');
-      window.location.href = '/';
+      customTextOnlyAlertOvenVidu(DefaultAlert, '이미 종료된 라이브방송입니다.');
     });
   }
 
@@ -222,9 +222,12 @@ class VideoRoomComponent extends Component {
             code: error.code,
             status: error.status,
           });
+
         }
-        alert('라이브 방송에 오류가 있습니다.');
-        window.location.href = '/';
+        customTextOnlyAlertOvenVidu(DefaultAlert, '라이브 방송에 오류가 생겼습니다.');
+       
+      
+        // window.location.href = '/';
         // alert('There was an error connecting to the session:', error.message);
         // console.log('There was an error connecting to the session:', error.code, error.message);
       });
@@ -329,8 +332,7 @@ class VideoRoomComponent extends Component {
     console.log('LEAVE_OV', this.OV);
     console.log('LEAVE_STATE', this.state);
 
-    alert('라이브가 종료되었습니다');
-    window.location.href = '/';
+    customTextOnlyAlertOvenVidu(DefaultAlert, '라이브가 종료되었습니다');
   }
 
   camStatusChanged() {

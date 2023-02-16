@@ -1,6 +1,6 @@
 import { http } from './axios';
 import { teamSignUpType } from '../types/user';
-import { customAlert, w1500 } from '../utils/customAlert';
+import logo from '../assets/images/logo.png';
 
 /** 단체 회원가입 */
 export const requestTeamSignUp = async (teamSignUpInfo: teamSignUpType) => {
@@ -15,6 +15,10 @@ export const requestTeamSignUp = async (teamSignUpInfo: teamSignUpType) => {
       formData.append(`${key}`, value);
     }
   });
+
+  /** 기본 프사 */
+  const defaultProfileBlob = await fetch(logo).then((res) => res.blob());
+  formData.append('profileImg', defaultProfileBlob, 'default-profile.png');
 
   const res = await http.post('team', formData);
 

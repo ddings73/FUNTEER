@@ -7,7 +7,7 @@ import { NoticeEditInterface } from '../../../types/notice';
 import styles from './NoticeEditContainer.module.scss';
 import requiredIcon from '../../../assets/images/funding/required.svg';
 import { requestEditNotice } from '../../../api/admin';
-import { customAlert, s1000 } from '../../../utils/customAlert';
+import { customAlert, customTextOnlyAlert, noTimeSuccess, s1000 } from '../../../utils/customAlert';
 
 function NoticeEditContainer() {
   const navigate = useNavigate();
@@ -70,7 +70,7 @@ function NoticeEditContainer() {
         noticeEditInfo.newFiles,
       );
       console.log('공지사항 수정 요청', response);
-      customAlert(s1000, '공지사항 수정 완료');
+      customTextOnlyAlert(noTimeSuccess, '공지사항 수정 완료');
       navigate(-1);
     } catch (err) {
       console.error(err);
