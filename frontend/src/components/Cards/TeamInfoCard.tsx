@@ -2,7 +2,7 @@ import React from 'react';
 import HomeIcon from '@mui/icons-material/Home';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneInTalkIcon from '@mui/icons-material/PhoneInTalk';
-import { Link } from 'react-router-dom';
+import { Link, NavLink, useParams } from 'react-router-dom';
 import styles from './TeamInfoCard.module.scss';
 import ProfileSvg from '../../assets/images/default-profile-img.svg';
 import { teamType } from '../../containers/Funding/FundingDetailContainer';
@@ -25,7 +25,9 @@ export function TeamInfo(team: teamType) {
         <img src={profileImgUrl} alt="BdgAlt" className={styles.teamPic} />
         <div className={styles.badgeWrapper}>
           <p className={styles.badgeName}>봉사단체명</p>
-          <p className={styles.badgeTeamName}>{name}</p>
+          <NavLink to={`/team/${id}`}>
+            <p className={styles.badgeTeamName}>{name}</p>
+          </NavLink>
         </div>
       </div>
       <div className={styles.buttonGroup}>
