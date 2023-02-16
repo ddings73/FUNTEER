@@ -17,6 +17,8 @@ import com.yam.funteer.live.entity.Gift;
 import com.yam.funteer.live.entity.Live;
 import com.yam.funteer.live.repository.GiftRepository;
 import com.yam.funteer.live.repository.LiveRepository;
+import com.yam.funteer.pay.entity.Payment;
+import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 
@@ -39,9 +41,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 
 import java.io.File;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -63,6 +63,7 @@ public class LiveServiceImpl implements LiveService{
     private final FundingRepository fundingRepository;
     private final AttachRepository attachRepository;
     private final WishRepository wishRepository;
+    private final PaymentRepository paymentRepository;
 
     @PostConstruct
     public void init(){
@@ -118,8 +119,7 @@ public class LiveServiceImpl implements LiveService{
 
                     // 녹화 종료
                     if(session.isBeingRecorded()) {
-                        Attach attach = recordSaveThisSession(live.getTeam(), sessionId);
-                        live.saveFile(attach);
+                        recordSaveThisSession(live, sessionId);
                     }
                 }
 
@@ -132,10 +132,6 @@ public class LiveServiceImpl implements LiveService{
 
     private CreateConnectionResponse createNewSession(String sessionName, Funding funding, User user,
                                                       RecordingProperties recordingProperties) {
-
-        liveRepository.findByFunding(funding).ifPresent(live -> {
-            throw new DuplicateInfoException(live.getFunding().getTitle());
-        });
 
         try {
             log.info("세션 생성 ===========> {}", sessionName);
@@ -153,16 +149,26 @@ public class LiveServiceImpl implements LiveService{
             String token = session.createConnection(connectionProperties).getToken();
 
             // DB에 저장
-            Live live = Live.of(session.getSessionId(), funding);
-            liveRepository.save(live);
+            liveRepository.findByFunding(funding).ifPresentOrElse(live -> {
+                live.overwriteSession(session.getSessionId());
+            }, ()->{
+                Live live = Live.of(session.getSessionId(), funding);
+                liveRepository.save(live);
+            });
 
             List<Wish> wishList = wishRepository.findAllByFundingAndChecked(funding, true);
-            List<String> emailList = wishList.stream()
+            Set<String> emailList = wishList.stream()
                 .map(wish -> wish.getMember().getEmail())
-                .collect(Collectors.toList());
+                .collect(Collectors.toSet());
+
+            List<Payment>paymentList = paymentRepository.findAllByPost(funding);
+
+            paymentList.stream().map(Payment::getUserEmail).collect(Collectors.toSet()).forEach(email ->{
+                emailList.add(email);
+            });
 
             log.info("이메일 리스트 => {}", emailList);
-            alarmService.sendList(emailList, sessionName + " 단체의 라이브 방송이 시작되었습니다.", "/subscribeLiveRoom/" + sessionName);
+            alarmService.sendList(Arrays.asList(emailList.toArray()), sessionName + " 단체의 라이브 방송이 시작되었습니다.", "/subscribeLiveRoom/" + sessionName);
             return new CreateConnectionResponse(token);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -231,7 +237,7 @@ public class LiveServiceImpl implements LiveService{
             throw new RuntimeException(e);
         }
     }
-    private Attach recordSaveThisSession(Team team, String sessionId){
+    private void recordSaveThisSession(Live live, String sessionId){
         log.info("녹화 저장 시작");
 
         log.info("sessionId => {}", sessionId);
@@ -241,15 +247,18 @@ public class LiveServiceImpl implements LiveService{
         log.info(fileUrl);
 
         File file = FileUtil.downloadFromUrl(fileUrl);
+
         String path = awsS3Uploader.upload(file, "live");
-
-        Attach attach = Attach.of(file.getName(), path, FileType.LIVE);
-        attachRepository.save(attach);
-
+        live.getAttach().ifPresentOrElse(attach -> {
+            awsS3Uploader.delete("live", attach.getPath());
+            live.updateFile(file.getName(), path);
+        },()->{
+            Attach attach = Attach.of(file.getName(), path, FileType.LIVE);
+            attachRepository.save(attach);
+            live.saveFile(attach);
+        });
 
         removeRecordingInServer(recording);
-
-        return attach;
     }
 
     private void removeRecordingInServer(Recording recording) {

@@ -1,6 +1,7 @@
 package com.yam.funteer.live.entity;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -55,7 +56,21 @@ public class Live {
 		return funding.getTeam();
 	}
 
+	public Optional<Attach> getAttach(){
+		return Optional.ofNullable(this.attach);
+	}
+
+	public void overwriteSession(String sessionId) {
+		this.sessionId = sessionId;
+		this.startTime = LocalDateTime.now();
+		this.endTime = null;
+	}
+
 	public void saveFile(Attach attach) {
 		this.attach = attach;
+	}
+
+	public void updateFile(String name, String path) {
+		attach.update(name, path);
 	}
 }
