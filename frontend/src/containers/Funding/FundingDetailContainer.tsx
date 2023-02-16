@@ -244,11 +244,16 @@ export function FundingDetailContainer() {
         customTextOnlyAlert(noTimeSuccess, `펀딩 후원은 100원 단위로 가능합니다.`);
         return;
       }
+<<<<<<< HEAD
       const regex = /[^0-9]/g;
       const separatorValue = stringToSeparator(paying.replaceAll(regex, ''));
       await fundingJoin(separatorValue, fundIdx);
       alert(`${separatorValue}원으로 펀딩을 완료했습니다!`);
       customTextOnlyAlert(noTimeSuccess, `${separatorValue}원으로 펀딩을 완료했습니다!`);
+=======
+      await fundingJoin(paying, fundIdx);
+      customTextOnlyAlert(noTimeSuccess, `${paying}원으로 펀딩을 완료했습니다!`);
+>>>>>>> d5739113d6fb36419f108ff02f2e0fd7da753701
       setToggled(!toggled);
       setPaying('');
       fetchData();
