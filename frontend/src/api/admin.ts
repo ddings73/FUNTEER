@@ -30,7 +30,7 @@ export const requestTeams = async (page: number, size: number, keyword?: string,
     size,
     keyword,
     userType,
-    sort: 'userType,DESC',
+    sort: 'id,DESC',
   };
 
   const response = await http.get('admin/team', { params });
@@ -70,7 +70,7 @@ export const requestAdminFundingList = async (page: number, size: number, keywor
     size,
     keyword,
     postType,
-    sort: 'postType,DESC',
+    sort: 'id,DESC',
   };
 
   const response = await http.get('admin/funding', { params });
