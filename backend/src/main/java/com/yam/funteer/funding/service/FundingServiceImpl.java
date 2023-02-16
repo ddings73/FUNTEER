@@ -34,6 +34,7 @@ import com.yam.funteer.common.aws.AwsS3Uploader;
 import com.yam.funteer.common.code.TargetMoneyType;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.common.security.SecurityUtil;
+import com.yam.funteer.exception.DuplicateInfoException;
 import com.yam.funteer.exception.UserNotFoundException;
 import com.yam.funteer.funding.dto.request.FundingCommentRequest;
 import com.yam.funteer.funding.dto.request.FundingReportDetailRequest;
@@ -67,6 +68,8 @@ import com.yam.funteer.funding.repository.ReportDetailRepository;
 import com.yam.funteer.funding.repository.ReportRepository;
 import com.yam.funteer.funding.repository.TargetMoneyDetailRepository;
 import com.yam.funteer.funding.repository.TargetMoneyRepository;
+import com.yam.funteer.live.entity.Live;
+import com.yam.funteer.live.repository.LiveRepository;
 import com.yam.funteer.pay.entity.Payment;
 import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.post.entity.Comment;
@@ -112,6 +115,7 @@ public class FundingServiceImpl implements FundingService{
 	private final CategoryRepository categoryRepository;
 
 	private final FundingRepository fundingRepository;
+	private final LiveRepository liveRepository;
 	private final TargetMoneyRepository targetMoneyRepository;
 	private final HashTagRepository hashTagRepository;
 	private final AwsS3Uploader awsS3Uploader;
@@ -512,9 +516,17 @@ public class FundingServiceImpl implements FundingService{
 	@Override
 	public FundingReportResponse createFundingReport(Long fundingId, FundingReportRequest data) {
 		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
+		
+		reportRepository.findByFundingFundingId(funding.getFundingId()).ifPresent(report -> {
+			log.warn("이미 보고를 작성한 펀딩임");
+			throw new DuplicateInfoException("보고서 이미 작성했어요");
+		});
+		
+		
 		String receiptUrl = awsS3Uploader.upload(data.getReceiptFile(), "reports/" + fundingId);
 
-		Report report = new Report(funding, data.getContent(), LocalDateTime.now());
+		// Report report = new Report(funding, data.getContent(), LocalDateTime.now());
+		Report report = new Report(funding, null, LocalDateTime.now());
 		reportRepository.save(report);
 
 		Attach attach = Attach.builder()
@@ -536,16 +548,16 @@ public class FundingServiceImpl implements FundingService{
 		attachRepository.save(attach);
 
 		List<ReportDetail> reportDetails = new ArrayList<>();
-		for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
-
-			String[] split = fundingReportDetailRequest.getAmount().split(",");
-			Long result = Long.parseLong(String.join("", split));
-
-			ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
-				result);
-			reportDetailRepository.save(reportDetail);
-			reportDetails.add(reportDetail);
-		}
+		// for (FundingReportDetailRequest fundingReportDetailRequest : data.getFundingDetailRequests()) {
+		//
+		// 	String[] split = fundingReportDetailRequest.getAmount().split(",");
+		// 	Long result = Long.parseLong(String.join("", split));
+		//
+		// 	ReportDetail reportDetail = new ReportDetail(report, fundingReportDetailRequest.getDescription(),
+		// 		result);
+		// 	reportDetailRepository.save(reportDetail);
+		// 	reportDetails.add(reportDetail);
+		// }
 		return reportDetails;
 	}
 
@@ -554,9 +566,11 @@ public class FundingServiceImpl implements FundingService{
 		Report byFundingId = reportRepository.findByFundingFundingId(fundingId).orElseThrow(NotFoundReportException::new);
 		FundingReportResponse response = FundingReportResponse.from(byFundingId);
 
-		Funding byFundingId1 = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
-		String liveUrlPath = postAttachRepository.findByPostId(byFundingId1.getId()).getAttach().getPath();
-		response.setLiveUrl(liveUrlPath);
+		Funding funding = fundingRepository.findByFundingId(fundingId).orElseThrow(FundingNotFoundException::new);
+		liveRepository.findByFunding(funding).ifPresent(live -> {
+			Attach attach = live.getAttach();
+			response.setLiveUrl(attach.getPath());
+		});
 
 		return response;
 	}
@@ -580,7 +594,7 @@ public class FundingServiceImpl implements FundingService{
 		List<ReportDetail> reportDetails = getReportDetails(data, report, attach);
 
 		report.setReportReceipts(attach);
-		report.setReportContent(data.getContent());
+		// report.setReportContent(data.getContent());
 		report.setReportDetail(reportDetails);
 		report.setReportRegDate(LocalDateTime.now());
 		funding.setPostType(PostType.REPORT_WAIT);
