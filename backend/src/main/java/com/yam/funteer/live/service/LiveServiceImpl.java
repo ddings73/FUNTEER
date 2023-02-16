@@ -17,6 +17,8 @@ import com.yam.funteer.live.entity.Gift;
 import com.yam.funteer.live.entity.Live;
 import com.yam.funteer.live.repository.GiftRepository;
 import com.yam.funteer.live.repository.LiveRepository;
+import com.yam.funteer.pay.entity.Payment;
+import com.yam.funteer.pay.repository.PaymentRepository;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.entity.User;
 
@@ -42,6 +44,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -63,6 +66,7 @@ public class LiveServiceImpl implements LiveService{
     private final FundingRepository fundingRepository;
     private final AttachRepository attachRepository;
     private final WishRepository wishRepository;
+    private final PaymentRepository paymentRepository;
 
     @PostConstruct
     public void init(){
@@ -161,8 +165,14 @@ public class LiveServiceImpl implements LiveService{
                 .map(wish -> wish.getMember().getEmail())
                 .collect(Collectors.toList());
 
+            List<Payment>paymentList=paymentRepository.findAllByPost(funding);
+            Set<User> userList;
+            userList=paymentList.stream().map(Payment::getUser).collect(Collectors.toSet());
+            List<String> userEmailList=userList.stream().map(User::getEmail).collect(Collectors.toList());
+
             log.info("이메일 리스트 => {}", emailList);
             alarmService.sendList(emailList, sessionName + " 단체의 라이브 방송이 시작되었습니다.", "/subscribeLiveRoom/" + sessionName);
+            alarmService.sendList(userEmailList, sessionName + " 단체의 라이브 방송이 시작되었습니다.", "/subscribeLiveRoom/" + sessionName);
             return new CreateConnectionResponse(token);
         } catch (Exception e) {
             log.error(e.getMessage());
