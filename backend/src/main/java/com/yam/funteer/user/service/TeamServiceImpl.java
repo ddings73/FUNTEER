@@ -1,9 +1,12 @@
 package com.yam.funteer.user.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import com.yam.funteer.alarm.service.AlarmService;
 import com.yam.funteer.attach.FileType;
 import com.yam.funteer.attach.entity.Attach;
 import com.yam.funteer.attach.entity.TeamAttach;
@@ -21,6 +24,7 @@ import com.yam.funteer.user.dto.request.team.UpdateTeamAccountRequest;
 import com.yam.funteer.user.dto.request.team.UpdateTeamProfileRequest;
 import com.yam.funteer.user.dto.response.team.TeamAccountResponse;
 import com.yam.funteer.user.dto.response.team.TeamGiftDetailResponse;
+import com.yam.funteer.user.entity.User;
 import com.yam.funteer.user.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +45,7 @@ import com.yam.funteer.user.dto.response.team.TeamProfileResponse;
 import com.yam.funteer.user.entity.Team;
 import com.yam.funteer.user.repository.FollowRepository;
 import com.yam.funteer.user.repository.TeamRepository;
+import com.yam.funteer.user.repository.UserRepository;
 
 @Service @Slf4j
 @Transactional
@@ -56,6 +61,7 @@ public class TeamServiceImpl implements TeamService{
 	private final AttachRepository attachRepository;
 	private final TeamAttachRepository teamAttachRepository;
 	private final GiftRepository giftRepository;
+	private final UserRepository userRepository;
 
 
 	private final PasswordEncoder passwordEncoder;
@@ -63,6 +69,7 @@ public class TeamServiceImpl implements TeamService{
 	private final BadgeService badgeService;
 
 
+	private final AlarmService alarmService;
 
 	@Override
 	public void createAccountWithOutProfile(CreateTeamRequest request) {
@@ -95,6 +102,11 @@ public class TeamServiceImpl implements TeamService{
 			TeamAttach teamAttach = TeamAttach.of(team, attach);
 			teamAttachRepository.save(teamAttach);
 		});
+
+		List<User> adminList = userRepository.findAllByUserType(UserType.ADMIN);
+		List<String>adminEmailList=adminList.stream().map(User::getEmail).collect(Collectors.toList());
+		alarmService.sendList(adminEmailList,"새로운 단체가 승인을 기다리고 있습니다.", "/admin/team");
+
 	}
 	@Override
 	public void setAccountSignOut(BaseUserRequest baseUserRequest) {

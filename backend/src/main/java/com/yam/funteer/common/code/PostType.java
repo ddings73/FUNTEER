@@ -36,6 +36,7 @@ public enum PostType implements TypeModel {
 	}
 
 	public static List<PostType> collectPostType(PostType postType){
+		if(postType == null) return List.of(FUNDING_ACCEPT, FUNDING_IN_PROGRESS, FUNDING_EXTEND, FUNDING_COMPLETE, REPORT_WAIT, REPORT_ACCEPT);
 		switch(postType){
 			case FUNDING_ACCEPT: return List.of(FUNDING_ACCEPT);
 			case FUNDING_IN_PROGRESS: return List.of(FUNDING_IN_PROGRESS, FUNDING_EXTEND);

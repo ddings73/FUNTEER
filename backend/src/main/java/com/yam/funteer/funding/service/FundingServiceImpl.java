@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.Cookie;
@@ -135,18 +136,13 @@ public class FundingServiceImpl implements FundingService{
 	public FundingListPageResponse findAllFunding(Pageable pageable, PostType postType, Long categoryId, String keyword) {
 		Page<Funding> fundings = null;
 		List<PostType> postTypes = null;
-		if(postType != null) {
-			postTypes = PostType.collectPostType(postType);
-		}
+		postTypes = PostType.collectPostType(postType);
+
 		if(categoryId == null){
-			fundings = postType == null
-					? fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword, pageable)
-					: fundingRepository.findAllByPostTypeInAndTitleContainingOrPostTypeInAndContentContaining(postTypes, keyword, postTypes, keyword, pageable);
+			fundings = fundingRepository.findAllByPostTypeInAndTitleContainingOrPostTypeInAndContentContaining(postTypes, keyword, postTypes, keyword, pageable);
 		}else{
 			Category category = categoryRepository.findById(categoryId).orElseThrow();
-			fundings = postType == null
-					? fundingRepository.findAllByCategoryAndTitleContainingOrCategoryAndContentContaining(category, keyword, category, keyword, pageable)
-					: fundingRepository.findAllByCategoryAndPostTypeInAndTitleContainingOrCategoryAndPostTypeInAndContentContaining(category, postTypes, keyword, category, postTypes, keyword, pageable);
+			fundings = fundingRepository.findAllByCategoryAndPostTypeInAndTitleContainingOrCategoryAndPostTypeInAndContentContaining(category, postTypes, keyword, category, postTypes, keyword, pageable);
 		}
 
 //		Page<FundingListResponse> fundingListResponses = getFundingListResponses(pageable, fundings);
@@ -326,6 +322,13 @@ public class FundingServiceImpl implements FundingService{
 		List<Hashtag> hashtagList = parseHashTags(data.getHashtags());
 		List<Hashtag> hashtags = saveNotExistHashTags(hashtagList);
 		addPostHashtags(funding, hashtags);
+
+		List<User> adminList = userRepository.findAllByUserType(UserType.ADMIN);
+		List<String>adminEmailList=adminList.stream().map(User::getEmail).collect(Collectors.toList());
+
+		log.info(adminEmailList.toString());
+
+		alarmService.sendList(adminEmailList, "새로운 펀딩이 생성되었습니다.", "admin/funding");
 
 		return FundingDetailResponse.from(savedPost);
 
@@ -573,8 +576,9 @@ public class FundingServiceImpl implements FundingService{
 		response.setFileUrl(report.getReceipts().getPath());
 
 		liveRepository.findByFunding(funding).ifPresent(live -> {
-			Attach attach = live.getAttach();
-			response.setLiveUrl(attach.getPath());
+			live.getAttach().ifPresent(attach -> {
+				response.setLiveUrl(attach.getPath());
+			});
 		});
 
 		return response;
@@ -697,6 +701,13 @@ public class FundingServiceImpl implements FundingService{
 				.collect(Collectors.toList());
 			Long targetAmount = 0L;
 
+
+			List<Payment>paymentList=paymentRepository.findAllByPost(funding);
+			Set<User> userList;
+			userList=paymentList.stream().map(Payment::getUser).collect(Collectors.toSet());
+			List<String> userEmailList=userList.stream().map(User::getEmail).collect(Collectors.toList());
+
+
 			for (TargetMoney targetMoney : funding.getTargetMoneyList()) {
 				if (targetMoney.getTargetMoneyType() == TargetMoneyType.LEVEL_ONE) {
 					targetAmount += targetMoney.getAmount();
@@ -707,10 +718,12 @@ public class FundingServiceImpl implements FundingService{
 				funding.setPostType(PostType.FUNDING_COMPLETE);
 				alarmService.sendList(allByFundingId, "찜한 펀딩이 성공했습니다.", "/funding/detail/" + funding.getFundingId());
 				alarmService.sendList(collect, "팔로우 한 단체의 펀딩이 성공했습니다.", "/funding/detail/" + funding.getFundingId());
+				alarmService.sendList(userEmailList,"참여한 펀딩이 성공했습니다.","/funding/detail"+funding.getFundingId());
 			} else {
 				funding.setPostType(PostType.FUNDING_FAIL);
 				alarmService.sendList(allByFundingId, "찜한 펀딩이 실패했습니다.", "/funding/detail/" + funding.getFundingId());
 				alarmService.sendList(collect, "팔로우 한 단체의 펀딩이 실패했습니다.", "/funding/detail/" + funding.getFundingId());
+				alarmService.sendList(userEmailList,"참여한 펀딩이 실패했습니다.","/funding/detail"+funding.getFundingId());
 
 			}
 		}
