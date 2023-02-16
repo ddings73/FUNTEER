@@ -81,7 +81,7 @@ export function ReportModal() {
             <input type="file" multiple onChange={onChangeFiles} />
           </div>
           <div style={{ marginTop: '5%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Button variant="contained" size="large" color="warning" onClick={() => createNotice()}>
+            <Button variant="contained" size="large" color="warning">
               등록하기
             </Button>
             <Button variant="outlined" size="large" color="warning" onClick={() => initModalClose()} sx={{ ml: 3 }}>
