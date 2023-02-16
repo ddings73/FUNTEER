@@ -20,7 +20,7 @@ export const NavbarMenuData: NavbarMenuDataType[] = [
   {
     title: '기부서비스',
     subRoutes: ['진행중인 기부'],
-    subPath: ['donation', 'funding/detail/:fundIdx'],
+    subPath: ['donation'],
   },
   {
     title: '라이브방송',
