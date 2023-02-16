@@ -576,8 +576,9 @@ public class FundingServiceImpl implements FundingService{
 		response.setFileUrl(report.getReceipts().getPath());
 
 		liveRepository.findByFunding(funding).ifPresent(live -> {
-			Attach attach = live.getAttach();
-			response.setLiveUrl(attach.getPath());
+			live.getAttach().ifPresent(attach -> {
+				response.setLiveUrl(attach.getPath());
+			});
 		});
 
 		return response;
