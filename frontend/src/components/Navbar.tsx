@@ -391,7 +391,7 @@ function ResponsiveAppBar() {
                         모두 읽기
                       </a>
                     </div>
-                    {eventList.map((event) => (
+                    {eventList.map((event, i) => (
                       <MenuItem
                         key={event.alarmId}
                         onClick={() => eventRead(event.alarmId, event.url)}
@@ -403,6 +403,8 @@ function ResponsiveAppBar() {
                           },
                         }}
                         className={styles['menu-item']}
+                        // eslint-disable-next-line
+                        key={i}
                       >
                         {event.content}
                       </MenuItem>
