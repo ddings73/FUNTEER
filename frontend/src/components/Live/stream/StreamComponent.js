@@ -12,11 +12,17 @@ import IconButton from '@material-ui/core/IconButton';
 import Lottie from 'lottie-react';
 import OvVideoComponent from './OvVideo';
 import donationLottie from '../../../lotties/115250-hand-and-coin-donation-request.json';
+import { getSpeech } from '../../../types/getSpeech';
 
 export default class StreamComponent extends Component {
   constructor(props) {
     super(props);
-    this.state = { nickname: this.props.user.getNickname(), sessionId: this.props.sessionId };
+    this.state = { nickname: this.props.user.getNickname(), sessionId: this.props.sessionId, ttsTest: '' };
+  }
+
+  componentDidMount() {
+    // eslint-disable-next-line no-undef
+    window.speechSynthesis.getVoices();
   }
 
   render() {
@@ -44,12 +50,13 @@ export default class StreamComponent extends Component {
 
         {this.props.checkLottie && (
           <div className="donationAnimation-box">
-            <p className='donation-contents'>
+            <p className="donation-contents">
               {this.props.donationUser}님이 {this.props.amount}원을 후원!!!
             </p>
+            {getSpeech(`${this.props.donationUser}님이 ${this.props.amount}원을 후원!!!`)}
             <Lottie animationData={donationLottie} />
           </div>
-          )}
+        )}
 
         {this.props.user !== undefined && this.props.user.getStreamManager() !== undefined ? (
           <div className="streamComponent">
