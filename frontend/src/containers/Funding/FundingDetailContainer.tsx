@@ -244,9 +244,11 @@ export function FundingDetailContainer() {
         customTextOnlyAlert(noTimeSuccess, `펀딩 후원은 100원 단위로 가능합니다.`);
         return;
       }
-      await fundingJoin(paying, fundIdx);
-      alert(`${paying}원으로 펀딩을 완료했습니다!`);
-      customTextOnlyAlert(noTimeSuccess, `${paying}원으로 펀딩을 완료했습니다!`);
+      const regex = /[^0-9]/g;
+      const separatorValue = stringToSeparator(paying.replaceAll(regex, ''));
+      await fundingJoin(separatorValue, fundIdx);
+      alert(`${separatorValue}원으로 펀딩을 완료했습니다!`);
+      customTextOnlyAlert(noTimeSuccess, `${separatorValue}원으로 펀딩을 완료했습니다!`);
       setToggled(!toggled);
       setPaying('');
       fetchData();
@@ -493,9 +495,8 @@ export function FundingDetailContainer() {
               color="warning"
               onChange={(e) => {
                 const { value } = e.target;
-                const regex = /[^0-9]/g;
-                const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
-                setPaying(separatorValue);
+                console.log('본래 value', value);
+                setPaying(value);
               }}
               value={paying}
             />
