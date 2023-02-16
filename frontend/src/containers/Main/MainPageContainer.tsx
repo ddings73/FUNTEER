@@ -1,19 +1,14 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Fade, Tooltip } from '@mui/material';
 import Lottie from 'lottie-react';
 import styles from './MainPageContainer.module.scss';
 import InfoCard from '../../components/Main/InfoCard';
 import FunList from '../../components/Main/funList';
-import LiveList from '../../components/Main/liveList';
 import ast from '../../assets/images/mainPage/ast.webp';
 import planet from '../../assets/images/mainPage/planet_funteer.webp';
 import background from '../../assets/images/mainPage/background.webp';
-import wave from '../../assets/images/mainPage/wave.svg';
-import wave2 from '../../assets/images/mainPage/wave2.svg';
-import { http } from '../../api/axios';
 import spaceLottie from '../../lotties/107693-space.json';
-import rocket from '../../lotties/127125-space-rocket.json';
 
 export function MainPageContainer() {
   const navigate = useNavigate();

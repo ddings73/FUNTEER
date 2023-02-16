@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './InfoCard.module.scss';
 import img1 from '../../assets/images/mainPage/fund.webp';
 import img2 from '../../assets/images/mainPage/live.webp';

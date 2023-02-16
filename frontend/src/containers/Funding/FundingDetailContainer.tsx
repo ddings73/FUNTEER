@@ -494,7 +494,6 @@ export function FundingDetailContainer() {
             펀딩 참여하기
           </button>
           <div className={styles.mileText}>
-            <p>현재 잔액: {money}원</p>
             <p>현재 잔액: {stringToSeparator(String(money))}원</p>
             <Link to="/charge" className={styles.milLink}>
               <p className={styles.milea}>마일리지 충전</p>
