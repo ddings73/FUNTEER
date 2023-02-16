@@ -21,7 +21,7 @@ export function liveList() {
             현재 <span>10</span>개의 라이브가 진행중이에요.
           </p>
         </div>
-        <CarouselCard />
+        {/* <CarouselCard /> */}
       </div>
     </div>
   );

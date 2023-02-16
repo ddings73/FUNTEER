@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './funList.module.scss';
 import CarouselCard from '../../components/Main/CarouselCard';
 
 export function funList() {
+  const [fundingLength, setFundingLength] = useState<number>(0);
+
   return (
     <div className={styles.listContainer}>
       <div className={styles.TypoWrapper}>
@@ -17,13 +19,13 @@ export function funList() {
       <div className={styles.contentWrapper}>
         <div className={styles.menuHeads}>
           <p className={styles.curStatus}>
-            총 <span>250</span>건의 펀딩이 진행 중 입니다.
+            총 <span>{fundingLength}</span>건의 펀딩이 진행 중 입니다.
           </p>
           <Link to="/funding" className={styles.linkTo}>
             전체보기
           </Link>
         </div>
-        <CarouselCard />
+        <CarouselCard setFundingLength={setFundingLength} />
       </div>
     </div>
   );
