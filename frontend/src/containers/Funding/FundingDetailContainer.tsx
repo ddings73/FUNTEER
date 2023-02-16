@@ -24,6 +24,7 @@ import { requestCreateSession } from '../../api/live';
 import { reportModalType } from '../../types/modal';
 import ReportModal from '../../components/Modal/ReportModal';
 import { openModal } from '../../store/slices/reportModalSlice';
+import PdfViewer from '../../components/Funding/PdfViewer';
 
 export interface ResponseInterface {
   title: string;
@@ -336,7 +337,6 @@ export function FundingDetailContainer() {
     }
   };
 
-  console.log('Video URL', report.liveUrl);
   return (
     <div className={styles.bodyContainer}>
       <div className={styles.banner}>
@@ -381,6 +381,7 @@ export function FundingDetailContainer() {
             TabIndicatorProps={{
               sx: { backgroundColor: '#E6750A' },
             }}
+            sx={{ height: '50px' }}
           >
             <Tab value="one" label="프로젝트 상세 계획" />
             <Tab value="two" label="프로젝트 보고" />
@@ -388,9 +389,7 @@ export function FundingDetailContainer() {
         </Box>
         <div className={styles.mainContent}>
           {value === 'one' ? (
-            <div className={styles.mainContentInner}>
-              <Viewer initialValue={board.content} />
-            </div>
+            <div className={styles.mainContentInner}>{board.content && <Viewer initialValue={board.content} />}</div>
           ) : (
             <div className={styles.mainContentInner}>
               <p>{report.content}</p>
@@ -400,23 +399,17 @@ export function FundingDetailContainer() {
                 <source src={report.liveUrl} type="video/mp4" />
                 <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
               </video>
-              <div className={styles.reslists}>
-                {report.reportDetailResponseList.map((resList, i) => (
-                  <div key={resList.description}>
-                    <h1>{i + 1}번째 보고서 총액</h1>
-                    <p>{resList.amount}원</p>
-                    <p>보고서 설명</p>
-                    <p>{resList.description}</p>
-                  </div>
-                ))}
-              </div>
+              <div className={styles.reslists}>123</div>
             </div>
           )}
         </div>
-        <hr style={{ borderTop: '3px solid #bbb', borderRadius: '3px', opacity: '0.5' }} />
+        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
+        <PdfViewer pdfUrl="https://koreascience.kr/article/JAKO200912651517978.pdf" />
+        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard} style={{ width: '90%', marginLeft: '6%' }}>
           <TeamInfo {...board.team} />
         </div>
+        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
         <DetailArcodian />
         <div className={styles.mainCommentSubmit}>
           <p className={styles.commentHead}>응원 댓글 등록({commentCount})</p>

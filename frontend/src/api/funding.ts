@@ -1,6 +1,6 @@
 import { async } from 'q';
 // import { commentType } from '../components/Cards/CommentCardSubmit';
-import { FundingInterface, FundingReportInterface } from '../types/funding';
+import { FundingInterface } from '../types/funding';
 import { http } from './axios';
 
 /**
@@ -50,7 +50,7 @@ export const requestModifyFunding = async (fundIdx: string, fundingData: Funding
  * @method GET
  */
 
-export const requestFundingList = async (categoryId?:string,keyword?:string,postType?:string,currentPage?:number,size?:number) => {
+export const requestFundingList = async (categoryId?: string, keyword?: string, postType?: string, currentPage?: number, size?: number) => {
   const res = await http.get(`funding/?categoryId=${categoryId}&keyword=${keyword}&postType=${postType}&page=${currentPage}&size=${size}`);
   return res;
 };
@@ -189,28 +189,18 @@ export const requestFundingReport = async (fundingId?: string) => {
  * @name 펀딩보고서 작성
  * @param fundingId
  */
-export const fundingReportPost = async (fundingId: string, reportData: FundingReportInterface) => {
-  console.log('데읻타타타타타타타타타타탙', reportData);
-  const formData = new FormData();
+export const fundingReportPost = async (fundingId: string, reportData: File) => {
+  // const formData = new FormData();
 
-  // formData.append('data', new Blob([JSON.stringify(reportData)], { type: 'application/json' }));
-  // formData.append('data', new Blob([JSON.stringify(reportData)], { type: 'application/json' }));
+  // formData.append('receiptFile', new Blob());
 
-  formData.append('content', reportData.content as string);
+  // const config = {
+  //   headers: {
+  //     'Content-Type': 'multipart/form-data',
+  //   },
+  // };
 
-  // reportData.fundingDetailRequests.forEach((element) => {
-  //   console.log(element);
-  formData.append('fundingDetailRequests', JSON.stringify(reportData.fundingDetailRequests));
-  // });
-  formData.append('receiptFile', new Blob());
-
-  const config = {
-    headers: {
-      'Content-Type': 'multipart/form-data',
-    },
-  };
-
-  const res = await http.post(`funding/${fundingId}/report`, formData, config);
+  const res = await http.post(`funding/${fundingId}/report`, reportData);
 
   return res;
 };
