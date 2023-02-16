@@ -12,8 +12,8 @@ import background from '../../assets/images/mainPage/background.png';
 import wave from '../../assets/images/mainPage/wave.svg';
 import wave2 from '../../assets/images/mainPage/wave2.svg';
 import { http } from '../../api/axios';
-import spaceLottie from '../../lotties/107693-space.json'
-import rocket from '../../lotties/127125-space-rocket.json'
+import spaceLottie from '../../lotties/107693-space.json';
+import rocket from '../../lotties/127125-space-rocket.json';
 
 export function MainPageContainer() {
   const navigate = useNavigate();
@@ -23,9 +23,13 @@ export function MainPageContainer() {
   };
 
   useEffect(() => {
-    updateScroll();
-  }, [scrollPosition]);
-  
+    window.addEventListener('scroll', updateScroll);
+
+    return () => {
+      window.removeEventListener('scroll', updateScroll);
+    };
+  }, []);
+
   const goServiceDetail = () => {
     navigate('/service');
   };
@@ -34,16 +38,12 @@ export function MainPageContainer() {
   const tooltipText = () => (
     <p style={{ lineHeight: '200%', fontSize: '1.1em', whiteSpace: 'pre-line', textAlign: 'center' }}>
       {`우주여행을 하는 우주선과 우주비행사들은 
-      모두를 대신해 그들의 염원과 희망을 품고 
-      우주로 떠납니다.
- 우리 Funteer도 여러분을 대신해 
- 나눔을 실천하는 봉사자분들을 돕고 응원합니다.      
-      `}
+        모두를 대신해 그들의 염원과 희망을 품고 
+        우주로 떠납니다.
+        우리 Funteer도 여러분을 대신해 
+        나눔을 실천하는 봉사자분들을 돕고 응원합니다.`}
     </p>
   );
-  useEffect(() => {
-    updateScroll();
-  }, [scrollPosition]);
 
   return (
     <div className={styles.container}>
@@ -76,15 +76,15 @@ export function MainPageContainer() {
             </Tooltip>
           </div>
         </div>
-        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 500 ? '1' : '0' }} alt="back" />
+        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 1500 ? '1' : '0' }} alt="back" />
       </div>
       <div className={styles.infoBanner}>
-       <Lottie className={styles.lottieSpace} animationData={spaceLottie} /> 
+        <Lottie className={styles.lottieSpace} animationData={spaceLottie} />
         <InfoCard />
       </div>
-      {/* <div className={styles.fundLists}>
+      <div className={styles.fundLists}>
         <FunList />
-      </div> */}
+      </div>
       <div className={styles.donate}> </div>
     </div>
   );

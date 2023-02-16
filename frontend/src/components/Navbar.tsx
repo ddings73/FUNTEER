@@ -232,9 +232,12 @@ function ResponsiveAppBar() {
     }
   };
 
-  const eventAllRead = async () => {
+  const eventAllRead = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+
     try {
-      const response = await await http.delete('subscribe/alarm');
+      const response = await http.delete('subscribe/alarm');
+      console.log('알림 모두 읽기', response);
       requestGetAlarms();
     } catch (error) {
       console.error(error);
