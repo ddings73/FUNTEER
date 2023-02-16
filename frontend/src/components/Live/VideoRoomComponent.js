@@ -105,7 +105,7 @@ class VideoRoomComponent extends Component {
     if (this.state.checkLottie) {
       setTimeout(() => {
         this.setState({ checkLottie: false });
-      }, 3000);
+      }, 5000);
     }
   }
 
