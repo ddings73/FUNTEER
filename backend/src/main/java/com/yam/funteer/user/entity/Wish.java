@@ -44,4 +44,8 @@ public class Wish {
 	public void toggle() {
 		this.checked = !this.checked;
 	}
+
+	public void doIt() {
+		this.checked = true;
+	}
 }
