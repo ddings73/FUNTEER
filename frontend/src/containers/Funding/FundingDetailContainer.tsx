@@ -229,12 +229,27 @@ export function FundingDetailContainer() {
   const [paying, setPaying] = useState('');
 
   async function fundingHandler() {
-    console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불');
+    console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불 시도');
 
     try {
+      if (Number(paying) < 1000) {
+        customTextOnlyAlert(noTimeSuccess, `최소펀딩 금액은 1000원부터 가능합니다.`);
+        return;
+      }
+      if (Number(paying) > Number(money)) {
+        customTextOnlyAlert(noTimeSuccess, `마일리지가 모자랍니다.`);
+        return;
+      }
+      if (Number(paying) % 100 !== 0) {
+        customTextOnlyAlert(noTimeSuccess, `펀딩 후원은 100원 단위로 가능합니다.`);
+        return;
+      }
+      const regex = /[^0-9]/g;
+      const separatorValue = stringToSeparator(paying.replaceAll(regex, ''));
+      await fundingJoin(separatorValue, fundIdx);
+      alert(`${separatorValue}원으로 펀딩을 완료했습니다!`);
+      customTextOnlyAlert(noTimeSuccess, `${separatorValue}원으로 펀딩을 완료했습니다!`);
       await fundingJoin(paying, fundIdx);
-      alert(`${paying}원으로 펀딩을 완료했습니다!`);
-      customTextOnlyAlert(noTimeSuccess, `${paying}원으로 펀딩을 완료했습니다!`);
       setToggled(!toggled);
       setPaying('');
       fetchData();
@@ -410,7 +425,7 @@ export function FundingDetailContainer() {
           )}
         </div>
         <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
-        <PdfViewer pdfUrl="https://koreascience.kr/article/JAKO200912651517978.pdf" />
+        <PdfViewer pdfUrl="http://www.example.com/myfile.pdf" />
         <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard} style={{ width: '90%', marginLeft: '6%' }}>
           <TeamInfo {...board.team} />
@@ -473,7 +488,7 @@ export function FundingDetailContainer() {
             <TextField
               label="금액 입력"
               id="custom-css-outlined-input"
-              type="number"
+              type="text"
               size="small"
               sx={{ margin: '0 20px', backgroundColor: 'white' }}
               // eslint-disable-next-line
@@ -481,9 +496,8 @@ export function FundingDetailContainer() {
               color="warning"
               onChange={(e) => {
                 const { value } = e.target;
-                const regex = /[^0-9]/g;
-                const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
-                setPaying(separatorValue);
+                console.log('본래 value', value);
+                setPaying(value);
               }}
               value={paying}
             />
@@ -494,7 +508,6 @@ export function FundingDetailContainer() {
             펀딩 참여하기
           </button>
           <div className={styles.mileText}>
-            <p>현재 잔액: {money}원</p>
             <p>현재 잔액: {stringToSeparator(String(money))}원</p>
             <Link to="/charge" className={styles.milLink}>
               <p className={styles.milea}>마일리지 충전</p>

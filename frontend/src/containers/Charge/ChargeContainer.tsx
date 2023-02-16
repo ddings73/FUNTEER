@@ -4,13 +4,14 @@ import { Button, MenuItem, Select } from '@mui/material';
 import { SelectChangeEvent } from '@mui/material/Select';
 import Pagination from '@mui/material/Pagination';
 import Stack from '@mui/material/Stack';
+import Swal from 'sweetalert2';
 import { useAppDispatch, useAppSelector } from '../../store/hooks';
 import styles from './ChargeContainer.module.scss';
 import { openModal } from '../../store/slices/payModalSlice';
 import { requestUserProfile } from '../../api/user';
 import { requestVerifyPayment, requestPayment, requestChargeList } from '../../api/payment';
 import { CallBackParams, PayParams } from '../../types/payment';
-import { customAlert, customTextAlert, customTextOnlyAlert, noTimeSuccess, noTimeWarn, s2000, w2000 } from '../../utils/customAlert';
+import { customTextOnlyAlert, noTimeWarn } from '../../utils/customAlert';
 import { YYYYMMDDHHMMSS } from '../../utils/day';
 
 /** 결제 콜백 함수 */
@@ -27,7 +28,19 @@ const callback: (response: CallBackParams) => void = async (response) => {
         const paymentResponse = await requestPayment(response.paid_amount, response.imp_uid);
         console.log('결제 요청 정보', paymentResponse);
         /** 결제 request 성공시 알림 */
-        customTextOnlyAlert(noTimeSuccess, '결제 성공');
+        Swal.fire({
+          icon: 'success',
+          iconColor: 'rgba(236, 153, 75, 1)',
+          text: '결제 완료',
+          confirmButtonText: '확인',
+          confirmButtonColor: 'rgba(211, 79, 4, 1)',
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload();
+          } else {
+            window.location.reload();
+          }
+        });
       } catch (error) {
         /** 결제 모달 닫기 */
         console.log('결제 요청 실패', error);

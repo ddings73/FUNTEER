@@ -103,9 +103,9 @@ function AdminDonationContainer() {
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
-        <h1 className={styles.title}>도네이션 관리</h1>
+        <h1 className={styles.title}>기부 관리</h1>
         <button type="button" onClick={onClickDonationRegister} className={styles.create}>
-          도네이션 작성
+          기부 작성
         </button>
 
         <ul className={styles['title-line']}>

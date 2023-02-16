@@ -1,17 +1,6 @@
 @import '../../styles/reset.scss';
 @import '../../styles/variable.scss';
 
-/*==========삭제 필요!! 임시 리소스============*/
-// @import url(//fonts.googleapis.com/earlyaccess/nanummyeongjo.css);
-// @import url('https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@800&display=swap');
-
-// @font-face {
-//   font-family: 'Arita-buri-SemiBold';
-//   src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_one@1.0/Arita-buri-SemiBold.woff') format('woff');
-//   font-weight: normal;
-//   font-style: normal;
-// }
-/*============================================*/
 .container::before {
   content: '';
 
@@ -44,7 +33,7 @@
   display: flex;
   color: white;
   width: 30%;
-  height: 100vh;
+  min-height: 100vh;
   // border: 1px solid rgb(255, 255, 255);
   transition: 0.5s;
   opacity: 1 !important;
@@ -57,13 +46,23 @@
   & .typoBox {
     position: relative;
     width: 50%;
-    margin-left: 200px;
+    margin-left: 10%;
     margin-top: 17%;
     height: 30% auto;
     margin-right: 0;
 
     @media (max-width: 900px) {
+      min-width: 300px;
       width: 100%;
+      margin-left: 0;
+      margin-top: 30%;
+    }
+
+    @media (max-width: 500px) {
+      min-width: 300px;
+      width: 100%;
+      margin-left: 0;
+      margin-top: 50%;
     }
 
     & .logoTypo {
@@ -72,6 +71,16 @@
       font-size: 3vw;
       line-height: 4.5vw;
       font-weight: 700;
+
+      @media (max-width: 900px) {
+        font-size: 6vw;
+        line-height: 6vw;
+      }
+
+      @media (max-width: 500px) {
+        font-size: 7vw;
+        line-height: 7vw;
+      }
 
       & .logoStrong {
         background: linear-gradient(261.5deg, #ffd2b2 59.63%, #fd6f08 102.79%);
@@ -88,6 +97,14 @@
       font-size: 1.5vw;
       color: rgba(185, 185, 185, 0.671);
       // border: 1px solid rgb(255, 255, 255);
+
+      @media (max-width: 900px) {
+        font-size: 3vw;
+      }
+
+      @media (max-width: 500px) {
+        font-size: 4.5vw;
+      }
     }
 
     & .serviceBtn {
@@ -107,9 +124,6 @@
       &:hover {
         opacity: 0.5;
       }
-      @media (max-width: 600px) {
-        scale: 50%;
-      }
     }
   }
   // 배너 우측 이미지 섹션
@@ -121,11 +135,16 @@
   z-index: 100;
 
   .lottieSpace {
+    transition: opacity 0.3s;
     position: absolute;
     width: 400px;
     top: -150px;
     left: 340px;
     transform: rotate(80deg);
+
+    @media screen and (max-width: 1200px) {
+      display: none;
+    }
   }
 }
 .fundLists {
@@ -173,6 +192,7 @@
       margin-top: 25%;
       margin-left: 20%;
       width: 1000px;
+      height: auto;
       rotate: -45deg;
       -webkit-animation: rotationMoon 360s linear infinite;
       -moz-animation: rotationMoon 360s linear infinite;
@@ -188,6 +208,7 @@
         margin-left: 5%;
         margin-top: 20%;
         width: 150px;
+        height: auto;
         -webkit-animation: swim1 5s ease-in-out infinite;
         -moz-animation: swim1 5s ease-in-out infinite;
         -o-animation: swim1 5s ease-in-out infinite;
@@ -210,7 +231,7 @@
 .backgroundImg {
   transition: opacity 0.3s;
   width: 100%;
-  height: auto;
+  height: 100%;
   margin-top: 90px;
   position: absolute;
   top: -20px;

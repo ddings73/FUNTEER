@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import { BrowserRouter, createBrowserRouter, RouterProvider, useParams, useSearchParams } from 'react-router-dom';
@@ -77,6 +77,7 @@ import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
 import ScrollToTop from './utils/ScrollToTop';
+
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
@@ -340,7 +341,7 @@ const persistor = persistStore(store);
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <RouterProvider router={router} />
+        <RouterProvider router={router} />
     </PersistGate>
   </Provider>,
 );
