@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import styles from './InfoCard.module.scss';
-import img1 from '../../assets/images/mainPage/fund.png';
-import img2 from '../../assets/images/mainPage/live.png';
-import img3 from '../../assets/images/mainPage/volunteer.png';
+import img1 from '../../assets/images/mainPage/fund.webp';
+import img2 from '../../assets/images/mainPage/live.webp';
+import img3 from '../../assets/images/mainPage/volunteer.webp';
 
 export function infoCard() {
   return (
