@@ -73,7 +73,10 @@ export const customTextOnlyAlert = (alertType: object, text: string) => {
 export const customTextOnlyAlertOvenVidu = (alertType: object, text: string) => {
   swal.fire({ ...alertType, text }).then((result)=>{
     if(result.isConfirmed){
-      window.location.href="/"
+      setTimeout(()=>{
+        window.location.href="/"
+      },1500)
     }
-  });
+    }
+  );
 };

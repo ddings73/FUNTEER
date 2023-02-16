@@ -16,7 +16,7 @@ import UserRoot from './roots/UserRoot';
 import AdminRoot from './roots/AdminRoot';
 import UserFooterRoot from './roots/UserFooterRoot';
 import {
-  // MainPage,
+  MainPage,
   SignUp,
   MemberSignUp,
   TeamSignUp,
@@ -78,7 +78,6 @@ import LiveTest from './containers/MyPage/LiveTest';
 import { http } from './api/axios';
 import ScrollToTop from './utils/ScrollToTop';
 
-const MainPage = lazy(() => import('./pages/MainPage'));
 
 const router = createBrowserRouter([
   /** Footer 없는 페이지 */
@@ -342,9 +341,7 @@ const persistor = persistStore(store);
 root.render(
   <Provider store={store}>
     <PersistGate loading={null} persistor={persistor}>
-      <Suspense fallback={<p>로딩중!!!!!!!!!</p>}>
         <RouterProvider router={router} />
-      </Suspense>
     </PersistGate>
   </Provider>,
 );
