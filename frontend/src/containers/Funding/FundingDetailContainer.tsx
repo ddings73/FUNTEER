@@ -24,6 +24,7 @@ import { requestCreateSession } from '../../api/live';
 import { reportModalType } from '../../types/modal';
 import ReportModal from '../../components/Modal/ReportModal';
 import { openModal } from '../../store/slices/reportModalSlice';
+import { stringToSeparator } from '../../utils/convert';
 
 export interface ResponseInterface {
   title: string;
@@ -182,6 +183,7 @@ export function FundingDetailContainer() {
   const [toggled, setToggled] = useState<boolean>(false);
   function handleDrawer() {
     setToggled(!toggled);
+    setPaying('');
   }
 
   // 엔터키 input 완성
@@ -231,6 +233,9 @@ export function FundingDetailContainer() {
     try {
       await fundingJoin(paying, fundIdx);
       alert(`${paying}원으로 펀딩을 완료했습니다!`);
+      setToggled(!toggled);
+      setPaying('');
+      fetchData();
       requestMoneyInfo();
     } catch (error) {
       console.log(error);
@@ -473,14 +478,18 @@ export function FundingDetailContainer() {
           <div>
             <TextField
               label="금액 입력"
-              id="custom-css-outlined-input"
-              type="number"
+              type="text"
               size="small"
               sx={{ margin: '0 20px', backgroundColor: 'white' }}
               // eslint-disable-next-line
               onKeyUp={handleKeyUp}
               color="warning"
-              onChange={(e) => setPaying(e.target.value)}
+              onChange={(e) => {
+                const { value } = e.target;
+                const regex = /[^0-9]/g;
+                const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
+                setPaying(separatorValue);
+              }}
               value={paying}
             />
           </div>
@@ -490,7 +499,7 @@ export function FundingDetailContainer() {
             펀딩 참여하기
           </button>
           <div className={styles.mileText}>
-            <p>현재 잔액: {money}원</p>
+            <p>현재 잔액: {stringToSeparator(String(money))}원</p>
             <Link to="/charge" className={styles.milLink}>
               <p className={styles.milea}>마일리지 충전</p>
             </Link>
