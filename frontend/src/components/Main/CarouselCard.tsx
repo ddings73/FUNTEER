@@ -38,10 +38,31 @@ export function CarouselCard({ setFundingLength }: Props) {
     responsive: [
       // 반응형 옵션
       {
-        breakpoint: 480, // (숫자)px 이하일 경우
+        breakpoint: 1600, // (숫자)px 이하일 경우
+        settings: {
+          slidesToShow: 4,
+          arrows: true,
+        },
+      },
+      {
+        breakpoint: 1200,
+        settings: {
+          slidesToShow: 3,
+          arrows: true,
+        },
+      },
+      {
+        breakpoint: 900,
+        settings: {
+          slidesToShow: 2,
+          arrows: true,
+        },
+      },
+      {
+        breakpoint: 550,
         settings: {
           slidesToShow: 1,
-          arrows: true,
+          arrows: false,
         },
       },
     ],

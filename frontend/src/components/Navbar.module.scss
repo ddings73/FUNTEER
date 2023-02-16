@@ -20,10 +20,6 @@ $Desktop-max-size: 1001px;
     &:hover {
       background-color: inherit;
     }
-
-    @media (max-width: $Desktop-max-size) {
-      display: none;
-    }
   }
   & .menuBox {
     width: 5%;
@@ -113,10 +109,24 @@ $Desktop-max-size: 1001px;
 .appContainer {
   padding: 0;
 }
+
+.toolbar {
+  @media screen and (max-width: 1200px) {
+    width: 100%;
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+}
+
 .pageBox {
   justify-content: center;
   align-items: center;
   display: flex;
+
+  @media screen and (max-width: 1200px) {
+    display: none;
+  }
+
   .menuWrapper {
     display: flex;
     flex-direction: column;
@@ -244,5 +254,20 @@ $Desktop-max-size: 1001px;
 
   &:hover {
     color: $primary;
+  }
+}
+
+.small-left {
+  display: flex;
+  align-items: center;
+
+  .small-menu-btn {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: $primary;
+
+    @media screen and (min-width: 1200px) {
+      display: none;
+    }
   }
 }

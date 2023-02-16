@@ -61,6 +61,22 @@ function ResponsiveAppBar() {
     setAnchorEl(null);
   };
 
+  /** 작은 화면 네브바 ===================================== */
+  const [anchorEl2, setAnchorEl2] = React.useState<null | HTMLElement>(null);
+  const open2 = Boolean(anchorEl2);
+  const handleClick2 = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl2(event.currentTarget);
+  };
+  const handleClose2 = () => {
+    setAnchorEl2(null);
+  };
+
+  const onClickSmallMenuItem = (path: string) => {
+    handleClose2();
+    clickNavigate(path);
+  };
+  // ==========================================================
+
   const navigateTo = useNavigate();
   const dispatch = useDispatch();
   function clickNavigate(address: string) {
@@ -233,11 +249,41 @@ function ResponsiveAppBar() {
     <div>
       <AppBar className={styles.appBar} position="fixed" sx={{ backgroundColor: scrollPosition < 10000 ? 'transparent' : 'rgb(255,255,255)' }}>
         <Container className={styles.appContainer} maxWidth="xl">
-          <Toolbar disableGutters>
+          <Toolbar disableGutters className={styles.toolbar}>
             {/* Desktop 구조 */}
-            <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ padding: '0', cursor: 'pointer', scale: '0.8' }} />
+            <div className={styles['small-left']}>
+              <img className={styles.logoImg} src={logoImg} alt="logoImg" onClick={() => logoHandler()} style={{ padding: '0', cursor: 'pointer', scale: '0.8' }} />
+              <Button
+                id="basic-button"
+                aria-controls={open2 ? 'basic-menu' : undefined}
+                aria-haspopup="true"
+                aria-expanded={open2 ? 'true' : undefined}
+                onClick={handleClick2}
+                className={styles['small-menu-btn']}
+              >
+                메뉴
+              </Button>
+              <Menu
+                id="basic-menu"
+                anchorEl={anchorEl2}
+                open={open2}
+                onClose={handleClose2}
+                MenuListProps={{
+                  'aria-labelledby': 'basic-button',
+                }}
+              >
+                <MenuItem onClick={() => onClickSmallMenuItem('/')}>홈으로</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('funding')}>펀딩 목록</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('funding/create')}>펀딩 등록</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('donation')}>기부</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('live')}>라이브 목록</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('notice')}>공지사항</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('faq')}>FAQ</MenuItem>
+                <MenuItem onClick={() => onClickSmallMenuItem('qna')}>1:1 문의</MenuItem>
+              </Menu>
+            </div>
             <Box
-              sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}
+              sx={{ flexGrow: 1 }}
               className={styles.pageBox}
               onMouseOut={() => {
                 setIsHovered(false);
