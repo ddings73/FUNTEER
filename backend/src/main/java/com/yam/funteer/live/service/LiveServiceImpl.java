@@ -132,6 +132,11 @@ public class LiveServiceImpl implements LiveService{
 
     private CreateConnectionResponse createNewSession(String sessionName, Funding funding, User user,
                                                       RecordingProperties recordingProperties) {
+
+        liveRepository.findByFunding(funding).ifPresent(live -> {
+            throw new DuplicateInfoException(live.getFunding().getTitle());
+        });
+
         try {
             log.info("세션 생성 ===========> {}", sessionName);
 
