@@ -6,21 +6,21 @@ import { Link, NavLink, useParams } from 'react-router-dom';
 import styles from './TeamInfoCard.module.scss';
 import ProfileSvg from '../../assets/images/default-profile-img.svg';
 import { teamType } from '../../containers/Funding/FundingDetailContainer';
+import { customTextOnlyAlert, noTimeSuccess, noTimeWarn } from '../../utils/customAlert';
 
 export function TeamInfo(team: teamType) {
   const { name, profileImgUrl, email, phone, id } = team;
   const handleCopyClipBoard = async (text: string, div: string) => {
     try {
       await navigator.clipboard.writeText(text);
-      alert(`${div} 복사했음 굿굿.`);
+      customTextOnlyAlert(noTimeSuccess, `${div}이 클립보드에 복사되었습니다.`);
     } catch (e) {
-      alert('복사에 실패하였습니다');
+      console.error(e);
     }
   };
 
   return (
     <div className={styles.bodyContainer}>
-      {' '}
       <div className={styles.teamBadge}>
         <img src={profileImgUrl} alt="BdgAlt" className={styles.teamPic} />
         <div className={styles.badgeWrapper}>
