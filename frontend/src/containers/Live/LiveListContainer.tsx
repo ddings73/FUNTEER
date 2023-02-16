@@ -5,6 +5,7 @@ import Lottie from 'lottie-react';
 import { requestLiveList } from '../../api/live';
 import styles from './LiveListContainer.module.scss';
 import liveLottie from '../../lotties/78810-live-animation.json';
+import emptyLottie from '../../lotties/85557-empty.json'
 
 import sudal from '../../assets/images/sudal.jpg';
 
@@ -38,12 +39,12 @@ function LiveListContainer() {
       <div className={styles.contents}>
         <div className={styles['title-box']}>
           <div className={styles['description-box']}>
-            <p>현재 진행중인 봉사활동을 라이브로 시청해보세요.</p>
+            <p>현재 진행중인 봉사활동을<br/>라이브로 시청해보세요.</p>
           </div>
         </div>
 
         <div className={styles['live-list-box']}>
-          {liveList.map((element, index) => (
+          {liveList.length===0 ?<div className={styles.lottieBox}><Lottie animationData={emptyLottie}/> <p className={styles.emptyText}>현재 진행중인 라이브 방송이 없어요</p> </div>  :(liveList.map((element, index) => (
             <div className={styles['live-element']} key={index + 1} onClick={() => onClickMoveLiveSession(element.sessionName)} aria-hidden="true">
               <div className={styles['live-thumbnail-box']}>
                 <img src={element.thumbnail} alt="" className={styles['live-thumbnail']} />
@@ -53,7 +54,8 @@ function LiveListContainer() {
                 {' '}
               </Lottie>
             </div>
-          ))}
+          )))}
+          {}
         </div>
       </div>
     </div>

@@ -77,9 +77,9 @@ function FundingListContainer() {
       const { data } = await requestFundingList(categoryId, searchText, fundingStateFilter, 0, size);
       console.log(data);
       setFundingList([...data.fundingListResponses]);
-      setSuccessFundingCount(data.inProgressFundingAmount);
-      setTotalFundingAmount(data.successFundingCount);
-      setTotalFundingCount(data.totalElements);
+      setSuccessFundingCount(data.successFundingCount);
+      setTotalFundingAmount(data.inProgressFundingAmount);
+      setTotalFundingCount(data.totalElements );
       setCurrentPage(data.number);
       setTotalPage(data.totalPages);
       console.log(data);
@@ -132,12 +132,12 @@ function FundingListContainer() {
           <div className={styles['statistic-box']}>
             <div>
               <p>
-                <CountUp start={0} end={154} separator="," duration={4} />건 <br /> 봉사 펀딩에 성공했어요.
+                <CountUp start={0} end={successFundingCount} separator="," duration={2} />건 <br /> 봉사 펀딩에 성공했어요.
               </p>
             </div>
             <div>
               <p>
-                <CountUp start={0} end={3568745} separator="," duration={4} />원 <br /> 기부에 성공했어요.
+                <CountUp start={0} end={totalFundingAmount} separator="," duration={2} />원 <br /> 기부에 성공했어요.
               </p>
             </div>
           </div>
