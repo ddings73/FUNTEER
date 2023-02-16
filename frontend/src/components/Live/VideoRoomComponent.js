@@ -223,8 +223,8 @@ class VideoRoomComponent extends Component {
             status: error.status,
           });
 
-          customTextOnlyAlertOvenVidu(DefaultAlert, '라이브 방송에 오류가 생겼습니다.');
         }
+        customTextOnlyAlertOvenVidu(DefaultAlert, '라이브 방송에 오류가 생겼습니다.');
        
       
         // window.location.href = '/';
@@ -333,7 +333,6 @@ class VideoRoomComponent extends Component {
     console.log('LEAVE_STATE', this.state);
 
     customTextOnlyAlertOvenVidu(DefaultAlert, '라이브가 종료되었습니다');
-
   }
 
   camStatusChanged() {
