@@ -53,6 +53,7 @@
       & .linkTo {
         cursor: pointer;
         text-decoration: none;
+        color: black;
         &:hover {
           color: $primary;
           font-weight: 500;

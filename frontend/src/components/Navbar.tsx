@@ -18,23 +18,19 @@ import { styled } from '@mui/material/styles';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 /*eslint-disable*/
 /*기타 Imports */
-import { Link, Outlet, NavLink, useNavigate, Navigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import styles from './Navbar.module.scss';
 /* 이미지 import */
-import logoImg from '../assets/images/headerlogo.png';
+import logoImg from '../assets/images/headerlogo.webp';
 /*로그인 Import */
-import { useAppDispatch, useAppSelector } from '../store/hooks';
-import userSlice, { isLoginState, resetLoginState, setUserLoginState } from '../store/slices/userSlice';
-import { useDispatch, useSelector } from 'react-redux';
+import { useAppSelector } from '../store/hooks';
+import { resetLoginState } from '../store/slices/userSlice';
+import { useDispatch } from 'react-redux';
 import NavbarMenuData from './NavbarMenuData';
 import { requestLogout } from '../api/user';
-import { openModal } from '../store/slices/modalSlice';
 import { Chip } from '@mui/material';
 import { requestTeamAccountInfo } from '../api/team';
 import { http } from '../api/axios';
-import { off } from 'process';
-import { type } from 'os';
-import { string } from 'yargs';
 import { BsFillBellFill } from 'react-icons/bs';
 import { customTextOnlyAlert, DefaultAlert } from '../utils/customAlert';
 
@@ -74,9 +70,6 @@ function ResponsiveAppBar() {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
   const [ishovered, setIsHovered] = useState(false);
 
-  const updateScroll = () => {
-    setScrollPosition(window.scrollY || document.documentElement.scrollTop);
-  };
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
   };
@@ -148,14 +141,6 @@ function ResponsiveAppBar() {
       getTeamInfo();
     }
   }, [userType]);
-
-  useEffect(() => {
-    window.addEventListener('scroll', updateScroll);
-    // console.log(scrollPosition);
-    return () => {
-      window.removeEventListener('scroll', updateScroll);
-    };
-  });
 
   const requestGetAlarms = async () => {
     setEventList([]);
