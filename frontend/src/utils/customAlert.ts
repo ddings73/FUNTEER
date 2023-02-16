@@ -68,3 +68,15 @@ export const customTextAlert = (alertType: object, title: string, text: string) 
 export const customTextOnlyAlert = (alertType: object, text: string) => {
   swal.fire({ ...alertType, text });
 };
+
+
+export const customTextOnlyAlertOvenVidu = (alertType: object, text: string) => {
+  swal.fire({ ...alertType, text }).then((result)=>{
+    if(result.isConfirmed){
+      setTimeout(()=>{
+        window.location.href="/"
+      },1500)
+    }
+    }
+  );
+};

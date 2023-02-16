@@ -6,12 +6,28 @@
   height: 300px;
   display: flex;
   justify-content: space-around;
+
+  @media (max-width: 1200px) {
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 30rem;
+  }
+
+  @media screen and (max-width: 600px) {
+    margin-bottom: 40rem;
+  }
+
   & .cardElement {
     width: 25%;
     color: rgb(0, 0, 0);
     display: flex;
     flex-direction: column;
     align-items: center;
+
+    @media (max-width: 1200px) {
+      margin: 3rem 0;
+    }
+
     & .cardCircle {
       width: 160px;
       height: 160px;
@@ -35,7 +51,6 @@
         font-size: 20px;
         font-style: normal;
         font-weight: 800;
-        color: #5c5c5c;
       }
 
       & .cardContent {
@@ -45,7 +60,6 @@
         font-weight: 700;
         font-size: 15px;
         line-height: 17px;
-        color: #797979;
       }
     }
   }

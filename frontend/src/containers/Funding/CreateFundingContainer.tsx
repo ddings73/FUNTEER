@@ -32,6 +32,26 @@ import { stringToSeparator, stringToNumber } from '../../utils/convert';
 import TabPanel from '../../components/Funding/TabPanel';
 import TabContent from '../../components/Funding/TabContent';
 
+const htmlString = `  
+<h1>프로젝트 소개</h1>
+<p>프로젝트를 간단히 소개한다면?</p> 
+<p>이 프로젝트를 하면 어떤 효과를 발생시키나요?</p> 
+<p>이 프로젝트를 시작하게 된 배경이 무엇인가요 ?</p>
+
+<h1>프로젝트 예산</h1>
+<p>펀딩으로 모금된 금액을 어디에 사용 예정인지 구체적으로 지출 항목으로 적어 주세요.</p>
+<ul>
+<li>구체적인 항목으로 적어주세요.</li>
+</ul>
+<h1>프로젝트 일정</h1>
+<p>아래의 양식을 참고하여 작성해보세요.</>
+<ul>
+<li>0월 0일: 봉사활동 계획</li>
+<li>0월 0일: 봉사활동 실행</li>
+</ul>
+
+`;
+
 const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => <Tooltip {...props} classes={{ popper: className }} />)(({ theme }) => ({
   [`& .${tooltipClasses.tooltip}`]: {
     backgroundColor: '#f5f5f9',
@@ -48,6 +68,7 @@ const HtmlTooltip = styled(({ className, ...props }: TooltipProps) => <Tooltip {
 
 function CreateFundingContainer() {
   const thumbnailRef = useRef<HTMLInputElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const editorRef = useRef<ToastEditor>(null);
@@ -261,30 +282,12 @@ function CreateFundingContainer() {
   };
 
   useEffect(() => {
-    const htmlString = `  
-    <h1>프로젝트 소개</h1>
-    <p>프로젝트를 간단히 소개한다면?</p> 
-    <p>이 프로젝트를 하면 어떤 효과를 발생시키나요?</p> 
-    <p>이 프로젝트를 시작하게 된 배경이 무엇인가요 ?</p>
-
-    <h1>프로젝트 예산</h1>
-    <p>펀딩으로 모금된 금액을 어디에 사용 예정인지 구체적으로 지출 항목으로 적어 주세요.</p>
-    <ul>
-    <li>구체적인 항목으로 적어주세요.</li>
-    </ul>
-    <h1>프로젝트 일정</h1>
-    <p>아래의 양식을 참고하여 작성해보세요.</>
-    <ul>
-    <li>0월 0일: 봉사활동 계획</li>
-    <li>0월 0일: 봉사활동 실행</li>
-    </ul>
-
-    `;
     editorRef.current?.getInstance().setHTML(htmlString);
+    containerRef.current?.scrollTo(0, 0);
   }, []);
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} ref={containerRef}>
       <div className={styles.contents}>
         <div className={styles['funding-thumbnail-box']}>
           <p className={styles.title}>
