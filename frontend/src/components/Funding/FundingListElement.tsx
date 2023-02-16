@@ -5,6 +5,7 @@ import styles from './FundingListElement.module.scss';
 import { FundingElementType } from '../../types/funding';
 import { diffDay } from '../../utils/day';
 import defaultFundingThumbnail from '../../assets/images/funding/funding_thumbnail.png';
+import { stringToSeparator } from '../../utils/convert';
 
 const ProgressBar = styled.div<{ gage: number }>`
   width: 100%;
@@ -44,7 +45,7 @@ function FundingListElement(funding: FundingElementType) {
       <div className={styles['progress-info-box']}>
         <p className={styles.money}>
           <span>{enoughMoney}%</span>&nbsp;
-          <span>{currentFundingAmount}원</span>
+          <span>{stringToSeparator(String(currentFundingAmount))}원</span>
         </p>
         <p className={styles.date}>{diffDay(endDate)}일남음</p>
       </div>
