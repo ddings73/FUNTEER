@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styles from './InfoCard.module.scss';
-import img1 from '../../assets/images/mainPage/fund.png';
-import img2 from '../../assets/images/mainPage/live.png';
-import img3 from '../../assets/images/mainPage/volunteer.png';
+import img1 from '../../assets/images/mainPage/fund.webp';
+import img2 from '../../assets/images/mainPage/live.webp';
+import img3 from '../../assets/images/mainPage/volunteer.webp';
 
 export function infoCard(scrollPosition: { scrollPosition: number }) {
   const scroll = scrollPosition.scrollPosition;
@@ -24,6 +24,7 @@ export function infoCard(scrollPosition: { scrollPosition: number }) {
           </p>
         </div>
       </div>
+
       <div className={styles.cardElement}>
         <div className={styles.cardCircle}>
           <img src={img2} className={styles.cardImg} alt="card" style={{ right: '-60px' }} />

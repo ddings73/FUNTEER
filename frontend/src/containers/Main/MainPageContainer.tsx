@@ -5,9 +5,9 @@ import Lottie from 'lottie-react';
 import styles from './MainPageContainer.module.scss';
 import InfoCard from '../../components/Main/InfoCard';
 import FunList from '../../components/Main/funList';
-import ast from '../../assets/images/mainPage/ast.png';
-import planet from '../../assets/images/mainPage/planet_funteer.png';
-import background from '../../assets/images/mainPage/background.png';
+import ast from '../../assets/images/mainPage/ast.webp';
+import planet from '../../assets/images/mainPage/planet_funteer.webp';
+import background from '../../assets/images/mainPage/background.webp';
 import spaceLottie from '../../lotties/107693-space.json';
 
 export function MainPageContainer() {
