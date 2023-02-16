@@ -71,6 +71,7 @@ import {
   FAQEdit,
   QuestionCreate,
   QuestionDetail,
+  NotFound,
 } from './pages/index';
 import FundingDetail from './pages/Funding/FundingDetail';
 import LiveTest from './containers/MyPage/LiveTest';
@@ -82,7 +83,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <UserRoot />,
-    errorElement: <ErrorPage />,
+    errorElement: <NotFound />,
     children: [
       {
         path: 'login',
@@ -191,7 +192,7 @@ const router = createBrowserRouter([
   {
     path: '/',
     element: <UserFooterRoot />,
-    errorElement: <ErrorPage />,
+    errorElement: <NotFound />,
     children: [
       {
         index: true,
@@ -283,7 +284,7 @@ const router = createBrowserRouter([
   {
     path: '/admin',
     element: <AdminRoot />,
-    errorElement: <ErrorPage />,
+    errorElement: <NotFound />,
     children: [
       {
         index: true,

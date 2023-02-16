@@ -39,6 +39,7 @@
     "iamport-react-native": "^2.0.4",
     "jquery": "^3.6.3",
     "lottie-react": "^2.3.1",
+    "lottie-web": "^5.10.2",
     "moment": "^2.29.4",
     "node-sass": "^8.0.0",
     "openvidu-browser": "^2.25.0",
