@@ -136,18 +136,13 @@ public class FundingServiceImpl implements FundingService{
 	public FundingListPageResponse findAllFunding(Pageable pageable, PostType postType, Long categoryId, String keyword) {
 		Page<Funding> fundings = null;
 		List<PostType> postTypes = null;
-		if(postType != null) {
-			postTypes = PostType.collectPostType(postType);
-		}
+		postTypes = PostType.collectPostType(postType);
+
 		if(categoryId == null){
-			fundings = postType == null
-					? fundingRepository.findAllByTitleContainingOrContentContaining(keyword, keyword, pageable)
-					: fundingRepository.findAllByPostTypeInAndTitleContainingOrPostTypeInAndContentContaining(postTypes, keyword, postTypes, keyword, pageable);
+			fundings = fundingRepository.findAllByPostTypeInAndTitleContainingOrPostTypeInAndContentContaining(postTypes, keyword, postTypes, keyword, pageable);
 		}else{
 			Category category = categoryRepository.findById(categoryId).orElseThrow();
-			fundings = postType == null
-					? fundingRepository.findAllByCategoryAndTitleContainingOrCategoryAndContentContaining(category, keyword, category, keyword, pageable)
-					: fundingRepository.findAllByCategoryAndPostTypeInAndTitleContainingOrCategoryAndPostTypeInAndContentContaining(category, postTypes, keyword, category, postTypes, keyword, pageable);
+			fundings = fundingRepository.findAllByCategoryAndPostTypeInAndTitleContainingOrCategoryAndPostTypeInAndContentContaining(category, postTypes, keyword, category, postTypes, keyword, pageable);
 		}
 
 //		Page<FundingListResponse> fundingListResponses = getFundingListResponses(pageable, fundings);
