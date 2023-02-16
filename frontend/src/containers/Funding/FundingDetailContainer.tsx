@@ -247,7 +247,6 @@ export function FundingDetailContainer() {
       const regex = /[^0-9]/g;
       const separatorValue = stringToSeparator(paying.replaceAll(regex, ''));
       await fundingJoin(separatorValue, fundIdx);
-      alert(`${separatorValue}원으로 펀딩을 완료했습니다!`);
       customTextOnlyAlert(noTimeSuccess, `${separatorValue}원으로 펀딩을 완료했습니다!`);
       await fundingJoin(paying, fundIdx);
       setToggled(!toggled);
@@ -357,6 +356,7 @@ export function FundingDetailContainer() {
       console.log(e);
     }
   };
+  console.log(board);
 
   return (
     <div className={styles.bodyContainer}>
@@ -415,23 +415,23 @@ export function FundingDetailContainer() {
             <div className={styles.mainContentInner}>
               <p>{report.content}</p>
               <p>{report.regDate}</p>
+              <h2>라이브 녹화 영상 보고</h2>
               <video className={styles.video} controls autoPlay loop>
                 <source src={report.liveUrl} type="video/webm" />
                 <source src={report.liveUrl} type="video/mp4" />
                 <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
               </video>
+              <PdfViewer pdfUrl="https://www.africau.edu/images/default/sample.pdf" />
               <div className={styles.reslists}>123</div>
             </div>
           )}
         </div>
         <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
-        <PdfViewer pdfUrl="http://www.example.com/myfile.pdf" />
-        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard} style={{ width: '90%', marginLeft: '6%' }}>
           <TeamInfo {...board.team} />
         </div>
         <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
-        <DetailArcodian />
+        <DetailArcodian {...board} />
         <div className={styles.mainCommentSubmit}>
           <p className={styles.commentHead}>응원 댓글 등록({commentCount})</p>
           <CommentCardSubmit initCommentList={initCommentList} />
@@ -440,7 +440,7 @@ export function FundingDetailContainer() {
           {isLoading ? (
             <CommentSkeleton />
           ) : (
-            commentList.map((comment) => {
+            commentList.map((comment, i) => {
               return (
                 <CommentCard
                   commentId={comment.commentId}
@@ -448,7 +448,8 @@ export function FundingDetailContainer() {
                   content={comment.content}
                   memberProfileImg={comment.memberProfileImg}
                   regDate={comment.regDate}
-                  key={comment.commentId}
+                  // eslint-disable-next-line
+                  key={i}
                 />
               );
             })

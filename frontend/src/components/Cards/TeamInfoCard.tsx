@@ -25,7 +25,7 @@ export function TeamInfo(team: teamType) {
         <img src={profileImgUrl} alt="BdgAlt" className={styles.teamPic} />
         <div className={styles.badgeWrapper}>
           <p className={styles.badgeName}>봉사단체명</p>
-          <NavLink to={`/team/${id}`}>
+          <NavLink to={`/team/${id}`} style={{ textDecoration: 'none' }}>
             <p className={styles.badgeTeamName}>{name}</p>
           </NavLink>
         </div>
