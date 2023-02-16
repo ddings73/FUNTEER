@@ -32,8 +32,10 @@
       @include mobile {
       }
 
-      & .footerLogo {
-        width: 250px;
+      & img {
+        width: 10rem;
+        margin: 0 0 0.5rem -1rem;
+
         @include mobile {
           margin: 1rem 0 2rem 0;
         }
@@ -45,7 +47,7 @@
         & a {
           margin-right: 1rem;
           text-decoration: none;
-          color: $primary;
+          color: rgb(76, 76, 76);
         }
       }
 

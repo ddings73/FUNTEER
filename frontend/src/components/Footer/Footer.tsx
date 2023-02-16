@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './Footer.module.scss';
-import footerLogo from '../../assets/images/footerLogo.svg';
+import logo2 from '../../assets/images/logo2.svg';
 
 function Footer() {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ function Footer() {
       <footer className={styles.footer}>
         <div className={styles.contents}>
           <div className={styles.left}>
-            <img className={styles.footerLogo} src={footerLogo} alt="footerLogo" />
+            <img src={logo2} alt="logo" />
             <nav>
               <a href="." onClick={goService}>
                 도움말

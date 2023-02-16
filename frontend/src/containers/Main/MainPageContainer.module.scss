@@ -121,6 +121,7 @@
   z-index: 100;
 
   .lottieSpace {
+    transition: opacity 0.3s;
     position: absolute;
     width: 400px;
     top: -150px;

@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom';
 import styles from './funList.module.scss';
 import CarouselCard from '../../components/Main/CarouselCard';
 
-export function funList() {
+export function funList(scrollPosition: { scrollPosition: number }) {
   const [fundingLength, setFundingLength] = useState<number>(0);
+  const scroll = scrollPosition.scrollPosition;
 
   return (
     <div className={styles.listContainer}>
@@ -18,7 +19,7 @@ export function funList() {
       </div>
       <div className={styles.contentWrapper}>
         <div className={styles.menuHeads}>
-          <p className={styles.curStatus}>
+          <p className={styles.curStatus} style={scroll >= 1000 ? { color: 'black' } : { color: 'white' }}>
             총 <span>{fundingLength}</span>건의 펀딩이 진행 중 입니다.
           </p>
           <Link to="/funding" className={styles.linkTo}>

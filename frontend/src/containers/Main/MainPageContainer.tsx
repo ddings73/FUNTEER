@@ -71,14 +71,15 @@ export function MainPageContainer() {
             </Tooltip>
           </div>
         </div>
-        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 1500 ? '1' : '0' }} alt="back" />
+        <img className={styles.backgroundImg} src={background} style={{ opacity: scrollPosition < 1000 ? '1' : '0' }} alt="back" />
       </div>
       <div className={styles.infoBanner}>
-        <Lottie className={styles.lottieSpace} animationData={spaceLottie} />
-        <InfoCard />
+        <Lottie className={styles.lottieSpace} animationData={spaceLottie} style={{ opacity: scrollPosition < 1000 ? '1' : '0' }} />
+        {/* eslint-disable-next-line */}
+        <InfoCard scrollPosition={scrollPosition} />
       </div>
       <div className={styles.fundLists}>
-        <FunList />
+        <FunList scrollPosition={scrollPosition} />
       </div>
       <div className={styles.donate}> </div>
     </div>
