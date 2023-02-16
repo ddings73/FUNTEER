@@ -117,7 +117,7 @@ function DonationContainer() {
           </div>
           <div className={styles['amount-box']}>
             <p>
-              총 후원금 <CountUp start={0} end={parseInt(donBoard.currentAmount, 10)} separator="," duration={2} /> 원
+              총 후원금 <CountUp start={0} end={parseInt(donBoard.currentAmount, 10)} separator="," duration={4} /> 원
             </p>
           </div>
           <div className={styles.finishedTable}>

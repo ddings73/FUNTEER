@@ -25,6 +25,7 @@ import { reportModalType } from '../../types/modal';
 import ReportModal from '../../components/Modal/ReportModal';
 import { openModal } from '../../store/slices/reportModalSlice';
 import { stringToSeparator } from '../../utils/convert';
+import { customTextOnlyAlert, noTimeSuccess } from '../../utils/customAlert';
 
 export interface ResponseInterface {
   title: string;
@@ -232,7 +233,7 @@ export function FundingDetailContainer() {
 
     try {
       await fundingJoin(paying, fundIdx);
-      alert(`${paying}원으로 펀딩을 완료했습니다!`);
+      customTextOnlyAlert(noTimeSuccess, `${paying}원으로 펀딩을 완료했습니다!`);
       setToggled(!toggled);
       setPaying('');
       fetchData();
