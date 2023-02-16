@@ -111,7 +111,11 @@ public class LiveServiceImpl implements LiveService{
             Session session = this.openVidu.getActiveSession(sessionId);
 
             Optional<Connection> optConn = session.getConnections().stream()
-                    .filter(conn -> conn.getServerData().equals(String.valueOf(userId))).findFirst();
+                    .filter(conn -> {
+                        log.info("serverData => {}", conn.getServerData());
+                        log.info("clientData => {}", conn.getClientData());
+                        conn.getServerData().equals(String.valueOf(userId));
+                    }).findFirst();
             optConn.ifPresent(connection -> {
                 if(connection.getRole().equals(OpenViduRole.PUBLISHER)) {
                     live.end();
