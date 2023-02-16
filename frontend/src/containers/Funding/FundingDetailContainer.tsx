@@ -245,7 +245,6 @@ export function FundingDetailContainer() {
         return;
       }
       await fundingJoin(paying, fundIdx);
-      alert(`${paying}원으로 펀딩을 완료했습니다!`);
       customTextOnlyAlert(noTimeSuccess, `${paying}원으로 펀딩을 완료했습니다!`);
       setToggled(!toggled);
       setPaying('');
