@@ -17,7 +17,6 @@ import { FundingReportInterface, responseListType } from '../../types/funding';
 import { fundingReportPost } from '../../api/funding';
 import requiredIcon from '../../assets/images/funding/required.svg';
 import styles from './ReportModal.module.scss';
-import { customTextOnlyAlert, noTimeSuccess, noTimeWarn } from '../../utils/customAlert';
 
 const style = {
   position: 'absolute',
@@ -94,7 +93,7 @@ export function ReportModal() {
         },
       ]);
     } else {
-      customTextOnlyAlert(noTimeWarn, '빈칸이 있습니다. 양식을 모두 채워주세요');
+      alert('빈칸이 있습니다. 양식을 모두 채워주세요');
     }
     setAmount('');
     setDescription('');
@@ -104,31 +103,13 @@ export function ReportModal() {
     setResponseList(responseList.filter((data, idx) => idx !== delIdx));
   }
 
-  // const createNotice = async () => {
-  //   responseList.shift();
-  //   setResponseList(responseList);
-  //   setReportData({ ...reportData, content: contentText, fundingDetailRequests: responseList });
-  // };
+  const createNotice = async () => {
+    responseList.shift();
+    setResponseList(responseList);
+    setReportData({ ...reportData, content: contentText, fundingDetailRequests: responseList });
 
-  // const test = async () => {
-  //   await createNotice();
-
-  //   try {
-  //     const response = await fundingReportPost(fundingId, reportData);
-
-  async function closeReportModal() {
-    if (responseList.length < 2) {
-      customTextOnlyAlert(noTimeWarn, '설명과 금액 보고를 작성해주세요');
-      return;
-    }
-    responseList.shift(); // 맨 앞 빈 객체 제거
     try {
-      // await fundingReportPost(fundingId, reportContent);
-      // setReportContent({
-      //   content: contentText,
-      //   reportDetailResponseList: responseList,
-      // });
-      customTextOnlyAlert(noTimeSuccess, '보고서가 성공적으로 등록되었습니다. 등록창이 닫힙니다.');
+      const response = await fundingReportPost(fundingId, reportData);
       dispatch(closeModal());
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
@@ -136,7 +117,7 @@ export function ReportModal() {
         console.error(error);
       }
     }
-  }
+  };
 
   function initModalClose() {
     setAmount('');
@@ -156,6 +137,7 @@ export function ReportModal() {
       const file = e.target.files[0];
       // setReportData({ ...reportData, content: contentText, fundingDetailRequests: responseList, receiptFile: [...prev, ...temp] });
       setReportData({ ...reportData, receiptFile: file });
+      console.log('contentTExt', reportData);
     }
   };
 
