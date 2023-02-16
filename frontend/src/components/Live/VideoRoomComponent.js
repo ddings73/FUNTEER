@@ -139,7 +139,7 @@ class VideoRoomComponent extends Component {
     this.state.session.on('streamDestroyed', (event) => {
       event.preventDefault();
 
-      customTextOnlyAlertOvenVidu(noTimeWarn, '이미 종료된 라이브방송입니다.');
+      customTextOnlyAlertOvenVidu(DefaultAlert, '이미 종료된 라이브방송입니다.');
     });
   }
 
@@ -222,8 +222,10 @@ class VideoRoomComponent extends Component {
             code: error.code,
             status: error.status,
           });
+
+          customTextOnlyAlertOvenVidu(DefaultAlert, '라이브 방송에 오류가 생겼습니다.');
         }
-        customTextOnlyAlertOvenVidu(noTimeWarn, '라이브 방송에 오류가 생겼습니다.');
+       
       
         // window.location.href = '/';
         // alert('There was an error connecting to the session:', error.message);
