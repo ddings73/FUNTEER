@@ -222,11 +222,9 @@ class VideoRoomComponent extends Component {
             code: error.code,
             status: error.status,
           });
-
         }
         customTextOnlyAlertOvenVidu(DefaultAlert, '라이브 방송에 오류가 생겼습니다.');
-       
-      
+
         // window.location.href = '/';
         // alert('There was an error connecting to the session:', error.message);
         // console.log('There was an error connecting to the session:', error.code, error.message);
@@ -438,7 +436,9 @@ class VideoRoomComponent extends Component {
 
   async switchCamera() {
     try {
-      const devices = await this.OV.getUserMedia();
+      // console.l
+      const devices = await this.OV.getDevices();
+      console.log(devices);
       const videoDevices = devices.filter((device) => device.kind === 'videoinput');
 
       if (videoDevices && videoDevices.length > 1) {
