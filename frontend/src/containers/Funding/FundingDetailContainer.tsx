@@ -24,7 +24,7 @@ import { requestCreateSession } from '../../api/live';
 import ReportModal from '../../components/Modal/ReportModal';
 import { openModal } from '../../store/slices/reportModalSlice';
 import PdfViewer from '../../components/Funding/PdfViewer';
-import { stringToSeparator } from '../../utils/convert';
+import { stringToSeparator, stringToNumber } from '../../utils/convert';
 import { customTextOnlyAlert, noTimeSuccess } from '../../utils/customAlert';
 
 export interface ResponseInterface {
@@ -230,25 +230,21 @@ export function FundingDetailContainer() {
 
   async function fundingHandler() {
     console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불 시도');
-
     try {
-      if (Number(paying) < 1000) {
+      if (stringToNumber(paying) < 1000) {
         customTextOnlyAlert(noTimeSuccess, `최소펀딩 금액은 1000원부터 가능합니다.`);
         return;
       }
-      if (Number(paying) > Number(money)) {
+      if (stringToNumber(paying) > Number(money)) {
         customTextOnlyAlert(noTimeSuccess, `마일리지가 모자랍니다.`);
         return;
       }
-      if (Number(paying) % 100 !== 0) {
+      if (stringToNumber(paying) % 100 !== 0) {
         customTextOnlyAlert(noTimeSuccess, `펀딩 후원은 100원 단위로 가능합니다.`);
         return;
       }
-      const regex = /[^0-9]/g;
-      const separatorValue = stringToSeparator(paying.replaceAll(regex, ''));
-      // await fundingJoin(separatorValue, fundIdx);
       await fundingJoin(paying, fundIdx);
-      customTextOnlyAlert(noTimeSuccess, `${separatorValue}원으로 펀딩을 완료했습니다!`);
+      customTextOnlyAlert(noTimeSuccess, `${paying}원으로 펀딩을 완료했습니다!`);
       setToggled(!toggled);
       setPaying('');
       fetchData();
@@ -291,28 +287,6 @@ export function FundingDetailContainer() {
     fetchReportList();
   }, []);
 
-  // 단계별 펀딩 정보
-  const levelOneData = () => (
-    <p style={{ whiteSpace: 'pre-line' }}>
-      {`1단계 금액: ${board.targetMoneyListLevelOne.amount}원
-      펀딩 설명: ${board.targetMoneyListLevelOne?.descriptions?.map((data) => data.description)}
-      `}
-    </p>
-  );
-  const levelTwoData = () => (
-    <p style={{ whiteSpace: 'pre-line' }}>
-      {`2단계 금액: ${board.targetMoneyListLevelTwo.amount}원
-      펀딩 설명: ${board.targetMoneyListLevelTwo?.descriptions?.map((data) => data.description)}
-      `}
-    </p>
-  );
-  const levelThreeData = () => (
-    <p style={{ whiteSpace: 'pre-line' }}>
-      {`3단계 금액: ${board.targetMoneyListLevelThree.amount}원
-      펀딩 설명: ${board.targetMoneyListLevelThree?.descriptions?.map((data) => data.description)}
-      `}
-    </p>
-  );
   // 백분율 계산
   function calc(tar: string, cur: string) {
     const newTar = Number(tar?.replaceAll(',', ''));
@@ -421,7 +395,7 @@ export function FundingDetailContainer() {
                 <source src={report.liveUrl} type="video/mp4" />
                 <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
               </video>
-              <PdfViewer pdfUrl="https://www.africau.edu/images/default/sample.pdf" />
+              <PdfViewer pdfUrl="" />
               <div className={styles.reslists}>123</div>
             </div>
           )}
@@ -458,7 +432,7 @@ export function FundingDetailContainer() {
         </div>
         {currentPage >= 0 ? <div ref={ref} /> : ''}
       </div>
-      {isLogin && userType === 'NORMAL' && (
+      {isLogin && (userType === 'NORMAL' || userType === 'KAKAO') && (
         <Fab
           aria-label="add"
           sx={{ color: 'white', backgroundColor: 'orange !important', position: 'fixed', bottom: '3%', right: '3%', width: '60px', height: '60px' }}
@@ -498,7 +472,9 @@ export function FundingDetailContainer() {
               onChange={(e) => {
                 const { value } = e.target;
                 console.log('본래 value', value);
-                setPaying(value);
+                const regex = /[^0-9]/g;
+                const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
+                setPaying(separatorValue);
               }}
               value={paying}
             />
