@@ -458,7 +458,7 @@ function ResponsiveAppBar() {
                       </Typography>
                     </MenuItem>
                   )}
-                  {userType === 'NORMAL' && (
+                  {(userType === 'NORMAL' || userType === 'KAKAO') && (
                     <MenuItem onClick={handleCloseUserMenu}>
                       <Typography
                         textAlign="center"
@@ -471,7 +471,7 @@ function ResponsiveAppBar() {
                       </Typography>
                     </MenuItem>
                   )}
-                  {userType === 'NORMAL' && (
+                  {(userType === 'NORMAL' || userType === 'KAKAO') && (
                     <MenuItem onClick={handleCloseUserMenu}>
                       <Typography
                         textAlign="center"
@@ -484,7 +484,7 @@ function ResponsiveAppBar() {
                       </Typography>
                     </MenuItem>
                   )}
-                  {userType === 'NORMAL' && (
+                  {(userType === 'NORMAL' || userType === 'KAKAO') && (
                     <MenuItem onClick={handleCloseUserMenu}>
                       <Typography
                         textAlign="center"
@@ -497,7 +497,7 @@ function ResponsiveAppBar() {
                       </Typography>
                     </MenuItem>
                   )}
-                  {userType === 'NORMAL' && (
+                  {(userType === 'NORMAL' || userType === 'KAKAO') && (
                     <MenuItem onClick={handleCloseUserMenu}>
                       <Typography
                         textAlign="center"
