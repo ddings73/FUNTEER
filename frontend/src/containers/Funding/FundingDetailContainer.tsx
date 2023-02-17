@@ -24,7 +24,7 @@ import { requestCreateSession } from '../../api/live';
 import ReportModal from '../../components/Modal/ReportModal';
 import { openModal } from '../../store/slices/reportModalSlice';
 import PdfViewer from '../../components/Funding/PdfViewer';
-import { stringToSeparator } from '../../utils/convert';
+import { stringToSeparator, stringToNumber } from '../../utils/convert';
 import { customTextOnlyAlert, noTimeSuccess } from '../../utils/customAlert';
 
 export interface ResponseInterface {
@@ -230,17 +230,16 @@ export function FundingDetailContainer() {
 
   async function fundingHandler() {
     console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불 시도');
-
     try {
-      if (Number(paying) < 1000) {
+      if (stringToNumber(paying) < 1000) {
         customTextOnlyAlert(noTimeSuccess, `최소펀딩 금액은 1000원부터 가능합니다.`);
         return;
       }
-      if (Number(paying) > Number(money)) {
+      if (stringToNumber(paying) > Number(money)) {
         customTextOnlyAlert(noTimeSuccess, `마일리지가 모자랍니다.`);
         return;
       }
-      if (Number(paying) % 100 !== 0) {
+      if (stringToNumber(paying) % 100 !== 0) {
         customTextOnlyAlert(noTimeSuccess, `펀딩 후원은 100원 단위로 가능합니다.`);
         return;
       }
@@ -418,7 +417,7 @@ export function FundingDetailContainer() {
                 <source src={report.liveUrl} type="video/mp4" />
                 <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
               </video>
-              <PdfViewer pdfUrl="https://www.africau.edu/images/default/sample.pdf" />
+              <PdfViewer pdfUrl="" />
               <div className={styles.reslists}>123</div>
             </div>
           )}
