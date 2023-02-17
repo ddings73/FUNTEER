@@ -64,3 +64,10 @@
     }
   }
 }
+.iconTag {
+  transition: 1s;
+  &:hover {
+    transform: translateY(-10px);
+    color: $primary;
+  }
+}
