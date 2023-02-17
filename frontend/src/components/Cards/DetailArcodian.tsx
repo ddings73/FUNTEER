@@ -106,27 +106,33 @@ export function DetailArcodian(board: ResponseInterface) {
           <div style={{ display: 'block' }}>
             <h3>😺 최소단계달성 계획 😺</h3>
             <h5>{board.targetMoneyListLevelOne.amount}원 달성 시</h5>
-            {board.targetMoneyListLevelOne.descriptions?.map((des, i) => (
-              <p key={i}>{des.description}</p>
-            ))}
+            <div style={{ display: 'block' }}>
+              {board.targetMoneyListLevelOne.descriptions?.map((des, i) => (
+                <p key={i}>{des.description}</p>
+              ))}
+            </div>
           </div>
         </div>
         <div style={{ display: 'none' }} ref={levelTwoRef}>
           <div style={{ display: 'block' }}>
             <h3>😹 중간단계달성 계획 😹</h3>
             <h5>{board.targetMoneyListLevelTwo.amount}원 달성 시</h5>
-            {board.targetMoneyListLevelTwo.descriptions?.map((des, i) => (
-              <p key={i}>{des.description}</p>
-            ))}
+            <div style={{ display: 'block' }}>
+              {board.targetMoneyListLevelTwo.descriptions?.map((des, i) => (
+                <p key={i}>{des.description}</p>
+              ))}
+            </div>
           </div>
         </div>
         <div style={{ display: 'none' }} ref={levelThreeRef}>
           <div style={{ display: 'block' }}>
             <h3>😻 최종단계달성 계획 😻</h3>
             <h5>{board.targetMoneyListLevelThree.amount}원 달성 시,</h5>
-            {board.targetMoneyListLevelThree.descriptions?.map((des, i) => (
-              <p key={i}>{des.description}</p>
-            ))}
+            <div style={{ display: 'block' }}>
+              {board.targetMoneyListLevelThree.descriptions?.map((des, i) => (
+                <p key={i}>{des.description}</p>
+              ))}
+            </div>
           </div>
         </div>
       </div>
