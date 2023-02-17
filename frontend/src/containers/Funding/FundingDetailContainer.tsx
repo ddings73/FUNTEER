@@ -287,28 +287,6 @@ export function FundingDetailContainer() {
     fetchReportList();
   }, []);
 
-  // 단계별 펀딩 정보
-  const levelOneData = () => (
-    <p style={{ whiteSpace: 'pre-line' }}>
-      {`1단계 금액: ${board.targetMoneyListLevelOne.amount}원
-      펀딩 설명: ${board.targetMoneyListLevelOne?.descriptions?.map((data) => data.description)}
-      `}
-    </p>
-  );
-  const levelTwoData = () => (
-    <p style={{ whiteSpace: 'pre-line' }}>
-      {`2단계 금액: ${board.targetMoneyListLevelTwo.amount}원
-      펀딩 설명: ${board.targetMoneyListLevelTwo?.descriptions?.map((data) => data.description)}
-      `}
-    </p>
-  );
-  const levelThreeData = () => (
-    <p style={{ whiteSpace: 'pre-line' }}>
-      {`3단계 금액: ${board.targetMoneyListLevelThree.amount}원
-      펀딩 설명: ${board.targetMoneyListLevelThree?.descriptions?.map((data) => data.description)}
-      `}
-    </p>
-  );
   // 백분율 계산
   function calc(tar: string, cur: string) {
     const newTar = Number(tar?.replaceAll(',', ''));
