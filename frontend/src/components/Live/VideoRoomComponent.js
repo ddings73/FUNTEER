@@ -440,6 +440,7 @@ class VideoRoomComponent extends Component {
       const devices = await this.OV.getDevices();
       console.log(devices);
       const videoDevices = devices.filter((device) => device.kind === 'videoinput');
+      console.log(videoDevices);
 
       if (videoDevices && videoDevices.length > 1) {
         const newVideoDevice = videoDevices.filter((device) => device.deviceId !== this.state.currentVideoDevice.deviceId);
@@ -455,13 +456,14 @@ class VideoRoomComponent extends Component {
             mirror: true,
           });
 
-          // newPublisher.once("accessAllowed", () => {
-          await this.state.session.unpublish(this.state.localUser.getStreamManager());
-          await this.state.session.publish(newPublisher);
-          this.state.localUser.setStreamManager(newPublisher);
-          this.setState({
-            currentVideoDevice: newVideoDevice,
-            localUser,
+          newPublisher.once('accessAllowed', async () => {
+            await this.state.session.unpublish(this.state.localUser.getStreamManager());
+            await this.state.session.publish(newPublisher);
+            this.state.localUser.setStreamManager(newPublisher);
+            this.setState({
+              currentVideoDevice: newVideoDevice,
+              localUser,
+            });
           });
         }
       }
