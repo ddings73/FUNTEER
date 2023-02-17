@@ -455,7 +455,7 @@ export function FundingDetailContainer() {
         </div>
         {currentPage >= 0 ? <div ref={ref} /> : ''}
       </div>
-      {isLogin && userType === 'NORMAL' && (
+      {isLogin && (userType === 'NORMAL' || userType === 'KAKAO') && (
         <Fab
           aria-label="add"
           sx={{ color: 'white', backgroundColor: 'orange !important', position: 'fixed', bottom: '3%', right: '3%', width: '60px', height: '60px' }}
