@@ -67,7 +67,7 @@ public class UserServiceImpl implements UserService{
         String email = request.getEmail();
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
-        String password = user.getPassword();
+        String password = request.getPassword();
         String encodedPassword = passwordEncoder.encode(password);
         user.changePassword(encodedPassword);
     }
