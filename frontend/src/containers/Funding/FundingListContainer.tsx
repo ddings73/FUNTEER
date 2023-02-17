@@ -51,7 +51,7 @@ function FundingListContainer() {
   const [selectIdx, setSelectIdx] = useState<number>(1);
   const [fundingStateFilter, setFundingStateFilter] = useState<string>('FUNDING_IN_PROGRESS');
   const [categoryId, setCategoryId] = useState<string>('');
-  const [searchText,setSearchText] = useState<string>("")
+  const [searchText, setSearchText] = useState<string>('');
 
   // 펀딩개수 계싼
   const fundingCount = useMemo(() => {
@@ -60,7 +60,7 @@ function FundingListContainer() {
 
   const handleTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
-    setSearchText(value)
+    setSearchText(value);
   };
 
   const hanlderFilter = (id: string, idx: number) => {
@@ -68,34 +68,32 @@ function FundingListContainer() {
     setSelectIdx(idx);
 
     // 필터 타입 변경
-    setFundingStateFilter(id)
+    setFundingStateFilter(id);
   };
 
-  const getFundingList =async()=>{
-    try{
+  const getFundingList = async () => {
+    try {
       setIsLoading(true);
-      const {data} = await requestFundingList(categoryId,searchText,fundingStateFilter,0,size)
-      console.log(data)
+      const { data } = await requestFundingList(categoryId, searchText, fundingStateFilter, 0, size);
+      console.log(data);
       setFundingList([...data.fundingListResponses]);
-      setSuccessFundingCount(data.inProgressFundingAmount);
-      setTotalFundingAmount(data.successFundingCount);
+      setSuccessFundingCount(data.successFundingCount);
+      setTotalFundingAmount(data.inProgressFundingAmount);
       setTotalFundingCount(data.totalElements );
       setCurrentPage(data.number);
       setTotalPage(data.totalPages);
-      console.log(data)
+      console.log(data);
       setIsLoading(false);
+    } catch (error) {
+      console.log(error);
     }
-    catch(error){
-      console.log(error)
-    }
-
-  }
+  };
 
   const nextFundingList = async () => {
     try {
       setNextLoading(true);
-      const {data} = await requestFundingList(categoryId,searchText,fundingStateFilter,currentPage+1,size)
-      console.log(data)
+      const { data } = await requestFundingList(categoryId, searchText, fundingStateFilter, currentPage + 1, size);
+      console.log(data);
       setFundingList([...fundingList, ...data.fundingListResponses]);
       setCurrentPage(data.number);
       setTotalPage(data.totalPages);
@@ -105,44 +103,41 @@ function FundingListContainer() {
     }
   };
   const onToggleCategory = async (id: string) => {
-    if(categoryId === id){
-      setCategoryId("")
-    }
-    else{
-      setCategoryId(id)
+    if (categoryId === id) {
+      setCategoryId('');
+    } else {
+      setCategoryId(id);
     }
   };
 
-
-  useEffect(()=>{
-    getFundingList()
-  },[searchText,fundingStateFilter,categoryId])
+  useEffect(() => {
+    getFundingList();
+  }, [searchText, fundingStateFilter, categoryId]);
 
   useEffect(() => {
     if (inView) {
       nextFundingList();
     }
-
   }, [inView]);
-
-
 
   return (
     <div className={styles.container}>
       <div className={styles.contents}>
         <div className={styles['title-box']}>
           <div className={styles['description-box']}>
-            <p>당신의 착한 마음을 <br/> Funteer가 응원합니다.</p>
+            <p>
+              당신의 착한 마음을 <br /> <span style={{ color: 'rgba(236, 153, 75, 1)' }}>FUNTEER</span>가 응원합니다.
+            </p>
           </div>
           <div className={styles['statistic-box']}>
             <div>
               <p>
-                <CountUp start={0} end={154} separator="," duration={4} />건 <br /> 봉사 펀딩에 성공했어요.
+                <CountUp start={0} end={successFundingCount} separator="," duration={2} />건 <br /> 봉사 펀딩에 성공했어요.
               </p>
             </div>
             <div>
               <p>
-                <CountUp start={0} end={3568745} separator="," duration={4} />원 <br /> 기부에 성공했어요.
+                <CountUp start={0} end={totalFundingAmount} separator="," duration={2} />원 <br /> 기부에 성공했어요.
               </p>
             </div>
           </div>
@@ -230,7 +225,7 @@ function FundingListContainer() {
           )}
         </div>
       </div>
-      {currentPage < totalPage  ? <div ref={ref} /> : ''}
+      {currentPage < totalPage ? <div ref={ref} /> : ''}
     </div>
   );
 }

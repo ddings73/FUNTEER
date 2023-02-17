@@ -391,8 +391,9 @@ function ResponsiveAppBar() {
                         모두 읽기
                       </a>
                     </div>
-                    {eventList.map((event) => (
+                    {eventList.map((event, i) => (
                       <MenuItem
+                        key={event.alarmId}
                         onClick={() => eventRead(event.alarmId, event.url)}
                         sx={{
                           borderRadius: '5px',

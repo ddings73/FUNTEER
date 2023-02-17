@@ -27,7 +27,7 @@ function FundingListElement(funding: FundingElementType) {
   const navigate = useNavigate();
 
   const enoughMoney = useMemo(() => {
-    return Math.floor((currentFundingAmount / targetAmount) * 100);
+    return  Math.round((currentFundingAmount / targetAmount) * 100);
   }, [currentFundingAmount, targetAmount]);
 
   const moveFundingDetail = () => {
@@ -47,9 +47,9 @@ function FundingListElement(funding: FundingElementType) {
           <span>{enoughMoney}%</span>&nbsp;
           <span>{stringToSeparator(String(currentFundingAmount))}원</span>
         </p>
-        <p className={styles.date}>{diffDay(endDate)}일남음</p>
+        <p className={styles.date}>{diffDay(endDate)<=0 ? "기간 내 미달성" : `${diffDay(endDate)}일남음`}</p>
       </div>
-      <ProgressBar gage={enoughMoney} />
+      <ProgressBar gage={enoughMoney>=100 ? 100 : enoughMoney} />
     </div>
   );
 }

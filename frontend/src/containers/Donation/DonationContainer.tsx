@@ -15,7 +15,7 @@ import { requestUserProfile } from '../../api/user';
 import { openModal } from '../../store/slices/donateModalSlice';
 import { requestTeamProfileInfo } from '../../api/team';
 import { customTextOnlyAlert, noTimeWarn } from '../../utils/customAlert';
-import logo from '../../assets/images/logo.png';
+import logo from '../../assets/images/logo3.svg';
 
 type ResponseInterface = {
   id: number;
