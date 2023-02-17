@@ -24,7 +24,7 @@ export function DetailArcodian(board: ResponseInterface) {
       case 1: {
         setLevelOne(!levelOne);
         if (levelOne && gauage.current && levelOneRef.current && levelTwoRef.current && levelThreeRef.current) {
-          gauage.current.style.width = '40%';
+          gauage.current.style.width = '35%';
           levelOneRef.current.style.display = 'flex';
           levelTwoRef.current.style.display = 'none';
           levelThreeRef.current.style.display = 'none';
