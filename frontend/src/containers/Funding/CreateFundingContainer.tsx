@@ -368,7 +368,6 @@ function CreateFundingContainer() {
           </p>
           <ToastEditor
             ref={editorRef}
-            placeholder="진행하시는 펀딩에 대해 자세히 설명해주세요."
             height="500px"
             useCommandShortcut
             initialEditType="wysiwyg"
@@ -388,7 +387,7 @@ function CreateFundingContainer() {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
               <DatePicker
                 disablePast
-                label="펀딩 종료 일자를 선택해주세요."
+                label="펀딩 시작 일자를 선택해주세요."
                 inputFormat="YYYY-MM-DD"
                 value={startDate}
                 onChange={(newValue) => {
@@ -429,12 +428,10 @@ function CreateFundingContainer() {
 
           <div className={styles['progress-box']}>
             <div className={styles['stage-text-box']}>
-              <Tooltip title="asdas" placement="top">
                 <Icon fontSize="large">
                   {' '}
                   <RoomIcon fontSize="large" sx={{ color: 'rgba(236, 153, 75, 1)' }} />
                 </Icon>
-              </Tooltip>
 
               <HtmlTooltip placement="top" title={<p className="title">최소 달성조건</p>}>
                 <Icon fontSize="large">
