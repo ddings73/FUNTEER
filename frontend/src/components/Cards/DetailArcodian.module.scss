@@ -9,17 +9,17 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 5% 0;
+  padding-top: 5%;
   margin-top: 20px;
   background-image: linear-gradient(to bottom, #ffffff, #fffdff, #fffbfc, #fffaf5, #fffaf0);
   box-shadow: rgba(0, 0, 0, 0.16) 0px 3px 0px, rgba(0, 0, 0, 0.23) 0px 0px 0px;
   & .planTitle {
-    font-size: 30px;
+    font-size: 2.5em;
     font-weight: 600;
-    margin-bottom: 20px;
+    margin-bottom: 4%;
   }
   & .planSubTitle {
-    font-size: 15px;
+    font-size: 1.3em;
     color: rgba(0, 0, 0, 0.555);
     margin-bottom: 40px;
   }
@@ -69,5 +69,28 @@
   &:hover {
     transform: translateY(-10px);
     color: $primary;
+  }
+}
+
+.levelContainer {
+  width: 50%;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 5%;
+  line-height: 150%;
+  padding: 5% 0;
+  h3 {
+    font-size: 2em;
+    font-weight: 600;
+  }
+  h5 {
+    font-size: 1.5em;
+    margin: 2em 0;
+  }
+  p {
+    font-size: 1em;
   }
 }
