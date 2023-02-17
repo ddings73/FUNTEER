@@ -37,6 +37,7 @@ public class MileageDetailResponse {
             Long postId = mileageDetail.getPostId();
             Funding findFunding = fundingList.stream().filter(funding -> funding.getId() == postId).findFirst().get();
             mileageDetail.setPostId(findFunding.getFundingId());
+            mileageDetail.setThumbnail(findFunding.getThumbnail());
         });
     }
 
@@ -51,6 +52,8 @@ public class MileageDetailResponse {
     @Getter @Setter
     @AllArgsConstructor
     private static class MileageDetail{
+
+        private String thumbnail;
         private Long postId;
         private String postName;
         private Long amount;
@@ -60,7 +63,7 @@ public class MileageDetailResponse {
             Post post = payment.getPost();
 
             LocalDate payDate = payment.getPayDate().toLocalDate();
-            return new MileageDetail(post.getId(), post.getTitle(), payment.getAmount(), payDate);
+            return new MileageDetail(post.getThumbnail(), post.getId(), post.getTitle(), payment.getAmount(), payDate);
         }
     }
 }
