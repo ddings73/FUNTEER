@@ -1,5 +1,5 @@
 /* eslint-disable */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import Accordion from '@mui/material/Accordion';
 import AccordionSummary from '@mui/material/AccordionSummary';
 import AccordionDetails from '@mui/material/AccordionDetails';
@@ -11,6 +11,48 @@ import styles from './DetailArcodian.module.scss';
 import { ResponseInterface } from '../../containers/Funding/FundingDetailContainer';
 
 export function DetailArcodian(board: ResponseInterface) {
+  const [levelOne, setLevelOne] = useState(false);
+  const [levelTwo, setLevelTwo] = useState(false);
+  const [levelThree, setLevelThree] = useState(false);
+  const gauage = useRef<HTMLDivElement>(null);
+  const levelOneRef = useRef<HTMLDivElement>(null);
+  const levelTwoRef = useRef<HTMLDivElement>(null);
+  const levelThreeRef = useRef<HTMLDivElement>(null);
+
+  function toggleChange(n: number) {
+    switch (n) {
+      case 1: {
+        setLevelOne(!levelOne);
+        if (levelOne && gauage.current && levelOneRef.current && levelTwoRef.current && levelThreeRef.current) {
+          gauage.current.style.width = '35%';
+          levelOneRef.current.style.display = 'flex';
+          levelTwoRef.current.style.display = 'none';
+          levelThreeRef.current.style.display = 'none';
+        }
+        return;
+      }
+      case 2: {
+        setLevelTwo(!levelTwo);
+        if (levelTwo && gauage.current && levelOneRef.current && levelTwoRef.current && levelThreeRef.current) {
+          gauage.current.style.width = '70%';
+          levelOneRef.current.style.display = 'none';
+          levelTwoRef.current.style.display = 'flex';
+          levelThreeRef.current.style.display = 'none';
+        }
+        return;
+      }
+      case 3: {
+        setLevelThree(!levelThree);
+        if (levelThree && gauage.current && levelOneRef.current && levelTwoRef.current && levelThreeRef.current) {
+          gauage.current.style.width = '100%';
+          levelOneRef.current.style.display = 'none';
+          levelTwoRef.current.style.display = 'none';
+          levelThreeRef.current.style.display = 'flex';
+        }
+        return;
+      }
+    }
+  }
   // 단계별 펀딩 정보
   const levelOneData = () => (
     <p style={{ whiteSpace: 'pre-line' }}>
@@ -36,38 +78,63 @@ export function DetailArcodian(board: ResponseInterface) {
 
   return (
     <div className={styles.fundingPlanner}>
-      <p className={styles.planTitle}>펀딩 금액에 따른 봉사 진행 상황</p>
+      <p className={styles.planTitle}>펀딩 금액에 따른 봉사 진행 계획</p>
+      <p className={styles.planSubTitle}> 각 단계를 클릭해 확인해 보세요!</p>
       <div className={styles.planTag}>
         <BeenhereIcon className={styles.iconTag} sx={{ visibility: 'hidden' }} />
-        <Tooltip title={levelOneData()} placement="top">
-          <BeenhereIcon className={styles.iconTag} color={Number(board.currentFundingAmount) >= Number(board.targetMoneyListLevelOne.amount) ? 'warning' : 'disabled'} />
+        <Tooltip title={levelOneData()} placement="top" onClick={() => toggleChange(1)}>
+          <BeenhereIcon className={styles.iconTag} />
         </Tooltip>
-        <Tooltip title={levelTwoData()} placement="top">
-          <BeenhereIcon className={styles.iconTag} color={Number(board.currentFundingAmount) >= Number(board.targetMoneyListLevelTwo.amount) ? 'warning' : 'disabled'} />
+        <Tooltip title={levelTwoData()} placement="top" onClick={() => toggleChange(2)}>
+          <BeenhereIcon className={styles.iconTag} />
         </Tooltip>
-        <Tooltip title={levelThreeData()} placement="top">
-          <BeenhereIcon
-            className={styles.iconTag}
-            color={Number(board.currentFundingAmount) >= Number(board.targetMoneyListLevelThree.amount) ? 'warning' : 'disabled'}
-          />
+        <Tooltip title={levelThreeData()} placement="top" onClick={() => toggleChange(3)}>
+          <BeenhereIcon className={styles.iconTag} />
         </Tooltip>
       </div>
       <div className={styles.progressBar}>
         <div
           className={styles.status}
           style={{
-            width:
-              Number(board.currentFundingAmount) >= Number(board.targetMoneyListLevelThree.amount)
-                ? '100%'
-                : Number(board.currentFundingAmount) >= Number(board.targetMoneyListLevelTwo.amount)
-                ? '60%'
-                : Number(board.currentFundingAmount) >= Number(board.targetMoneyListLevelOne.amount)
-                ? '30%'
-                : Number(board.currentFundingAmount) > 0
-                ? '15%'
-                : '0%',
+            width: '0%',
           }}
+          ref={gauage}
         />
+      </div>
+      <div className={styles.levelContainer}>
+        <div style={{ display: 'none' }} ref={levelOneRef}>
+          <div style={{ display: 'block' }}>
+            <h3>😺 최소단계달성 계획 😺</h3>
+            <h5>{board.targetMoneyListLevelOne.amount}원 달성 시</h5>
+            <div style={{ display: 'block' }}>
+              {board.targetMoneyListLevelOne.descriptions?.map((des, i) => (
+                <p key={i}>{des.description}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: 'none' }} ref={levelTwoRef}>
+          <div style={{ display: 'block' }}>
+            <h3>😹 중간단계달성 계획 😹</h3>
+            <h5>{board.targetMoneyListLevelTwo.amount}원 달성 시</h5>
+            <div style={{ display: 'block' }}>
+              {board.targetMoneyListLevelTwo.descriptions?.map((des, i) => (
+                <p key={i}>{des.description}</p>
+              ))}
+            </div>
+          </div>
+        </div>
+        <div style={{ display: 'none' }} ref={levelThreeRef}>
+          <div style={{ display: 'block' }}>
+            <h3>😻 최종단계달성 계획 😻</h3>
+            <h5>{board.targetMoneyListLevelThree.amount}원 달성 시,</h5>
+            <div style={{ display: 'block' }}>
+              {board.targetMoneyListLevelThree.descriptions?.map((des, i) => (
+                <p key={i}>{des.description}</p>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
