@@ -12,11 +12,14 @@ import com.yam.funteer.user.repository.MemberRepository;
 import com.yam.funteer.user.repository.TeamRepository;
 import com.yam.funteer.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional @Slf4j
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
 
@@ -68,6 +71,7 @@ public class UserServiceImpl implements UserService{
         User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 
         String password = request.getPassword();
+        log.info(password);
         String encodedPassword = passwordEncoder.encode(password);
         user.changePassword(encodedPassword);
     }
