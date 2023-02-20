@@ -1,4 +1,4 @@
-# FUNTEER
+# <span style="color:orange"> FUNTEER </span>
 
 ## - 기부형 크라우드 펀딩을 통한 봉사활동 중개 플랫폼
 
@@ -15,8 +15,6 @@
   - [결과물](#결과물)
   - [프로젝트 파일 구조](#프로젝트-파일-구조)
 
-
-
 ## 서비스 소개
 
 1. 개발 기간 : 2023.01.09 ~ 2023.02.17 (총 6주)
@@ -25,36 +23,50 @@
 <table>
   <tr>
    <td align="center"><a href="https://github.com/bbookng"><img src="https://avatars.githubusercontent.com/u/109321163?v=4" width="100px;" alt=""/>
-   <br /><sub><b>bbookng</b><br></sub></a></td>
+   <br /><sub><b>bbookng</b><br></sub></a>
+    <sub><b>팀장, BE</b><br></sub></td>
    <td align="center"><a href="https://github.com/"><img src="https://avatars.githubusercontent.com/u/76030391?v=4" width="100px;" alt=""/>
-   <br /><sub><b>김송빈</b><br></sub></a></td>
+   <br /><sub><b>김송빈</b><br></sub></a>
+   <sub><b>BE</b><br></sub></td>
    <td align="center"><a href="https://github.com/ddings7303"><img src="https://avatars.githubusercontent.com/u/76030391?v=4" width="100px;" alt=""/>
-   <br /><sub><b>ddings73</b><br></sub></a></td>
+   <br /><sub><b>ddings73</b><br></sub></a>
+    <sub><b>BE</b><br></sub></td>
    <td align="center"><a href="https://github.com/bangbongbim"><img src="https://avatars.githubusercontent.com/u/37106496?v=4" width="100px;" alt=""/>
-   <br /><sub><b>bangbongbim</b><br></sub></a></td>
+   <br /><sub><b>bangbongbim</b><br></sub></a>
+   <sub><b>FE</b><br></sub></td>
    <td align="center"><a href="https://github.com/"><img src="https://avatars.githubusercontent.com/u/76030391?v=4" width="100px;" alt=""/>
-   <br /><sub><b>김승섭</b><br></sub></a></td>
+   <br /><sub><b>김승섭</b><br></sub></a>
+       <sub><b>FE</b><br></sub></td>
    <td align="center"><a href="https://github.com/becoding96"><img src="https://avatars.githubusercontent.com/u/88614621?v=4" width="100px;" alt=""/>
-   <br /><sub><b>becoding96</b><br></sub></a></td>
+   <br /><sub><b>becoding96</b><br></sub></a>
+      <sub><b>FE</b><br></sub></td>
   </tr>
 </table>
 
-| [김보경](https://github.com/bbookng) | 김송빈 | 안명수 | 김진호 | 김승섭 | 백준봉 |
-| :----------------------------------: | :----: | :----: | :----: | :----: | :----: |
-|             **팀장, BE**             | **BE** | **BE** | **FE** | **FE** | **FE** |
-
 ### 📌 개요
 
-- 기획 배경 :
-- 서비스 목표 : **기부형 크라우드 펀딩**을 통해 개인의 기부 참여를 독려, 봉사 단체의 활성화를 증대 
-
-
+- 서비스 목표 : **기부형 크라우드 펀딩**을 통한 개인의 기부 참여 독려, 봉사 단체 활성화
+- 기획 배경
+  - 기부자 측면의 문제점
+  ```
+    - 기부 단체에 대한 신뢰 부족
+    - 기부 단체 또는 방법에 대한 정보 부족
+    - 공간적, 시간적 제한으로 인한 참여
+  ```
+  - 봉사 단체 측면의 문제점
+  ```
+    - 자선 활동 예산 부족
+  ```
+- 기대 효과 (서비스 목표 상세)
+  ```
+    - 봉사활동 라이브 중계를 통하여 봉사 단체, 기부에 대한 투명성과 신뢰성을 보장
+    - 펀딩 참여자에게는 만족감을 불러 일으키고, 봉사 단체에게는 자금을 전달하여 기부와 봉사를 활성화
+    - 플랫폼을 통해 기부와 봉사에 대한 정보를 제공해 접근성 증대
+  ```
 
 ### 📌 서비스 화면
 
 넣 어 줘 !
-
-
 
 ## 기술 스택 및 버전
 
@@ -66,14 +78,14 @@
 
 4. 개발 환경
 
-   - IDE : ![IntelliJ](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)2022.3.1	![Visual_Studio_Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)1.75.1
-   - DB : ![MySQL](https://img.shields.io/badge/MySQL-003545?style=for-the-badge&logo=mysql&logoColor=white)![AmazonRDS](https://img.shields.io/badge/AmazonRDS-527FFF?style=for-the-badge&logo=AmazonRDS&logoColor=white)  8.0.32 
+   - IDE : ![IntelliJ](https://img.shields.io/badge/IntelliJIDEA-000000.svg?style=for-the-badge&logo=intellij-idea&logoColor=white)2022.3.1 ![Visual_Studio_Code](https://img.shields.io/badge/Visual%20Studio%20Code-0078d7.svg?style=for-the-badge&logo=visual-studio-code&logoColor=white)1.75.1
+   - DB : ![MySQL](https://img.shields.io/badge/MySQL-003545?style=for-the-badge&logo=mysql&logoColor=white)![AmazonRDS](https://img.shields.io/badge/AmazonRDS-527FFF?style=for-the-badge&logo=AmazonRDS&logoColor=white) 8.0.32
    - UI & UX : ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=for-the-badge&logo=figma&logoColor=white)
-   - Server : ![AWS](https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) ![S3](https://img.shields.io/badge/S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white) ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=white) ![ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)![NGINX](https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white) 
+   - Server : ![AWS](https://img.shields.io/badge/AWS-FF9900?style=for-the-badge&logo=amazonaws&logoColor=white) ![S3](https://img.shields.io/badge/S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white) ![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=white) ![ubuntu](https://img.shields.io/badge/Ubuntu-E95420?style=for-the-badge&logo=ubuntu&logoColor=white)![NGINX](https://img.shields.io/badge/nginx-009639?style=for-the-badge&logo=nginx&logoColor=white)
 
 5. 상세
 
-   - Backend : ![JAVA](https://img.shields.io/badge/JAVA-FF0000?style=for-the-badge&logoColor=white) 11.0.17 ![Spring](https://img.shields.io/badge/Springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)2.7.7 ![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)6.8.3 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)0.11.2 
+   - Backend : ![JAVA](https://img.shields.io/badge/JAVA-FF0000?style=for-the-badge&logoColor=white) 11.0.17 ![Spring](https://img.shields.io/badge/Springboot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white)2.7.7 ![Gradle](https://img.shields.io/badge/Gradle-02303A?style=for-the-badge&logo=gradle&logoColor=white)6.8.3 ![JWT](https://img.shields.io/badge/JWT-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)0.11.2
 
    - Frontend : ![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)![CSS3](https://img.shields.io/badge/css3-1572B6?style=for-the-badge&logo=css3&logoColor=white)![JAVASCRIPT](https://img.shields.io/badge/javascript-F7DF1E?style=for-the-badge&logo=reactt&logoColor=white)
 
@@ -83,25 +95,19 @@
 
    - WebRTC : ![OpenVidu](https://img.shields.io/badge/OpenVidu-F7DF1E?style=for-the-badge&logoColor=white) 2.25.0
 
-
-
 ## 프로젝트 아키텍쳐
 
-####  📌 아키텍쳐 - ERD
+#### 📌 아키텍쳐 - ERD
 
 ![img](assets/erd_img.png)
 
-
-
-####  📌 서비스 아키텍쳐
+#### 📌 서비스 아키텍쳐
 
 ![image](assets/image.png)
 
+## 산출물
 
-
-## 산출물 
-
-- [프로젝트 관리 : Notion](https://orchid-yarrow-bec.notion.site/2-b0c54b7b536e463fb159d48d76b3c5b4)  
+- [프로젝트 관리 : Notion](https://orchid-yarrow-bec.notion.site/2-b0c54b7b536e463fb159d48d76b3c5b4)
 
 - [기획서](https://www.notion.so/7071e837b059473eaa53a8ac00f53d65?pvs=4)
 - [API Docs](https://www.notion.so/API-Docs-a7fa3a03be664de6a6ac88c3dfe98aca?pvs=4)
@@ -109,16 +115,12 @@
 - [와이어프레임](https://www.figma.com/file/tvcb2DWNgUQYmNkuIQmkER/FUNTEER_wireframe)
 - [Git Convention](https://www.notion.so/Git-Convention-f23951645a804c66a0dfc34b2c3f9033?pvs=4)
 
-
-
-## 결과물 
+## 결과물
 
 - [포팅메뉴얼](./exec/포팅 매뉴얼.md)
 
-- [시연시나리오](./exec/시연.pptx) 
+- [시연시나리오](./exec/시연.pptx)
 - [최종발표자료](./exec/funteer_최종ppt.pdf)
-
-
 
 ## 프로젝트 파일 구조
 
@@ -911,6 +913,3 @@
  ┣ 📜setupProxy.ts
  ┗ 📜setupTests.ts
 ```
-
-
-
