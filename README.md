@@ -30,13 +30,13 @@
   <tr>
    <td align="center"><a href="https://github.com/bbookng"><img src="https://avatars.githubusercontent.com/u/109321163?v=4" width="100px;" alt=""/>
    <br /><sub><b>bbookng</b><br></sub></a></td>
-   <td align="center"><a href="https://github.com/"><img src="" width="100px;" alt=""/>
+   <td align="center"><a href="https://github.com/"><img src="https://avatars.githubusercontent.com/u/76030391?v=4" width="100px;" alt=""/>
    <br /><sub><b>김송빈</b><br></sub></a></td>
    <td align="center"><a href="https://github.com/ddings7303"><img src="https://avatars.githubusercontent.com/u/76030391?v=4" width="100px;" alt=""/>
    <br /><sub><b>ddings73</b><br></sub></a></td>
    <td align="center"><a href="https://github.com/bangbongbim"><img src="https://avatars.githubusercontent.com/u/37106496?v=4" width="100px;" alt=""/>
    <br /><sub><b>bangbongbim</b><br></sub></a></td>
-   <td align="center"><a href="https://github.com/"><img src="" width="100px;" alt=""/>
+   <td align="center"><a href="https://github.com/"><img src="https://avatars.githubusercontent.com/u/76030391?v=4" width="100px;" alt=""/>
    <br /><sub><b>김승섭</b><br></sub></a></td>
    <td align="center"><a href="https://github.com/becoding96"><img src="https://avatars.githubusercontent.com/u/88614621?v=4" width="100px;" alt=""/>
    <br /><sub><b>becoding96</b><br></sub></a></td>
@@ -93,13 +93,13 @@
 
 ####  📌 아키텍쳐 - ERD
 
-![img](https://cdn.discordapp.com/attachments/1041466873117687869/1077207036347027456/erd_img.png)
+![img](assets/erd_img.png)
 
 
 
 ####  📌 서비스 아키텍쳐
 
-![image-20230220213657706](C:\Users\Bokyeong\AppData\Roaming\Typora\typora-user-images\image-20230220213657706.png)
+![image](assets/image.png)
 
 
 
