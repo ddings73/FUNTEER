@@ -70,7 +70,38 @@
 
 ### 📌 서비스 화면
 
-넣 어 줘 !
+- 로그인
+  ![로그인](assets/login.gif)
+
+- 펀딩 생성
+  ![펀딩 생성](assets/fundingcreate.gif)
+
+- 펀딩 리스트
+  ![펀딩 리스트](assets/fundinglist.gif)
+
+- 펀딩 상세
+  ![펀딩 상세](assets/fundingdetail.gif)
+
+- 기부: 서비스에서 개별적으로 시행하는 기부 이벤트
+  ![기부](assets/donation.gif)
+
+- 라이브: 봉사 활동 중계 방송
+  ![라이브](assets/live.gif)
+
+- 프로필
+  ![로그인](assets/profile.gif)
+
+- 충전
+  ![충전](assets/charge.gif)
+
+- 서비스 소개
+  ![서비스](assets/service.gif)
+
+- 고객센터
+  ![고객센터](assets/customercenter.gif)
+
+- 관리자 페이지
+  ![관리자](assets/admin.gif)
 
 <br>
 <br>
