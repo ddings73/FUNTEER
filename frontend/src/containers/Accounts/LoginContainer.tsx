@@ -63,7 +63,7 @@ function LoginContainer() {
     try {
       // const REST_API_KEY = process.env.REACT_APP_KAKAO_LOGIN_API;
       // const REDIRECT_URI = `http://localhost:3000`;
-      const url = `https://i8e204.p.ssafy.io/api/v1/oauth2/authorization/kakao`;
+      const url = `https://funteer.site/api/v1/oauth2/authorization/kakao`;
       // const url = ` kauth.kakao.com/oauth/authorize?client_id=${REST_API_KEY}&redirect_uri=${REDIRECT_URI}&response_type=code`;
       window.location.href = url;
 

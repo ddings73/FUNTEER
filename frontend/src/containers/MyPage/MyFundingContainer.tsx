@@ -6,6 +6,7 @@ import SideBarList from '../../components/MyPageSideBar/SideBarList';
 import styles from './MyFundingContainer.module.scss';
 
 export interface fundListType {
+  thumbnail:string
   amount: number;
   payDate: string;
   postId: number;
@@ -17,6 +18,7 @@ export function MyFundingContainer() {
   const [page, setPage] = useState(0);
   const [fundList, setFundList] = useState<fundListType[]>([
     {
+      thumbnail:"",
       amount: 0,
       payDate: '',
       postId: 0,

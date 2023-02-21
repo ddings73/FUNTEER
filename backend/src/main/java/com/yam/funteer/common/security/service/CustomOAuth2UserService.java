@@ -29,16 +29,18 @@ import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import com.yam.funteer.badge.service.BadgeService;
 import com.yam.funteer.common.code.UserType;
 import com.yam.funteer.user.entity.Member;
 import com.yam.funteer.user.repository.MemberRepository;
+import com.yam.funteer.user.service.MemberService;
 
 @Service @Slf4j
 @RequiredArgsConstructor
 public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequest, OAuth2User> {
 
     private final MemberRepository memberRepository;
-
+    private final BadgeService badgeService;
     private PasswordEncoder passwordEncoder;
 
     @Autowired
@@ -76,7 +78,9 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
         Member member = memberRepository.findByEmail(email).orElseGet(() -> {
             String kakaoPassword = passwordEncoder.encode("kakaoPassword");
             Member newKakaoMember = Member.toKakaoUser(email, name, kakaoPassword);
-            return memberRepository.save(newKakaoMember);
+            memberRepository.save(newKakaoMember);
+            badgeService.initBadges(newKakaoMember);
+            return newKakaoMember;
         });
 
         memberAttribute.put("userId", String.valueOf(member.getId()));

@@ -179,7 +179,7 @@ function ResponsiveAppBar() {
       // sse 연결
       // http://localhost:8080/api/v1/subscribe
       // https://i8e204.p.ssafy.io/api/v1/subscribe
-      eventSource = new EventSourcePolyfill('https://i8e204.p.ssafy.io/api/v1/subscribe', {
+      eventSource = new EventSourcePolyfill('https://funteer.site/api/v1/subscribe', {
         headers: {
           'Content-Type': 'text/event-stream',
           'Access-Control-Allow-Origin': '*',
@@ -391,8 +391,9 @@ function ResponsiveAppBar() {
                         모두 읽기
                       </a>
                     </div>
-                    {eventList.map((event) => (
+                    {eventList.map((event, i) => (
                       <MenuItem
+                        key={event.alarmId}
                         onClick={() => eventRead(event.alarmId, event.url)}
                         sx={{
                           borderRadius: '5px',
@@ -457,7 +458,7 @@ function ResponsiveAppBar() {
                       </Typography>
                     </MenuItem>
                   )}
-                  {userType === 'NORMAL' && (
+                  {(userType === 'NORMAL' || userType === 'KAKAO') && (
                     <MenuItem onClick={handleCloseUserMenu}>
                       <Typography
                         textAlign="center"
@@ -470,7 +471,7 @@ function ResponsiveAppBar() {
                       </Typography>
                     </MenuItem>
                   )}
-                  {userType === 'NORMAL' && (
+                  {(userType === 'NORMAL' || userType === 'KAKAO') && (
                     <MenuItem onClick={handleCloseUserMenu}>
                       <Typography
                         textAlign="center"
@@ -483,7 +484,7 @@ function ResponsiveAppBar() {
                       </Typography>
                     </MenuItem>
                   )}
-                  {userType === 'NORMAL' && (
+                  {(userType === 'NORMAL' || userType === 'KAKAO') && (
                     <MenuItem onClick={handleCloseUserMenu}>
                       <Typography
                         textAlign="center"
@@ -496,7 +497,7 @@ function ResponsiveAppBar() {
                       </Typography>
                     </MenuItem>
                   )}
-                  {userType === 'NORMAL' && (
+                  {(userType === 'NORMAL' || userType === 'KAKAO') && (
                     <MenuItem onClick={handleCloseUserMenu}>
                       <Typography
                         textAlign="center"

@@ -24,7 +24,7 @@ import { requestCreateSession } from '../../api/live';
 import ReportModal from '../../components/Modal/ReportModal';
 import { openModal } from '../../store/slices/reportModalSlice';
 import PdfViewer from '../../components/Funding/PdfViewer';
-import { stringToSeparator } from '../../utils/convert';
+import { stringToSeparator, stringToNumber } from '../../utils/convert';
 import { customTextOnlyAlert, noTimeSuccess } from '../../utils/customAlert';
 
 export interface ResponseInterface {
@@ -229,18 +229,17 @@ export function FundingDetailContainer() {
   const [paying, setPaying] = useState('');
 
   async function fundingHandler() {
-    console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불');
-
+    console.log('펀딩 지불 정보: ', fundIdx, '번 게시물에', paying, '원 지불 시도');
     try {
-      if (Number(paying) < 1000) {
+      if (stringToNumber(paying) < 1000) {
         customTextOnlyAlert(noTimeSuccess, `최소펀딩 금액은 1000원부터 가능합니다.`);
         return;
       }
-      if (Number(paying) > Number(money)) {
+      if (stringToNumber(paying) > Number(money)) {
         customTextOnlyAlert(noTimeSuccess, `마일리지가 모자랍니다.`);
         return;
       }
-      if (Number(paying) % 100 !== 0) {
+      if (stringToNumber(paying) % 100 !== 0) {
         customTextOnlyAlert(noTimeSuccess, `펀딩 후원은 100원 단위로 가능합니다.`);
         return;
       }
@@ -288,28 +287,6 @@ export function FundingDetailContainer() {
     fetchReportList();
   }, []);
 
-  // 단계별 펀딩 정보
-  const levelOneData = () => (
-    <p style={{ whiteSpace: 'pre-line' }}>
-      {`1단계 금액: ${board.targetMoneyListLevelOne.amount}원
-      펀딩 설명: ${board.targetMoneyListLevelOne?.descriptions?.map((data) => data.description)}
-      `}
-    </p>
-  );
-  const levelTwoData = () => (
-    <p style={{ whiteSpace: 'pre-line' }}>
-      {`2단계 금액: ${board.targetMoneyListLevelTwo.amount}원
-      펀딩 설명: ${board.targetMoneyListLevelTwo?.descriptions?.map((data) => data.description)}
-      `}
-    </p>
-  );
-  const levelThreeData = () => (
-    <p style={{ whiteSpace: 'pre-line' }}>
-      {`3단계 금액: ${board.targetMoneyListLevelThree.amount}원
-      펀딩 설명: ${board.targetMoneyListLevelThree?.descriptions?.map((data) => data.description)}
-      `}
-    </p>
-  );
   // 백분율 계산
   function calc(tar: string, cur: string) {
     const newTar = Number(tar?.replaceAll(',', ''));
@@ -353,6 +330,7 @@ export function FundingDetailContainer() {
       console.log(e);
     }
   };
+  console.log(board);
 
   return (
     <div className={styles.bodyContainer}>
@@ -411,23 +389,23 @@ export function FundingDetailContainer() {
             <div className={styles.mainContentInner}>
               <p>{report.content}</p>
               <p>{report.regDate}</p>
+              <h2>라이브 녹화 영상 보고</h2>
               <video className={styles.video} controls autoPlay loop>
                 <source src={report.liveUrl} type="video/webm" />
                 <source src={report.liveUrl} type="video/mp4" />
                 <track src="captions_en.vtt" kind="captions" srcLang="kor" label="kor_captions" />
               </video>
+              <PdfViewer pdfUrl="" />
               <div className={styles.reslists}>123</div>
             </div>
           )}
         </div>
         <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
-        <PdfViewer pdfUrl="http://www.example.com/myfile.pdf" />
-        <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
         <div className={styles.teamInfoCard} style={{ width: '90%', marginLeft: '6%' }}>
           <TeamInfo {...board.team} />
         </div>
         <hr style={{ borderTop: '2px solid #bbb', borderRadius: '2px', opacity: '0.5' }} />
-        <DetailArcodian />
+        <DetailArcodian {...board} />
         <div className={styles.mainCommentSubmit}>
           <p className={styles.commentHead}>응원 댓글 등록({commentCount})</p>
           <CommentCardSubmit initCommentList={initCommentList} />
@@ -436,7 +414,7 @@ export function FundingDetailContainer() {
           {isLoading ? (
             <CommentSkeleton />
           ) : (
-            commentList.map((comment) => {
+            commentList.map((comment, i) => {
               return (
                 <CommentCard
                   commentId={comment.commentId}
@@ -444,7 +422,8 @@ export function FundingDetailContainer() {
                   content={comment.content}
                   memberProfileImg={comment.memberProfileImg}
                   regDate={comment.regDate}
-                  key={comment.commentId}
+                  // eslint-disable-next-line
+                  key={i}
                 />
               );
             })
@@ -453,7 +432,7 @@ export function FundingDetailContainer() {
         </div>
         {currentPage >= 0 ? <div ref={ref} /> : ''}
       </div>
-      {isLogin && userType === 'NORMAL' && (
+      {isLogin && (userType === 'NORMAL' || userType === 'KAKAO') && (
         <Fab
           aria-label="add"
           sx={{ color: 'white', backgroundColor: 'orange !important', position: 'fixed', bottom: '3%', right: '3%', width: '60px', height: '60px' }}
@@ -492,6 +471,7 @@ export function FundingDetailContainer() {
               color="warning"
               onChange={(e) => {
                 const { value } = e.target;
+                console.log('본래 value', value);
                 const regex = /[^0-9]/g;
                 const separatorValue = stringToSeparator(value.replaceAll(regex, ''));
                 setPaying(separatorValue);
