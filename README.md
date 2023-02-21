@@ -31,8 +31,8 @@
    <td align="center"><a href="https://github.com/bbookng"><img src="https://avatars.githubusercontent.com/u/109321163?v=4" width="100px;" alt=""/>
    <br /><sub><b>bbookng</b><br></sub></a>
     <sub><b>팀장, BE</b><br></sub></td>
-   <td align="center"><a href="https://github.com/"><img src="https://avatars.githubusercontent.com/u/76030391?v=4" width="100px;" alt=""/>
-   <br /><sub><b>김송빈</b><br></sub></a>
+   <td align="center"><a href="https://github.com/dhyunee"><img src="https://avatars.githubusercontent.com/u/101089655?v=4" width="100px;" alt=""/>
+   <br /><sub><b>dhyunee</b><br></sub></a>
    <sub><b>BE</b><br></sub></td>
    <td align="center"><a href="https://github.com/ddings7303"><img src="https://avatars.githubusercontent.com/u/76030391?v=4" width="100px;" alt=""/>
    <br /><sub><b>ddings73</b><br></sub></a>
@@ -48,6 +48,7 @@
       <sub><b>FE</b><br></sub></td>
   </tr>
 </table>
+
 
 <br>
 
@@ -71,7 +72,7 @@
   - 브라우저 크기별 반응형 웹 페이지
   - I'mport 결제 모듈 연동으로 다양한 결제 방식 도입 (카카오 페이, 네이버 페이, 카드, PAYCO 등) 지원
   - Axios Interceptor를 이용해 accessToken만료시 refreshToken을 자동요청 하도록 구현함
-<br>
+  <br>
 
 ### 📌 서비스 화면
 
