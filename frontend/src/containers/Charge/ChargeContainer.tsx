@@ -62,7 +62,8 @@ const callback: (response: CallBackParams) => void = async (response) => {
 /** 결제 요청 함수 */
 export const payment = (data: PayParams) => {
   const { IMP } = window;
-  IMP?.init('imp45886434');
+  const IMP_CODE = process.env.REACT_APP_IMP_CODE;
+  IMP?.init(IMP_CODE);
 
   IMP.request_pay(data, callback);
 };
